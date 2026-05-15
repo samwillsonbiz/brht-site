@@ -230,12 +230,12 @@ export default function LandingPage() {
             </div>
             <div className="mt-10 grid gap-6 md:grid-cols-4">
               {[
-                [Settings2, "Map", "We identify your tools, KPIs, manual work, and reporting gaps."],
-                [Database, "Connect", "We build secure data pipelines into a centralized database."],
-                [Zap, "Automate", "We create dashboards, workflows, alerts, and recurring reports."],
-                [RefreshCw, "Improve", "We monitor, refine, and add new views as your business changes."],
-              ].map(([Icon, title, desc]) => {
-                const StepIcon = Icon;
+  { icon: Settings2, title: "Map", desc: "We identify your tools, KPIs, manual work, and reporting gaps." },
+  { icon: Database, title: "Connect", desc: "We build secure data pipelines into a centralized database." },
+  { icon: Zap, title: "Automate", desc: "We create dashboards, workflows, alerts, and recurring reports." },
+  { icon: RefreshCw, title: "Improve", desc: "We monitor, refine, and add new views as your business changes." },
+].map(({ icon: StepIcon, title, desc }) => {
+                
                 return (
                   <Card key={title} className="rounded-3xl border-slate-800 bg-slate-950">
                     <CardContent className="p-6">
