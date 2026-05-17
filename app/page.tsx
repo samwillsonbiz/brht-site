@@ -222,6 +222,45 @@ function DataConnectionFlow() {
 
   const activeCount = activeSources.length;
 
+  const intelligenceMetrics = [
+    {
+      title: "Blended ROAS",
+      description: "Unified advertising efficiency across all paid acquisition channels.",
+      requires: ["meta", "google", "shopify", "amazon"],
+      value: "3.7x",
+    },
+    {
+      title: "True Contribution Margin",
+      description: "Revenue minus ad spend, COGS, fees, and operational costs.",
+      requires: ["shopify", "amazon", "dear", "bill"],
+      value: "22.4%",
+    },
+    {
+      title: "Inventory Runway",
+      description: "Projected days remaining before stockout risk appears.",
+      requires: ["shopify", "amazon", "dear"],
+      value: "31 days",
+    },
+    {
+      title: "Customer Acquisition Cost",
+      description: "Real blended CAC from all paid channels and order sources.",
+      requires: ["meta", "google", "shopify", "amazon"],
+      value: "$42",
+    },
+    {
+      title: "Cash Burn Forecast",
+      description: "Forward operational cash projection based on current spend and sales velocity.",
+      requires: ["bill", "shopify", "amazon"],
+      value: "14.2 mo",
+    },
+    {
+      title: "Forecast Accuracy",
+      description: "Compares forecasted inventory and sales assumptions against live operational data.",
+      requires: ["sheets", "shopify", "amazon", "dear"],
+      value: "94%",
+    },
+  ];
+
   function toggleSource(key: string) {
     setActiveSources((current) => {
       if (current.includes(key)) {
@@ -354,6 +393,91 @@ function DataConnectionFlow() {
               );
             })}
           </div>
+        </div>
+
+      <div className="relative mt-10 overflow-hidden rounded-[2rem] border border-white/10 bg-slate-950/45 p-6">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(34,211,238,0.08),transparent_60%)]" />
+
+        <div className="relative flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <div className="inline-flex items-center gap-2 rounded-full border border-yellow-300/20 bg-yellow-300/10 px-3 py-1 text-xs font-black uppercase tracking-[0.2em] text-yellow-100">
+              <BrainCircuit className="h-3.5 w-3.5" /> Intelligence synthesis
+            </div>
+            <h4 className="mt-4 text-3xl font-black tracking-tight text-white md:text-4xl">
+              New intelligence appears when systems connect together.
+            </h4>
+            <p className="mt-3 max-w-3xl leading-7 text-slate-300">
+              BRHT doesn’t just display platform data. It combines multiple systems into operational metrics that individual platforms cannot calculate alone.
+            </p>
+          </div>
+
+          <div className="rounded-3xl border border-cyan-300/20 bg-cyan-300/10 px-5 py-4 text-right">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-100">Available intelligence</p>
+            <p className="mt-1 text-4xl font-black text-white">
+              {
+                intelligenceMetrics.filter((metric) =>
+                  metric.requires.every((req) => activeSources.includes(req))
+                ).length
+              }
+            </p>
+          </div>
+        </div>
+
+        <div className="relative mt-8 grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
+          {intelligenceMetrics.map((metric) => {
+            const unlocked = metric.requires.every((req) => activeSources.includes(req));
+
+            return (
+              <motion.div
+                layout
+                key={metric.title}
+                className={`relative overflow-hidden rounded-[1.8rem] border p-5 transition ${unlocked ? "border-cyan-300/25 bg-cyan-300/10 shadow-[0_0_35px_rgba(103,232,249,0.12)]" : "border-white/10 bg-white/[0.03]"}`}
+              >
+                <div className={`absolute inset-x-0 top-0 h-1 ${unlocked ? "bg-gradient-to-r from-cyan-300 via-cyan-100 to-yellow-200" : "bg-white/10"}`} />
+
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <h5 className="text-xl font-black text-white">{metric.title}</h5>
+                    <p className="mt-2 leading-6 text-slate-300">{metric.description}</p>
+                  </div>
+
+                  <div className={`flex h-9 min-w-9 items-center justify-center rounded-full border px-3 text-xs font-black uppercase tracking-[0.12em] ${unlocked ? "border-cyan-200 bg-cyan-300 text-slate-950" : "border-white/10 bg-white/[0.03] text-slate-500"}`}>
+                    {unlocked ? "Live" : "Locked"}
+                  </div>
+                </div>
+
+                <div className="mt-6 flex flex-wrap gap-2">
+                  {metric.requires.map((req) => {
+                    const connected = activeSources.includes(req);
+
+                    return (
+                      <span
+                        key={req}
+                        className={`rounded-full border px-3 py-1 text-xs font-bold capitalize ${connected ? "border-cyan-300/25 bg-cyan-300/10 text-cyan-100" : "border-white/10 bg-white/[0.03] text-slate-500"}`}
+                      >
+                        {req}
+                      </span>
+                    );
+                  })}
+                </div>
+
+                <div className="mt-7 flex items-end justify-between gap-4">
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">
+                      Operational metric
+                    </p>
+                    <p className={`mt-2 text-4xl font-black tracking-tight ${unlocked ? "text-white" : "text-slate-700"}`}>
+                      {unlocked ? metric.value : "—"}
+                    </p>
+                  </div>
+
+                  <div className={`rounded-2xl border px-3 py-2 text-xs font-bold ${unlocked ? "border-emerald-300/20 bg-emerald-300/10 text-emerald-100" : "border-white/10 bg-white/[0.03] text-slate-500"}`}>
+                    {unlocked ? "Data unified" : `${metric.requires.filter((req) => !activeSources.includes(req)).length} source missing`}
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })}
         </div>
       </div>
     </div>
