@@ -220,52 +220,55 @@ function DataConnectionFlow() {
     },
   ];
 
-  const activeCount = activeSources.length;
-
   const intelligenceMetrics = [
     {
       title: "Blended ROAS",
-      description: "Unified advertising efficiency across all paid acquisition channels.",
+      description: "Unified advertising efficiency across paid acquisition and revenue channels.",
       requires: ["meta", "google", "shopify", "amazon"],
       value: "3.7x",
     },
     {
       title: "True Contribution Margin",
-      description: "Revenue minus ad spend, COGS, fees, and operational costs.",
+      description: "Revenue minus ad spend, COGS, marketplace fees, and operating expenses.",
       requires: ["shopify", "amazon", "dear", "bill"],
       value: "22.4%",
     },
     {
       title: "Inventory Runway",
-      description: "Projected days remaining before stockout risk appears.",
+      description: "Projected days remaining before products reach stockout risk.",
       requires: ["shopify", "amazon", "dear"],
       value: "31 days",
     },
     {
       title: "Customer Acquisition Cost",
-      description: "Real blended CAC from all paid channels and order sources.",
+      description: "Real blended CAC across paid media and commerce channels.",
       requires: ["meta", "google", "shopify", "amazon"],
       value: "$42",
     },
     {
       title: "Cash Burn Forecast",
-      description: "Forward operational cash projection based on current spend and sales velocity.",
+      description: "Forward cash projection based on expenses, revenue, and sales velocity.",
       requires: ["bill", "shopify", "amazon"],
       value: "14.2 mo",
     },
     {
       title: "Forecast Accuracy",
-      description: "Compares forecasted inventory and sales assumptions against live operational data.",
+      description: "Compares forecasted assumptions against live commerce and inventory data.",
       requires: ["sheets", "shopify", "amazon", "dear"],
       value: "94%",
     },
   ];
+
+  const unlockedMetrics = intelligenceMetrics.filter((metric) =>
+    metric.requires.every((req) => activeSources.includes(req))
+  );
 
   function toggleSource(key: string) {
     setActiveSources((current) => {
       if (current.includes(key)) {
         return current.length === 1 ? current : current.filter((item) => item !== key);
       }
+
       return [...current, key];
     });
   }
@@ -290,58 +293,53 @@ function DataConnectionFlow() {
 
         <div className="rounded-3xl border border-cyan-300/20 bg-cyan-300/10 px-5 py-4 text-right">
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-100">Connected sources</p>
-          <p className="mt-1 text-4xl font-black text-white">{activeCount}</p>
+          <p className="mt-1 text-4xl font-black text-white">{activeSources.length}</p>
         </div>
       </div>
 
       <div className="relative mt-10 grid gap-8 xl:grid-cols-[1.15fr_0.85fr]">
-        <div>
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {sources.map((source) => {
-              const active = activeSources.includes(source.key);
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {sources.map((source) => {
+            const active = activeSources.includes(source.key);
 
-              return (
-                <motion.button
-                  layout
-                  key={source.key}
-                  onClick={() => toggleSource(source.key)}
-                  whileHover={{ y: -3 }}
-                  className={`group relative overflow-hidden rounded-[1.8rem] border p-5 text-left transition ${active ? "border-cyan-300/30 bg-cyan-300/10 shadow-[0_0_40px_rgba(103,232,249,0.12)]" : "border-white/10 bg-white/[0.03] hover:bg-white/[0.05]"}`}
-                >
-                  <div className={`mb-5 h-1.5 w-20 rounded-full bg-gradient-to-r ${source.accent}`} />
+            return (
+              <motion.button
+                layout
+                key={source.key}
+                onClick={() => toggleSource(source.key)}
+                whileHover={{ y: -3 }}
+                className={`group relative overflow-hidden rounded-[1.8rem] border p-5 text-left transition ${active ? "border-cyan-300/30 bg-cyan-300/10 shadow-[0_0_40px_rgba(103,232,249,0.12)]" : "border-white/10 bg-white/[0.03] hover:bg-white/[0.05]"}`}
+              >
+                <div className={`mb-5 h-1.5 w-20 rounded-full bg-gradient-to-r ${source.accent}`} />
 
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <h4 className="text-xl font-black text-white">{source.title}</h4>
-                      <p className="mt-1 text-sm text-slate-400">{source.subtitle}</p>
-                    </div>
-
-                    <div className={`flex h-7 w-7 items-center justify-center rounded-full border ${active ? "border-cyan-200 bg-cyan-300 text-slate-950" : "border-white/15 text-slate-500"}`}>
-                      {active ? <CheckCircle2 className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
-                    </div>
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <h4 className="text-xl font-black text-white">{source.title}</h4>
+                    <p className="mt-1 text-sm text-slate-400">{source.subtitle}</p>
                   </div>
 
-                  <div className="mt-5 flex flex-wrap gap-2">
-                    {source.metrics.map((metric) => (
-                      <span key={metric} className="rounded-full border border-white/10 bg-slate-950/35 px-3 py-1 text-xs font-medium text-slate-300">
-                        {metric}
-                      </span>
-                    ))}
+                  <div className={`flex h-7 w-7 items-center justify-center rounded-full border ${active ? "border-cyan-200 bg-cyan-300 text-slate-950" : "border-white/15 text-slate-500"}`}>
+                    {active ? <CheckCircle2 className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
                   </div>
-                </motion.button>
-              );
-            })}
-          </div>
+                </div>
+
+                <div className="mt-5 flex flex-wrap gap-2">
+                  {source.metrics.map((metric) => (
+                    <span key={metric} className="rounded-full border border-white/10 bg-slate-950/35 px-3 py-1 text-xs font-medium text-slate-300">
+                      {metric}
+                    </span>
+                  ))}
+                </div>
+              </motion.button>
+            );
+          })}
         </div>
 
         <div className="relative flex min-h-[620px] items-center justify-center overflow-hidden rounded-[2rem] border border-white/10 bg-slate-950/45 p-6">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(34,211,238,0.12),transparent_58%)]" />
 
           <div className="relative flex h-full w-full items-center justify-center">
-            <motion.div
-              layout
-              className="absolute flex h-40 w-40 items-center justify-center rounded-[2rem] border border-cyan-300/30 bg-cyan-300/10 shadow-[0_0_60px_rgba(103,232,249,0.2)] backdrop-blur-xl"
-            >
+            <motion.div layout className="absolute z-10 flex h-40 w-40 items-center justify-center rounded-[2rem] border border-cyan-300/30 bg-cyan-300/10 shadow-[0_0_60px_rgba(103,232,249,0.2)] backdrop-blur-xl">
               <div className="text-center">
                 <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-cyan-300 text-slate-950">
                   <BrainCircuit className="h-7 w-7" />
@@ -362,12 +360,7 @@ function DataConnectionFlow() {
                 <motion.div
                   key={source.key}
                   initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{
-                    opacity: active ? 1 : 0.4,
-                    scale: active ? 1 : 0.94,
-                    x,
-                    y,
-                  }}
+                  animate={{ opacity: active ? 1 : 0.35, scale: active ? 1 : 0.94, x, y }}
                   transition={{ duration: 0.35 }}
                   className="absolute"
                 >
@@ -383,10 +376,7 @@ function DataConnectionFlow() {
                       animate={{ opacity: [0.35, 0.9, 0.35] }}
                       transition={{ duration: 2.2, repeat: Infinity }}
                       className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[2px] origin-left bg-gradient-to-r from-cyan-300 via-cyan-200 to-transparent"
-                      style={{
-                        width: radius - 60,
-                        transform: `translateY(-50%) rotate(${angle + Math.PI}rad)`,
-                      }}
+                      style={{ width: radius - 60, transform: `translateY(-50%) rotate(${angle + Math.PI}rad)` }}
                     />
                   )}
                 </motion.div>
@@ -394,6 +384,7 @@ function DataConnectionFlow() {
             })}
           </div>
         </div>
+      </div>
 
       <div className="relative mt-10 overflow-hidden rounded-[2rem] border border-white/10 bg-slate-950/45 p-6">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(34,211,238,0.08),transparent_60%)]" />
@@ -404,80 +395,76 @@ function DataConnectionFlow() {
               <BrainCircuit className="h-3.5 w-3.5" /> Intelligence synthesis
             </div>
             <h4 className="mt-4 text-3xl font-black tracking-tight text-white md:text-4xl">
-              New intelligence appears when systems connect together.
+              Cross-platform intelligence appears as systems connect.
             </h4>
             <p className="mt-3 max-w-3xl leading-7 text-slate-300">
-              BRHT doesn’t just display platform data. It combines multiple systems into operational metrics that individual platforms cannot calculate alone.
+              Individual platforms only know part of the story. BRHT creates entirely new operational metrics once multiple systems are connected together.
             </p>
           </div>
 
           <div className="rounded-3xl border border-cyan-300/20 bg-cyan-300/10 px-5 py-4 text-right">
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-100">Available intelligence</p>
-            <p className="mt-1 text-4xl font-black text-white">
-              {
-                intelligenceMetrics.filter((metric) =>
-                  metric.requires.every((req) => activeSources.includes(req))
-                ).length
-              }
-            </p>
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-100">Unlocked metrics</p>
+            <p className="mt-1 text-4xl font-black text-white">{unlockedMetrics.length}</p>
           </div>
         </div>
 
         <div className="relative mt-8 grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
-          {intelligenceMetrics.map((metric) => {
-            const unlocked = metric.requires.every((req) => activeSources.includes(req));
-
-            return (
+          <AnimatePresence mode="popLayout">
+            {unlockedMetrics.map((metric) => (
               <motion.div
                 layout
+                initial={{ opacity: 0, scale: 0.96, y: 8 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.96, y: 8 }}
                 key={metric.title}
-                className={`relative overflow-hidden rounded-[1.8rem] border p-5 transition ${unlocked ? "border-cyan-300/25 bg-cyan-300/10 shadow-[0_0_35px_rgba(103,232,249,0.12)]" : "border-white/10 bg-white/[0.03]"}`}
+                className="relative overflow-hidden rounded-[1.8rem] border border-cyan-300/25 bg-cyan-300/10 p-5 shadow-[0_0_35px_rgba(103,232,249,0.12)]"
               >
-                <div className={`absolute inset-x-0 top-0 h-1 ${unlocked ? "bg-gradient-to-r from-cyan-300 via-cyan-100 to-yellow-200" : "bg-white/10"}`} />
+                <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-cyan-300 via-cyan-100 to-yellow-200" />
 
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <h5 className="text-xl font-black text-white">{metric.title}</h5>
-                    <p className="mt-2 leading-6 text-slate-300">{metric.description}</p>
-                  </div>
+                    <div className="inline-flex items-center gap-2 rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-emerald-100">
+                      <CheckCircle2 className="h-3 w-3" /> Live metric
+                    </div>
 
-                  <div className={`flex h-9 min-w-9 items-center justify-center rounded-full border px-3 text-xs font-black uppercase tracking-[0.12em] ${unlocked ? "border-cyan-200 bg-cyan-300 text-slate-950" : "border-white/10 bg-white/[0.03] text-slate-500"}`}>
-                    {unlocked ? "Live" : "Locked"}
+                    <h5 className="mt-4 text-2xl font-black text-white">{metric.title}</h5>
+                    <p className="mt-3 leading-6 text-slate-300">{metric.description}</p>
                   </div>
                 </div>
 
                 <div className="mt-6 flex flex-wrap gap-2">
-                  {metric.requires.map((req) => {
-                    const connected = activeSources.includes(req);
-
-                    return (
-                      <span
-                        key={req}
-                        className={`rounded-full border px-3 py-1 text-xs font-bold capitalize ${connected ? "border-cyan-300/25 bg-cyan-300/10 text-cyan-100" : "border-white/10 bg-white/[0.03] text-slate-500"}`}
-                      >
-                        {req}
-                      </span>
-                    );
-                  })}
+                  {metric.requires.map((req) => (
+                    <span key={req} className="rounded-full border border-cyan-300/25 bg-cyan-300/10 px-3 py-1 text-xs font-bold capitalize text-cyan-100">
+                      {req}
+                    </span>
+                  ))}
                 </div>
 
                 <div className="mt-7 flex items-end justify-between gap-4">
                   <div>
-                    <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">
-                      Operational metric
-                    </p>
-                    <p className={`mt-2 text-4xl font-black tracking-tight ${unlocked ? "text-white" : "text-slate-700"}`}>
-                      {unlocked ? metric.value : "—"}
-                    </p>
+                    <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">Unified business intelligence</p>
+                    <p className="mt-2 text-5xl font-black tracking-tight text-white">{metric.value}</p>
                   </div>
 
-                  <div className={`rounded-2xl border px-3 py-2 text-xs font-bold ${unlocked ? "border-emerald-300/20 bg-emerald-300/10 text-emerald-100" : "border-white/10 bg-white/[0.03] text-slate-500"}`}>
-                    {unlocked ? "Data unified" : `${metric.requires.filter((req) => !activeSources.includes(req)).length} source missing`}
+                  <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-3 py-2 text-xs font-bold text-emerald-100">
+                    Multi-source
                   </div>
                 </div>
               </motion.div>
-            );
-          })}
+            ))}
+          </AnimatePresence>
+
+          {unlockedMetrics.length === 0 && (
+            <div className="col-span-full rounded-[2rem] border border-dashed border-white/10 bg-white/[0.02] p-10 text-center">
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-3xl border border-white/10 bg-white/[0.03] text-slate-500">
+                <BrainCircuit className="h-8 w-8" />
+              </div>
+              <h5 className="mt-5 text-2xl font-black text-white">Connect more systems to unlock intelligence.</h5>
+              <p className="mx-auto mt-3 max-w-2xl leading-7 text-slate-400">
+                Operational metrics like blended ROAS, true contribution margin, and inventory runway only appear when enough systems are connected together.
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>
