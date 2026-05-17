@@ -22,6 +22,7 @@ import {
   Menu,
   MessageCircle,
   MousePointerClick,
+  Plus,
   Network,
   PlugZap,
   Radar,
@@ -157,6 +158,206 @@ function formatMetric(metric: (typeof metricCatalog)[number], multiplier: number
   if (metric.type === "percent") return `${Math.round(scaled)}${metric.suffix}`;
   if (metric.type === "days") return `${Math.round(scaled)}${metric.suffix}`;
   return `${metric.prefix}${Math.round(scaled).toLocaleString()}${metric.suffix}`;
+}
+
+function DataConnectionFlow() {
+  const [activeSources, setActiveSources] = useState([
+    "shopify",
+    "amazon",
+    "meta",
+    "google",
+  ]);
+
+  const sources = [
+    {
+      key: "shopify",
+      title: "Shopify",
+      subtitle: "Orders + customers",
+      accent: "from-emerald-300 to-cyan-100",
+      metrics: ["Revenue", "AOV", "Units", "Customer LTV"],
+    },
+    {
+      key: "amazon",
+      title: "Amazon",
+      subtitle: "Marketplace signal",
+      accent: "from-orange-300 to-yellow-100",
+      metrics: ["Sessions", "Conversion", "FBA inventory", "Buy box"],
+    },
+    {
+      key: "meta",
+      title: "Meta Ads",
+      subtitle: "Paid social",
+      accent: "from-cyan-300 to-indigo-100",
+      metrics: ["Spend", "ROAS", "CTR", "CAC"],
+    },
+    {
+      key: "google",
+      title: "Google Ads",
+      subtitle: "Search + PMAX",
+      accent: "from-blue-300 to-cyan-100",
+      metrics: ["Spend", "Conv. value", "ROAS", "Search demand"],
+    },
+    {
+      key: "dear",
+      title: "DEAR Systems",
+      subtitle: "Inventory + ops",
+      accent: "from-yellow-300 to-orange-100",
+      metrics: ["Stock", "COGS", "Lead time", "Purchase orders"],
+    },
+    {
+      key: "bill",
+      title: "Bill.com",
+      subtitle: "Expenses + AP",
+      accent: "from-fuchsia-300 to-cyan-100",
+      metrics: ["Expenses", "Cash flow", "Vendors", "Burn rate"],
+    },
+    {
+      key: "sheets",
+      title: "Google Sheets",
+      subtitle: "Custom business logic",
+      accent: "from-lime-300 to-cyan-100",
+      metrics: ["Forecasts", "Manual KPIs", "Targets", "Scenarios"],
+    },
+  ];
+
+  const activeCount = activeSources.length;
+
+  function toggleSource(key: string) {
+    setActiveSources((current) => {
+      if (current.includes(key)) {
+        return current.length === 1 ? current : current.filter((item) => item !== key);
+      }
+      return [...current, key];
+    });
+  }
+
+  return (
+    <div className="relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-white/[0.055] p-5 shadow-2xl shadow-slate-950/30 backdrop-blur-2xl md:p-7">
+      <div className="absolute left-0 top-0 h-64 w-64 rounded-full bg-cyan-300/10 blur-3xl" />
+      <div className="absolute bottom-0 right-0 h-72 w-72 rounded-full bg-yellow-300/10 blur-3xl" />
+
+      <div className="relative flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <div className="inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs font-black uppercase tracking-[0.2em] text-cyan-100">
+            <PlugZap className="h-3.5 w-3.5" /> Source orchestration
+          </div>
+          <h3 className="mt-4 text-3xl font-black tracking-tight md:text-5xl">
+            Connect the systems that already run your business.
+          </h3>
+          <p className="mt-4 max-w-3xl leading-8 text-slate-300 md:text-lg">
+            BRHT pulls fragmented data from commerce, ads, inventory, finance, and custom spreadsheets into one operational intelligence layer.
+          </p>
+        </div>
+
+        <div className="rounded-3xl border border-cyan-300/20 bg-cyan-300/10 px-5 py-4 text-right">
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-100">Connected sources</p>
+          <p className="mt-1 text-4xl font-black text-white">{activeCount}</p>
+        </div>
+      </div>
+
+      <div className="relative mt-10 grid gap-8 xl:grid-cols-[1.15fr_0.85fr]">
+        <div>
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {sources.map((source) => {
+              const active = activeSources.includes(source.key);
+
+              return (
+                <motion.button
+                  layout
+                  key={source.key}
+                  onClick={() => toggleSource(source.key)}
+                  whileHover={{ y: -3 }}
+                  className={`group relative overflow-hidden rounded-[1.8rem] border p-5 text-left transition ${active ? "border-cyan-300/30 bg-cyan-300/10 shadow-[0_0_40px_rgba(103,232,249,0.12)]" : "border-white/10 bg-white/[0.03] hover:bg-white/[0.05]"}`}
+                >
+                  <div className={`mb-5 h-1.5 w-20 rounded-full bg-gradient-to-r ${source.accent}`} />
+
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <h4 className="text-xl font-black text-white">{source.title}</h4>
+                      <p className="mt-1 text-sm text-slate-400">{source.subtitle}</p>
+                    </div>
+
+                    <div className={`flex h-7 w-7 items-center justify-center rounded-full border ${active ? "border-cyan-200 bg-cyan-300 text-slate-950" : "border-white/15 text-slate-500"}`}>
+                      {active ? <CheckCircle2 className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
+                    </div>
+                  </div>
+
+                  <div className="mt-5 flex flex-wrap gap-2">
+                    {source.metrics.map((metric) => (
+                      <span key={metric} className="rounded-full border border-white/10 bg-slate-950/35 px-3 py-1 text-xs font-medium text-slate-300">
+                        {metric}
+                      </span>
+                    ))}
+                  </div>
+                </motion.button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="relative flex min-h-[620px] items-center justify-center overflow-hidden rounded-[2rem] border border-white/10 bg-slate-950/45 p-6">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(34,211,238,0.12),transparent_58%)]" />
+
+          <div className="relative flex h-full w-full items-center justify-center">
+            <motion.div
+              layout
+              className="absolute flex h-40 w-40 items-center justify-center rounded-[2rem] border border-cyan-300/30 bg-cyan-300/10 shadow-[0_0_60px_rgba(103,232,249,0.2)] backdrop-blur-xl"
+            >
+              <div className="text-center">
+                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-cyan-300 text-slate-950">
+                  <BrainCircuit className="h-7 w-7" />
+                </div>
+                <p className="mt-4 text-sm font-bold uppercase tracking-[0.18em] text-cyan-100">BRHT Core</p>
+                <p className="mt-2 text-2xl font-black text-white">Unified Intelligence</p>
+              </div>
+            </motion.div>
+
+            {sources.map((source, index) => {
+              const active = activeSources.includes(source.key);
+              const angle = (Math.PI * 2 * index) / sources.length;
+              const radius = 220;
+              const x = Math.cos(angle) * radius;
+              const y = Math.sin(angle) * radius;
+
+              return (
+                <motion.div
+                  key={source.key}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{
+                    opacity: active ? 1 : 0.4,
+                    scale: active ? 1 : 0.94,
+                    x,
+                    y,
+                  }}
+                  transition={{ duration: 0.35 }}
+                  className="absolute"
+                >
+                  <div className={`relative flex h-28 w-40 flex-col justify-center rounded-[1.6rem] border px-4 py-4 backdrop-blur-xl ${active ? "border-cyan-300/30 bg-white/[0.08]" : "border-white/10 bg-white/[0.03]"}`}>
+                    <div className={`mb-3 h-1.5 w-14 rounded-full bg-gradient-to-r ${source.accent}`} />
+                    <p className="text-lg font-black text-white">{source.title}</p>
+                    <p className="text-xs text-slate-400">{source.subtitle}</p>
+                  </div>
+
+                  {active && (
+                    <motion.div
+                      initial={{ opacity: 0.3 }}
+                      animate={{ opacity: [0.35, 0.9, 0.35] }}
+                      transition={{ duration: 2.2, repeat: Infinity }}
+                      className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[2px] origin-left bg-gradient-to-r from-cyan-300 via-cyan-200 to-transparent"
+                      style={{
+                        width: radius - 60,
+                        transform: `translateY(-50%) rotate(${angle + Math.PI}rad)`,
+                      }}
+                    />
+                  )}
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 function InteractiveDashboard() {
@@ -563,7 +764,8 @@ export default function LandingPage() {
         </section>
 
         <section id="demo" className="scroll-mt-24 px-6 py-20">
-          <div className="mx-auto max-w-7xl">
+          <div className="mx-auto max-w-7xl space-y-10">
+            <DataConnectionFlow />
             <InteractiveDashboard />
           </div>
         </section>
