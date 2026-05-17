@@ -164,369 +164,421 @@ function formatMetric(metric: (typeof metricCatalog)[number], multiplier: number
 }
 
 function DataConnectionFlow() {
-  const [activeSources, setActiveSources] = useState([
-    "shopify",
-    "amazon",
-    "meta",
-    "google",
-    "dear",
-    "bill",
-  ]);
+  const [activeSources, setActiveSources] = useState(["shopify", "amazon", "meta"]);
+  const [activeRange, setActiveRange] = useState("7d");
 
   const sources = [
-    { key: "shopify", title: "Shopify", logo: "Shopify", subtitle: "Commerce", accent: "from-emerald-300 to-cyan-100" },
-    { key: "amazon", title: "Amazon", logo: "amazon", subtitle: "Marketplace", accent: "from-orange-300 to-yellow-100" },
-    { key: "meta", title: "Meta", logo: "Meta", subtitle: "Paid social", accent: "from-cyan-300 to-indigo-100" },
-    { key: "google", title: "Google Ads", logo: "Google", subtitle: "Search", accent: "from-blue-300 to-cyan-100" },
-    { key: "dear", title: "DEAR", logo: "DEAR", subtitle: "Inventory", accent: "from-yellow-300 to-orange-100" },
-    { key: "bill", title: "Bill.com", logo: "BILL", subtitle: "Expenses", accent: "from-fuchsia-300 to-cyan-100" },
-    { key: "sheets", title: "Sheets", logo: "Sheets", subtitle: "Custom data", accent: "from-lime-300 to-cyan-100" },
-    { key: "hubspot", title: "HubSpot", logo: "HubSpot", subtitle: "CRM", accent: "from-orange-400 to-pink-100" },
-    { key: "shipstation", title: "ShipStation", logo: "ShipStation", subtitle: "Shipping", accent: "from-sky-300 to-cyan-100" },
+    { key: "shopify", name: "Shopify", short: "S", type: "Commerce", accent: "from-emerald-400 to-cyan-200", bg: "bg-emerald-400/10", border: "border-emerald-300/35" },
+    { key: "amazon", name: "Amazon", short: "a", type: "Marketplace", accent: "from-orange-300 to-yellow-100", bg: "bg-orange-400/10", border: "border-orange-300/35" },
+    { key: "meta", name: "Meta Ads", short: "∞", type: "Paid Social", accent: "from-cyan-300 to-blue-100", bg: "bg-cyan-400/10", border: "border-cyan-300/35" },
+    { key: "google", name: "Google Ads", short: "G", type: "Paid Search", accent: "from-blue-400 to-yellow-100", bg: "bg-blue-400/10", border: "border-blue-300/35" },
+    { key: "shipstation", name: "ShipStation", short: "⚙", type: "Shipping", accent: "from-sky-300 to-cyan-100", bg: "bg-sky-400/10", border: "border-sky-300/35" },
+    { key: "hubspot", name: "HubSpot", short: "H", type: "CRM", accent: "from-orange-400 to-pink-100", bg: "bg-orange-400/10", border: "border-orange-300/35" },
   ];
 
-  const intelligenceMetrics = [
-    { key: "roas", title: "Blended ROAS", requires: ["meta", "google"] },
-    { key: "paidRevenue", title: "Paid Revenue Attribution", requires: ["meta", "shopify"] },
-    { key: "marketplaceMargin", title: "Marketplace Margin", requires: ["amazon", "bill"] },
-    { key: "inventoryVelocity", title: "Inventory Velocity", requires: ["shopify", "dear"] },
-    { key: "shippingCost", title: "Shipping Cost / Order", requires: ["shipstation", "shopify"] },
-    { key: "customerLtv", title: "Customer LTV", requires: ["hubspot", "shopify"] },
-    { key: "forecastVariance", title: "Forecast Variance", requires: ["sheets", "shopify"] },
-    { key: "adEfficiency", title: "Cross-channel Ad Efficiency", requires: ["meta", "google"] },
-    { key: "cashProjection", title: "Cash Projection", requires: ["bill", "shopify"] },
-    { key: "stockoutRisk", title: "Stockout Risk", requires: ["amazon", "dear"] },
-    { key: "cac", title: "Blended CAC", requires: ["hubspot", "meta"] },
-    { key: "fulfillmentLatency", title: "Fulfillment Latency", requires: ["shipstation", "amazon"] },
-    { key: "returnRate", title: "Return Rate Analysis", requires: ["shopify", "amazon"] },
-    { key: "profitSignal", title: "Profit Signal", requires: ["google", "bill"] },
-    { key: "cohortHealth", title: "Cohort Health", requires: ["hubspot", "meta"] },
-    { key: "sellThrough", title: "Sell-through Rate", requires: ["amazon", "dear"] },
-    { key: "blendedConversion", title: "Blended Conversion Rate", requires: ["shopify", "google"] },
-    { key: "opsLoad", title: "Operational Load", requires: ["shipstation", "bill"] },
+  const intelligenceSignals = [
+    {
+      key: "multiChannelRevenue",
+      title: "Multi-Channel Revenue",
+      desc: "Total revenue across Shopify store and Amazon marketplace.",
+      requires: ["shopify", "amazon"],
+      value: "$482,216",
+      trend: "+18.6%",
+    },
+    {
+      key: "shopifyMetaRoas",
+      title: "ROAS by Sales Channel",
+      desc: "Meta ad performance tied directly to Shopify revenue.",
+      requires: ["shopify", "meta"],
+      value: "4.21x",
+      trend: "+32.1%",
+    },
+    {
+      key: "amazonMetaEfficiency",
+      title: "Marketplace Ad Efficiency",
+      desc: "Meta-driven demand compared against Amazon marketplace sales.",
+      requires: ["amazon", "meta"],
+      value: "3.47x",
+      trend: "+21.4%",
+    },
+    {
+      key: "shopifyGoogleSearch",
+      title: "Search to Sales",
+      desc: "Google Ads search performance tied to Shopify purchases.",
+      requires: ["shopify", "google"],
+      value: "3.88x",
+      trend: "+14.9%",
+    },
+    {
+      key: "amazonGoogleSales",
+      title: "Search to Marketplace Sales",
+      desc: "Google demand compared against Amazon marketplace revenue.",
+      requires: ["amazon", "google"],
+      value: "2.94x",
+      trend: "+9.8%",
+    },
+    {
+      key: "crossChannelRoas",
+      title: "Cross-Channel ROAS",
+      desc: "Meta and Google performance compared in one paid media view.",
+      requires: ["meta", "google"],
+      value: "3.62x",
+      trend: "+17.2%",
+    },
+    {
+      key: "shopifyShippingCost",
+      title: "Shipping Cost by Channel",
+      desc: "Fulfillment cost for Shopify orders by shipping method.",
+      requires: ["shopify", "shipstation"],
+      value: "$7.82",
+      trend: "-6.5%",
+    },
+    {
+      key: "amazonShippingCost",
+      title: "FBA vs FBM Shipping Cost",
+      desc: "Amazon fulfillment cost compared against ShipStation shipments.",
+      requires: ["amazon", "shipstation"],
+      value: "$8.91",
+      trend: "-3.2%",
+    },
+    {
+      key: "shopifyCustomerLtv",
+      title: "Customer LTV",
+      desc: "Lifetime value of Shopify customers tracked inside HubSpot.",
+      requires: ["shopify", "hubspot"],
+      value: "$186",
+      trend: "+11.7%",
+    },
+    {
+      key: "amazonCustomerValue",
+      title: "Marketplace Customer Value",
+      desc: "Amazon customer value connected to CRM follow-up activity.",
+      requires: ["amazon", "hubspot"],
+      value: "$142",
+      trend: "+7.4%",
+    },
+    {
+      key: "metaCustomerValue",
+      title: "Ad Driven Customer Value",
+      desc: "LTV of customers acquired from Meta campaigns.",
+      requires: ["meta", "hubspot"],
+      value: "$211",
+      trend: "+24.3%",
+    },
+    {
+      key: "googleCustomerValue",
+      title: "Search Driven Customer Value",
+      desc: "LTV of customers acquired from Google search demand.",
+      requires: ["google", "hubspot"],
+      value: "$198",
+      trend: "+19.1%",
+    },
+    {
+      key: "googleShippingLag",
+      title: "Search Order Delivery Lag",
+      desc: "Delivery speed for orders generated from Google Ads traffic.",
+      requires: ["google", "shipstation"],
+      value: "2.4d",
+      trend: "-0.6d",
+    },
+    {
+      key: "metaShippingLag",
+      title: "Social Order Delivery Lag",
+      desc: "Delivery speed for orders generated from Meta campaigns.",
+      requires: ["meta", "shipstation"],
+      value: "2.8d",
+      trend: "-0.4d",
+    },
+    {
+      key: "crmFulfillment",
+      title: "Post-Purchase Experience",
+      desc: "CRM follow-up performance connected to delivery completion.",
+      requires: ["hubspot", "shipstation"],
+      value: "91%",
+      trend: "+8.0%",
+    },
   ];
 
-  const unlockedMetrics = intelligenceMetrics.filter((metric) =>
-    metric.requires.every((req) => activeSources.includes(req))
+  const unlockedSignals = intelligenceSignals.filter((signal) =>
+    signal.requires.every((source) => activeSources.includes(source))
   );
+
+  const featuredSignals = unlockedSignals.slice(0, 4);
+  const topSignal = unlockedSignals[0];
+
+  const ranges = [
+    { key: "today", label: "Today" },
+    { key: "yesterday", label: "Yesterday" },
+    { key: "7d", label: "Last 7 Days" },
+    { key: "30d", label: "Last 30 Days" },
+  ];
 
   function toggleSource(key: string) {
     setActiveSources((current) => {
-      if (current.includes(key)) {
-        return current.length === 1 ? current : current.filter((item) => item !== key);
-      }
-
+      if (current.includes(key)) return current.filter((item) => item !== key);
       return [...current, key];
     });
   }
 
-  return (
-    <div className="relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-white/[0.055] p-5 shadow-2xl shadow-slate-950/30 backdrop-blur-2xl md:p-7">
-      <div className="absolute left-0 top-0 h-64 w-64 rounded-full bg-cyan-300/10 blur-3xl" />
-      <div className="absolute bottom-0 right-0 h-72 w-72 rounded-full bg-yellow-300/10 blur-3xl" />
-
-      <div className="relative flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-        <div>
-          <div className="inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs font-black uppercase tracking-[0.2em] text-cyan-100">
-            <PlugZap className="h-3.5 w-3.5" /> Source orchestration
-          </div>
-          <h3 className="mt-4 text-3xl font-black tracking-tight md:text-5xl">
-            Connect systems. Reveal intelligence.
-          </h3>
-          <p className="mt-4 max-w-3xl leading-8 text-slate-300 md:text-lg">
-            BRHT combines operational systems together to generate business intelligence that individual platforms cannot create alone.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-2 gap-3">
-          <div className="rounded-3xl border border-cyan-300/20 bg-cyan-300/10 px-5 py-4 text-right">
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-100">Sources</p>
-            <p className="mt-1 text-4xl font-black text-white">{activeSources.length}</p>
-          </div>
-          <div className="rounded-3xl border border-yellow-300/20 bg-yellow-300/10 px-5 py-4 text-right">
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-yellow-100">Signals</p>
-            <p className="mt-1 text-4xl font-black text-white">{unlockedMetrics.length}</p>
-          </div>
-        </div>
-      </div>
-
-      <div className="relative mt-10 grid gap-6 xl:grid-cols-[0.82fr_1.18fr]">
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-          {sources.map((source) => {
-            const active = activeSources.includes(source.key);
-
-            return (
-              <motion.button
-                layout
-                key={source.key}
-                onClick={() => toggleSource(source.key)}
-                whileHover={{ y: -3 }}
-                className={`group relative overflow-hidden rounded-[1.4rem] border p-4 text-left transition ${active ? "border-cyan-300/30 bg-cyan-300/10 shadow-[0_0_36px_rgba(103,232,249,0.12)]" : "border-white/10 bg-white/[0.03] hover:bg-white/[0.05]"}`}
-              >
-                <div className={`mb-4 h-1.5 w-16 rounded-full bg-gradient-to-r ${source.accent}`} />
-
-                <div className="flex items-center justify-between gap-3">
-                  <div>
-                    <div className="text-2xl font-black tracking-tight text-white">{source.logo}</div>
-                    <p className="mt-1 text-sm text-slate-400">{source.subtitle}</p>
-                  </div>
-
-                  <div className={`flex h-7 w-7 items-center justify-center rounded-full border ${active ? "border-cyan-200 bg-cyan-300 text-slate-950" : "border-white/15 text-slate-500"}`}>
-                    {active ? <CheckCircle2 className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
-                  </div>
-                </div>
-              </motion.button>
-            );
-          })}
-        </div>
-
-        <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-slate-950/45 p-5">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(34,211,238,0.12),transparent_58%)]" />
-
-          <div className="relative h-full min-h-[620px]">
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="relative flex h-40 w-40 items-center justify-center rounded-[2rem] border border-cyan-300/30 bg-cyan-300/10 shadow-[0_0_60px_rgba(103,232,249,0.2)] backdrop-blur-xl">
-                <div className="text-center">
-                  <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-cyan-300 text-slate-950">
-                    <BrainCircuit className="h-7 w-7" />
-                  </div>
-                  <p className="mt-4 text-sm font-bold uppercase tracking-[0.18em] text-cyan-100">BRHT Core</p>
-                  <p className="mt-2 text-2xl font-black text-white">Unified Intelligence</p>
-                </div>
-              </div>
-            </div>
-
-            {sources.map((source, index) => {
-              const active = activeSources.includes(source.key);
-              const angle = (Math.PI * 2 * index) / sources.length;
-              const radius = 230;
-              const x = Math.cos(angle) * radius;
-              const y = Math.sin(angle) * radius;
-
-              return (
-                <div
-                  key={source.key}
-                  className="absolute left-1/2 top-1/2"
-                  style={{ transform: `translate(${x}px, ${y}px)` }}
-                >
-                  <div className={`relative -translate-x-1/2 -translate-y-1/2 rounded-[1.4rem] border px-4 py-3 backdrop-blur-xl ${active ? "border-cyan-300/30 bg-white/[0.08]" : "border-white/10 bg-white/[0.03] opacity-50"}`}>
-                    <div className={`mb-2 h-1.5 w-12 rounded-full bg-gradient-to-r ${source.accent}`} />
-                    <p className="text-base font-black text-white">{source.logo}</p>
-                  </div>
-
-                  {active && (
-                    <motion.div
-                      initial={{ opacity: 0.3 }}
-                      animate={{ opacity: [0.35, 0.9, 0.35] }}
-                      transition={{ duration: 2.2, repeat: Infinity }}
-                      className="pointer-events-none absolute left-1/2 top-1/2 h-[2px] origin-left bg-gradient-to-r from-cyan-300 via-cyan-200 to-transparent"
-                      style={{
-                        width: radius - 55,
-                        transform: `rotate(${angle + Math.PI}rad)`,
-                      }}
-                    />
-                  )}
-                </div>
-              );
-            })}
-
-            <div className="absolute inset-x-0 bottom-0 pt-6">
-              <div className="mb-4 flex items-center justify-between gap-3">
-                <div>
-                  <p className="text-xs font-black uppercase tracking-[0.18em] text-yellow-100">
-                    Intelligence signals
-                  </p>
-                  <h4 className="mt-2 text-2xl font-black text-white">
-                    Live business intelligence
-                  </h4>
-                </div>
-                <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/10 px-3 py-2 text-xs font-black uppercase tracking-[0.14em] text-cyan-100">
-                  {unlockedMetrics.length} unlocked
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-2 lg:grid-cols-3">
-                <AnimatePresence mode="popLayout">
-                  {unlockedMetrics.map((metric) => (
-                    <motion.div
-                      layout
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.9 }}
-                      key={metric.key}
-                      className="rounded-xl border border-cyan-300/20 bg-cyan-300/10 px-3 py-2"
-                    >
-                      <p className="text-xs font-black leading-4 text-white">
-                        {metric.title}
-                      </p>
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function InteractiveDashboard() {
-  const [activeRange, setActiveRange] = useState(dateRanges[2]);
-  const [activeMetrics, setActiveMetrics] = useState(["blendedRoas", "contributionMargin", "inventoryRunway", "cac"]);
-
-  const visibleMetrics = metricCatalog.filter((metric) => activeMetrics.includes(metric.key));
-  const chartSeries = useMemo(() => {
-    const base = [34, 48, 41, 62, 56, 77, 72, 94, 86, 102, 91, 118];
-    return base.map((point, index) => Math.max(12, point * activeRange.multiplier * (0.82 + index * 0.015)));
-  }, [activeRange]);
-
-  function toggleMetric(key: string) {
-    setActiveMetrics((current) => {
-      if (current.includes(key)) return current.length === 1 ? current : current.filter((item) => item !== key);
-      return [...current, key];
-    });
+  function getSource(key: string) {
+    return sources.find((source) => source.key === key);
   }
 
   return (
-    <div className="relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-white/[0.055] p-5 shadow-2xl shadow-slate-950/30 backdrop-blur-2xl md:p-7">
-      <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-cyan-300/20 blur-3xl" />
-      <div className="absolute -bottom-20 left-10 h-56 w-56 rounded-full bg-yellow-300/10 blur-3xl" />
+    <section id="demo" className="scroll-mt-24 px-6 py-20">
+      <div className="mx-auto max-w-7xl">
+        <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-slate-950/70 p-5 shadow-2xl shadow-slate-950/40 backdrop-blur-2xl md:p-8">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_33%_35%,rgba(16,185,129,0.12),transparent_28%),radial-gradient(circle_at_58%_42%,rgba(34,211,238,0.14),transparent_28%),radial-gradient(circle_at_86%_72%,rgba(168,85,247,0.12),transparent_30%)]" />
 
-      <div className="relative flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-        <div>
-          <div className="inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs font-black uppercase tracking-[0.2em] text-cyan-100">
-            <MousePointerClick className="h-3.5 w-3.5" /> Interactive vision
-          </div>
-          <h3 className="mt-4 text-3xl font-black tracking-tight md:text-4xl">Experience the operating layer.</h3>
-          <p className="mt-3 max-w-2xl leading-7 text-slate-300">
-            Choose a time period, toggle the intelligence metrics that were unlocked above, and see how BRHT turns unified business data into one executive view.
-          </p>
-        </div>
-
-        <div className="flex flex-wrap gap-2 rounded-3xl border border-white/10 bg-slate-950/40 p-2">
-          {dateRanges.map((range) => (
-            <button
-              key={range.key}
-              onClick={() => setActiveRange(range)}
-              className={`rounded-full px-4 py-2 text-sm font-bold transition ${activeRange.key === range.key ? "bg-cyan-300 text-slate-950 shadow-[0_0_24px_rgba(103,232,249,0.25)]" : "text-slate-300 hover:bg-white/10"}`}
-            >
-              {range.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="relative mt-8 grid gap-5 lg:grid-cols-[0.78fr_1.22fr]">
-        <div className="rounded-[2rem] border border-white/10 bg-slate-950/45 p-5">
-          <div className="mb-4 flex items-center justify-between gap-3">
+          <div className="relative grid gap-6 lg:grid-cols-[1fr_auto] lg:items-start">
             <div>
-              <p className="text-sm font-bold text-slate-200">Data points</p>
-              <p className="text-xs text-slate-500">Add or remove dashboard cards</p>
-            </div>
-            <Layers3 className="h-5 w-5 text-cyan-200" />
-          </div>
-
-          <div className="grid gap-3">
-            {metricCatalog.map((metric) => {
-              const checked = activeMetrics.includes(metric.key);
-              return (
-                <button
-                  key={metric.key}
-                  onClick={() => toggleMetric(metric.key)}
-                  className={`flex items-center justify-between rounded-2xl border px-4 py-3 text-left transition ${checked ? "border-cyan-300/30 bg-cyan-300/10" : "border-white/10 bg-white/[0.03] hover:bg-white/[0.06]"}`}
-                >
-                  <span className="flex items-center gap-3">
-                    <span className={`flex h-5 w-5 items-center justify-center rounded-md border ${checked ? "border-cyan-200 bg-cyan-300 text-slate-950" : "border-white/20"}`}>
-                      {checked && <CheckCircle2 className="h-3.5 w-3.5" />}
-                    </span>
-                    <span className="font-bold text-slate-200">{metric.label}</span>
-                  </span>
-                  <span className="text-xs font-bold text-slate-500">{metric.trend}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        <div className="grid gap-5">
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            {visibleMetrics.map((metric) => (
-              <motion.div
-                layout
-                key={metric.key}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="rounded-[1.7rem] border border-white/10 bg-slate-950/45 p-5"
-              >
-                <div className={`mb-5 h-1.5 w-16 rounded-full bg-gradient-to-r ${metric.color}`} />
-                <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">{metric.label}</p>
-                <p className="mt-3 text-3xl font-black tracking-tight text-white">{formatMetric(metric, activeRange.multiplier)}</p>
-                <p className="mt-2 text-sm font-bold text-cyan-200">{metric.trend}</p>
-              </motion.div>
-            ))}
-          </div>
-
-          <div className="rounded-[2rem] border border-white/10 bg-slate-950/45 p-5">
-            <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <p className="text-sm font-bold text-slate-200">Unified performance flow</p>
-                <p className="text-xs text-slate-500">Simulated signal across selected range</p>
-              </div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1 text-xs font-bold text-emerald-200">
-                <Network className="h-3.5 w-3.5" /> Data synced
-              </div>
-            </div>
-            <div className="flex h-56 items-end gap-2 rounded-3xl border border-white/10 bg-white/[0.025] p-4">
-              {chartSeries.map((height, index) => (
-                <motion.div
-                  key={`${activeRange.key}-${index}`}
-                  initial={{ height: 12, opacity: 0.4 }}
-                  animate={{ height: `${Math.min(100, height)}%`, opacity: 1 }}
-                  transition={{ duration: 0.42, delay: index * 0.025 }}
-                  className="relative flex-1 rounded-t-2xl bg-gradient-to-t from-cyan-500 via-cyan-200 to-yellow-200 shadow-[0_0_18px_rgba(103,232,249,0.16)]"
-                >
-                  <div className="absolute inset-x-0 top-0 h-2 rounded-full bg-white/50" />
-                </motion.div>
-              ))}
-            </div>
-          </div>
-
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="rounded-[2rem] border border-yellow-300/15 bg-yellow-300/10 p-5">
-              <div className="mb-3 flex items-center gap-2 text-sm font-bold text-yellow-100">
-                <Bot className="h-4 w-4 text-yellow-200" /> AI explanation
-              </div>
-              <p className="text-sm leading-6 text-slate-300">
-                Blended ROAS is healthy, but contribution margin is the stronger signal. Inventory runway is acceptable; watch fulfillment cost if ad spend scales further.
+              <h2 className="text-3xl font-black tracking-tight text-white md:text-5xl">
+                Connect your systems. Unlock intelligence.
+              </h2>
+              <p className="mt-4 max-w-2xl text-base leading-7 text-slate-300 md:text-lg">
+                BRHT combines your operational systems to create business intelligence that no single platform can deliver alone.
               </p>
             </div>
-            <div className="rounded-[2rem] border border-cyan-300/15 bg-cyan-300/10 p-5">
-              <div className="mb-3 flex items-center gap-2 text-sm font-bold text-cyan-100">
-                <Workflow className="h-4 w-4 text-cyan-200" /> Automation trigger
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-6 py-4 text-center">
+                <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-300">Sources Connected</p>
+                <p className="mt-2 text-4xl font-black text-emerald-300">{activeSources.length}<span className="text-slate-500"> / 6</span></p>
               </div>
-              <p className="text-sm leading-6 text-slate-300">
-                If stockout risk falls under 21 days, create reorder task, notify ops, and send daily owner alerts until resolved.
-              </p>
+              <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-6 py-4 text-center">
+                <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-300">Intelligence Signals</p>
+                <p className="mt-2 text-4xl font-black text-orange-300">{unlockedSignals.length}<span className="text-slate-500"> / 15</span></p>
+              </div>
+            </div>
+          </div>
+
+          <div className="relative mt-8 grid gap-6 xl:grid-cols-[0.48fr_0.52fr]">
+            <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
+              <div className="rounded-[1.5rem] border border-white/10 bg-black/20 p-4">
+                <p className="mb-4 text-sm font-black uppercase tracking-[0.16em] text-slate-300">Connect your data sources</p>
+                <div className="grid gap-3">
+                  {sources.map((source) => {
+                    const active = activeSources.includes(source.key);
+
+                    return (
+                      <button
+                        key={source.key}
+                        onClick={() => toggleSource(source.key)}
+                        className={`flex items-center justify-between rounded-2xl border px-4 py-3 text-left transition ${active ? `${source.border} ${source.bg}` : "border-white/10 bg-white/[0.03] hover:bg-white/[0.06]"}`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className={`flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${source.accent} text-lg font-black text-slate-950 shadow-lg shadow-cyan-950/20`}>
+                            {source.short}
+                          </div>
+                          <div>
+                            <p className="font-black text-white">{source.name}</p>
+                            <p className="text-sm text-slate-400">{source.type}</p>
+                          </div>
+                        </div>
+
+                        <div className={`flex h-8 w-14 items-center rounded-full p-1 transition ${active ? "bg-emerald-400" : "bg-slate-700"}`}>
+                          <div className={`h-6 w-6 rounded-full bg-white shadow transition ${active ? "translate-x-6" : "translate-x-0"}`} />
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="relative min-h-[520px] overflow-hidden rounded-[1.5rem] border border-white/10 bg-black/20 p-4">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(34,211,238,0.16),transparent_55%)]" />
+
+                <svg className="absolute inset-0 h-full w-full" viewBox="0 0 520 520" preserveAspectRatio="none">
+                  {sources.map((source, index) => {
+                    const active = activeSources.includes(source.key);
+                    const positions = [
+                      [78, 90],
+                      [78, 205],
+                      [78, 320],
+                      [78, 435],
+                      [118, 500],
+                      [118, 20],
+                    ];
+                    const [x, y] = positions[index];
+                    return (
+                      <path
+                        key={source.key}
+                        d={`M ${x} ${y} C 210 ${y}, 230 260, 285 260`}
+                        stroke={active ? "rgba(110, 231, 183, 0.85)" : "rgba(148, 163, 184, 0.25)"}
+                        strokeWidth={active ? 3 : 2}
+                        fill="none"
+                        strokeDasharray={active ? "0" : "6 8"}
+                      />
+                    );
+                  })}
+                </svg>
+
+                <div className="absolute left-[58%] top-1/2 z-10 -translate-x-1/2 -translate-y-1/2">
+                  <div className="relative flex h-44 w-44 items-center justify-center rounded-full border border-cyan-300 bg-slate-950/80 shadow-[0_0_80px_rgba(34,211,238,0.35)]">
+                    <div className="absolute inset-[-10px] rounded-full border border-cyan-300/25" />
+                    <div className="text-center">
+                      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-cyan-300 text-slate-950">
+                        <BrainCircuit className="h-7 w-7" />
+                      </div>
+                      <p className="mt-4 text-sm font-black uppercase tracking-[0.24em] text-cyan-100">BRHT Core</p>
+                      <p className="mt-2 text-sm leading-5 text-slate-300">Unified Operational Intelligence</p>
+                    </div>
+                  </div>
+                </div>
+
+                {sources.map((source, index) => {
+                  const active = activeSources.includes(source.key);
+                  const positions = [
+                    "left-[6%] top-[12%]",
+                    "left-[6%] top-[30%]",
+                    "left-[6%] top-[48%]",
+                    "left-[6%] top-[66%]",
+                    "left-[14%] top-[82%]",
+                    "left-[14%] top-[3%]",
+                  ];
+
+                  return (
+                    <div key={source.key} className={`absolute ${positions[index]}`}>
+                      <div className={`flex h-14 w-14 items-center justify-center rounded-2xl border text-xl font-black transition ${active ? `${source.border} ${source.bg} text-white shadow-[0_0_22px_rgba(34,211,238,0.15)]` : "border-white/10 bg-white/[0.03] text-slate-500"}`}>
+                        {source.short}
+                      </div>
+                    </div>
+                  );
+                })}
+
+                <div className="absolute bottom-6 right-6 rounded-2xl border border-cyan-300/30 bg-cyan-300/10 px-5 py-4 text-sm text-cyan-100">
+                  <div className="flex items-center gap-3">
+                    <Database className="h-6 w-6" />
+                    <div>
+                      <p className="font-black">All your data.</p>
+                      <p className="text-slate-300">One source of truth.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-[1.5rem] border border-white/10 bg-black/20 p-4">
+              <div className="mb-4 flex items-start justify-between gap-4">
+                <div>
+                  <p className="text-sm font-black uppercase tracking-[0.16em] text-slate-300">Intelligence Signals Unlocked</p>
+                  <p className="mt-1 text-sm text-slate-400">Signals appear when the correct pair of systems is connected.</p>
+                </div>
+                <div className="rounded-full bg-emerald-400/10 px-3 py-1 text-xs font-black text-emerald-300">
+                  {unlockedSignals.length} active
+                </div>
+              </div>
+
+              <div className="grid max-h-[620px] gap-3 overflow-hidden lg:grid-cols-2 xl:grid-cols-3">
+                {intelligenceSignals.map((signal) => {
+                  const unlocked = signal.requires.every((source) => activeSources.includes(source));
+                  const first = getSource(signal.requires[0]);
+                  const second = getSource(signal.requires[1]);
+
+                  return (
+                    <div
+                      key={signal.key}
+                      className={`relative min-h-[124px] rounded-2xl border p-4 transition ${unlocked ? "border-emerald-300/35 bg-emerald-400/10" : "border-white/10 bg-white/[0.025] opacity-60"}`}
+                    >
+                      <div className="mb-3 flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-2">
+                          <span className={`flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br ${first?.accent} text-sm font-black text-slate-950`}>{first?.short}</span>
+                          <span className="text-slate-400">+</span>
+                          <span className={`flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br ${second?.accent} text-sm font-black text-slate-950`}>{second?.short}</span>
+                        </div>
+                        {unlocked ? (
+                          <span className="rounded-full bg-emerald-400/20 px-2 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-emerald-300">Active</span>
+                        ) : (
+                          <Lock className="h-4 w-4 text-slate-500" />
+                        )}
+                      </div>
+
+                      <p className="font-black text-white">{signal.title}</p>
+                      <p className="mt-1 text-sm leading-5 text-slate-400">{signal.desc}</p>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          <div className="relative mt-6 rounded-[1.5rem] border border-white/10 bg-black/20 p-5">
+            <div className="mb-5 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+              <div className="flex items-center gap-3">
+                <p className="text-sm font-black uppercase tracking-[0.16em] text-white">Live Intelligence Dashboard</p>
+                <span className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1 text-xs text-slate-400">Auto-updated with connected data</span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {ranges.map((range) => (
+                  <button
+                    key={range.key}
+                    onClick={() => setActiveRange(range.key)}
+                    className={`rounded-full px-3 py-1.5 text-xs font-bold transition ${activeRange === range.key ? "bg-cyan-300 text-slate-950" : "border border-white/10 bg-white/[0.04] text-slate-300 hover:bg-white/[0.08]"}`}
+                  >
+                    {range.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid gap-4 lg:grid-cols-[0.75fr_1fr_1fr_1fr_1fr]">
+              <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+                <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-400">Connected</p>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {sources.map((source) => {
+                    const active = activeSources.includes(source.key);
+                    return (
+                      <div key={source.key} className={`flex h-8 w-8 items-center justify-center rounded-lg text-xs font-black ${active ? `bg-gradient-to-br ${source.accent} text-slate-950` : "bg-white/[0.04] text-slate-600"}`}>
+                        {source.short}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {(featuredSignals.length ? featuredSignals : intelligenceSignals.slice(0, 4)).map((signal, index) => {
+                const active = unlockedSignals.some((item) => item.key === signal.key);
+                const bars = [22, 28, 31, 45, 33, 39, 42, 57, 49, 66, 58, 79];
+
+                return (
+                  <div key={signal.key} className={`rounded-2xl border p-4 transition ${active ? "border-cyan-300/20 bg-cyan-300/10" : "border-white/10 bg-white/[0.03] opacity-55"}`}>
+                    <div className="flex items-start justify-between gap-3">
+                      <p className="font-black text-white">{signal.title}</p>
+                      {!active && <Lock className="h-4 w-4 text-slate-500" />}
+                    </div>
+                    <p className="mt-3 text-3xl font-black text-white">{active ? signal.value : "—"}</p>
+                    <p className={`mt-1 text-sm font-bold ${active ? "text-emerald-300" : "text-slate-500"}`}>{active ? signal.trend : "Connect sources"}</p>
+                    <div className="mt-4 flex h-16 items-end gap-1.5">
+                      {bars.map((height, barIndex) => (
+                        <div key={barIndex} className={`flex-1 rounded-t-md ${active ? "bg-gradient-to-t from-cyan-500 to-cyan-200" : "bg-white/10"}`} style={{ height: `${Math.max(12, height + index * 3)}%` }} />
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="mt-4 flex flex-col gap-3 rounded-2xl border border-purple-300/20 bg-purple-400/10 p-4 md:flex-row md:items-center md:justify-between">
+              <div className="flex items-start gap-3">
+                <Sparkles className="mt-1 h-5 w-5 text-purple-200" />
+                <p className="leading-7 text-slate-300">
+                  <span className="font-black text-purple-100">AI Insight:</span> {topSignal ? `${topSignal.title} is now live. BRHT can explain what changed, why it matters, and what action to take next.` : "Connect two systems to generate the first operational insight."}
+                </p>
+              </div>
+              <Button className="rounded-full bg-purple-400/20 px-6 text-purple-100 hover:bg-purple-400/30">
+                View Full Dashboard <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 }
 
 function scrollToId(id: string) {
   const element = document.querySelector(id);
   element?.scrollIntoView({ behavior: "smooth", block: "start" });
-}
-
-function buildMailto(form: { name: string; email: string; company: string; message: string }) {
-  const subject = encodeURIComponent(`BRHT Strategy Call Request${form.company ? ` - ${form.company}` : ""}`);
-  const body = encodeURIComponent(
-    `Name: ${form.name}\nEmail: ${form.email}\nCompany: ${form.company}\n\nWhat they need help with:\n${form.message}`
-  );
-  return `mailto:${EMAIL_TO}?subject=${subject}&body=${body}`;
 }
 
 function LogoMark() {
@@ -542,7 +594,18 @@ function LogoMark() {
 function LeadModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [form, setForm] = useState({ name: "", email: "", company: "", message: "" });
   const canSubmit = form.name.trim() && form.email.trim() && form.message.trim();
-  const mailto = useMemo(() => buildMailto(form), [form]);
+  const mailto = useMemo(() => {
+    const subject = encodeURIComponent(`BRHT Strategy Call Request${form.company ? ` - ${form.company}` : ""}`);
+    const body = encodeURIComponent(
+      `Name: ${form.name}
+Email: ${form.email}
+Company: ${form.company}
+
+What they need help with:
+${form.message}`
+    );
+    return `mailto:${EMAIL_TO}?subject=${subject}&body=${body}`;
+  }, [form]);
 
   return (
     <AnimatePresence>
@@ -774,12 +837,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section id="demo" className="scroll-mt-24 px-6 py-20">
-          <div className="mx-auto max-w-7xl space-y-10">
-            <DataConnectionFlow />
-            <InteractiveDashboard />
-          </div>
-        </section>
+        <DataConnectionFlow />
 
         <section id="platform" className="scroll-mt-24 px-6 py-20">
           <div className="mx-auto max-w-7xl">
