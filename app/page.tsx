@@ -142,18 +142,21 @@ const dateRanges = [
 ];
 
 const metricCatalog = [
-  { key: "revenue", label: "Revenue", value: 18400, prefix: "$", suffix: "", trend: "+18%", type: "money", color: "from-cyan-300 to-cyan-100" },
-  { key: "roas", label: "Blended ROAS", value: 3.7, prefix: "", suffix: "x", trend: "+0.4", type: "decimal", color: "from-yellow-300 to-yellow-100" },
-  { key: "orders", label: "Orders", value: 246, prefix: "", suffix: "", trend: "+32", type: "number", color: "from-indigo-300 to-cyan-100" },
-  { key: "margin", label: "Gross Margin", value: 61, prefix: "", suffix: "%", trend: "+6%", type: "percent", color: "from-emerald-300 to-cyan-100" },
-  { key: "inventory", label: "Stockout Risk", value: 31, prefix: "", suffix: " days", trend: "Watch", type: "days", color: "from-orange-300 to-yellow-100" },
-  { key: "alerts", label: "Automation Alerts", value: 12, prefix: "", suffix: "", trend: "4 resolved", type: "number", color: "from-fuchsia-300 to-cyan-100" },
+  { key: "blendedRoas", label: "Blended ROAS", value: 3.7, prefix: "", suffix: "x", trend: "+0.4", type: "decimal", color: "from-cyan-300 to-cyan-100" },
+  { key: "contributionMargin", label: "True Contribution Margin", value: 22.4, prefix: "", suffix: "%", trend: "+6%", type: "percent", color: "from-emerald-300 to-cyan-100" },
+  { key: "inventoryRunway", label: "Inventory Runway", value: 31, prefix: "", suffix: " days", trend: "Watch", type: "days", color: "from-orange-300 to-yellow-100" },
+  { key: "cac", label: "Blended CAC", value: 42, prefix: "$", suffix: "", trend: "-12%", type: "money", color: "from-yellow-300 to-yellow-100" },
+  { key: "cashForecast", label: "Cash Burn Forecast", value: 14.2, prefix: "", suffix: " mo", trend: "+2.1 mo", type: "decimal", color: "from-indigo-300 to-cyan-100" },
+  { key: "fulfillmentCost", label: "Fulfillment Cost / Order", value: 8.31, prefix: "$", suffix: "", trend: "-7%", type: "moneyDecimal", color: "from-fuchsia-300 to-cyan-100" },
+  { key: "forecastAccuracy", label: "Forecast Accuracy", value: 94, prefix: "", suffix: "%", trend: "+9%", type: "percent", color: "from-lime-300 to-cyan-100" },
+  { key: "customerPayback", label: "Customer Payback Period", value: 38, prefix: "", suffix: " days", trend: "-11 days", type: "days", color: "from-blue-300 to-cyan-100" },
 ];
 
 function formatMetric(metric: (typeof metricCatalog)[number], multiplier: number) {
   const scaled = metric.key === "roas" || metric.key === "margin" || metric.key === "inventory" ? metric.value : metric.value * multiplier;
 
   if (metric.type === "money") return `${metric.prefix}${Math.round(scaled).toLocaleString()}`;
+  if (metric.type === "moneyDecimal") return `${metric.prefix}${scaled.toFixed(2)}`;
   if (metric.type === "decimal") return `${scaled.toFixed(1)}${metric.suffix}`;
   if (metric.type === "percent") return `${Math.round(scaled)}${metric.suffix}`;
   if (metric.type === "days") return `${Math.round(scaled)}${metric.suffix}`;
@@ -166,96 +169,78 @@ function DataConnectionFlow() {
     "amazon",
     "meta",
     "google",
+    "dear",
+    "bill",
   ]);
 
   const sources = [
-    {
-      key: "shopify",
-      title: "Shopify",
-      subtitle: "Orders + customers",
-      accent: "from-emerald-300 to-cyan-100",
-      metrics: ["Revenue", "AOV", "Units", "Customer LTV"],
-    },
-    {
-      key: "amazon",
-      title: "Amazon",
-      subtitle: "Marketplace signal",
-      accent: "from-orange-300 to-yellow-100",
-      metrics: ["Sessions", "Conversion", "FBA inventory", "Buy box"],
-    },
-    {
-      key: "meta",
-      title: "Meta Ads",
-      subtitle: "Paid social",
-      accent: "from-cyan-300 to-indigo-100",
-      metrics: ["Spend", "ROAS", "CTR", "CAC"],
-    },
-    {
-      key: "google",
-      title: "Google Ads",
-      subtitle: "Search + PMAX",
-      accent: "from-blue-300 to-cyan-100",
-      metrics: ["Spend", "Conv. value", "ROAS", "Search demand"],
-    },
-    {
-      key: "dear",
-      title: "DEAR Systems",
-      subtitle: "Inventory + ops",
-      accent: "from-yellow-300 to-orange-100",
-      metrics: ["Stock", "COGS", "Lead time", "Purchase orders"],
-    },
-    {
-      key: "bill",
-      title: "Bill.com",
-      subtitle: "Expenses + AP",
-      accent: "from-fuchsia-300 to-cyan-100",
-      metrics: ["Expenses", "Cash flow", "Vendors", "Burn rate"],
-    },
-    {
-      key: "sheets",
-      title: "Google Sheets",
-      subtitle: "Custom business logic",
-      accent: "from-lime-300 to-cyan-100",
-      metrics: ["Forecasts", "Manual KPIs", "Targets", "Scenarios"],
-    },
+    { key: "shopify", title: "Shopify", logo: "Shopify", subtitle: "Commerce", accent: "from-emerald-300 to-cyan-100" },
+    { key: "amazon", title: "Amazon", logo: "amazon", subtitle: "Marketplace", accent: "from-orange-300 to-yellow-100" },
+    { key: "meta", title: "Meta Ads", logo: "Meta", subtitle: "Paid social", accent: "from-cyan-300 to-indigo-100" },
+    { key: "google", title: "Google Ads", logo: "Google", subtitle: "Search + PMAX", accent: "from-blue-300 to-cyan-100" },
+    { key: "dear", title: "DEAR Systems", logo: "DEAR", subtitle: "Inventory", accent: "from-yellow-300 to-orange-100" },
+    { key: "bill", title: "Bill.com", logo: "BILL", subtitle: "Expenses", accent: "from-fuchsia-300 to-cyan-100" },
+    { key: "sheets", title: "Google Sheets", logo: "Sheets", subtitle: "Custom data", accent: "from-lime-300 to-cyan-100" },
+    { key: "hubspot", title: "HubSpot", logo: "HubSpot", subtitle: "CRM", accent: "from-orange-400 to-pink-100" },
+    { key: "shipstation", title: "ShipStation", logo: "ShipStation", subtitle: "Shipping", accent: "from-sky-300 to-cyan-100" },
   ];
 
   const intelligenceMetrics = [
     {
+      key: "blendedRoas",
       title: "Blended ROAS",
-      description: "Unified advertising efficiency across paid acquisition and revenue channels.",
+      description: "Total ad revenue divided by total paid media spend across channels.",
       requires: ["meta", "google", "shopify", "amazon"],
       value: "3.7x",
     },
     {
+      key: "contributionMargin",
       title: "True Contribution Margin",
-      description: "Revenue minus ad spend, COGS, marketplace fees, and operating expenses.",
-      requires: ["shopify", "amazon", "dear", "bill"],
+      description: "Revenue after ad spend, COGS, marketplace fees, shipping, and expenses.",
+      requires: ["shopify", "amazon", "dear", "bill", "shipstation"],
       value: "22.4%",
     },
     {
+      key: "inventoryRunway",
       title: "Inventory Runway",
-      description: "Projected days remaining before products reach stockout risk.",
+      description: "Projected stockout timing based on sales velocity and current inventory.",
       requires: ["shopify", "amazon", "dear"],
       value: "31 days",
     },
     {
-      title: "Customer Acquisition Cost",
-      description: "Real blended CAC across paid media and commerce channels.",
-      requires: ["meta", "google", "shopify", "amazon"],
+      key: "cac",
+      title: "Blended CAC",
+      description: "Customer acquisition cost across ads, stores, and customer records.",
+      requires: ["meta", "google", "shopify", "amazon", "hubspot"],
       value: "$42",
     },
     {
+      key: "cashForecast",
       title: "Cash Burn Forecast",
-      description: "Forward cash projection based on expenses, revenue, and sales velocity.",
+      description: "Forward cash projection from revenue, expenses, and operational velocity.",
       requires: ["bill", "shopify", "amazon"],
       value: "14.2 mo",
     },
     {
+      key: "fulfillmentCost",
+      title: "Fulfillment Cost per Order",
+      description: "True shipping and fulfillment cost by order, channel, and product mix.",
+      requires: ["shopify", "amazon", "shipstation", "bill"],
+      value: "$8.31",
+    },
+    {
+      key: "forecastAccuracy",
       title: "Forecast Accuracy",
-      description: "Compares forecasted assumptions against live commerce and inventory data.",
+      description: "Compares forecast assumptions against live commerce and inventory data.",
       requires: ["sheets", "shopify", "amazon", "dear"],
       value: "94%",
+    },
+    {
+      key: "customerPayback",
+      title: "Customer Payback Period",
+      description: "How quickly new customers pay back acquisition and fulfillment costs.",
+      requires: ["hubspot", "meta", "google", "shopify", "bill"],
+      value: "38 days",
     },
   ];
 
@@ -284,21 +269,27 @@ function DataConnectionFlow() {
             <PlugZap className="h-3.5 w-3.5" /> Source orchestration
           </div>
           <h3 className="mt-4 text-3xl font-black tracking-tight md:text-5xl">
-            Connect the systems that already run your business.
+            Connect systems. Unlock intelligence.
           </h3>
           <p className="mt-4 max-w-3xl leading-8 text-slate-300 md:text-lg">
-            BRHT pulls fragmented data from commerce, ads, inventory, finance, and custom spreadsheets into one operational intelligence layer.
+            Turn on the tools your business already uses. As the right combinations connect, BRHT reveals new metrics those platforms cannot calculate alone.
           </p>
         </div>
 
-        <div className="rounded-3xl border border-cyan-300/20 bg-cyan-300/10 px-5 py-4 text-right">
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-100">Connected sources</p>
-          <p className="mt-1 text-4xl font-black text-white">{activeSources.length}</p>
+        <div className="grid grid-cols-2 gap-3">
+          <div className="rounded-3xl border border-cyan-300/20 bg-cyan-300/10 px-5 py-4 text-right">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-100">Sources</p>
+            <p className="mt-1 text-4xl font-black text-white">{activeSources.length}</p>
+          </div>
+          <div className="rounded-3xl border border-yellow-300/20 bg-yellow-300/10 px-5 py-4 text-right">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-yellow-100">Metrics</p>
+            <p className="mt-1 text-4xl font-black text-white">{unlockedMetrics.length}</p>
+          </div>
         </div>
       </div>
 
-      <div className="relative mt-10 grid gap-8 xl:grid-cols-[1.15fr_0.85fr]">
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      <div className="relative mt-10 grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {sources.map((source) => {
             const active = activeSources.includes(source.key);
 
@@ -308,13 +299,12 @@ function DataConnectionFlow() {
                 key={source.key}
                 onClick={() => toggleSource(source.key)}
                 whileHover={{ y: -3 }}
-                className={`group relative overflow-hidden rounded-[1.8rem] border p-5 text-left transition ${active ? "border-cyan-300/30 bg-cyan-300/10 shadow-[0_0_40px_rgba(103,232,249,0.12)]" : "border-white/10 bg-white/[0.03] hover:bg-white/[0.05]"}`}
+                className={`group relative overflow-hidden rounded-[1.4rem] border p-4 text-left transition ${active ? "border-cyan-300/30 bg-cyan-300/10 shadow-[0_0_36px_rgba(103,232,249,0.12)]" : "border-white/10 bg-white/[0.03] hover:bg-white/[0.05]"}`}
               >
-                <div className={`mb-5 h-1.5 w-20 rounded-full bg-gradient-to-r ${source.accent}`} />
-
-                <div className="flex items-start justify-between gap-3">
+                <div className={`mb-4 h-1.5 w-16 rounded-full bg-gradient-to-r ${source.accent}`} />
+                <div className="flex items-center justify-between gap-3">
                   <div>
-                    <h4 className="text-xl font-black text-white">{source.title}</h4>
+                    <div className="text-2xl font-black tracking-tight text-white">{source.logo}</div>
                     <p className="mt-1 text-sm text-slate-400">{source.subtitle}</p>
                   </div>
 
@@ -322,149 +312,76 @@ function DataConnectionFlow() {
                     {active ? <CheckCircle2 className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
                   </div>
                 </div>
-
-                <div className="mt-5 flex flex-wrap gap-2">
-                  {source.metrics.map((metric) => (
-                    <span key={metric} className="rounded-full border border-white/10 bg-slate-950/35 px-3 py-1 text-xs font-medium text-slate-300">
-                      {metric}
-                    </span>
-                  ))}
-                </div>
               </motion.button>
             );
           })}
         </div>
 
-        <div className="relative flex min-h-[620px] items-center justify-center overflow-hidden rounded-[2rem] border border-white/10 bg-slate-950/45 p-6">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(34,211,238,0.12),transparent_58%)]" />
+        <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-slate-950/45 p-5">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(34,211,238,0.1),transparent_58%)]" />
 
-          <div className="relative flex h-full w-full items-center justify-center">
-            <motion.div layout className="absolute z-10 flex h-40 w-40 items-center justify-center rounded-[2rem] border border-cyan-300/30 bg-cyan-300/10 shadow-[0_0_60px_rgba(103,232,249,0.2)] backdrop-blur-xl">
-              <div className="text-center">
-                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-cyan-300 text-slate-950">
-                  <BrainCircuit className="h-7 w-7" />
-                </div>
-                <p className="mt-4 text-sm font-bold uppercase tracking-[0.18em] text-cyan-100">BRHT Core</p>
-                <p className="mt-2 text-2xl font-black text-white">Unified Intelligence</p>
+          <div className="relative flex items-center justify-between gap-4">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full border border-yellow-300/20 bg-yellow-300/10 px-3 py-1 text-xs font-black uppercase tracking-[0.2em] text-yellow-100">
+                <BrainCircuit className="h-3.5 w-3.5" /> Intelligence unlocked
               </div>
-            </motion.div>
+              <h4 className="mt-4 text-2xl font-black tracking-tight text-white md:text-3xl">
+                Available business intelligence
+              </h4>
+            </div>
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-cyan-300 text-slate-950 shadow-[0_0_35px_rgba(103,232,249,0.2)]">
+              <BrainCircuit className="h-7 w-7" />
+            </div>
+          </div>
 
-            {sources.map((source, index) => {
-              const active = activeSources.includes(source.key);
-              const angle = (Math.PI * 2 * index) / sources.length;
-              const radius = 220;
-              const x = Math.cos(angle) * radius;
-              const y = Math.sin(angle) * radius;
-
-              return (
+          <div className="relative mt-6 grid gap-3 lg:grid-cols-2">
+            <AnimatePresence mode="popLayout">
+              {unlockedMetrics.map((metric) => (
                 <motion.div
-                  key={source.key}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: active ? 1 : 0.35, scale: active ? 1 : 0.94, x, y }}
-                  transition={{ duration: 0.35 }}
-                  className="absolute"
+                  layout
+                  initial={{ opacity: 0, scale: 0.96, y: 8 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.96, y: 8 }}
+                  key={metric.key}
+                  className="relative overflow-hidden rounded-[1.5rem] border border-cyan-300/25 bg-cyan-300/10 p-4 shadow-[0_0_28px_rgba(103,232,249,0.10)]"
                 >
-                  <div className={`relative flex h-28 w-40 flex-col justify-center rounded-[1.6rem] border px-4 py-4 backdrop-blur-xl ${active ? "border-cyan-300/30 bg-white/[0.08]" : "border-white/10 bg-white/[0.03]"}`}>
-                    <div className={`mb-3 h-1.5 w-14 rounded-full bg-gradient-to-r ${source.accent}`} />
-                    <p className="text-lg font-black text-white">{source.title}</p>
-                    <p className="text-xs text-slate-400">{source.subtitle}</p>
-                  </div>
-
-                  {active && (
-                    <motion.div
-                      initial={{ opacity: 0.3 }}
-                      animate={{ opacity: [0.35, 0.9, 0.35] }}
-                      transition={{ duration: 2.2, repeat: Infinity }}
-                      className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[2px] origin-left bg-gradient-to-r from-cyan-300 via-cyan-200 to-transparent"
-                      style={{ width: radius - 60, transform: `translateY(-50%) rotate(${angle + Math.PI}rad)` }}
-                    />
-                  )}
-                </motion.div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-
-      <div className="relative mt-10 overflow-hidden rounded-[2rem] border border-white/10 bg-slate-950/45 p-6">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(34,211,238,0.08),transparent_60%)]" />
-
-        <div className="relative flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
-          <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-yellow-300/20 bg-yellow-300/10 px-3 py-1 text-xs font-black uppercase tracking-[0.2em] text-yellow-100">
-              <BrainCircuit className="h-3.5 w-3.5" /> Intelligence synthesis
-            </div>
-            <h4 className="mt-4 text-3xl font-black tracking-tight text-white md:text-4xl">
-              Cross-platform intelligence appears as systems connect.
-            </h4>
-            <p className="mt-3 max-w-3xl leading-7 text-slate-300">
-              Individual platforms only know part of the story. BRHT creates entirely new operational metrics once multiple systems are connected together.
-            </p>
-          </div>
-
-          <div className="rounded-3xl border border-cyan-300/20 bg-cyan-300/10 px-5 py-4 text-right">
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-100">Unlocked metrics</p>
-            <p className="mt-1 text-4xl font-black text-white">{unlockedMetrics.length}</p>
-          </div>
-        </div>
-
-        <div className="relative mt-8 grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
-          <AnimatePresence mode="popLayout">
-            {unlockedMetrics.map((metric) => (
-              <motion.div
-                layout
-                initial={{ opacity: 0, scale: 0.96, y: 8 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.96, y: 8 }}
-                key={metric.title}
-                className="relative overflow-hidden rounded-[1.8rem] border border-cyan-300/25 bg-cyan-300/10 p-5 shadow-[0_0_35px_rgba(103,232,249,0.12)]"
-              >
-                <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-cyan-300 via-cyan-100 to-yellow-200" />
-
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <div className="inline-flex items-center gap-2 rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-emerald-100">
-                      <CheckCircle2 className="h-3 w-3" /> Live metric
+                  <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-cyan-300 via-cyan-100 to-yellow-200" />
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <h5 className="text-lg font-black text-white">{metric.title}</h5>
+                      <p className="mt-2 text-sm leading-6 text-slate-300">{metric.description}</p>
                     </div>
-
-                    <h5 className="mt-4 text-2xl font-black text-white">{metric.title}</h5>
-                    <p className="mt-3 leading-6 text-slate-300">{metric.description}</p>
-                  </div>
-                </div>
-
-                <div className="mt-6 flex flex-wrap gap-2">
-                  {metric.requires.map((req) => (
-                    <span key={req} className="rounded-full border border-cyan-300/25 bg-cyan-300/10 px-3 py-1 text-xs font-bold capitalize text-cyan-100">
-                      {req}
-                    </span>
-                  ))}
-                </div>
-
-                <div className="mt-7 flex items-end justify-between gap-4">
-                  <div>
-                    <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">Unified business intelligence</p>
-                    <p className="mt-2 text-5xl font-black tracking-tight text-white">{metric.value}</p>
+                    <div className="shrink-0 rounded-xl border border-emerald-300/20 bg-emerald-300/10 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-emerald-100">
+                      Live
+                    </div>
                   </div>
 
-                  <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-3 py-2 text-xs font-bold text-emerald-100">
-                    Multi-source
+                  <div className="mt-4 flex items-end justify-between gap-3">
+                    <p className="text-3xl font-black tracking-tight text-white">{metric.value}</p>
+                    <div className="flex flex-wrap justify-end gap-1.5">
+                      {metric.requires.map((req) => (
+                        <span key={req} className="rounded-full border border-cyan-300/20 bg-slate-950/35 px-2 py-0.5 text-[10px] font-bold capitalize text-cyan-100">
+                          {req}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              </motion.div>
-            ))}
-          </AnimatePresence>
+                </motion.div>
+              ))}
+            </AnimatePresence>
 
-          {unlockedMetrics.length === 0 && (
-            <div className="col-span-full rounded-[2rem] border border-dashed border-white/10 bg-white/[0.02] p-10 text-center">
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-3xl border border-white/10 bg-white/[0.03] text-slate-500">
-                <BrainCircuit className="h-8 w-8" />
+            {unlockedMetrics.length === 0 && (
+              <div className="col-span-full rounded-[2rem] border border-dashed border-white/10 bg-white/[0.02] p-10 text-center">
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-3xl border border-white/10 bg-white/[0.03] text-slate-500">
+                  <BrainCircuit className="h-8 w-8" />
+                </div>
+                <h5 className="mt-5 text-2xl font-black text-white">Connect more systems to unlock intelligence.</h5>
+                <p className="mx-auto mt-3 max-w-2xl leading-7 text-slate-400">
+                  Metrics like blended ROAS, true contribution margin, and fulfillment cost only appear when enough systems are connected together.
+                </p>
               </div>
-              <h5 className="mt-5 text-2xl font-black text-white">Connect more systems to unlock intelligence.</h5>
-              <p className="mx-auto mt-3 max-w-2xl leading-7 text-slate-400">
-                Operational metrics like blended ROAS, true contribution margin, and inventory runway only appear when enough systems are connected together.
-              </p>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </div>
@@ -473,7 +390,7 @@ function DataConnectionFlow() {
 
 function InteractiveDashboard() {
   const [activeRange, setActiveRange] = useState(dateRanges[2]);
-  const [activeMetrics, setActiveMetrics] = useState(["revenue", "roas", "orders", "margin"]);
+  const [activeMetrics, setActiveMetrics] = useState(["blendedRoas", "contributionMargin", "inventoryRunway", "cac"]);
 
   const visibleMetrics = metricCatalog.filter((metric) => activeMetrics.includes(metric.key));
   const chartSeries = useMemo(() => {
@@ -500,7 +417,7 @@ function InteractiveDashboard() {
           </div>
           <h3 className="mt-4 text-3xl font-black tracking-tight md:text-4xl">Experience the operating layer.</h3>
           <p className="mt-3 max-w-2xl leading-7 text-slate-300">
-            Choose a time period, toggle the metrics that matter, and see how BRHT turns raw business systems into one executive view.
+            Choose a time period, toggle the intelligence metrics that were unlocked above, and see how BRHT turns unified business data into one executive view.
           </p>
         </div>
 
@@ -598,7 +515,7 @@ function InteractiveDashboard() {
                 <Bot className="h-4 w-4 text-yellow-200" /> AI explanation
               </div>
               <p className="text-sm leading-6 text-slate-300">
-                Revenue increased while margin held steady. Inventory risk is acceptable, but ad spend should be watched if ROAS drops below 3.2x.
+                Blended ROAS is healthy, but contribution margin is the stronger signal. Inventory runway is acceptable; watch fulfillment cost if ad spend scales further.
               </p>
             </div>
             <div className="rounded-[2rem] border border-cyan-300/15 bg-cyan-300/10 p-5">
