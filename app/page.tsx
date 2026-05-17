@@ -39,6 +39,7 @@ import { Card, CardContent } from "@/components/ui/card";
 const EMAIL_TO = "samwillsonbiz@gmail.com";
 
 const navItems = [
+  { label: "Live Demo", href: "#demo" },
   { label: "Platform", href: "#platform" },
   { label: "Systems", href: "#systems" },
   { label: "Process", href: "#process" },
@@ -130,6 +131,178 @@ const pricing = [
 ];
 
 const dashboardBars = [42, 55, 49, 68, 62, 81, 74, 96, 88, 100, 92, 116];
+
+const dateRanges = [
+  { label: "Today", key: "today", multiplier: 0.18 },
+  { label: "Yesterday", key: "yesterday", multiplier: 0.16 },
+  { label: "Last 7 days", key: "7d", multiplier: 1 },
+  { label: "Last 30 days", key: "30d", multiplier: 4.15 },
+  { label: "Quarter", key: "quarter", multiplier: 12.4 },
+];
+
+const metricCatalog = [
+  { key: "revenue", label: "Revenue", value: 18400, prefix: "$", suffix: "", trend: "+18%", type: "money", color: "from-cyan-300 to-cyan-100" },
+  { key: "roas", label: "Blended ROAS", value: 3.7, prefix: "", suffix: "x", trend: "+0.4", type: "decimal", color: "from-yellow-300 to-yellow-100" },
+  { key: "orders", label: "Orders", value: 246, prefix: "", suffix: "", trend: "+32", type: "number", color: "from-indigo-300 to-cyan-100" },
+  { key: "margin", label: "Gross Margin", value: 61, prefix: "", suffix: "%", trend: "+6%", type: "percent", color: "from-emerald-300 to-cyan-100" },
+  { key: "inventory", label: "Stockout Risk", value: 31, prefix: "", suffix: " days", trend: "Watch", type: "days", color: "from-orange-300 to-yellow-100" },
+  { key: "alerts", label: "Automation Alerts", value: 12, prefix: "", suffix: "", trend: "4 resolved", type: "number", color: "from-fuchsia-300 to-cyan-100" },
+];
+
+function formatMetric(metric: (typeof metricCatalog)[number], multiplier: number) {
+  const scaled = metric.key === "roas" || metric.key === "margin" || metric.key === "inventory" ? metric.value : metric.value * multiplier;
+
+  if (metric.type === "money") return `${metric.prefix}${Math.round(scaled).toLocaleString()}`;
+  if (metric.type === "decimal") return `${scaled.toFixed(1)}${metric.suffix}`;
+  if (metric.type === "percent") return `${Math.round(scaled)}${metric.suffix}`;
+  if (metric.type === "days") return `${Math.round(scaled)}${metric.suffix}`;
+  return `${metric.prefix}${Math.round(scaled).toLocaleString()}${metric.suffix}`;
+}
+
+function InteractiveDashboard() {
+  const [activeRange, setActiveRange] = useState(dateRanges[2]);
+  const [activeMetrics, setActiveMetrics] = useState(["revenue", "roas", "orders", "margin"]);
+
+  const visibleMetrics = metricCatalog.filter((metric) => activeMetrics.includes(metric.key));
+  const chartSeries = useMemo(() => {
+    const base = [34, 48, 41, 62, 56, 77, 72, 94, 86, 102, 91, 118];
+    return base.map((point, index) => Math.max(12, point * activeRange.multiplier * (0.82 + index * 0.015)));
+  }, [activeRange]);
+
+  function toggleMetric(key: string) {
+    setActiveMetrics((current) => {
+      if (current.includes(key)) return current.length === 1 ? current : current.filter((item) => item !== key);
+      return [...current, key];
+    });
+  }
+
+  return (
+    <div className="relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-white/[0.055] p-5 shadow-2xl shadow-slate-950/30 backdrop-blur-2xl md:p-7">
+      <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-cyan-300/20 blur-3xl" />
+      <div className="absolute -bottom-20 left-10 h-56 w-56 rounded-full bg-yellow-300/10 blur-3xl" />
+
+      <div className="relative flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+        <div>
+          <div className="inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs font-black uppercase tracking-[0.2em] text-cyan-100">
+            <MousePointerClick className="h-3.5 w-3.5" /> Interactive vision
+          </div>
+          <h3 className="mt-4 text-3xl font-black tracking-tight md:text-4xl">Experience the operating layer.</h3>
+          <p className="mt-3 max-w-2xl leading-7 text-slate-300">
+            Choose a time period, toggle the metrics that matter, and see how BRHT turns raw business systems into one executive view.
+          </p>
+        </div>
+
+        <div className="flex flex-wrap gap-2 rounded-3xl border border-white/10 bg-slate-950/40 p-2">
+          {dateRanges.map((range) => (
+            <button
+              key={range.key}
+              onClick={() => setActiveRange(range)}
+              className={`rounded-full px-4 py-2 text-sm font-bold transition ${activeRange.key === range.key ? "bg-cyan-300 text-slate-950 shadow-[0_0_24px_rgba(103,232,249,0.25)]" : "text-slate-300 hover:bg-white/10"}`}
+            >
+              {range.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="relative mt-8 grid gap-5 lg:grid-cols-[0.78fr_1.22fr]">
+        <div className="rounded-[2rem] border border-white/10 bg-slate-950/45 p-5">
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <div>
+              <p className="text-sm font-bold text-slate-200">Data points</p>
+              <p className="text-xs text-slate-500">Add or remove dashboard cards</p>
+            </div>
+            <Layers3 className="h-5 w-5 text-cyan-200" />
+          </div>
+
+          <div className="grid gap-3">
+            {metricCatalog.map((metric) => {
+              const checked = activeMetrics.includes(metric.key);
+              return (
+                <button
+                  key={metric.key}
+                  onClick={() => toggleMetric(metric.key)}
+                  className={`flex items-center justify-between rounded-2xl border px-4 py-3 text-left transition ${checked ? "border-cyan-300/30 bg-cyan-300/10" : "border-white/10 bg-white/[0.03] hover:bg-white/[0.06]"}`}
+                >
+                  <span className="flex items-center gap-3">
+                    <span className={`flex h-5 w-5 items-center justify-center rounded-md border ${checked ? "border-cyan-200 bg-cyan-300 text-slate-950" : "border-white/20"}`}>
+                      {checked && <CheckCircle2 className="h-3.5 w-3.5" />}
+                    </span>
+                    <span className="font-bold text-slate-200">{metric.label}</span>
+                  </span>
+                  <span className="text-xs font-bold text-slate-500">{metric.trend}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="grid gap-5">
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            {visibleMetrics.map((metric) => (
+              <motion.div
+                layout
+                key={metric.key}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="rounded-[1.7rem] border border-white/10 bg-slate-950/45 p-5"
+              >
+                <div className={`mb-5 h-1.5 w-16 rounded-full bg-gradient-to-r ${metric.color}`} />
+                <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">{metric.label}</p>
+                <p className="mt-3 text-3xl font-black tracking-tight text-white">{formatMetric(metric, activeRange.multiplier)}</p>
+                <p className="mt-2 text-sm font-bold text-cyan-200">{metric.trend}</p>
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="rounded-[2rem] border border-white/10 bg-slate-950/45 p-5">
+            <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-sm font-bold text-slate-200">Unified performance flow</p>
+                <p className="text-xs text-slate-500">Simulated signal across selected range</p>
+              </div>
+              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1 text-xs font-bold text-emerald-200">
+                <Network className="h-3.5 w-3.5" /> Data synced
+              </div>
+            </div>
+            <div className="flex h-56 items-end gap-2 rounded-3xl border border-white/10 bg-white/[0.025] p-4">
+              {chartSeries.map((height, index) => (
+                <motion.div
+                  key={`${activeRange.key}-${index}`}
+                  initial={{ height: 12, opacity: 0.4 }}
+                  animate={{ height: `${Math.min(100, height)}%`, opacity: 1 }}
+                  transition={{ duration: 0.42, delay: index * 0.025 }}
+                  className="relative flex-1 rounded-t-2xl bg-gradient-to-t from-cyan-500 via-cyan-200 to-yellow-200 shadow-[0_0_18px_rgba(103,232,249,0.16)]"
+                >
+                  <div className="absolute inset-x-0 top-0 h-2 rounded-full bg-white/50" />
+                </motion.div>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="rounded-[2rem] border border-yellow-300/15 bg-yellow-300/10 p-5">
+              <div className="mb-3 flex items-center gap-2 text-sm font-bold text-yellow-100">
+                <Bot className="h-4 w-4 text-yellow-200" /> AI explanation
+              </div>
+              <p className="text-sm leading-6 text-slate-300">
+                Revenue increased while margin held steady. Inventory risk is acceptable, but ad spend should be watched if ROAS drops below 3.2x.
+              </p>
+            </div>
+            <div className="rounded-[2rem] border border-cyan-300/15 bg-cyan-300/10 p-5">
+              <div className="mb-3 flex items-center gap-2 text-sm font-bold text-cyan-100">
+                <Workflow className="h-4 w-4 text-cyan-200" /> Automation trigger
+              </div>
+              <p className="text-sm leading-6 text-slate-300">
+                If stockout risk falls under 21 days, create reorder task, notify ops, and send daily owner alerts until resolved.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function scrollToId(id: string) {
   const element = document.querySelector(id);
@@ -246,8 +419,8 @@ export default function LandingPage() {
           </nav>
 
           <div className="hidden items-center gap-3 md:flex">
-            <Button variant="outline" className="rounded-full border-white/15 bg-white/5 px-5 text-white hover:bg-white/10 hover:text-white" onClick={() => handleNav("#platform")}>
-              Explore
+            <Button variant="outline" className="rounded-full border-white/15 bg-white/5 px-5 text-white hover:bg-white/10 hover:text-white" onClick={() => handleNav("#demo")}>
+              Live Demo
             </Button>
             <Button className="rounded-full bg-cyan-300 px-6 text-slate-950 shadow-[0_0_30px_rgba(103,232,249,0.25)] hover:bg-cyan-200" onClick={() => setModalOpen(true)}>
               Book Audit
@@ -299,8 +472,8 @@ export default function LandingPage() {
                 <Button size="lg" className="rounded-full bg-cyan-300 px-8 text-slate-950 shadow-[0_0_40px_rgba(103,232,249,0.22)] hover:bg-cyan-200" onClick={() => setModalOpen(true)}>
                   Get an operations audit <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
-                <Button size="lg" variant="outline" className="rounded-full border-white/15 bg-white/5 px-8 text-white hover:bg-white/10 hover:text-white" onClick={() => handleNav("#systems")}>
-                  See what we connect
+                <Button size="lg" variant="outline" className="rounded-full border-white/15 bg-white/5 px-8 text-white hover:bg-white/10 hover:text-white" onClick={() => handleNav("#demo")}>
+                  Try the live dashboard
                 </Button>
               </div>
 
@@ -386,6 +559,12 @@ export default function LandingPage() {
                 </CardContent>
               </Card>
             </motion.div>
+          </div>
+        </section>
+
+        <section id="demo" className="scroll-mt-24 px-6 py-20">
+          <div className="mx-auto max-w-7xl">
+            <InteractiveDashboard />
           </div>
         </section>
 
