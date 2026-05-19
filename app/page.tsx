@@ -660,7 +660,7 @@ function DataConnectionFlow() {
               <div className="absolute left-[45%] top-1/2 h-[560px] w-[560px] -translate-y-1/2 rounded-full bg-cyan-300/20 blur-3xl" />
 
               <svg
-                className="absolute inset-0 z-10 h-full w-full"
+                className="absolute inset-0 z-0 h-full w-full"
                 viewBox="0 0 920 620"
                 preserveAspectRatio="none"
               >
@@ -690,10 +690,10 @@ function DataConnectionFlow() {
 
                   const startY = [128, 218, 308, 398, 488, 578][index];
                   const startX = 360;
-                  const endX = 650;
+                  const endX = 620;
                   const endY = 310;
 
-                  const path = `M ${startX} ${startY} C 470 ${startY}, 500 ${endY}, ${endX} ${endY}`;
+                  const path = `M ${startX} ${startY} C 470 ${startY}, 505 ${endY}, ${endX} ${endY}`;
 
                   return (
                     <g key={source.key}>
@@ -714,7 +714,7 @@ function DataConnectionFlow() {
                         fill="none"
                         strokeLinecap="round"
                         strokeDasharray={active ? "0" : "8 10"}
-                        opacity={active ? 0.95 : 0.55}
+                        opacity={active ? 0.88 : 0.42}
                       />
 
                       <circle
