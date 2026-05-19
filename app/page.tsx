@@ -813,38 +813,35 @@ function DataConnectionFlow() {
           <div className="pointer-events-none absolute inset-0 opacity-[0.075] [background-image:linear-gradient(to_right,#fff_1px,transparent_1px),linear-gradient(to_bottom,#fff_1px,transparent_1px)] [background-size:48px_48px]" />
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(2,6,23,0.24)_48%,rgba(2,6,23,0.78)_100%)]" />
 
-          <div className="relative z-10 mb-8 grid gap-5 xl:grid-cols-[0.58fr_0.42fr] xl:items-stretch">
-            <div className="relative overflow-hidden rounded-[26px] border border-white/10 bg-white/[0.025] px-7 py-7 backdrop-blur-xl">
+          <div className="relative z-10 mb-5 grid gap-5 xl:grid-cols-[0.58fr_0.42fr] xl:items-stretch">
+            <div className="relative overflow-hidden rounded-[26px] border border-white/10 bg-white/[0.025] px-7 py-6 backdrop-blur-xl">
               <div className="pointer-events-none absolute -left-16 -top-16 h-56 w-56 rounded-full bg-cyan-300/10 blur-3xl" />
               <div className="pointer-events-none absolute bottom-0 right-0 h-40 w-40 rounded-full bg-emerald-300/10 blur-3xl" />
               <div className="relative">
-                <p className="mb-4 inline-flex rounded-full border border-cyan-300/25 bg-cyan-300/10 px-4 py-2 text-xs font-black uppercase tracking-[0.22em] text-cyan-100">
+                <p className="mb-3 inline-flex rounded-full border border-cyan-300/25 bg-cyan-300/10 px-4 py-2 text-xs font-black uppercase tracking-[0.22em] text-cyan-100">
                   Interactive Business Intelligence
                 </p>
-                <h2 className="max-w-4xl text-[48px] font-black leading-[0.9] tracking-[-0.06em] text-white drop-shadow-[0_0_28px_rgba(255,255,255,0.18)] md:text-[68px]">
-                  Connect your systems.
-                  <br />
-                  Unlock intelligence.
+                <h2 className="max-w-4xl text-[42px] font-black leading-[0.94] tracking-[-0.055em] text-white drop-shadow-[0_0_28px_rgba(255,255,255,0.18)] md:text-[58px]">
+                  Connect your systems. Unlock intelligence.
                 </h2>
-                <p className="mt-5 max-w-2xl text-base font-medium leading-7 text-slate-300 md:text-lg">
+                <p className="mt-4 max-w-2xl text-base font-medium leading-7 text-slate-300">
                   BRHT combines your operational systems to create business intelligence that no single platform can deliver alone.
                 </p>
               </div>
             </div>
 
-            <div className="relative overflow-hidden rounded-[26px] border-2 border-cyan-200/70 bg-cyan-300 px-8 py-7 text-slate-950 shadow-[0_0_80px_rgba(34,211,238,0.42)]">
-              <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/35 blur-2xl" />
-              <div className="pointer-events-none absolute -bottom-12 left-12 h-32 w-32 rounded-full bg-emerald-200/40 blur-2xl" />
-              <div className="relative flex h-full items-center gap-6">
-                <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[24px] bg-slate-950 text-cyan-200 shadow-[0_0_34px_rgba(15,23,42,0.42)]">
-                  <Sparkles className="h-10 w-10" />
+            <div className="relative overflow-hidden rounded-[26px] border border-cyan-300/30 bg-[linear-gradient(135deg,rgba(8,47,73,0.92),rgba(15,23,42,0.96))] px-8 py-6 shadow-[0_0_50px_rgba(34,211,238,0.12)]">
+              <div className="pointer-events-none absolute right-0 top-0 h-full w-[220px] bg-cyan-300/10 blur-3xl" />
+              <div className="relative flex h-full items-center justify-center gap-5 text-center xl:text-left">
+                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-[18px] bg-gradient-to-br from-cyan-300 to-emerald-300 text-slate-950 shadow-[0_0_30px_rgba(34,211,238,0.3)]">
+                  <Sparkles className="h-8 w-8" />
                 </div>
-                <div>
-                  <p className="text-5xl font-black uppercase leading-none tracking-[0.08em] text-slate-950 md:text-6xl">
+                <div className="min-w-0">
+                  <p className="whitespace-nowrap text-[42px] font-black uppercase leading-none tracking-[0.08em] text-white">
                     Live Demo
                   </p>
-                  <p className="mt-3 max-w-[540px] text-base font-semibold leading-7 text-slate-800">
-                    Toggle sources, change date ranges, and click dashboard cards to watch the intelligence update.
+                  <p className="mt-2 text-sm leading-6 text-slate-300">
+                    Toggle systems, change time ranges, and click dashboard cards to watch the intelligence update in real time.
                   </p>
                 </div>
               </div>
@@ -1268,7 +1265,7 @@ export default function LandingPage() {
             <SecondaryButton className="px-5" onClick={() => handleNav("#demo")}>
               Live Demo
             </SecondaryButton>
-            <PrimaryButton onClick={() => setModalOpen(true)}>Book Audit</PrimaryButton>
+            <PrimaryButton onClick={() => setModalOpen(true)}>Book Meeting</PrimaryButton>
           </div>
 
           <button className="rounded-full border border-white/10 p-3 md:hidden" onClick={() => setMenuOpen(!menuOpen)}>
@@ -1321,21 +1318,10 @@ export default function LandingPage() {
                 BRHT connects your tools, centralizes your data, automates the busywork, and uses AI to reveal what changed, what matters, and what to do next.
               </p>
 
-              <div className="mt-9 flex flex-col gap-4 sm:flex-row">
-                <PrimaryButton className="px-8" onClick={() => setModalOpen(true)}>
-                  Get an operations audit <ArrowRight className="ml-2 h-4 w-4" />
+              <div className="mt-9 flex">
+                <PrimaryButton className="px-9" onClick={() => setModalOpen(true)}>
+                  Book Meeting <ArrowRight className="ml-2 h-4 w-4" />
                 </PrimaryButton>
-                <SecondaryButton className="px-8" onClick={() => handleNav("#demo")}>
-                  Try the live dashboard
-                </SecondaryButton>
-              </div>
-
-              <div className="mt-10 flex flex-wrap gap-3">
-                {["Shopify", "Amazon", "Meta Ads", "Google Ads", "ShipStation", "HubSpot", "AI"].map((item) => (
-                  <span key={item} className="rounded-full border border-white/10 bg-white/[0.045] px-4 py-2 text-sm font-medium text-slate-300 shadow-sm backdrop-blur">
-                    {item}
-                  </span>
-                ))}
               </div>
             </motion.div>
 
@@ -1599,7 +1585,7 @@ export default function LandingPage() {
             </p>
             <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
               <PrimaryButton className="px-8" onClick={() => setModalOpen(true)}>
-                Book a Strategy Call <ArrowRight className="ml-2 h-4 w-4" />
+                Book Meeting <ArrowRight className="ml-2 h-4 w-4" />
               </PrimaryButton>
               <a href={`mailto:${EMAIL_TO}?subject=${encodeURIComponent("BRHT Intelligence Inquiry")}`}>
                 <SecondaryButton className="w-full px-8 sm:w-auto">
