@@ -141,3 +141,16 @@
 .testimonial-marquee {
   animation: testimonial-marquee 70s linear infinite;
 }
+@keyframes liveDemoPulse {
+  0%, 100% {
+    box-shadow: 0 0 18px rgba(34, 211, 238, 0.35);
+    border-color: rgba(103, 232, 249, 0.45);
+    background-color: rgba(103, 232, 249, 0.10);
+  }
+
+  50% {
+    box-shadow: 0 0 34px rgba(34, 211, 238, 0.78);
+    border-color: rgba(103, 232, 249, 0.95);
+    background-color: rgba(103, 232, 249, 0.22);
+  }
+}
