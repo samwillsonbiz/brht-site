@@ -1469,95 +1469,100 @@ export default function LandingPage() {
   </div>
 </section>
 
-        <section id="systems" className="scroll-mt-24 px-6 py-20">
-          <div className="mx-auto max-w-7xl">
-            <div className="max-w-3xl">
-              <p className="font-bold uppercase tracking-[0.24em] text-yellow-200">Operational systems</p>
-              <h2 className="mt-4 text-4xl font-black tracking-tight md:text-5xl">
-                One illuminated layer across the tools that run your business.
-              </h2>
+<section id="process" className="scroll-mt-24 px-6 py-24">
+  <div className="mx-auto max-w-7xl">
+    <div className="mx-auto max-w-4xl text-center">
+      <p className="font-black uppercase tracking-[0.24em] text-cyan-200">
+        What Working With BRHT Looks Like
+      </p>
+
+      <h2 className="mt-4 text-4xl font-black tracking-tight text-white md:text-6xl">
+        From disconnected systems to operational clarity in four stages.
+      </h2>
+
+      <p className="mx-auto mt-5 max-w-3xl text-lg leading-8 text-slate-300">
+        BRHT becomes the operational layer between your tools, reporting, workflows,
+        and executive decision-making.
+      </p>
+    </div>
+
+    <div className="relative mt-16">
+      <div className="absolute left-0 right-0 top-10 hidden h-px bg-gradient-to-r from-cyan-300/0 via-cyan-300/60 to-emerald-300/0 lg:block" />
+
+      <div className="grid gap-6 lg:grid-cols-4">
+        {[
+          {
+            step: "01",
+            title: "Discovery",
+            caption: "Usually completed in 1–2 strategy sessions.",
+            items: [
+              "Audit your operational stack",
+              "Identify reporting blind spots",
+              "Define the KPIs that matter",
+              "Prioritize highest-value integrations",
+            ],
+          },
+          {
+            step: "02",
+            title: "Integration",
+            caption: "Your systems begin speaking the same language.",
+            items: [
+              "Connect commerce, ads, CRM, and fulfillment",
+              "Centralize data into a warehouse",
+              "Validate source accuracy",
+              "Map business logic clearly",
+            ],
+          },
+          {
+            step: "03",
+            title: "Intelligence Layer",
+            caption: "Your business becomes measurable in real time.",
+            items: [
+              "Executive dashboards",
+              "Operational reporting",
+              "Automated alerts",
+              "AI summaries and anomaly detection",
+            ],
+          },
+          {
+            step: "04",
+            title: "Ongoing Operations",
+            caption: "BRHT evolves alongside your operations.",
+            items: [
+              "Continuous optimization",
+              "Dashboard iteration",
+              "Workflow refinement",
+              "Strategic operational insights",
+            ],
+          },
+        ].map((stage) => (
+          <div key={stage.step} className="relative">
+            <div className="relative z-10 mb-6 flex h-20 w-20 items-center justify-center rounded-full border border-cyan-300/35 bg-slate-950 text-cyan-200 shadow-[0_0_35px_rgba(34,211,238,0.18)]">
+              <span className="text-xl font-black">{stage.step}</span>
             </div>
 
-            <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-              {systems.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <div
-                    key={item.title}
-                    className="rounded-[2rem] border border-white/10 bg-white/[0.045] p-6 text-white shadow-lg shadow-slate-950/20 backdrop-blur-xl"
-                  >
-                    <Icon className="h-7 w-7 text-cyan-200" />
-                    <h3 className="mt-5 text-xl font-black">{item.title}</h3>
-                    <p className="mt-3 leading-7 text-slate-300">{item.text}</p>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </section>
+            <div className="rounded-[2rem] border border-white/10 bg-white/[0.045] p-7 shadow-xl shadow-slate-950/20 backdrop-blur-xl">
+              <h3 className="text-2xl font-black text-white">{stage.title}</h3>
 
-        <section className="px-6 py-20">
-          <div className="mx-auto grid max-w-7xl gap-10 rounded-[2.5rem] border border-white/10 bg-white/[0.055] p-8 text-white shadow-2xl shadow-slate-950/20 backdrop-blur-xl md:p-12 lg:grid-cols-[0.9fr_1.1fr]">
-            <div>
-              <p className="font-bold uppercase tracking-[0.24em] text-yellow-200">Why it matters</p>
-              <h2 className="mt-4 text-4xl font-black tracking-tight md:text-5xl">
-                Your business already has the data. BRHT turns the lights on.
-              </h2>
-              <p className="mt-5 text-lg leading-8 text-slate-300">
-                BRHT gives operators the visibility of a BI team, the leverage of an automation team, and the strategic lift of AI without building a full internal data department.
+              <p className="mt-3 text-sm leading-6 text-cyan-100">
+                {stage.caption}
               </p>
-            </div>
 
-            <div className="grid gap-4">
-              {[
-                "Know revenue, ROAS, margin, and fulfillment position without logging into every platform.",
-                "Spot problems earlier with automated alerts, thresholds, and anomaly detection.",
-                "Replace manual spreadsheet reporting with a centralized operational data layer.",
-                "Give founders, CFOs, and operators one clear source of truth.",
-              ].map((item) => (
-                <div key={item} className="flex items-start gap-3 rounded-3xl border border-white/10 bg-slate-950/35 p-5">
-                  <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-cyan-200" />
-                  <p className="leading-7 text-slate-200">{item}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section id="process" className="scroll-mt-24 px-6 py-20">
-          <div className="mx-auto max-w-7xl">
-            <div className="max-w-3xl">
-              <p className="font-bold uppercase tracking-[0.24em] text-cyan-200">How it works</p>
-              <h2 className="mt-4 text-4xl font-black tracking-tight md:text-5xl">
-                From scattered platforms to a bright operating layer.
-              </h2>
-            </div>
-
-            <div className="mt-10 grid gap-5 md:grid-cols-4">
-              {[
-                { icon: PlugZap, title: "Connect", desc: "We connect the platforms your business already runs on." },
-                { icon: Database, title: "Centralize", desc: "Your data flows into a structured warehouse built for reporting." },
-                { icon: BarChart3, title: "Illuminate", desc: "Dashboards reveal the numbers, trends, and bottlenecks that matter." },
-                { icon: Zap, title: "Automate", desc: "Workflows move tasks, alerts, and reports without manual effort." },
-              ].map((step, index) => {
-                const Icon = step.icon;
-                return (
-                  <div
-                    key={step.title}
-                    className="rounded-[2rem] border border-white/10 bg-white/[0.045] p-6 text-white shadow-lg shadow-slate-950/20 backdrop-blur-xl"
-                  >
-                    <div className="flex items-center justify-between">
-                      <Icon className="h-7 w-7 text-cyan-200" />
-                      <span className="text-sm font-black text-white/20">0{index + 1}</span>
-                    </div>
-                    <h3 className="mt-5 text-xl font-black">{step.title}</h3>
-                    <p className="mt-3 leading-7 text-slate-300">{step.desc}</p>
+              <div className="mt-6 space-y-3">
+                {stage.items.map((item) => (
+                  <div key={item} className="flex items-start gap-3">
+                    <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-cyan-200" />
+                    <p className="text-sm leading-6 text-slate-300">{item}</p>
                   </div>
-                );
-              })}
+                ))}
+              </div>
             </div>
           </div>
-        </section>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
 
         <section id="pricing" className="scroll-mt-24 px-6 py-20">
           <div className="mx-auto max-w-7xl">
