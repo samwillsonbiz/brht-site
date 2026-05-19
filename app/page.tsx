@@ -61,8 +61,7 @@ type Signal = {
 
 const navItems = [
   { label: "Live Demo", href: "#demo" },
-  { label: "Platform", href: "#platform" },
-  { label: "Systems", href: "#systems" },
+  { label: "BRHT Layer", href: "#platform" },
   { label: "Process", href: "#process" },
   { label: "Pricing", href: "#pricing" },
 ];
@@ -806,9 +805,9 @@ function DataConnectionFlow() {
   }, []);
 
   return (
-    <section id="demo" className="scroll-mt-24 px-6 py-20">
+    <section id="demo" className="scroll-mt-24 px-4 py-12 md:px-6 md:py-20">
       <div className="mx-auto max-w-[1536px]">
-        <div className="relative overflow-hidden rounded-[34px] border border-white/10 bg-[#030712] px-8 py-8 shadow-[0_0_120px_rgba(0,0,0,0.55)]">
+        <div className="relative overflow-hidden rounded-[28px] border border-white/10 bg-[#030712] px-4 py-5 md:rounded-[34px] md:px-8 md:py-8 shadow-[0_0_120px_rgba(0,0,0,0.55)]">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_38%_38%,rgba(34,211,238,0.22),transparent_30%),radial-gradient(circle_at_88%_84%,rgba(124,58,237,0.16),transparent_30%),radial-gradient(circle_at_18%_16%,rgba(16,185,129,0.13),transparent_26%)]" />
           <div className="pointer-events-none absolute inset-0 opacity-[0.075] [background-image:linear-gradient(to_right,#fff_1px,transparent_1px),linear-gradient(to_bottom,#fff_1px,transparent_1px)] [background-size:48px_48px]" />
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(2,6,23,0.24)_48%,rgba(2,6,23,0.78)_100%)]" />
@@ -823,18 +822,90 @@ function DataConnectionFlow() {
                 </span>
               </div>
 
-              <h2 className="whitespace-nowrap text-[clamp(34px,4.2vw,64px)] font-black leading-none tracking-[-0.055em] text-white drop-shadow-[0_0_28px_rgba(255,255,255,0.18)]">
+              <h2 className="text-[clamp(32px,7.5vw,64px)] lg:whitespace-nowrap font-black leading-none tracking-[-0.055em] text-white drop-shadow-[0_0_28px_rgba(255,255,255,0.18)]">
                 Connect your systems. Unlock intelligence.
               </h2>
 
-              <p className="mt-3 text-[clamp(14px,1.25vw,19px)] font-medium leading-7 text-slate-300 md:whitespace-nowrap">
+              <p className="mt-3 text-[clamp(14px,1.25vw,19px)] font-medium leading-7 text-slate-300 xl:whitespace-nowrap">
                 BRHT combines your operational systems to create business intelligence that no single platform can deliver alone.
               </p>
             </div>
           </div>
 
           <div className="relative z-10 grid gap-5 xl:grid-cols-[0.58fr_0.42fr]">
-            <div ref={flowPanelRef} className="relative min-h-[600px] overflow-hidden rounded-[26px] border border-white/10 bg-white/[0.025] backdrop-blur-xl">
+            <div className="rounded-[26px] border border-white/10 bg-white/[0.035] p-4 backdrop-blur-xl md:hidden">
+              <p className="mb-4 text-xs font-black uppercase tracking-[0.22em] text-slate-300">
+                Connect Your Data Sources
+              </p>
+
+              <div className="grid gap-3">
+                {sources.map((source) => {
+                  const active = activeSources.includes(source.key);
+
+                  return (
+                    <button
+                      key={source.key}
+                      onClick={() => toggleSource(source.key)}
+                      className={cx(
+                        "flex items-center justify-between rounded-[18px] border px-3 py-3 text-left transition",
+                        active
+                          ? `${source.borderTone} ${source.activeTone}`
+                          : "border-white/10 bg-white/[0.035]"
+                      )}
+                    >
+                      <div className="flex items-center gap-3">
+                        <SourceLogo source={source} size="sm" />
+                        <div>
+                          <p className="text-sm font-black text-white">{source.name}</p>
+                          <p className="text-xs text-slate-400">{source.type}</p>
+                        </div>
+                      </div>
+
+                      <div
+                        className={cx(
+                          "flex h-7 w-12 items-center rounded-full p-1 transition",
+                          active ? "bg-emerald-400" : "bg-slate-700"
+                        )}
+                      >
+                        <div
+                          className={cx(
+                            "h-5 w-5 rounded-full bg-white shadow transition",
+                            active ? "translate-x-5" : "translate-x-0"
+                          )}
+                        />
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="mt-5 rounded-[24px] border border-cyan-300/25 bg-slate-950/70 p-5 text-center">
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[20px] border border-cyan-200/30 bg-gradient-to-br from-cyan-200 via-cyan-300 to-emerald-300 text-slate-950 shadow-[0_0_40px_rgba(103,232,249,0.4)]">
+                  <div className="relative">
+                    <Lightbulb className="h-8 w-8" />
+                    <Sparkles className="absolute -right-2 -top-2 h-3.5 w-3.5 text-slate-950" />
+                  </div>
+                </div>
+                <p className="mt-4 text-base font-black uppercase tracking-[0.28em] text-white">
+                  BRHT Core
+                </p>
+                <p className="mt-2 text-sm leading-5 text-slate-300">
+                  Unified operational intelligence from every connected source.
+                </p>
+
+                <div className="mt-5 rounded-[18px] border border-cyan-300/35 bg-cyan-300/10 px-4 py-3 text-sm text-cyan-100">
+                  <div className="flex items-center justify-center gap-3">
+                    <Database className="h-5 w-5" />
+                    <div className="text-left">
+                      <p className="font-black text-cyan-100">All your data.</p>
+                      <p className="text-xs text-slate-300">One source of truth.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div ref={flowPanelRef} className="relative hidden md:block min-h-[600px] overflow-hidden rounded-[26px] border border-white/10 bg-white/[0.025] backdrop-blur-xl">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_58%_50%,rgba(34,211,238,0.25),transparent_48%)]" />
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_45%,rgba(16,185,129,0.10),transparent_32%)]" />
 
@@ -1028,7 +1099,7 @@ function DataConnectionFlow() {
               </div>
             </div>
 
-            <div className="rounded-[26px] border border-white/10 bg-white/[0.025] p-5 backdrop-blur-xl">
+            <div className="rounded-[26px] border border-white/10 bg-white/[0.025] p-4 backdrop-blur-xl md:p-5">
               <div className="mb-4 flex items-start justify-between gap-4">
                 <div>
                   <p className="text-sm font-black uppercase tracking-[0.22em] text-slate-300">
@@ -1040,7 +1111,7 @@ function DataConnectionFlow() {
                 </div>
               </div>
 
-              <div className="grid max-h-[590px] gap-3 overflow-hidden lg:grid-cols-2 xl:grid-cols-3">
+              <div className="grid max-h-none gap-3 overflow-visible sm:grid-cols-2 xl:max-h-[590px] xl:grid-cols-3 xl:overflow-hidden">
                 {intelligenceSignals.slice(0, 15).map((signal) => {
                   const unlocked = signal.requires.every((source) => activeSources.includes(source));
                   const first = getSource(signal.requires[0]);
@@ -1081,7 +1152,7 @@ function DataConnectionFlow() {
             </div>
           </div>
 
-          <div className="relative z-10 mt-5 rounded-[26px] border border-white/10 bg-white/[0.03] p-5 backdrop-blur-xl">
+          <div className="relative z-10 mt-5 rounded-[26px] border border-white/10 bg-white/[0.03] p-4 backdrop-blur-xl md:p-5">
             <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
               <div className="flex items-center gap-3">
                 <p className="text-sm font-black uppercase tracking-[0.22em] text-white">Live Intelligence Dashboard</p>
@@ -1108,7 +1179,7 @@ function DataConnectionFlow() {
               </div>
             </div>
 
-            <div className="grid gap-4 lg:grid-cols-[0.72fr_1fr_1fr_1fr_1fr]">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[0.72fr_1fr_1fr_1fr_1fr]">
               <div className="rounded-[18px] border border-white/10 bg-white/[0.03] p-4">
                 <p className="text-xs font-black uppercase tracking-[0.18em] text-slate-400">Connected</p>
                 <div className="mt-4 flex flex-wrap gap-2">
@@ -1286,20 +1357,20 @@ export default function LandingPage() {
       </header>
 
       <main id="top">
-        <section className="relative px-6 pb-20 pt-16 md:pb-28 md:pt-24">
+        <section className="relative px-4 pb-14 pt-12 md:px-6 md:pb-24 md:pt-20">
           <div className="absolute left-1/2 top-24 -z-10 h-[34rem] w-[34rem] -translate-x-1/2 rounded-full bg-cyan-300/10 blur-3xl" />
-          <div className="mx-auto grid max-w-7xl items-center gap-14 lg:grid-cols-[1.03fr_0.97fr]">
+          <div className="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-[1.03fr_0.97fr] lg:gap-14">
             <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
               <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-cyan-300/25 bg-white/5 px-4 py-2 text-sm font-medium text-cyan-100 shadow-[0_0_40px_rgba(34,211,238,0.12)] backdrop-blur">
                 <SunMedium className="h-4 w-4 text-yellow-300" />
                 BI + automation + AI for operators who need clarity
               </div>
 
-              <h1 className="max-w-5xl text-5xl font-black leading-[0.92] tracking-[-0.055em] text-white md:text-7xl lg:text-8xl">
+              <h1 className="max-w-5xl text-[clamp(48px,13vw,84px)] font-black leading-[0.92] tracking-[-0.055em] text-white lg:text-8xl">
                 Turn scattered data into a living command center.
               </h1>
 
-              <p className="mt-7 max-w-2xl text-lg leading-8 text-slate-300 md:text-xl">
+              <p className="mt-6 max-w-2xl text-base leading-7 text-slate-300 md:text-xl md:leading-8">
                 BRHT connects your tools, centralizes your data, automates the busywork, and uses AI to reveal what changed, what matters, and what to do next.
               </p>
 
@@ -1389,7 +1460,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section className="relative left-1/2 right-1/2 w-screen -translate-x-1/2 border-y border-cyan-200/35 bg-[linear-gradient(90deg,#dffbff_0%,#cbf7ef_48%,#fff0c7_100%)] px-6 py-9 text-slate-950 shadow-[0_0_80px_rgba(34,211,238,0.12)]">
+        <section className="relative left-1/2 right-1/2 w-screen -translate-x-1/2 border-y border-cyan-200/35 bg-[linear-gradient(90deg,#dffbff_0%,#cbf7ef_48%,#fff0c7_100%)] px-6 py-7 text-slate-950 md:py-9 shadow-[0_0_80px_rgba(34,211,238,0.12)]">
           <div className="mx-auto grid max-w-7xl gap-8 text-center md:grid-cols-4 md:divide-x md:divide-slate-950/15">
             <div className="px-4">
               <p className="text-[11px] font-black uppercase tracking-[0.24em] text-slate-600">Built for</p>
@@ -1419,7 +1490,7 @@ export default function LandingPage() {
 
         <DataConnectionFlow />
 
-        <section id="platform" className="scroll-mt-24 bg-cyan-50 px-6 py-20 text-slate-950">
+        <section id="platform" className="scroll-mt-24 bg-cyan-50 px-4 py-14 md:px-6 md:py-20 text-slate-950">
   <div className="mx-auto max-w-7xl">
     <div className="mx-auto max-w-3xl text-center">
       <p className="font-black uppercase tracking-[0.24em] text-cyan-700">
@@ -1469,7 +1540,7 @@ export default function LandingPage() {
   </div>
 </section>
 
-<section id="process" className="scroll-mt-24 px-6 py-24">
+<section id="process" className="scroll-mt-24 px-4 py-16 md:px-6 md:py-24">
   <div className="mx-auto max-w-7xl">
     <div className="mx-auto max-w-4xl text-center">
       <p className="font-black uppercase tracking-[0.24em] text-cyan-200">
@@ -1486,7 +1557,7 @@ export default function LandingPage() {
       </p>
     </div>
 
-    <div className="relative mt-16">
+    <div className="relative mt-10 md:mt-16">
       <div className="absolute left-0 right-0 top-10 hidden h-px bg-gradient-to-r from-cyan-300/0 via-cyan-300/60 to-emerald-300/0 lg:block" />
 
       <div className="grid gap-6 lg:grid-cols-4">
@@ -1576,7 +1647,7 @@ export default function LandingPage() {
       <div
         key={row}
         aria-hidden={row === 1}
-        className="testimonial-marquee flex min-w-full shrink-0 gap-8 px-4"
+        className="testimonial-marquee flex min-w-full shrink-0 gap-5 px-4 md:gap-8"
       >
         {[
           {
@@ -1606,14 +1677,14 @@ export default function LandingPage() {
         ].map((item, i) => (
           <div
             key={i}
-            className="flex min-h-[280px] w-[420px] shrink-0 flex-col justify-between rounded-[2rem] bg-white p-8 shadow-[0_18px_50px_rgba(15,23,42,0.10)]"
+            className="flex min-h-[250px] w-[300px] shrink-0 flex-col justify-between rounded-[1.5rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.10)] md:min-h-[280px] md:w-[420px] md:rounded-[2rem] md:p-8"
           >
             <div>
               <div className="mb-7 text-xl tracking-[0.12em] text-yellow-400">
                 ★★★★★
               </div>
 
-              <p className="text-xl font-medium leading-8 text-slate-900">
+              <p className="text-base font-medium leading-7 text-slate-900 md:text-xl md:leading-8">
                 “{item.quote}”
               </p>
             </div>
@@ -1639,7 +1710,7 @@ export default function LandingPage() {
   </div>
 </section>
 
-        <section id="pricing" className="scroll-mt-24 px-6 py-20">
+        <section id="pricing" className="scroll-mt-24 px-4 py-16 md:px-6 md:py-20">
           <div className="mx-auto max-w-7xl">
             <div className="mx-auto max-w-3xl text-center">
               <p className="font-bold uppercase tracking-[0.24em] text-cyan-200">Pricing direction</p>
@@ -1693,19 +1764,16 @@ export default function LandingPage() {
             <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-slate-300">
               Book a BRHT operations audit and see where better data, automation, and AI can create immediate leverage.
             </p>
-           <div className="mt-10 flex justify-center">
-  <button className="group rounded-full bg-cyan-300 px-10 py-4 text-lg font-black text-slate-950 transition hover:scale-[1.02]">
-    <span className="flex items-center gap-3">
-      Book Meeting
-      <ArrowRight className="h-5 w-5 transition group-hover:translate-x-1" />
-    </span>
-  </button>
-</div>
+            <div className="mt-8 flex justify-center">
+              <PrimaryButton className="px-8" onClick={() => setModalOpen(true)}>
+                Book Meeting <ArrowRight className="ml-2 h-4 w-4" />
+              </PrimaryButton>
+            </div>
           </div>
         </section>
       </main>
 
-      <footer className="border-t border-white/10 px-6 py-10">
+      <footer className="border-t border-white/10 px-4 py-10 md:px-6">
         <div className="mx-auto flex max-w-7xl flex-col gap-6 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-3">
             <LogoMark />
