@@ -859,43 +859,54 @@ function DataConnectionFlow() {
                 </div>
               </div>
 
-              <div className="grid max-h-[550px] gap-3 overflow-hidden lg:grid-cols-2 xl:grid-cols-3">
-                {intelligenceSignals.slice(0, 12).map((signal) => {
-                  const unlocked = signal.requires.every((source) => activeSources.includes(source));
-                  const first = getSource(signal.requires[0]);
-                  const second = getSource(signal.requires[1]);
+             <div className="grid max-h-[550px] gap-3 overflow-hidden lg:grid-cols-2 xl:grid-cols-3">
+  {intelligenceSignals.slice(0, 15).map((signal) => {
+    const unlocked = signal.requires.every((source) =>
+      activeSources.includes(source)
+    );
 
-                  return (
-                    <div
-                      key={signal.key}
-                      className={cx(
-                        "relative min-h-[118px] rounded-[18px] border p-4 transition",
-                        unlocked
-                          ? "border-emerald-300/35 bg-emerald-400/[0.09] shadow-[0_0_30px_rgba(16,185,129,0.08)]"
-                          : "border-white/10 bg-white/[0.025] opacity-50"
-                      )}
-                    >
-                      <div className="mb-3 flex items-center justify-between gap-2">
-                        <div className="flex items-center gap-2">
-                          <SourceLogo source={first} size="sm" />
-                          <span className="text-slate-500">+</span>
-                          <SourceLogo source={second} size="sm" />
-                        </div>
-                        {unlocked ? (
-                          <span className="rounded-full bg-emerald-400/20 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-emerald-300">
-                            Active
-                          </span>
-                        ) : (
-                          <Lock className="h-4 w-4 text-slate-500" />
-                        )}
-                      </div>
+    const first = getSource(signal.requires[0]);
+    const second = getSource(signal.requires[1]);
 
-                      <p className="text-sm font-black leading-5 text-white">{signal.title}</p>
-                      <p className="mt-1 text-xs leading-5 text-slate-400">{signal.desc}</p>
-                    </div>
-                  );
-                })}
-              </div>
+    return (
+      <div
+        key={signal.key}
+        className={cx(
+          "relative min-h-[88px] rounded-[18px] border px-4 py-3 transition",
+          unlocked
+            ? "border-emerald-300/35 bg-emerald-400/[0.09] shadow-[0_0_30px_rgba(16,185,129,0.08)]"
+            : "border-white/10 bg-white/[0.025] opacity-50"
+        )}
+      >
+        <div className="mb-2 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-1.5">
+            <SourceLogo source={first} size="sm" />
+
+            <span className="text-slate-500">+</span>
+
+            <SourceLogo source={second} size="sm" />
+          </div>
+
+          {unlocked ? (
+            <span className="rounded-full bg-emerald-400/20 px-2 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-emerald-300">
+              Active
+            </span>
+          ) : (
+            <Lock className="h-4 w-4 text-slate-500" />
+          )}
+        </div>
+
+        <p className="line-clamp-1 text-[15px] font-black leading-5 text-white">
+          {signal.title}
+        </p>
+
+        <p className="mt-1 line-clamp-1 text-[11px] leading-4 text-slate-400">
+          {signal.desc}
+        </p>
+      </div>
+    );
+  })}
+</div>
             </div>
           </div>
 
