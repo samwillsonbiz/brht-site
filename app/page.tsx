@@ -817,7 +817,10 @@ function DataConnectionFlow() {
             <div className="pointer-events-none absolute bottom-0 right-0 h-40 w-40 rounded-full bg-emerald-300/10 blur-3xl" />
             <div className="relative mx-auto max-w-[1400px]">
               <div className="mb-3 flex items-center justify-center gap-3">
-               
+                <span className="inline-flex animate-[liveDemoPulse_2.4s_ease-in-out_infinite] items-center gap-2 rounded-full border border-cyan-300/50 bg-cyan-300/15 px-4 py-1.5 text-xs font-black uppercase tracking-[0.22em] text-cyan-100 shadow-[0_0_26px_rgba(34,211,238,0.45)]">
+  <Sparkles className="h-3.5 w-3.5" />
+  Live Demo
+</span>
               </div>
 
               <h2 className="text-[clamp(32px,7.5vw,64px)] lg:whitespace-nowrap font-black leading-none tracking-[-0.055em] text-white drop-shadow-[0_0_28px_rgba(255,255,255,0.18)]">
@@ -832,16 +835,9 @@ function DataConnectionFlow() {
 
           <div className="relative z-10 grid gap-5 xl:grid-cols-[0.58fr_0.42fr]">
             <div className="rounded-[26px] border border-white/10 bg-white/[0.035] p-4 backdrop-blur-xl md:hidden">
-              <div className="mb-5 flex items-center justify-between">
-  <p className="text-sm font-black uppercase tracking-[0.22em] text-slate-300">
-    Connect Your Data Sources
-  </p>
-
-  <span className="inline-flex animate-[liveDemoPulse_2.4s_ease-in-out_infinite] items-center gap-2 rounded-full border border-cyan-300/50 bg-cyan-300/15 px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.22em] text-cyan-100 shadow-[0_0_26px_rgba(34,211,238,0.45)]">
-    <Sparkles className="h-3.5 w-3.5" />
-    Live Demo
-  </span>
-</div>
+              <p className="mb-4 text-xs font-black uppercase tracking-[0.22em] text-slate-300">
+                Connect Your Data Sources
+              </p>
 
               <div className="grid gap-3">
                 {sources.map((source) => {
