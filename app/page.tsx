@@ -1563,10 +1563,11 @@ export default function LandingPage() {
     </div>
   </div>
 </section>
-<section className="relative left-1/2 right-1/2 w-screen -translate-x-1/2 overflow-hidden border-y border-slate-300/40 bg-[#eef6fb] py-6 text-slate-950">
-  <div className="mx-auto mb-4 max-w-7xl px-6">
-    <p className="text-center text-sm font-black uppercase tracking-[0.24em] text-cyan-700">
-      Operator Feedback + Outcomes
+
+<section className="relative left-1/2 right-1/2 w-screen -translate-x-1/2 overflow-hidden bg-[#eef6fb] py-10 text-slate-950">
+  <div className="mx-auto mb-7 max-w-7xl px-6 text-center">
+    <p className="text-sm font-black uppercase tracking-[0.24em] text-cyan-700">
+      Operator Feedback
     </p>
   </div>
 
@@ -1575,27 +1576,62 @@ export default function LandingPage() {
       <div
         key={row}
         aria-hidden={row === 1}
-        className="marquee flex min-w-full shrink-0 items-center gap-5 px-3"
+        className="testimonial-marquee flex min-w-full shrink-0 gap-8 px-4"
       >
         {[
-          "“Finally one source of truth.”",
-          "↓ 22 hrs/week saved in reporting",
-          "Shopify + Amazon + Meta unified",
-          "“BRHT exposed issues we couldn’t see.”",
-          "ROAS visibility across every channel",
-          "Automated executive reporting",
-          "“Our operations finally make sense.”",
-          "Real-time fulfillment visibility",
-          "Cross-platform profitability tracking",
-          "Daily operational intelligence briefings",
+          {
+            quote:
+              "BRHT finally gave us one clear place to see what was happening across revenue, ads, and operations.",
+            name: "Operations Lead",
+            company: "Commerce Brand",
+          },
+          {
+            quote:
+              "The biggest win was getting out of manual reporting. We can see problems earlier and act faster.",
+            name: "Founder",
+            company: "DTC Business",
+          },
+          {
+            quote:
+              "Our systems were creating data, but not clarity. BRHT connected the dots in a way our team could actually use.",
+            name: "CEO",
+            company: "Growth Company",
+          },
+          {
+            quote:
+              "The AI summaries make the dashboards easier to understand. We know what changed and what to look at next.",
+            name: "Marketing Director",
+            company: "Multi-Channel Seller",
+          },
         ].map((item, i) => (
-          <div key={i} className="flex shrink-0 items-center gap-5">
-            <div className="rounded-full border border-slate-300 bg-white px-6 py-3 shadow-sm">
-              <span className="text-sm font-semibold tracking-wide text-slate-800 md:text-base">
-                {item}
-              </span>
+          <div
+            key={i}
+            className="flex min-h-[280px] w-[420px] shrink-0 flex-col justify-between rounded-[2rem] bg-white p-8 shadow-[0_18px_50px_rgba(15,23,42,0.10)]"
+          >
+            <div>
+              <div className="mb-7 text-xl tracking-[0.12em] text-yellow-400">
+                ★★★★★
+              </div>
+
+              <p className="text-xl font-medium leading-8 text-slate-900">
+                “{item.quote}”
+              </p>
             </div>
-            <div className="h-2 w-2 rounded-full bg-cyan-400" />
+
+            <div className="mt-8 flex items-center gap-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-cyan-500 text-lg font-black text-white">
+                {item.name[0]}
+              </div>
+
+              <div>
+                <p className="font-black uppercase tracking-[0.08em] text-slate-950">
+                  {item.name}
+                </p>
+                <p className="text-sm font-semibold text-slate-500">
+                  {item.company}
+                </p>
+              </div>
+            </div>
           </div>
         ))}
       </div>
