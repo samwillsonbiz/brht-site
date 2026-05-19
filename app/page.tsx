@@ -657,46 +657,116 @@ function DataConnectionFlow() {
               <div className="relative min-h-[540px] overflow-hidden rounded-[26px] border border-white/10 bg-white/[0.025] backdrop-blur-xl">
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_60%_50%,rgba(34,211,238,0.25),transparent_45%)]" />
 
-                <svg className="absolute inset-0 h-full w-full" viewBox="0 0 560 560" preserveAspectRatio="none">
-                  {sources.map((source, index) => {
-                    const active = activeSources.includes(source.key);
-                    const startY = [86, 176, 266, 356, 446, 506][index];
-                    const x1 = 62;
-                    const y1 = startY;
-                    const x2 = 305;
-                    const y2 = 280;
+                <svg
+  className="absolute inset-0 h-full w-full"
+  viewBox="0 0 560 560"
+  preserveAspectRatio="none"
+>
+  <defs>
+    <filter id="flowGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
 
-                    return (
-                      <g key={source.key}>
-                        <path
-                          d={`M ${x1} ${y1} C 165 ${y1}, 175 ${y2}, ${x2} ${y2}`}
-                          stroke={active ? source.line : "rgba(148,163,184,0.26)"}
-                          strokeWidth={active ? 3.1 : 2}
-                          fill="none"
-                          strokeLinecap="round"
-                          strokeDasharray={active ? "0" : "7 10"}
-                          opacity={active ? 0.95 : 0.55}
-                        />
-                        {active && (
-                          <>
-                            <path
-                              d={`M ${x1} ${y1} C 165 ${y1}, 175 ${y2}, ${x2} ${y2}`}
-                              stroke={source.line}
-                              strokeWidth={9}
-                              fill="none"
-                              strokeLinecap="round"
-                              opacity={0.08}
-                            />
-                            <circle cx={x1} cy={y1} r="4.6" fill={source.line} />
-                            <circle cx={x2} cy={y2} r="4.2" fill={source.line} />
-                            <circle cx={(x1 + x2) / 2} cy={(y1 + y2) / 2} r="2.6" fill={source.line} opacity="0.7" />
-                          </>
-                        )}
-                        {!active && <circle cx={x1} cy={y1} r="4.4" fill="rgba(148,163,184,0.55)" />}
-                      </g>
-                    );
-                  })}
-                </svg>
+    <linearGradient id="activeFlow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stopColor="rgba(110,231,183,0.95)" />
+      <stop offset="55%" stopColor="rgba(103,232,249,0.95)" />
+      <stop offset="100%" stopColor="rgba(34,211,238,0.95)" />
+    </linearGradient>
+
+    <linearGradient id="inactiveFlow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stopColor="rgba(148,163,184,0.35)" />
+      <stop offset="100%" stopColor="rgba(148,163,184,0.18)" />
+    </linearGradient>
+  </defs>
+
+  {sources.map((source, index) => {
+    const active = activeSources.includes(source.key);
+
+    // These y-values line up with each source card row.
+    // The line starts at the right edge of the source list and flows into BRHT Core.
+    const startY = [82, 172, 262, 352, 442, 512][index];
+    const startX = 0;
+    const endX = 314;
+    const endY = 280;
+
+    const path = `M ${startX} ${startY} C 110 ${startY}, 145 ${endY}, ${endX} ${endY}`;
+
+    return (
+      <g key={source.key}>
+        {/* soft outer glow */}
+        <path
+          d={path}
+          stroke={active ? "url(#activeFlow)" : "url(#inactiveFlow)"}
+          strokeWidth={active ? 10 : 5}
+          fill="none"
+          strokeLinecap="round"
+          opacity={active ? 0.14 : 0.1}
+          filter={active ? "url(#flowGlow)" : undefined}
+        />
+
+        {/* main line */}
+        <path
+          d={path}
+          stroke={active ? "url(#activeFlow)" : "url(#inactiveFlow)"}
+          strokeWidth={active ? 3.2 : 2}
+          fill="none"
+          strokeLinecap="round"
+          strokeDasharray={active ? "0" : "7 10"}
+          opacity={active ? 0.95 : 0.55}
+        />
+
+        {/* source connection node */}
+        <circle
+          cx={startX}
+          cy={startY}
+          r={active ? 5.5 : 4.5}
+          fill={active ? "rgba(110,231,183,1)" : "rgba(148,163,184,0.55)"}
+          filter={active ? "url(#flowGlow)" : undefined}
+        />
+
+        {/* core connection node */}
+        <circle
+          cx={endX}
+          cy={endY}
+          r={active ? 5 : 4}
+          fill={active ? "rgba(34,211,238,1)" : "rgba(148,163,184,0.35)"}
+          filter={active ? "url(#flowGlow)" : undefined}
+        />
+
+        {/* animated data packets */}
+        {active && (
+          <>
+            <circle r="4" fill="rgba(167,243,208,1)" filter="url(#flowGlow)">
+              <animateMotion dur="2.4s" repeatCount="indefinite" path={path} />
+            </circle>
+
+            <circle r="3" fill="rgba(103,232,249,1)" filter="url(#flowGlow)">
+              <animateMotion
+                dur="2.4s"
+                begin="0.55s"
+                repeatCount="indefinite"
+                path={path}
+              />
+            </circle>
+
+            <circle r="2.4" fill="rgba(255,255,255,0.9)">
+              <animateMotion
+                dur="2.4s"
+                begin="1.1s"
+                repeatCount="indefinite"
+                path={path}
+              />
+            </circle>
+          </>
+        )}
+      </g>
+    );
+  })}
+</svg>
 
                 <div className="absolute left-[62%] top-1/2 z-10 -translate-x-1/2 -translate-y-1/2">
                   <div className="relative flex h-[238px] w-[238px] items-center justify-center rounded-full border border-cyan-300 bg-[#020617]/95 shadow-[0_0_110px_rgba(34,211,238,0.42)]">
