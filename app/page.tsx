@@ -688,12 +688,14 @@ function DataConnectionFlow() {
                 {sources.map((source, index) => {
                   const active = activeSources.includes(source.key);
 
-                  const startY = [128, 218, 308, 398, 488, 578][index];
-                  const startX = 360;
+                  // These coordinates line the connector dots up with the right edge
+                  // of each source card, so the lines visibly come FROM the cards.
+                  const startY = [104, 194, 284, 374, 464, 554][index];
+                  const startX = 405;
                   const endX = 620;
                   const endY = 310;
 
-                  const path = `M ${startX} ${startY} C 470 ${startY}, 505 ${endY}, ${endX} ${endY}`;
+                  const path = `M ${startX} ${startY} C 475 ${startY}, 520 ${endY}, ${endX} ${endY}`;
 
                   return (
                     <g key={source.key}>
