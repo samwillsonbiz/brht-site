@@ -177,126 +177,21 @@ function DataConnectionFlow() {
   ];
 
   const intelligenceSignals = [
-    {
-      key: "multiChannelRevenue",
-      title: "Multi-Channel Revenue",
-      desc: "Total revenue across Shopify store and Amazon marketplace.",
-      requires: ["shopify", "amazon"],
-      value: "$482,216",
-      trend: "+18.6%",
-    },
-    {
-      key: "shopifyMetaRoas",
-      title: "ROAS by Sales Channel",
-      desc: "Meta ad performance tied directly to Shopify revenue.",
-      requires: ["shopify", "meta"],
-      value: "4.21x",
-      trend: "+32.1%",
-    },
-    {
-      key: "amazonMetaEfficiency",
-      title: "Marketplace Ad Efficiency",
-      desc: "Meta-driven demand compared against Amazon marketplace sales.",
-      requires: ["amazon", "meta"],
-      value: "3.47x",
-      trend: "+21.4%",
-    },
-    {
-      key: "shopifyGoogleSearch",
-      title: "Search to Sales",
-      desc: "Google Ads search performance tied to Shopify purchases.",
-      requires: ["shopify", "google"],
-      value: "3.88x",
-      trend: "+14.9%",
-    },
-    {
-      key: "amazonGoogleSales",
-      title: "Search to Marketplace Sales",
-      desc: "Google demand compared against Amazon marketplace revenue.",
-      requires: ["amazon", "google"],
-      value: "2.94x",
-      trend: "+9.8%",
-    },
-    {
-      key: "crossChannelRoas",
-      title: "Cross-Channel ROAS",
-      desc: "Meta and Google performance compared in one paid media view.",
-      requires: ["meta", "google"],
-      value: "3.62x",
-      trend: "+17.2%",
-    },
-    {
-      key: "shopifyShippingCost",
-      title: "Shipping Cost by Channel",
-      desc: "Fulfillment cost for Shopify orders by shipping method.",
-      requires: ["shopify", "shipstation"],
-      value: "$7.82",
-      trend: "-6.5%",
-    },
-    {
-      key: "amazonShippingCost",
-      title: "FBA vs FBM Shipping Cost",
-      desc: "Amazon fulfillment cost compared against ShipStation shipments.",
-      requires: ["amazon", "shipstation"],
-      value: "$8.91",
-      trend: "-3.2%",
-    },
-    {
-      key: "shopifyCustomerLtv",
-      title: "Customer LTV",
-      desc: "Lifetime value of Shopify customers tracked inside HubSpot.",
-      requires: ["shopify", "hubspot"],
-      value: "$186",
-      trend: "+11.7%",
-    },
-    {
-      key: "amazonCustomerValue",
-      title: "Marketplace Customer Value",
-      desc: "Amazon customer value connected to CRM follow-up activity.",
-      requires: ["amazon", "hubspot"],
-      value: "$142",
-      trend: "+7.4%",
-    },
-    {
-      key: "metaCustomerValue",
-      title: "Ad Driven Customer Value",
-      desc: "LTV of customers acquired from Meta campaigns.",
-      requires: ["meta", "hubspot"],
-      value: "$211",
-      trend: "+24.3%",
-    },
-    {
-      key: "googleCustomerValue",
-      title: "Search Driven Customer Value",
-      desc: "LTV of customers acquired from Google search demand.",
-      requires: ["google", "hubspot"],
-      value: "$198",
-      trend: "+19.1%",
-    },
-    {
-      key: "googleShippingLag",
-      title: "Search Order Delivery Lag",
-      desc: "Delivery speed for orders generated from Google Ads traffic.",
-      requires: ["google", "shipstation"],
-      value: "2.4d",
-      trend: "-0.6d",
-    },
-    {
-      key: "metaShippingLag",
-      title: "Social Order Delivery Lag",
-      desc: "Delivery speed for orders generated from Meta campaigns.",
-      requires: ["meta", "shipstation"],
-      value: "2.8d",
-      trend: "-0.4d",
-    },
-    {
-      key: "crmFulfillment",
-      title: "Post-Purchase Experience",
-      desc: "CRM follow-up performance connected to delivery completion.",
-      requires: ["hubspot", "shipstation"],
-      value: "91%",
-      trend: "+8.0%",
-    },
+    { key: "multiChannelRevenue", title: "Multi-Channel Revenue", desc: "Total revenue across Shopify and Amazon marketplace.", requires: ["shopify", "amazon"], value: "$482,216", trend: "+18.6%" },
+    { key: "shopifyMetaRoas", title: "ROAS by Sales Channel", desc: "Meta ad performance tied directly to Shopify revenue.", requires: ["shopify", "meta"], value: "4.21x", trend: "+32.1%" },
+    { key: "amazonMetaEfficiency", title: "Marketplace Ad Efficiency", desc: "Meta-driven demand compared against Amazon sales.", requires: ["amazon", "meta"], value: "3.47x", trend: "+21.4%" },
+    { key: "shopifyGoogleSearch", title: "Search to Sales", desc: "Google Ads search performance tied to Shopify purchases.", requires: ["shopify", "google"], value: "3.88x", trend: "+14.9%" },
+    { key: "amazonGoogleSales", title: "Search to Marketplace Sales", desc: "Google demand compared against Amazon revenue.", requires: ["amazon", "google"], value: "2.94x", trend: "+9.8%" },
+    { key: "crossChannelRoas", title: "Cross-Channel ROAS", desc: "Meta and Google performance compared in one view.", requires: ["meta", "google"], value: "3.62x", trend: "+17.2%" },
+    { key: "shopifyShippingCost", title: "Shipping Cost by Channel", desc: "Fulfillment cost for Shopify orders by method.", requires: ["shopify", "shipstation"], value: "$7.82", trend: "-6.5%" },
+    { key: "amazonShippingCost", title: "FBA vs FBM Shipping Cost", desc: "Amazon fulfillment cost compared to ShipStation.", requires: ["amazon", "shipstation"], value: "$8.91", trend: "-3.2%" },
+    { key: "shopifyCustomerLtv", title: "Customer LTV", desc: "Lifetime value of Shopify customers in HubSpot.", requires: ["shopify", "hubspot"], value: "$186", trend: "+11.7%" },
+    { key: "amazonCustomerValue", title: "Marketplace Customer Value", desc: "Amazon customer value connected to CRM activity.", requires: ["amazon", "hubspot"], value: "$142", trend: "+7.4%" },
+    { key: "metaCustomerValue", title: "Ad Driven Customer Value", desc: "LTV of customers acquired from Meta campaigns.", requires: ["meta", "hubspot"], value: "$211", trend: "+24.3%" },
+    { key: "googleCustomerValue", title: "Search Driven Customer Value", desc: "LTV of customers acquired from Google demand.", requires: ["google", "hubspot"], value: "$198", trend: "+19.1%" },
+    { key: "googleShippingLag", title: "Search Order Delivery Lag", desc: "Delivery speed for Google Ads generated orders.", requires: ["google", "shipstation"], value: "2.4d", trend: "-0.6d" },
+    { key: "metaShippingLag", title: "Social Order Delivery Lag", desc: "Delivery speed for Meta campaign orders.", requires: ["meta", "shipstation"], value: "2.8d", trend: "-0.4d" },
+    { key: "crmFulfillment", title: "Post-Purchase Experience", desc: "CRM follow-up connected to delivery completion.", requires: ["hubspot", "shipstation"], value: "91%", trend: "+8.0%" },
   ];
 
   const unlockedSignals = intelligenceSignals.filter((signal) =>
@@ -324,15 +219,34 @@ function DataConnectionFlow() {
     return sources.find((source) => source.key === key);
   }
 
+  const activePositionClass: Record<string, string> = {
+    shopify: "left-[8%] top-[13%]",
+    amazon: "left-[8%] top-[31%]",
+    meta: "left-[8%] top-[49%]",
+    google: "left-[8%] top-[67%]",
+    shipstation: "left-[16%] top-[84%]",
+    hubspot: "left-[16%] top-[3%]",
+  };
+
+  const curvePositions: Record<string, [number, number]> = {
+    shopify: [88, 95],
+    amazon: [78, 205],
+    meta: [78, 315],
+    google: [78, 425],
+    shipstation: [132, 555],
+    hubspot: [132, 35],
+  };
+
   return (
     <section id="demo" className="scroll-mt-24 px-6 py-20">
-      <div className="mx-auto max-w-[1600px]">
-        <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-slate-950/70 p-5 shadow-2xl shadow-slate-950/40 backdrop-blur-2xl md:p-8 xl:p-10">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_33%_35%,rgba(16,185,129,0.12),transparent_28%),radial-gradient(circle_at_58%_42%,rgba(34,211,238,0.14),transparent_28%),radial-gradient(circle_at_86%_72%,rgba(168,85,247,0.12),transparent_30%)]" />
+      <div className="mx-auto max-w-[1720px]">
+        <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[#050917]/90 p-6 shadow-2xl shadow-slate-950/50 backdrop-blur-2xl xl:p-8">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_28%_32%,rgba(16,185,129,0.12),transparent_24%),radial-gradient(circle_at_48%_38%,rgba(34,211,238,0.16),transparent_28%),radial-gradient(circle_at_86%_80%,rgba(168,85,247,0.14),transparent_28%)]" />
+          <div className="absolute inset-0 opacity-[0.055] [background-image:linear-gradient(to_right,#fff_1px,transparent_1px),linear-gradient(to_bottom,#fff_1px,transparent_1px)] [background-size:42px_42px]" />
 
           <div className="relative grid gap-6 lg:grid-cols-[1fr_auto] lg:items-start">
             <div>
-              <h2 className="text-3xl font-black tracking-tight text-white md:text-5xl">
+              <h2 className="max-w-4xl text-4xl font-black tracking-[-0.045em] text-white md:text-6xl">
                 Connect your systems. Unlock intelligence.
               </h2>
               <p className="mt-4 max-w-2xl text-base leading-7 text-slate-300 md:text-lg">
@@ -340,22 +254,22 @@ function DataConnectionFlow() {
               </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-6 py-4 text-center">
-                <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-300">Sources Connected</p>
-                <p className="mt-2 text-4xl font-black text-emerald-300">{activeSources.length}<span className="text-slate-500"> / 6</span></p>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="rounded-2xl border border-white/10 bg-white/[0.035] px-8 py-5 text-center shadow-inner shadow-white/5">
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-slate-300">Sources Connected</p>
+                <p className="mt-2 text-5xl font-black tracking-tight text-emerald-300">{activeSources.length}<span className="text-slate-500"> / 6</span></p>
               </div>
-              <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-6 py-4 text-center">
-                <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-300">Intelligence Signals</p>
-                <p className="mt-2 text-4xl font-black text-orange-300">{unlockedSignals.length}<span className="text-slate-500"> / 15</span></p>
+              <div className="rounded-2xl border border-white/10 bg-white/[0.035] px-8 py-5 text-center shadow-inner shadow-white/5">
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-slate-300">Intelligence Signals</p>
+                <p className="mt-2 text-5xl font-black tracking-tight text-orange-300">{unlockedSignals.length}<span className="text-slate-500"> / 15</span></p>
               </div>
             </div>
           </div>
 
-          <div className="relative mt-8 grid gap-6 xl:grid-cols-[0.49fr_0.51fr]">
-            <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-              <div className="rounded-[1.5rem] border border-white/10 bg-black/20 p-4">
-                <p className="mb-4 text-sm font-black uppercase tracking-[0.16em] text-slate-300">Connect your data sources</p>
+          <div className="relative mt-8 grid gap-5 xl:grid-cols-[0.43fr_0.57fr]">
+            <div className="grid gap-5 lg:grid-cols-[0.86fr_1.14fr]">
+              <div className="rounded-[1.4rem] border border-white/10 bg-black/25 p-5 shadow-xl shadow-black/20">
+                <p className="mb-4 text-sm font-black uppercase tracking-[0.18em] text-slate-300">Connect your data sources</p>
                 <div className="grid gap-3">
                   {sources.map((source) => {
                     const active = activeSources.includes(source.key);
@@ -364,14 +278,14 @@ function DataConnectionFlow() {
                       <button
                         key={source.key}
                         onClick={() => toggleSource(source.key)}
-                        className={`flex items-center justify-between rounded-2xl border px-4 py-3 text-left transition ${active ? `${source.border} ${source.bg}` : "border-white/10 bg-white/[0.03] hover:bg-white/[0.06]"}`}
+                        className={`flex items-center justify-between rounded-2xl border px-4 py-3 text-left transition ${active ? `${source.border} ${source.bg}` : "border-white/10 bg-white/[0.035] hover:bg-white/[0.06]"}`}
                       >
                         <div className="flex items-center gap-3">
-                          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/95 p-2 shadow-lg shadow-cyan-950/20">
+                          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white p-2 shadow-lg shadow-cyan-950/20">
                             <img src={source.logoSrc} alt={`${source.name} logo`} className="h-full w-full object-contain" />
                           </div>
                           <div>
-                            <p className="font-black text-white">{source.name}</p>
+                            <p className="text-base font-black text-white">{source.name}</p>
                             <p className="text-sm text-slate-400">{source.type}</p>
                           </div>
                         </div>
@@ -385,72 +299,57 @@ function DataConnectionFlow() {
                 </div>
               </div>
 
-              <div className="relative min-h-[520px] overflow-hidden rounded-[1.5rem] border border-white/10 bg-black/20 p-4">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(34,211,238,0.16),transparent_55%)]" />
+              <div className="relative min-h-[570px] overflow-hidden rounded-[1.4rem] border border-white/10 bg-black/25 p-4 shadow-xl shadow-black/20">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_58%_50%,rgba(34,211,238,0.2),transparent_52%)]" />
 
-                <svg className="absolute inset-0 h-full w-full" viewBox="0 0 520 520" preserveAspectRatio="none">
-                  {sources.map((source, index) => {
+                <svg className="absolute inset-0 h-full w-full" viewBox="0 0 560 620" preserveAspectRatio="none">
+                  {sources.map((source) => {
                     const active = activeSources.includes(source.key);
-                    const positions = [
-                      [78, 90],
-                      [78, 205],
-                      [78, 320],
-                      [78, 435],
-                      [118, 500],
-                      [118, 20],
-                    ];
-                    const [x, y] = positions[index];
+                    const [x, y] = curvePositions[source.key];
                     return (
                       <path
                         key={source.key}
-                        d={`M ${x} ${y} C 210 ${y}, 230 260, 285 260`}
-                        stroke={active ? "rgba(110, 231, 183, 0.85)" : "rgba(148, 163, 184, 0.25)"}
-                        strokeWidth={active ? 3 : 2}
+                        d={`M ${x} ${y} C 210 ${y}, 235 310, 305 310`}
+                        stroke={active ? "rgba(110, 231, 183, 0.9)" : "rgba(148, 163, 184, 0.22)"}
+                        strokeWidth={active ? 3.5 : 2}
                         fill="none"
-                        strokeDasharray={active ? "0" : "6 8"}
+                        strokeDasharray={active ? "0" : "7 10"}
                       />
                     );
                   })}
                 </svg>
 
-                <div className="absolute left-[58%] top-1/2 z-10 -translate-x-1/2 -translate-y-1/2">
-                  <div className="relative flex h-44 w-44 items-center justify-center rounded-full border border-cyan-300 bg-slate-950/80 shadow-[0_0_80px_rgba(34,211,238,0.35)]">
-                    <div className="absolute inset-[-10px] rounded-full border border-cyan-300/25" />
+                <div className="absolute left-[60%] top-1/2 z-10 -translate-x-1/2 -translate-y-1/2">
+                  <div className="relative flex h-52 w-52 items-center justify-center rounded-full border border-cyan-300 bg-slate-950/85 shadow-[0_0_95px_rgba(34,211,238,0.42)]">
+                    <div className="absolute inset-[-12px] rounded-full border border-cyan-300/25" />
+                    <div className="absolute inset-[-24px] rounded-full border border-cyan-300/10" />
                     <div className="text-center">
-                      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-cyan-300 text-slate-950">
-                        <BrainCircuit className="h-7 w-7" />
+                      <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-cyan-300 text-slate-950 shadow-[0_0_35px_rgba(103,232,249,0.4)]">
+                        <BrainCircuit className="h-8 w-8" />
                       </div>
-                      <p className="mt-4 text-sm font-black uppercase tracking-[0.24em] text-cyan-100">BRHT Core</p>
-                      <p className="mt-2 text-sm leading-5 text-slate-300">Unified Operational Intelligence</p>
+                      <p className="mt-5 text-sm font-black uppercase tracking-[0.28em] text-cyan-100">BRHT Core</p>
+                      <p className="mt-2 text-sm leading-5 text-slate-300">Unified Operational<br />Intelligence</p>
                     </div>
                   </div>
                 </div>
 
-                {sources.map((source, index) => {
+                {sources.map((source) => {
                   const active = activeSources.includes(source.key);
-                  const positions = [
-                    "left-[6%] top-[12%]",
-                    "left-[6%] top-[30%]",
-                    "left-[6%] top-[48%]",
-                    "left-[6%] top-[66%]",
-                    "left-[14%] top-[82%]",
-                    "left-[14%] top-[3%]",
-                  ];
 
                   return (
-                    <div key={source.key} className={`absolute ${positions[index]}`}>
-                      <div className={`flex h-14 w-14 items-center justify-center rounded-2xl border p-2 transition ${active ? `${source.border} bg-white/95 shadow-[0_0_22px_rgba(34,211,238,0.15)]` : "border-white/10 bg-white/[0.03] opacity-50"}`}>
+                    <div key={source.key} className={`absolute ${activePositionClass[source.key]}`}>
+                      <div className={`flex h-16 w-16 items-center justify-center rounded-2xl border p-2 transition ${active ? `${source.border} bg-white shadow-[0_0_24px_rgba(34,211,238,0.18)]` : "border-white/10 bg-white/[0.04] opacity-45"}`}>
                         <img src={source.logoSrc} alt={`${source.name} logo`} className="h-full w-full object-contain" />
                       </div>
                     </div>
                   );
                 })}
 
-                <div className="absolute bottom-6 right-6 rounded-2xl border border-cyan-300/30 bg-cyan-300/10 px-5 py-4 text-sm text-cyan-100">
+                <div className="absolute bottom-6 right-6 rounded-2xl border border-cyan-300/35 bg-cyan-300/10 px-5 py-4 text-sm text-cyan-100 shadow-[0_0_30px_rgba(34,211,238,0.12)]">
                   <div className="flex items-center gap-3">
                     <Database className="h-6 w-6" />
                     <div>
-                      <p className="font-black">All your data.</p>
+                      <p className="font-black text-cyan-100">All your data.</p>
                       <p className="text-slate-300">One source of truth.</p>
                     </div>
                   </div>
@@ -458,18 +357,18 @@ function DataConnectionFlow() {
               </div>
             </div>
 
-            <div className="rounded-[1.5rem] border border-white/10 bg-black/20 p-4">
+            <div className="rounded-[1.4rem] border border-white/10 bg-black/25 p-5 shadow-xl shadow-black/20">
               <div className="mb-4 flex items-start justify-between gap-4">
                 <div>
-                  <p className="text-sm font-black uppercase tracking-[0.16em] text-slate-300">Intelligence Signals Unlocked</p>
-                  <p className="mt-1 text-sm text-slate-400">Signals appear when the correct pair of systems is connected.</p>
+                  <p className="text-sm font-black uppercase tracking-[0.18em] text-slate-300">Intelligence Signals Unlocked</p>
+                  <p className="mt-1 text-sm text-slate-400">New intelligence appears when connected systems create new insights.</p>
                 </div>
                 <div className="rounded-full bg-emerald-400/10 px-3 py-1 text-xs font-black text-emerald-300">
                   {unlockedSignals.length} active
                 </div>
               </div>
 
-              <div className="grid max-h-[620px] gap-3 overflow-hidden lg:grid-cols-2 xl:grid-cols-3">
+              <div className="grid max-h-[660px] gap-3 overflow-hidden lg:grid-cols-2 xl:grid-cols-3">
                 {intelligenceSignals.map((signal) => {
                   const unlocked = signal.requires.every((source) => activeSources.includes(source));
                   const first = getSource(signal.requires[0]);
@@ -478,15 +377,15 @@ function DataConnectionFlow() {
                   return (
                     <div
                       key={signal.key}
-                      className={`relative min-h-[124px] rounded-2xl border p-4 transition ${unlocked ? "border-emerald-300/35 bg-emerald-400/10" : "border-white/10 bg-white/[0.025] opacity-60"}`}
+                      className={`relative min-h-[116px] rounded-2xl border p-4 transition ${unlocked ? "border-emerald-300/35 bg-emerald-400/10 shadow-[0_0_26px_rgba(16,185,129,0.08)]" : "border-white/10 bg-white/[0.025] opacity-55"}`}
                     >
                       <div className="mb-3 flex items-center justify-between gap-2">
                         <div className="flex items-center gap-2">
-                          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/95 p-1.5">
+                          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white p-1.5">
                             {first && <img src={first.logoSrc} alt={`${first.name} logo`} className="h-full w-full object-contain" />}
                           </span>
                           <span className="text-slate-400">+</span>
-                          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/95 p-1.5">
+                          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white p-1.5">
                             {second && <img src={second.logoSrc} alt={`${second.name} logo`} className="h-full w-full object-contain" />}
                           </span>
                         </div>
@@ -497,8 +396,8 @@ function DataConnectionFlow() {
                         )}
                       </div>
 
-                      <p className="font-black text-white">{signal.title}</p>
-                      <p className="mt-1 text-sm leading-5 text-slate-400">{signal.desc}</p>
+                      <p className="text-sm font-black leading-5 text-white">{signal.title}</p>
+                      <p className="mt-1 text-xs leading-5 text-slate-400">{signal.desc}</p>
                     </div>
                   );
                 })}
@@ -506,10 +405,10 @@ function DataConnectionFlow() {
             </div>
           </div>
 
-          <div className="relative mt-6 rounded-[1.5rem] border border-white/10 bg-black/20 p-5">
+          <div className="relative mt-6 rounded-[1.5rem] border border-white/10 bg-black/25 p-5 shadow-xl shadow-black/20">
             <div className="mb-5 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
               <div className="flex items-center gap-3">
-                <p className="text-sm font-black uppercase tracking-[0.16em] text-white">Live Intelligence Dashboard</p>
+                <p className="text-sm font-black uppercase tracking-[0.18em] text-white">Live Intelligence Dashboard</p>
                 <span className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1 text-xs text-slate-400">Auto-updated with connected data</span>
               </div>
               <div className="flex flex-wrap gap-2">
@@ -525,14 +424,14 @@ function DataConnectionFlow() {
               </div>
             </div>
 
-            <div className="grid gap-4 lg:grid-cols-[0.75fr_1fr_1fr_1fr_1fr]">
+            <div className="grid gap-4 lg:grid-cols-[0.72fr_1fr_1fr_1fr_1fr]">
               <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-                <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-400">Connected</p>
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-slate-400">Connected</p>
                 <div className="mt-4 flex flex-wrap gap-2">
                   {sources.map((source) => {
                     const active = activeSources.includes(source.key);
                     return (
-                      <div key={source.key} className={`flex h-8 w-8 items-center justify-center rounded-lg p-1.5 ${active ? "bg-white/95" : "bg-white/[0.04] opacity-45"}`}>
+                      <div key={source.key} className={`flex h-9 w-9 items-center justify-center rounded-lg p-1.5 ${active ? "bg-white" : "bg-white/[0.04] opacity-45"}`}>
                         <img src={source.logoSrc} alt={`${source.name} logo`} className="h-full w-full object-contain" />
                       </div>
                     );
@@ -550,11 +449,11 @@ function DataConnectionFlow() {
                       <p className="font-black text-white">{signal.title}</p>
                       {!active && <Lock className="h-4 w-4 text-slate-500" />}
                     </div>
-                    <p className="mt-3 text-3xl font-black text-white">{active ? signal.value : "—"}</p>
+                    <p className="mt-3 text-4xl font-black tracking-tight text-white">{active ? signal.value : "—"}</p>
                     <p className={`mt-1 text-sm font-bold ${active ? "text-emerald-300" : "text-slate-500"}`}>{active ? signal.trend : "Connect sources"}</p>
                     <div className="mt-4 flex h-16 items-end gap-1.5">
                       {bars.map((height, barIndex) => (
-                        <div key={barIndex} className={`flex-1 rounded-t-md ${active ? "bg-gradient-to-t from-cyan-500 to-cyan-200" : "bg-white/10"}`} style={{ height: `${Math.max(12, height + index * 3)}%` }} />
+                        <div key={barIndex} className={`flex-1 rounded-t-md ${active ? "bg-gradient-to-t from-cyan-500 to-cyan-200 shadow-[0_0_12px_rgba(34,211,238,0.25)]" : "bg-white/10"}`} style={{ height: `${Math.max(12, height + index * 3)}%` }} />
                       ))}
                     </div>
                   </div>
