@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowRight,
@@ -542,6 +542,16 @@ function SourceLogo({
 function DataConnectionFlow() {
   const [activeSources, setActiveSources] = useState<SourceKey[]>(["shopify", "amazon", "meta"]);
   const [activeRange, setActiveRange] = useState("7d");
+  const flowPanelRef = useRef<HTMLDivElement | null>(null);
+  const sourceButtonRefs = useRef<Record<SourceKey, HTMLButtonElement | null>>({
+    shopify: null,
+    amazon: null,
+    meta: null,
+    google: null,
+    shipstation: null,
+    hubspot: null,
+  });
+  const [connectorStarts, setConnectorStarts] = useState<Record<SourceKey, { x: number; y: number }> | null>(null);
 
   const unlockedSignals = intelligenceSignals.filter((signal) =>
     signal.requires.every((source) => activeSources.includes(source))
@@ -570,6 +580,48 @@ function DataConnectionFlow() {
   function getSource(key: SourceKey) {
     return sources.find((source) => source.key === key)!;
   }
+
+  useEffect(() => {
+    function calculateConnectorStarts() {
+      const panel = flowPanelRef.current;
+      if (!panel) return;
+
+      const panelRect = panel.getBoundingClientRect();
+      const nextStarts = sources.reduce((acc, source) => {
+        const button = sourceButtonRefs.current[source.key];
+        if (!button) return acc;
+
+        const buttonRect = button.getBoundingClientRect();
+
+        // Convert real DOM pixel positions into the SVG's 920 x 620 viewBox.
+        // This keeps every connector locked to the exact vertical center of its card,
+        // even if card height, spacing, font rendering, or responsive width changes.
+        acc[source.key] = {
+          x: ((buttonRect.right - panelRect.left) / panelRect.width) * 920,
+          y: ((buttonRect.top + buttonRect.height / 2 - panelRect.top) / panelRect.height) * 620,
+        };
+
+        return acc;
+      }, {} as Record<SourceKey, { x: number; y: number }>);
+
+      setConnectorStarts(nextStarts);
+    }
+
+    calculateConnectorStarts();
+    window.addEventListener("resize", calculateConnectorStarts);
+
+    const observer = new ResizeObserver(calculateConnectorStarts);
+    if (flowPanelRef.current) observer.observe(flowPanelRef.current);
+    sources.forEach((source) => {
+      const button = sourceButtonRefs.current[source.key];
+      if (button) observer.observe(button);
+    });
+
+    return () => {
+      window.removeEventListener("resize", calculateConnectorStarts);
+      observer.disconnect();
+    };
+  }, []);
 
   return (
     <section id="demo" className="scroll-mt-24 px-6 py-20">
@@ -606,7 +658,7 @@ function DataConnectionFlow() {
           </div>
 
           <div className="relative z-10 grid gap-5 xl:grid-cols-[0.58fr_0.42fr]">
-            <div className="relative min-h-[600px] overflow-hidden rounded-[26px] border border-white/10 bg-white/[0.025] backdrop-blur-xl">
+            <div ref={flowPanelRef} className="relative min-h-[600px] overflow-hidden rounded-[26px] border border-white/10 bg-white/[0.025] backdrop-blur-xl">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_58%_50%,rgba(34,211,238,0.25),transparent_48%)]" />
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_45%,rgba(16,185,129,0.10),transparent_32%)]" />
 
@@ -622,9 +674,12 @@ function DataConnectionFlow() {
                     return (
                       <button
                         key={source.key}
+                        ref={(node) => {
+                          sourceButtonRefs.current[source.key] = node;
+                        }}
                         onClick={() => toggleSource(source.key)}
                         className={cx(
-                          "group relative flex items-center justify-between rounded-[20px] border px-4 py-3 text-left transition",
+                          "group relative flex h-[78px] items-center justify-between rounded-[20px] border px-4 text-left transition",
                           active
                             ? `${source.borderTone} ${source.activeTone} shadow-[0_0_34px_rgba(16,185,129,0.08)]`
                             : "border-white/10 bg-white/[0.035] hover:bg-white/[0.06]"
@@ -688,15 +743,18 @@ function DataConnectionFlow() {
                 {sources.map((source, index) => {
                   const active = activeSources.includes(source.key);
 
-                  // These coordinates line the connector dots up with the right edge
-                  // of each source card, so the lines visibly come FROM the cards.
-                  const startY = [104, 194, 284, 374, 464, 554][index];
-                  const startX = 410;
-                  const elbowX = 455;
+                  const measuredStart = connectorStarts?.[source.key];
+                  const fallbackCardTop = 57;
+                  const fallbackCardHeight = 78;
+                  const fallbackGap = 12;
+                  const startX = measuredStart?.x ?? 380;
+                  const startY =
+                    measuredStart?.y ?? fallbackCardTop + index * (fallbackCardHeight + fallbackGap) + fallbackCardHeight / 2;
+                  const elbowX = startX + 42;
                   const endX = 620;
                   const endY = 310;
 
-                  const path = `M ${startX} ${startY} L ${elbowX} ${startY} C 515 ${startY}, 535 ${endY}, ${endX} ${endY}`;
+                  const path = `M ${startX} ${startY} L ${elbowX} ${startY} C ${elbowX + 70} ${startY}, 535 ${endY}, ${endX} ${endY}`;
 
                   return (
                     <g key={source.key}>
