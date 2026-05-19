@@ -1310,8 +1310,8 @@ export default function LandingPage() {
               </div>
             </motion.div>
 
-            <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.7, delay: 0.1 }} className="relative">
-              <div className="absolute -inset-6 -z-10 rounded-[2.5rem] bg-gradient-to-br from-yellow-300/20 via-cyan-300/25 to-indigo-500/20 blur-2xl" />
+            <div className="relative">
+              <div className="absolute -inset-5 -z-10 rounded-[2.5rem] bg-gradient-to-br from-cyan-300/18 via-cyan-300/16 to-indigo-500/14 blur-2xl" />
               <div className="overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.055] text-white shadow-2xl shadow-cyan-950/30 backdrop-blur-2xl">
                 <div className="border-b border-white/10 bg-slate-950/70 p-6">
                   <div className="mb-6 flex items-center justify-between">
@@ -1385,38 +1385,34 @@ export default function LandingPage() {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           </div>
         </section>
 
-        <section className="px-6 pb-6">
-          <div className="mx-auto max-w-7xl overflow-hidden rounded-[28px] border border-cyan-300/20 bg-white/[0.035] shadow-[0_0_70px_rgba(34,211,238,0.08)] backdrop-blur-xl">
-            <div className="relative grid gap-0 divide-y divide-white/10 md:grid-cols-4 md:divide-x md:divide-y-0">
-              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(34,211,238,0.16),transparent_30%),radial-gradient(circle_at_80%_50%,rgba(16,185,129,0.12),transparent_28%)]" />
+        <section className="relative left-1/2 right-1/2 w-screen -translate-x-1/2 border-y border-cyan-200/35 bg-[linear-gradient(90deg,#dffbff_0%,#cbf7ef_48%,#fff0c7_100%)] px-6 py-9 text-slate-950 shadow-[0_0_80px_rgba(34,211,238,0.12)]">
+          <div className="mx-auto grid max-w-7xl gap-8 text-center md:grid-cols-4 md:divide-x md:divide-slate-950/15">
+            <div className="px-4">
+              <p className="text-[11px] font-black uppercase tracking-[0.24em] text-slate-600">Built for</p>
+              <p className="mt-2 text-3xl font-black tracking-tight text-slate-950">Operators</p>
+              <p className="mt-1 text-sm font-semibold text-slate-700">founders, CFOs, and teams who need clarity fast</p>
+            </div>
 
-              <div className="relative p-5 text-center">
-                <p className="text-[11px] font-black uppercase tracking-[0.24em] text-cyan-200">Built for</p>
-                <p className="mt-2 text-lg font-black text-white">Operators & founders</p>
-                <p className="mt-1 text-sm text-slate-400">who need fast clarity</p>
-              </div>
+            <div className="px-4">
+              <p className="text-[11px] font-black uppercase tracking-[0.24em] text-slate-600">Connect</p>
+              <p className="mt-2 text-3xl font-black tracking-tight text-slate-950">6 core systems</p>
+              <p className="mt-1 text-sm font-semibold text-slate-700">commerce, ads, fulfillment, CRM, and operations</p>
+            </div>
 
-              <div className="relative p-5 text-center">
-                <p className="text-[11px] font-black uppercase tracking-[0.24em] text-cyan-200">Connect</p>
-                <p className="mt-2 text-lg font-black text-white">6 core systems</p>
-                <p className="mt-1 text-sm text-slate-400">commerce, ads, ops, CRM</p>
-              </div>
+            <div className="px-4">
+              <p className="text-[11px] font-black uppercase tracking-[0.24em] text-slate-600">Unlock</p>
+              <p className="mt-2 text-3xl font-black tracking-tight text-slate-950">15 signals</p>
+              <p className="mt-1 text-sm font-semibold text-slate-700">cross-platform intelligence no single app shows</p>
+            </div>
 
-              <div className="relative p-5 text-center">
-                <p className="text-[11px] font-black uppercase tracking-[0.24em] text-cyan-200">Unlock</p>
-                <p className="mt-2 text-lg font-black text-white">15 intelligence signals</p>
-                <p className="mt-1 text-sm text-slate-400">that no single app shows</p>
-              </div>
-
-              <div className="relative p-5 text-center">
-                <p className="text-[11px] font-black uppercase tracking-[0.24em] text-cyan-200">Result</p>
-                <p className="mt-2 text-lg font-black text-white">One command center</p>
-                <p className="mt-1 text-sm text-slate-400">BI + automation + AI</p>
-              </div>
+            <div className="px-4">
+              <p className="text-[11px] font-black uppercase tracking-[0.24em] text-slate-600">Result</p>
+              <p className="mt-2 text-3xl font-black tracking-tight text-slate-950">BI + AI</p>
+              <p className="mt-1 text-sm font-semibold text-slate-700">one command center for smarter decisions</p>
             </div>
           </div>
         </section>
