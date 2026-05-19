@@ -1389,6 +1389,38 @@ export default function LandingPage() {
           </div>
         </section>
 
+        <section className="px-6 pb-6">
+          <div className="mx-auto max-w-7xl overflow-hidden rounded-[28px] border border-cyan-300/20 bg-white/[0.035] shadow-[0_0_70px_rgba(34,211,238,0.08)] backdrop-blur-xl">
+            <div className="relative grid gap-0 divide-y divide-white/10 md:grid-cols-4 md:divide-x md:divide-y-0">
+              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(34,211,238,0.16),transparent_30%),radial-gradient(circle_at_80%_50%,rgba(16,185,129,0.12),transparent_28%)]" />
+
+              <div className="relative p-5 text-center">
+                <p className="text-[11px] font-black uppercase tracking-[0.24em] text-cyan-200">Built for</p>
+                <p className="mt-2 text-lg font-black text-white">Operators & founders</p>
+                <p className="mt-1 text-sm text-slate-400">who need fast clarity</p>
+              </div>
+
+              <div className="relative p-5 text-center">
+                <p className="text-[11px] font-black uppercase tracking-[0.24em] text-cyan-200">Connect</p>
+                <p className="mt-2 text-lg font-black text-white">6 core systems</p>
+                <p className="mt-1 text-sm text-slate-400">commerce, ads, ops, CRM</p>
+              </div>
+
+              <div className="relative p-5 text-center">
+                <p className="text-[11px] font-black uppercase tracking-[0.24em] text-cyan-200">Unlock</p>
+                <p className="mt-2 text-lg font-black text-white">15 intelligence signals</p>
+                <p className="mt-1 text-sm text-slate-400">that no single app shows</p>
+              </div>
+
+              <div className="relative p-5 text-center">
+                <p className="text-[11px] font-black uppercase tracking-[0.24em] text-cyan-200">Result</p>
+                <p className="mt-2 text-lg font-black text-white">One command center</p>
+                <p className="mt-1 text-sm text-slate-400">BI + automation + AI</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <DataConnectionFlow />
 
         <section id="platform" className="scroll-mt-24 px-6 py-20">
