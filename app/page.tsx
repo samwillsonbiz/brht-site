@@ -570,6 +570,165 @@ function DataConnectionFlow() {
     { key: "30d", label: "Last 30 Days" },
   ];
 
+  const dashboardMetrics = {
+    today: [
+      {
+        title: "Multi-Channel Revenue",
+        value: "$2,184",
+        trend: "+6.8%",
+        detail: "Today revenue pace",
+        chartTone: "from-emerald-500 to-cyan-200",
+        insight:
+          "Revenue is pacing above the daily average, mostly from Shopify and Amazon activity. Watch whether the afternoon traffic keeps the same conversion rate.",
+      },
+      {
+        title: "ROAS by Sales Channel",
+        value: "3.14x",
+        trend: "+8.2%",
+        detail: "Today paid efficiency",
+        chartTone: "from-cyan-500 to-sky-200",
+        insight:
+          "Ad efficiency is healthy today, but it is not as strong as the 7-day average. Keep spend steady until conversion quality proves it can hold.",
+      },
+      {
+        title: "Marketplace Ad Efficiency",
+        value: "2.91x",
+        trend: "+5.4%",
+        detail: "Today Amazon impact",
+        chartTone: "from-orange-500 to-yellow-200",
+        insight:
+          "Amazon-driven ad performance is positive today, but marketplace efficiency is lagging the Shopify-side return. Check search terms before scaling.",
+      },
+      {
+        title: "Top Performing Channel",
+        value: "Shopify",
+        trend: "41%",
+        detail: "of today revenue",
+        chartTone: "from-purple-500 to-violet-200",
+        insight:
+          "Shopify is leading today’s revenue mix. If this continues, prioritize onsite conversion and cart recovery over marketplace pushes today.",
+      },
+    ],
+    yesterday: [
+      {
+        title: "Multi-Channel Revenue",
+        value: "$3,946",
+        trend: "+11.3%",
+        detail: "Yesterday revenue",
+        chartTone: "from-emerald-500 to-cyan-200",
+        insight:
+          "Yesterday had stronger revenue volume than today, with solid marketplace contribution. Compare traffic source mix to see what changed.",
+      },
+      {
+        title: "ROAS by Sales Channel",
+        value: "3.76x",
+        trend: "+18.5%",
+        detail: "Yesterday paid efficiency",
+        chartTone: "from-cyan-500 to-sky-200",
+        insight:
+          "Yesterday’s paid traffic converted efficiently across connected channels. The strongest play is to identify which campaign carried the lift.",
+      },
+      {
+        title: "Marketplace Ad Efficiency",
+        value: "3.22x",
+        trend: "+13.1%",
+        detail: "Yesterday Amazon impact",
+        chartTone: "from-orange-500 to-yellow-200",
+        insight:
+          "Amazon marketplace ads performed well yesterday. Keep an eye on whether the result came from higher conversion or simply higher spend.",
+      },
+      {
+        title: "Top Performing Channel",
+        value: "Amazon",
+        trend: "38%",
+        detail: "of yesterday revenue",
+        chartTone: "from-purple-500 to-violet-200",
+        insight:
+          "Amazon was yesterday’s strongest revenue channel. This suggests marketplace demand was unusually strong and may deserve follow-up spend.",
+      },
+    ],
+    "7d": [
+      {
+        title: "Multi-Channel Revenue",
+        value: "$482,216",
+        trend: "+18.6%",
+        detail: "Last 7 days",
+        chartTone: "from-emerald-500 to-cyan-200",
+        insight:
+          "Revenue is trending upward across Shopify and Amazon over the last 7 days. The next step is separating organic lift from paid-driven lift.",
+      },
+      {
+        title: "ROAS by Sales Channel",
+        value: "4.21x",
+        trend: "+32.1%",
+        detail: "Last 7 days",
+        chartTone: "from-cyan-500 to-sky-200",
+        insight:
+          "ROAS is strongest over the last 7 days, suggesting recent ad optimization is working. This is the strongest card to investigate before scaling budget.",
+      },
+      {
+        title: "Marketplace Ad Efficiency",
+        value: "3.47x",
+        trend: "+21.4%",
+        detail: "Last 7 days",
+        chartTone: "from-orange-500 to-yellow-200",
+        insight:
+          "Amazon ad efficiency is improving and contributing meaningful marketplace revenue. Consider testing whether the same audience also converts on Shopify.",
+      },
+      {
+        title: "Top Performing Channel",
+        value: "Meta Ads",
+        trend: "32%",
+        detail: "of total revenue",
+        chartTone: "from-purple-500 to-violet-200",
+        insight:
+          "Meta Ads is the top performing channel for the last 7 days. BRHT should watch for fatigue and compare Meta’s revenue quality against Google and Amazon.",
+      },
+    ],
+    "30d": [
+      {
+        title: "Multi-Channel Revenue",
+        value: "$1.84M",
+        trend: "+24.9%",
+        detail: "Last 30 days",
+        chartTone: "from-emerald-500 to-cyan-200",
+        insight:
+          "The 30-day view shows strong multi-channel revenue growth. This is a good executive-level signal, but margin and fulfillment cost should be reviewed next.",
+      },
+      {
+        title: "ROAS by Sales Channel",
+        value: "3.68x",
+        trend: "+19.7%",
+        detail: "Last 30 days",
+        chartTone: "from-cyan-500 to-sky-200",
+        insight:
+          "ROAS is stable over 30 days, though slightly below the 7-day peak. Recent improvements may not be fully reflected in the longer window yet.",
+      },
+      {
+        title: "Marketplace Ad Efficiency",
+        value: "3.09x",
+        trend: "+12.8%",
+        detail: "Last 30 days",
+        chartTone: "from-orange-500 to-yellow-200",
+        insight:
+          "Marketplace ad efficiency is profitable but improving slower than Shopify-side performance. Review Amazon campaign structure and product-level profitability.",
+      },
+      {
+        title: "Top Performing Channel",
+        value: "Meta Ads",
+        trend: "35%",
+        detail: "of total revenue",
+        chartTone: "from-purple-500 to-violet-200",
+        insight:
+          "Meta Ads is the strongest channel over the last 30 days. The key question is whether Meta is creating new demand or capturing demand from other channels.",
+      },
+    ],
+  };
+
+  const [selectedDashboardCard, setSelectedDashboardCard] = useState(1);
+  const activeDashboardMetrics = dashboardMetrics[activeRange as keyof typeof dashboardMetrics];
+  const selectedInsight = activeDashboardMetrics[selectedDashboardCard];
+
   function toggleSource(key: SourceKey) {
     setActiveSources((current) => {
       if (current.includes(key)) return current.filter((item) => item !== key);
@@ -956,74 +1115,74 @@ function DataConnectionFlow() {
                 </div>
               </div>
 
-              {featuredSignals.map((signal, index) => {
-                const active = unlockedSignals.some((item) => item.key === signal.key);
+              {activeDashboardMetrics.map((metric, index) => {
+                const selected = selectedDashboardCard === index;
+                const isTopChannel = index === 3;
+
                 return (
-                  <div
-                    key={signal.key}
+                  <button
+                    key={metric.title}
+                    onClick={() => setSelectedDashboardCard(index)}
                     className={cx(
-                      "overflow-hidden rounded-[18px] border p-4 transition",
-                      active
-                        ? "border-cyan-300/20 bg-[linear-gradient(180deg,rgba(8,47,73,0.62),rgba(2,6,23,0.72))]"
-                        : "border-white/10 bg-white/[0.03] opacity-55"
+                      "overflow-hidden rounded-[18px] border p-4 text-left transition",
+                      isTopChannel
+                        ? selected
+                          ? "border-purple-300/35 bg-purple-400/[0.14] shadow-[0_0_35px_rgba(168,85,247,0.18)]"
+                          : "border-purple-300/10 bg-purple-400/[0.08] hover:border-purple-300/25"
+                        : selected
+                          ? "border-cyan-300/50 bg-[linear-gradient(180deg,rgba(8,47,73,0.72),rgba(2,6,23,0.82))] shadow-[0_0_35px_rgba(34,211,238,0.16)]"
+                          : "border-cyan-300/20 bg-[linear-gradient(180deg,rgba(8,47,73,0.45),rgba(2,6,23,0.65))] hover:border-cyan-300/35"
                     )}
                   >
-                    <div className="flex items-start justify-between gap-3">
-                      <p className="font-black text-white">{signal.title}</p>
-                      {!active && <Lock className="h-4 w-4 text-slate-500" />}
-                    </div>
-                    <p className="mt-3 text-4xl font-semibold tracking-tight text-white">{active ? signal.value : "—"}</p>
-                    <p className={cx("mt-1 text-sm font-bold", active ? "text-emerald-300" : "text-slate-500")}>
-                      {active ? signal.trend : "Connect sources"}
-                    </p>
+                    {isTopChannel ? (
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <p className="text-sm font-black text-white">{metric.title}</p>
+                          <p className="mt-5 text-4xl font-semibold tracking-tight text-white">{metric.value}</p>
+                          <p className="mt-2 text-sm text-slate-300">
+                            {metric.trend} {metric.detail}
+                          </p>
+                        </div>
+                        <div className="relative h-24 w-24 shrink-0 rounded-full bg-[conic-gradient(from_0deg,#8b5cf6_0_32%,rgba(255,255,255,0.12)_32%_100%)]">
+                          <div className="absolute inset-4 grid place-items-center rounded-full bg-[#050917] text-sm font-black text-white">
+                            {metric.trend}
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <p className="font-black text-white">{metric.title}</p>
+                        <p className="mt-3 text-4xl font-semibold tracking-tight text-white">{metric.value}</p>
+                        <p className="mt-1 text-sm font-bold text-emerald-300">{metric.trend}</p>
 
-                    <div className="mt-4 flex h-14 items-end gap-1.5">
-                      {dashboardBars.map((height, barIndex) => (
-                        <div
-                          key={barIndex}
-                          className={cx(
-                            "flex-1 rounded-t-md",
-                            active
-                              ? `bg-gradient-to-t ${signal.chartTone} shadow-[0_0_12px_rgba(34,211,238,0.25)]`
-                              : "bg-white/10"
-                          )}
-                          style={{ height: `${Math.max(12, height + index * 3)}%` }}
-                        />
-                      ))}
-                    </div>
-                  </div>
+                        <div className="mt-4 flex h-14 items-end gap-1.5">
+                          {dashboardBars.map((height, barIndex) => (
+                            <div
+                              key={barIndex}
+                              className={cx(
+                                "flex-1 rounded-t-md shadow-[0_0_12px_rgba(34,211,238,0.25)]",
+                                `bg-gradient-to-t ${metric.chartTone}`
+                              )}
+                              style={{ height: `${Math.max(12, height + index * 3)}%` }}
+                            />
+                          ))}
+                        </div>
+                      </>
+                    )}
+                  </button>
                 );
               })}
-
-              <div className="rounded-[18px] border border-purple-300/10 bg-purple-400/[0.08] p-4">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <p className="text-sm font-black text-white">Top Performing Channel</p>
-                    <p className="mt-5 text-4xl font-semibold tracking-tight text-white">Meta Ads</p>
-                    <p className="mt-2 text-sm text-slate-300">32% of total revenue</p>
-                  </div>
-                  <div className="relative h-24 w-24 rounded-full bg-[conic-gradient(from_0deg,#8b5cf6_0_32%,rgba(255,255,255,0.12)_32%_100%)]">
-                    <div className="absolute inset-4 grid place-items-center rounded-full bg-[#050917] text-sm font-black text-white">
-                      32%
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
 
-            <div className="mt-4 flex flex-col gap-3 rounded-2xl border border-purple-300/20 bg-purple-400/10 p-4 md:flex-row md:items-center md:justify-between">
+            <div className="mt-4 rounded-2xl border border-purple-300/20 bg-purple-400/10 p-4">
               <div className="flex items-start gap-3">
-                <Sparkles className="mt-1 h-5 w-5 text-purple-200" />
+                <Sparkles className="mt-1 h-5 w-5 shrink-0 text-purple-200" />
                 <p className="leading-7 text-slate-300">
                   <span className="font-black text-purple-100">AI Insight:</span>{" "}
-                  {topSignal
-                    ? `${topSignal.title} is now live. BRHT can explain what changed, why it matters, and what action to take next.`
-                    : "Connect two systems to generate the first operational insight."}
+                  <span className="font-black text-white">{selectedInsight.title}:</span>{" "}
+                  {selectedInsight.insight}
                 </p>
               </div>
-              <SecondaryButton className="bg-purple-400/20 px-6 text-purple-100 hover:bg-purple-400/30">
-                View Full Dashboard <ArrowRight className="ml-2 h-4 w-4" />
-              </SecondaryButton>
             </div>
           </div>
         </div>
