@@ -575,9 +575,9 @@ function DataConnectionFlow() {
     <section id="demo" className="scroll-mt-24 px-6 py-20">
       <div className="mx-auto max-w-[1536px]">
         <div className="relative overflow-hidden rounded-[34px] border border-white/10 bg-[#030712] px-8 py-8 shadow-[0_0_120px_rgba(0,0,0,0.55)]">
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_42%_38%,rgba(34,211,238,0.20),transparent_28%),radial-gradient(circle_at_90%_85%,rgba(124,58,237,0.16),transparent_30%),radial-gradient(circle_at_18%_16%,rgba(16,185,129,0.13),transparent_26%)]" />
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_38%_38%,rgba(34,211,238,0.22),transparent_30%),radial-gradient(circle_at_88%_84%,rgba(124,58,237,0.16),transparent_30%),radial-gradient(circle_at_18%_16%,rgba(16,185,129,0.13),transparent_26%)]" />
           <div className="pointer-events-none absolute inset-0 opacity-[0.075] [background-image:linear-gradient(to_right,#fff_1px,transparent_1px),linear-gradient(to_bottom,#fff_1px,transparent_1px)] [background-size:48px_48px]" />
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(2,6,23,0.25)_48%,rgba(2,6,23,0.78)_100%)]" />
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(2,6,23,0.24)_48%,rgba(2,6,23,0.78)_100%)]" />
 
           <div className="relative z-10 mb-8 grid gap-6 lg:grid-cols-[1fr_auto] lg:items-start">
             <div>
@@ -605,9 +605,12 @@ function DataConnectionFlow() {
             </div>
           </div>
 
-          <div className="relative z-10 grid gap-5 xl:grid-cols-[0.495fr_0.505fr]">
-            <div className="grid gap-5 lg:grid-cols-[0.92fr_1.08fr]">
-              <div className="rounded-[26px] border border-white/10 bg-white/[0.025] p-5 backdrop-blur-xl">
+          <div className="relative z-10 grid gap-5 xl:grid-cols-[0.58fr_0.42fr]">
+            <div className="relative min-h-[600px] overflow-hidden rounded-[26px] border border-white/10 bg-white/[0.025] backdrop-blur-xl">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_58%_50%,rgba(34,211,238,0.25),transparent_48%)]" />
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_45%,rgba(16,185,129,0.10),transparent_32%)]" />
+
+              <div className="absolute left-5 top-5 z-30 w-[360px]">
                 <p className="mb-5 text-sm font-black uppercase tracking-[0.22em] text-slate-300">
                   Connect Your Data Sources
                 </p>
@@ -621,7 +624,7 @@ function DataConnectionFlow() {
                         key={source.key}
                         onClick={() => toggleSource(source.key)}
                         className={cx(
-                          "group flex items-center justify-between rounded-[20px] border px-4 py-3 text-left transition",
+                          "group relative flex items-center justify-between rounded-[20px] border px-4 py-3 text-left transition",
                           active
                             ? `${source.borderTone} ${source.activeTone} shadow-[0_0_34px_rgba(16,185,129,0.08)]`
                             : "border-white/10 bg-white/[0.035] hover:bg-white/[0.06]"
@@ -654,146 +657,127 @@ function DataConnectionFlow() {
                 </div>
               </div>
 
-              <div className="relative min-h-[540px] overflow-hidden rounded-[26px] border border-white/10 bg-white/[0.025] backdrop-blur-xl">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_60%_50%,rgba(34,211,238,0.25),transparent_45%)]" />
+              <div className="absolute left-[45%] top-1/2 h-[560px] w-[560px] -translate-y-1/2 rounded-full bg-cyan-300/20 blur-3xl" />
 
-                <svg
-  className="absolute inset-0 h-full w-full"
-  viewBox="0 0 560 560"
-  preserveAspectRatio="none"
->
-  <defs>
-    <filter id="flowGlow" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur stdDeviation="4" result="blur" />
-      <feMerge>
-        <feMergeNode in="blur" />
-        <feMergeNode in="SourceGraphic" />
-      </feMerge>
-    </filter>
+              <svg
+                className="absolute inset-0 z-10 h-full w-full"
+                viewBox="0 0 920 620"
+                preserveAspectRatio="none"
+              >
+                <defs>
+                  <filter id="flowGlowCombined" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur stdDeviation="4" result="blur" />
+                    <feMerge>
+                      <feMergeNode in="blur" />
+                      <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                  </filter>
 
-    <linearGradient id="activeFlow" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stopColor="rgba(110,231,183,0.95)" />
-      <stop offset="55%" stopColor="rgba(103,232,249,0.95)" />
-      <stop offset="100%" stopColor="rgba(34,211,238,0.95)" />
-    </linearGradient>
+                  <linearGradient id="activeFlowCombined" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="rgba(110,231,183,0.95)" />
+                    <stop offset="55%" stopColor="rgba(103,232,249,0.95)" />
+                    <stop offset="100%" stopColor="rgba(34,211,238,0.95)" />
+                  </linearGradient>
 
-    <linearGradient id="inactiveFlow" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stopColor="rgba(148,163,184,0.35)" />
-      <stop offset="100%" stopColor="rgba(148,163,184,0.18)" />
-    </linearGradient>
-  </defs>
+                  <linearGradient id="inactiveFlowCombined" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="rgba(148,163,184,0.30)" />
+                    <stop offset="100%" stopColor="rgba(148,163,184,0.14)" />
+                  </linearGradient>
+                </defs>
 
-  {sources.map((source, index) => {
-    const active = activeSources.includes(source.key);
+                {sources.map((source, index) => {
+                  const active = activeSources.includes(source.key);
 
-    // These y-values line up with each source card row.
-    // The line starts at the right edge of the source list and flows into BRHT Core.
-    const startY = [82, 172, 262, 352, 442, 512][index];
-    const startX = 0;
-    const endX = 314;
-    const endY = 280;
+                  const startY = [128, 218, 308, 398, 488, 578][index];
+                  const startX = 360;
+                  const endX = 650;
+                  const endY = 310;
 
-    const path = `M ${startX} ${startY} C 110 ${startY}, 145 ${endY}, ${endX} ${endY}`;
+                  const path = `M ${startX} ${startY} C 470 ${startY}, 500 ${endY}, ${endX} ${endY}`;
 
-    return (
-      <g key={source.key}>
-        {/* soft outer glow */}
-        <path
-          d={path}
-          stroke={active ? "url(#activeFlow)" : "url(#inactiveFlow)"}
-          strokeWidth={active ? 10 : 5}
-          fill="none"
-          strokeLinecap="round"
-          opacity={active ? 0.14 : 0.1}
-          filter={active ? "url(#flowGlow)" : undefined}
-        />
+                  return (
+                    <g key={source.key}>
+                      <path
+                        d={path}
+                        stroke={active ? "url(#activeFlowCombined)" : "url(#inactiveFlowCombined)"}
+                        strokeWidth={active ? 11 : 5}
+                        fill="none"
+                        strokeLinecap="round"
+                        opacity={active ? 0.13 : 0.08}
+                        filter={active ? "url(#flowGlowCombined)" : undefined}
+                      />
 
-        {/* main line */}
-        <path
-          d={path}
-          stroke={active ? "url(#activeFlow)" : "url(#inactiveFlow)"}
-          strokeWidth={active ? 3.2 : 2}
-          fill="none"
-          strokeLinecap="round"
-          strokeDasharray={active ? "0" : "7 10"}
-          opacity={active ? 0.95 : 0.55}
-        />
+                      <path
+                        d={path}
+                        stroke={active ? "url(#activeFlowCombined)" : "url(#inactiveFlowCombined)"}
+                        strokeWidth={active ? 3.4 : 2}
+                        fill="none"
+                        strokeLinecap="round"
+                        strokeDasharray={active ? "0" : "8 10"}
+                        opacity={active ? 0.95 : 0.55}
+                      />
 
-        {/* source connection node */}
-        <circle
-          cx={startX}
-          cy={startY}
-          r={active ? 5.5 : 4.5}
-          fill={active ? "rgba(110,231,183,1)" : "rgba(148,163,184,0.55)"}
-          filter={active ? "url(#flowGlow)" : undefined}
-        />
+                      <circle
+                        cx={startX}
+                        cy={startY}
+                        r={active ? 5.5 : 4.5}
+                        fill={active ? "rgba(110,231,183,1)" : "rgba(148,163,184,0.55)"}
+                        filter={active ? "url(#flowGlowCombined)" : undefined}
+                      />
 
-        {/* core connection node */}
-        <circle
-          cx={endX}
-          cy={endY}
-          r={active ? 5 : 4}
-          fill={active ? "rgba(34,211,238,1)" : "rgba(148,163,184,0.35)"}
-          filter={active ? "url(#flowGlow)" : undefined}
-        />
+                      <circle
+                        cx={endX}
+                        cy={endY}
+                        r={active ? 5 : 4}
+                        fill={active ? "rgba(34,211,238,1)" : "rgba(148,163,184,0.35)"}
+                        filter={active ? "url(#flowGlowCombined)" : undefined}
+                      />
 
-        {/* animated data packets */}
-        {active && (
-          <>
-            <circle r="4" fill="rgba(167,243,208,1)" filter="url(#flowGlow)">
-              <animateMotion dur="2.4s" repeatCount="indefinite" path={path} />
-            </circle>
+                      {active && (
+                        <>
+                          <circle r="4.2" fill="rgba(167,243,208,1)" filter="url(#flowGlowCombined)">
+                            <animateMotion dur="2.2s" repeatCount="indefinite" path={path} />
+                          </circle>
 
-            <circle r="3" fill="rgba(103,232,249,1)" filter="url(#flowGlow)">
-              <animateMotion
-                dur="2.4s"
-                begin="0.55s"
-                repeatCount="indefinite"
-                path={path}
-              />
-            </circle>
+                          <circle r="3.2" fill="rgba(103,232,249,1)" filter="url(#flowGlowCombined)">
+                            <animateMotion dur="2.2s" begin="0.55s" repeatCount="indefinite" path={path} />
+                          </circle>
 
-            <circle r="2.4" fill="rgba(255,255,255,0.9)">
-              <animateMotion
-                dur="2.4s"
-                begin="1.1s"
-                repeatCount="indefinite"
-                path={path}
-              />
-            </circle>
-          </>
-        )}
-      </g>
-    );
-  })}
-</svg>
+                          <circle r="2.4" fill="rgba(255,255,255,0.9)">
+                            <animateMotion dur="2.2s" begin="1.1s" repeatCount="indefinite" path={path} />
+                          </circle>
+                        </>
+                      )}
+                    </g>
+                  );
+                })}
+              </svg>
 
-                <div className="absolute left-[62%] top-1/2 z-10 -translate-x-1/2 -translate-y-1/2">
-                  <div className="relative flex h-[238px] w-[238px] items-center justify-center rounded-full border border-cyan-300 bg-[#020617]/95 shadow-[0_0_110px_rgba(34,211,238,0.42)]">
-                    <div className="absolute inset-[-12px] rounded-full border border-cyan-300/20" />
-                    <div className="absolute inset-[-24px] rounded-full border border-cyan-300/10" />
-                    <div className="absolute inset-[-38px] rounded-full border border-cyan-300/5" />
-                    <div className="text-center">
-                      <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-cyan-300 text-slate-950 shadow-[0_0_36px_rgba(103,232,249,0.45)]">
-                        <BrainCircuit className="h-8 w-8" />
-                      </div>
-                      <p className="mt-6 text-sm font-black uppercase tracking-[0.32em] text-white">BRHT Core</p>
-                      <p className="mt-3 text-sm leading-5 text-slate-300">
-                        Unified Operational
-                        <br />
-                        Intelligence
-                      </p>
+              <div className="absolute left-[70%] top-1/2 z-20 -translate-x-1/2 -translate-y-1/2">
+                <div className="relative flex h-[250px] w-[250px] items-center justify-center rounded-full border border-cyan-300 bg-[#020617]/95 shadow-[0_0_120px_rgba(34,211,238,0.44)]">
+                  <div className="absolute inset-[-14px] rounded-full border border-cyan-300/20" />
+                  <div className="absolute inset-[-28px] rounded-full border border-cyan-300/10" />
+                  <div className="absolute inset-[-42px] rounded-full border border-cyan-300/5" />
+                  <div className="text-center">
+                    <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-cyan-300 text-slate-950 shadow-[0_0_36px_rgba(103,232,249,0.45)]">
+                      <BrainCircuit className="h-8 w-8" />
                     </div>
+                    <p className="mt-6 text-sm font-black uppercase tracking-[0.32em] text-white">BRHT Core</p>
+                    <p className="mt-3 text-sm leading-5 text-slate-300">
+                      Unified Operational
+                      <br />
+                      Intelligence
+                    </p>
                   </div>
                 </div>
+              </div>
 
-                <div className="absolute bottom-6 right-6 rounded-[18px] border border-cyan-300/35 bg-cyan-300/10 px-5 py-4 text-sm text-cyan-100 shadow-[0_0_30px_rgba(34,211,238,0.14)]">
-                  <div className="flex items-center gap-3">
-                    <Database className="h-6 w-6" />
-                    <div>
-                      <p className="font-black text-cyan-100">All your data.</p>
-                      <p className="text-slate-300">One source of truth.</p>
-                    </div>
+              <div className="absolute bottom-6 right-8 z-30 rounded-[18px] border border-cyan-300/35 bg-cyan-300/10 px-5 py-4 text-sm text-cyan-100 shadow-[0_0_30px_rgba(34,211,238,0.14)]">
+                <div className="flex items-center gap-3">
+                  <Database className="h-6 w-6" />
+                  <div>
+                    <p className="font-black text-cyan-100">All your data.</p>
+                    <p className="text-slate-300">One source of truth.</p>
                   </div>
                 </div>
               </div>
@@ -814,7 +798,7 @@ function DataConnectionFlow() {
                 </div>
               </div>
 
-              <div className="grid max-h-[520px] gap-3 overflow-hidden lg:grid-cols-2 xl:grid-cols-3">
+              <div className="grid max-h-[550px] gap-3 overflow-hidden lg:grid-cols-2 xl:grid-cols-3">
                 {intelligenceSignals.slice(0, 12).map((signal) => {
                   const unlocked = signal.requires.every((source) => activeSources.includes(source));
                   const first = getSource(signal.requires[0]);
