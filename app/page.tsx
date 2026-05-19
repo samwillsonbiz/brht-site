@@ -168,12 +168,12 @@ function DataConnectionFlow() {
   const [activeRange, setActiveRange] = useState("7d");
 
   const sources = [
-    { key: "shopify", name: "Shopify", short: "S", type: "Commerce", accent: "from-emerald-400 to-cyan-200", bg: "bg-emerald-400/10", border: "border-emerald-300/35" },
-    { key: "amazon", name: "Amazon", short: "a", type: "Marketplace", accent: "from-orange-300 to-yellow-100", bg: "bg-orange-400/10", border: "border-orange-300/35" },
-    { key: "meta", name: "Meta Ads", short: "∞", type: "Paid Social", accent: "from-cyan-300 to-blue-100", bg: "bg-cyan-400/10", border: "border-cyan-300/35" },
-    { key: "google", name: "Google Ads", short: "G", type: "Paid Search", accent: "from-blue-400 to-yellow-100", bg: "bg-blue-400/10", border: "border-blue-300/35" },
-    { key: "shipstation", name: "ShipStation", short: "⚙", type: "Shipping", accent: "from-sky-300 to-cyan-100", bg: "bg-sky-400/10", border: "border-sky-300/35" },
-    { key: "hubspot", name: "HubSpot", short: "H", type: "CRM", accent: "from-orange-400 to-pink-100", bg: "bg-orange-400/10", border: "border-orange-300/35" },
+    { key: "shopify", name: "Shopify", short: "S", logoSrc: "/logos/Shopify.svg", type: "Commerce", accent: "from-emerald-400 to-cyan-200", bg: "bg-emerald-400/10", border: "border-emerald-300/35" },
+    { key: "amazon", name: "Amazon", short: "a", logoSrc: "/logos/Amazon.svg", type: "Marketplace", accent: "from-orange-300 to-yellow-100", bg: "bg-orange-400/10", border: "border-orange-300/35" },
+    { key: "meta", name: "Meta Ads", short: "∞", logoSrc: "/logos/Meta.svg", type: "Paid Social", accent: "from-cyan-300 to-blue-100", bg: "bg-cyan-400/10", border: "border-cyan-300/35" },
+    { key: "google", name: "Google Ads", short: "G", logoSrc: "/logos/Googleads.svg", type: "Paid Search", accent: "from-blue-400 to-yellow-100", bg: "bg-blue-400/10", border: "border-blue-300/35" },
+    { key: "shipstation", name: "ShipStation", short: "⚙", logoSrc: "/logos/Shipstation.svg", type: "Shipping", accent: "from-sky-300 to-cyan-100", bg: "bg-sky-400/10", border: "border-sky-300/35" },
+    { key: "hubspot", name: "HubSpot", short: "H", logoSrc: "/logos/Hubspot.svg", type: "CRM", accent: "from-orange-400 to-pink-100", bg: "bg-orange-400/10", border: "border-orange-300/35" },
   ];
 
   const intelligenceSignals = [
@@ -326,8 +326,8 @@ function DataConnectionFlow() {
 
   return (
     <section id="demo" className="scroll-mt-24 px-6 py-20">
-      <div className="mx-auto max-w-7xl">
-        <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-slate-950/70 p-5 shadow-2xl shadow-slate-950/40 backdrop-blur-2xl md:p-8">
+      <div className="mx-auto max-w-[1600px]">
+        <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-slate-950/70 p-5 shadow-2xl shadow-slate-950/40 backdrop-blur-2xl md:p-8 xl:p-10">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_33%_35%,rgba(16,185,129,0.12),transparent_28%),radial-gradient(circle_at_58%_42%,rgba(34,211,238,0.14),transparent_28%),radial-gradient(circle_at_86%_72%,rgba(168,85,247,0.12),transparent_30%)]" />
 
           <div className="relative grid gap-6 lg:grid-cols-[1fr_auto] lg:items-start">
@@ -352,8 +352,8 @@ function DataConnectionFlow() {
             </div>
           </div>
 
-          <div className="relative mt-8 grid gap-6 xl:grid-cols-[0.48fr_0.52fr]">
-            <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
+          <div className="relative mt-8 grid gap-6 xl:grid-cols-[0.49fr_0.51fr]">
+            <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
               <div className="rounded-[1.5rem] border border-white/10 bg-black/20 p-4">
                 <p className="mb-4 text-sm font-black uppercase tracking-[0.16em] text-slate-300">Connect your data sources</p>
                 <div className="grid gap-3">
@@ -367,8 +367,8 @@ function DataConnectionFlow() {
                         className={`flex items-center justify-between rounded-2xl border px-4 py-3 text-left transition ${active ? `${source.border} ${source.bg}` : "border-white/10 bg-white/[0.03] hover:bg-white/[0.06]"}`}
                       >
                         <div className="flex items-center gap-3">
-                          <div className={`flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${source.accent} text-lg font-black text-slate-950 shadow-lg shadow-cyan-950/20`}>
-                            {source.short}
+                          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/95 p-2 shadow-lg shadow-cyan-950/20">
+                            <img src={source.logoSrc} alt={`${source.name} logo`} className="h-full w-full object-contain" />
                           </div>
                           <div>
                             <p className="font-black text-white">{source.name}</p>
@@ -439,8 +439,8 @@ function DataConnectionFlow() {
 
                   return (
                     <div key={source.key} className={`absolute ${positions[index]}`}>
-                      <div className={`flex h-14 w-14 items-center justify-center rounded-2xl border text-xl font-black transition ${active ? `${source.border} ${source.bg} text-white shadow-[0_0_22px_rgba(34,211,238,0.15)]` : "border-white/10 bg-white/[0.03] text-slate-500"}`}>
-                        {source.short}
+                      <div className={`flex h-14 w-14 items-center justify-center rounded-2xl border p-2 transition ${active ? `${source.border} bg-white/95 shadow-[0_0_22px_rgba(34,211,238,0.15)]` : "border-white/10 bg-white/[0.03] opacity-50"}`}>
+                        <img src={source.logoSrc} alt={`${source.name} logo`} className="h-full w-full object-contain" />
                       </div>
                     </div>
                   );
@@ -482,9 +482,13 @@ function DataConnectionFlow() {
                     >
                       <div className="mb-3 flex items-center justify-between gap-2">
                         <div className="flex items-center gap-2">
-                          <span className={`flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br ${first?.accent} text-sm font-black text-slate-950`}>{first?.short}</span>
+                          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/95 p-1.5">
+                            {first && <img src={first.logoSrc} alt={`${first.name} logo`} className="h-full w-full object-contain" />}
+                          </span>
                           <span className="text-slate-400">+</span>
-                          <span className={`flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br ${second?.accent} text-sm font-black text-slate-950`}>{second?.short}</span>
+                          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/95 p-1.5">
+                            {second && <img src={second.logoSrc} alt={`${second.name} logo`} className="h-full w-full object-contain" />}
+                          </span>
                         </div>
                         {unlocked ? (
                           <span className="rounded-full bg-emerald-400/20 px-2 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-emerald-300">Active</span>
@@ -528,8 +532,8 @@ function DataConnectionFlow() {
                   {sources.map((source) => {
                     const active = activeSources.includes(source.key);
                     return (
-                      <div key={source.key} className={`flex h-8 w-8 items-center justify-center rounded-lg text-xs font-black ${active ? `bg-gradient-to-br ${source.accent} text-slate-950` : "bg-white/[0.04] text-slate-600"}`}>
-                        {source.short}
+                      <div key={source.key} className={`flex h-8 w-8 items-center justify-center rounded-lg p-1.5 ${active ? "bg-white/95" : "bg-white/[0.04] opacity-45"}`}>
+                        <img src={source.logoSrc} alt={`${source.name} logo`} className="h-full w-full object-contain" />
                       </div>
                     );
                   })}
