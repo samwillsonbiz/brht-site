@@ -819,11 +819,19 @@ function DataConnectionFlow() {
                   <div className="absolute inset-[-14px] rounded-full border border-cyan-300/20" />
                   <div className="absolute inset-[-28px] rounded-full border border-cyan-300/10" />
                   <div className="absolute inset-[-42px] rounded-full border border-cyan-300/5" />
+
                   <div className="text-center">
-                    <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-cyan-300 text-slate-950 shadow-[0_0_36px_rgba(103,232,249,0.45)]">
-                      <BrainCircuit className="h-8 w-8" />
+                    <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-[24px] border border-cyan-200/30 bg-gradient-to-br from-cyan-200 via-cyan-300 to-emerald-300 text-slate-950 shadow-[0_0_48px_rgba(103,232,249,0.6)]">
+                      <div className="relative">
+                        <Lightbulb className="h-10 w-10" />
+                        <Sparkles className="absolute -right-2 -top-2 h-4 w-4 text-slate-950" />
+                      </div>
                     </div>
-                    <p className="mt-6 text-sm font-black uppercase tracking-[0.32em] text-white">BRHT Core</p>
+
+                    <p className="mt-6 text-xl font-black uppercase tracking-[0.28em] text-white">
+                      BRHT Core
+                    </p>
+
                     <p className="mt-3 text-sm leading-5 text-slate-300">
                       Unified Operational
                       <br />
@@ -833,7 +841,7 @@ function DataConnectionFlow() {
                 </div>
               </div>
 
-              <div className="absolute bottom-6 right-8 z-30 rounded-[18px] border border-cyan-300/35 bg-cyan-300/10 px-5 py-4 text-sm text-cyan-100 shadow-[0_0_30px_rgba(34,211,238,0.14)]">
+              <div className="absolute bottom-10 left-[70%] z-30 -translate-x-1/2 rounded-[18px] border border-cyan-300/35 bg-cyan-300/10 px-6 py-4 text-sm text-cyan-100 shadow-[0_0_30px_rgba(34,211,238,0.14)]">
                 <div className="flex items-center gap-3">
                   <Database className="h-6 w-6" />
                   <div>
