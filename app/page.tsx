@@ -689,7 +689,7 @@ function DataConnectionFlow() {
                   const active = activeSources.includes(source.key);
 
                   const startY = [128, 218, 308, 398, 488, 578][index];
-                  const startX = 360;
+                  const startX = 432;
                   const endX = 650;
                   const endY = 310;
 
