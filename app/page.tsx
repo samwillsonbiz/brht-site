@@ -813,29 +813,38 @@ function DataConnectionFlow() {
           <div className="pointer-events-none absolute inset-0 opacity-[0.075] [background-image:linear-gradient(to_right,#fff_1px,transparent_1px),linear-gradient(to_bottom,#fff_1px,transparent_1px)] [background-size:48px_48px]" />
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(2,6,23,0.24)_48%,rgba(2,6,23,0.78)_100%)]" />
 
-          <div className="relative z-10 mb-8 grid gap-6 lg:grid-cols-[1fr_auto] lg:items-start">
-            <div>
-              <h2 className="max-w-4xl text-[42px] font-semibold leading-[0.98] tracking-[-0.045em] text-white md:text-[58px]">
-                Connect your systems. Unlock intelligence.
-              </h2>
-              <p className="mt-4 max-w-2xl text-base leading-7 text-slate-300 md:text-lg">
-                BRHT combines your operational systems to create business intelligence that no single platform can deliver alone.
-              </p>
+          <div className="relative z-10 mb-8 grid gap-5 xl:grid-cols-[0.58fr_0.42fr] xl:items-stretch">
+            <div className="relative overflow-hidden rounded-[26px] border border-white/10 bg-white/[0.025] px-7 py-7 backdrop-blur-xl">
+              <div className="pointer-events-none absolute -left-16 -top-16 h-56 w-56 rounded-full bg-cyan-300/10 blur-3xl" />
+              <div className="pointer-events-none absolute bottom-0 right-0 h-40 w-40 rounded-full bg-emerald-300/10 blur-3xl" />
+              <div className="relative">
+                <p className="mb-4 inline-flex rounded-full border border-cyan-300/25 bg-cyan-300/10 px-4 py-2 text-xs font-black uppercase tracking-[0.22em] text-cyan-100">
+                  Interactive Business Intelligence
+                </p>
+                <h2 className="max-w-4xl text-[48px] font-black leading-[0.9] tracking-[-0.06em] text-white drop-shadow-[0_0_28px_rgba(255,255,255,0.18)] md:text-[68px]">
+                  Connect your systems.
+                  <br />
+                  Unlock intelligence.
+                </h2>
+                <p className="mt-5 max-w-2xl text-base font-medium leading-7 text-slate-300 md:text-lg">
+                  BRHT combines your operational systems to create business intelligence that no single platform can deliver alone.
+                </p>
+              </div>
             </div>
 
-            <div className="relative ml-auto w-full max-w-[620px] overflow-hidden rounded-[30px] border border-cyan-300/25 bg-[linear-gradient(135deg,rgba(8,47,73,0.72),rgba(15,23,42,0.92))] px-8 py-7 shadow-[0_0_80px_rgba(34,211,238,0.10)] backdrop-blur-xl">
-              <div className="pointer-events-none absolute -right-10 -top-10 h-36 w-36 rounded-full bg-cyan-300/25 blur-3xl" />
-              <div className="pointer-events-none absolute -bottom-12 left-16 h-28 w-28 rounded-full bg-emerald-300/15 blur-3xl" />
-              <div className="relative flex items-center gap-6">
-                <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[24px] bg-gradient-to-br from-cyan-300 to-emerald-300 text-slate-950 shadow-[0_0_44px_rgba(34,211,238,0.36)]">
+            <div className="relative overflow-hidden rounded-[26px] border-2 border-cyan-200/70 bg-cyan-300 px-8 py-7 text-slate-950 shadow-[0_0_80px_rgba(34,211,238,0.42)]">
+              <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/35 blur-2xl" />
+              <div className="pointer-events-none absolute -bottom-12 left-12 h-32 w-32 rounded-full bg-emerald-200/40 blur-2xl" />
+              <div className="relative flex h-full items-center gap-6">
+                <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[24px] bg-slate-950 text-cyan-200 shadow-[0_0_34px_rgba(15,23,42,0.42)]">
                   <Sparkles className="h-10 w-10" />
                 </div>
                 <div>
-                  <p className="text-5xl font-black uppercase leading-none tracking-[0.12em] text-white">
+                  <p className="text-5xl font-black uppercase leading-none tracking-[0.08em] text-slate-950 md:text-6xl">
                     Live Demo
                   </p>
-                  <p className="mt-3 max-w-[560px] text-sm leading-6 text-slate-300 md:text-base md:leading-7">
-                    Toggle systems, change time ranges, and click dashboard cards to watch the intelligence update.
+                  <p className="mt-3 max-w-[540px] text-base font-semibold leading-7 text-slate-800">
+                    Toggle sources, change date ranges, and click dashboard cards to watch the intelligence update.
                   </p>
                 </div>
               </div>
@@ -1080,7 +1089,7 @@ function DataConnectionFlow() {
                         )}
                       </div>
 
-                      <p className="line-clamp-2 text-[13px] font-black leading-4 tracking-[-0.01em] text-white">
+                      <p className="line-clamp-2 text-[12px] font-black leading-[14px] tracking-[-0.01em] text-white">
                         {signal.title}
                       </p>
                     </div>
