@@ -823,7 +823,7 @@ function DataConnectionFlow() {
               </p>
             </div>
 
-            <div className="relative overflow-hidden rounded-[30px] border border-cyan-300/25 bg-[linear-gradient(135deg,rgba(8,47,73,0.72),rgba(15,23,42,0.92))] px-8 py-7 shadow-[0_0_80px_rgba(34,211,238,0.10)] backdrop-blur-xl">
+            <div className="relative ml-auto w-full max-w-[620px] overflow-hidden rounded-[30px] border border-cyan-300/25 bg-[linear-gradient(135deg,rgba(8,47,73,0.72),rgba(15,23,42,0.92))] px-8 py-7 shadow-[0_0_80px_rgba(34,211,238,0.10)] backdrop-blur-xl">
               <div className="pointer-events-none absolute -right-10 -top-10 h-36 w-36 rounded-full bg-cyan-300/25 blur-3xl" />
               <div className="pointer-events-none absolute -bottom-12 left-16 h-28 w-28 rounded-full bg-emerald-300/15 blur-3xl" />
               <div className="relative flex items-center gap-6">
