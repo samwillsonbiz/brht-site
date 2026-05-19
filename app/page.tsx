@@ -691,11 +691,12 @@ function DataConnectionFlow() {
                   // These coordinates line the connector dots up with the right edge
                   // of each source card, so the lines visibly come FROM the cards.
                   const startY = [104, 194, 284, 374, 464, 554][index];
-                  const startX = 405;
+                  const startX = 410;
+                  const elbowX = 455;
                   const endX = 620;
                   const endY = 310;
 
-                  const path = `M ${startX} ${startY} C 475 ${startY}, 520 ${endY}, ${endX} ${endY}`;
+                  const path = `M ${startX} ${startY} L ${elbowX} ${startY} C 515 ${startY}, 535 ${endY}, ${endX} ${endY}`;
 
                   return (
                     <g key={source.key}>
