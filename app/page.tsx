@@ -856,7 +856,7 @@ function DataConnectionFlow() {
                 </div>
               </div>
 
-              <div className="grid max-h-[550px] gap-3 overflow-hidden lg:grid-cols-2 xl:grid-cols-3">
+              <div className="grid max-h-[590px] gap-3 overflow-hidden lg:grid-cols-2 xl:grid-cols-3">
                 {intelligenceSignals.slice(0, 15).map((signal) => {
                   const unlocked = signal.requires.every((source) => activeSources.includes(source));
                   const first = getSource(signal.requires[0]);
