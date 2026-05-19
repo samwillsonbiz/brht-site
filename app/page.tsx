@@ -1563,6 +1563,45 @@ export default function LandingPage() {
     </div>
   </div>
 </section>
+<section className="relative left-1/2 right-1/2 w-screen -translate-x-1/2 overflow-hidden border-y border-slate-300/40 bg-[#eef6fb] py-6 text-slate-950">
+  <div className="mx-auto mb-4 max-w-7xl px-6">
+    <p className="text-center text-sm font-black uppercase tracking-[0.24em] text-cyan-700">
+      Operator Feedback + Outcomes
+    </p>
+  </div>
+
+  <div className="relative flex overflow-hidden">
+    {[0, 1].map((row) => (
+      <div
+        key={row}
+        aria-hidden={row === 1}
+        className="marquee flex min-w-full shrink-0 items-center gap-5 px-3"
+      >
+        {[
+          "“Finally one source of truth.”",
+          "↓ 22 hrs/week saved in reporting",
+          "Shopify + Amazon + Meta unified",
+          "“BRHT exposed issues we couldn’t see.”",
+          "ROAS visibility across every channel",
+          "Automated executive reporting",
+          "“Our operations finally make sense.”",
+          "Real-time fulfillment visibility",
+          "Cross-platform profitability tracking",
+          "Daily operational intelligence briefings",
+        ].map((item, i) => (
+          <div key={i} className="flex shrink-0 items-center gap-5">
+            <div className="rounded-full border border-slate-300 bg-white px-6 py-3 shadow-sm">
+              <span className="text-sm font-semibold tracking-wide text-slate-800 md:text-base">
+                {item}
+              </span>
+            </div>
+            <div className="h-2 w-2 rounded-full bg-cyan-400" />
+          </div>
+        ))}
+      </div>
+    ))}
+  </div>
+</section>
 
         <section id="pricing" className="scroll-mt-24 px-6 py-20">
           <div className="mx-auto max-w-7xl">
