@@ -1419,38 +1419,55 @@ export default function LandingPage() {
 
         <DataConnectionFlow />
 
-        <section id="platform" className="scroll-mt-24 px-6 py-20">
-          <div className="mx-auto max-w-7xl">
-            <div className="mx-auto max-w-3xl text-center">
-              <p className="font-bold uppercase tracking-[0.24em] text-cyan-200">The BRHT layer</p>
-              <h2 className="mt-4 text-4xl font-black tracking-tight md:text-6xl">See. Move. Think.</h2>
-              <p className="mt-5 text-lg leading-8 text-slate-300">
-                Three connected layers that turn scattered business systems into operational clarity.
+        <section id="platform" className="scroll-mt-24 bg-cyan-50 px-6 py-20 text-slate-950">
+  <div className="mx-auto max-w-7xl">
+    <div className="mx-auto max-w-3xl text-center">
+      <p className="font-black uppercase tracking-[0.24em] text-cyan-700">
+        The BRHT Layer
+      </p>
+      <h2 className="mt-4 text-4xl font-black tracking-tight md:text-6xl">
+        See. Move. Think.
+      </h2>
+      <p className="mt-5 text-lg leading-8 text-slate-600">
+        BRHT connects intelligence, automation, and AI into one progressive operating layer.
+      </p>
+    </div>
+
+    <div className="relative mt-14 grid gap-8 lg:grid-cols-3">
+      <div className="absolute left-[18%] right-[18%] top-1/2 hidden h-1 -translate-y-1/2 rounded-full bg-gradient-to-r from-cyan-300 via-emerald-300 to-yellow-300 lg:block" />
+
+      {pillars.map((pillar, index) => {
+        const Icon = pillar.icon;
+
+        return (
+          <div key={pillar.title} className="relative">
+            {index < 2 && (
+              <div className="absolute -right-7 top-1/2 z-20 hidden h-14 w-14 -translate-y-1/2 items-center justify-center rounded-full border border-cyan-200 bg-white shadow-xl lg:flex">
+                <ArrowRight className="h-6 w-6 text-cyan-700" />
+              </div>
+            )}
+
+            <div className="relative z-10 rounded-[2rem] border border-slate-200 bg-white p-8 shadow-[0_20px_60px_rgba(15,23,42,0.12)]">
+              <div className="mb-6 inline-flex rounded-full bg-slate-950 px-4 py-2 text-sm font-black uppercase tracking-[0.18em] text-cyan-200">
+                {pillar.label}
+              </div>
+
+              <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-300 to-emerald-300 text-slate-950 shadow-[0_0_30px_rgba(34,211,238,0.25)]">
+                <Icon className="h-8 w-8" />
+              </div>
+
+              <h3 className="text-2xl font-black text-slate-950">{pillar.title}</h3>
+
+              <p className="mt-4 leading-7 text-slate-600">
+                {pillar.description}
               </p>
             </div>
-
-            <div className="mt-12 grid gap-6 md:grid-cols-3">
-              {pillars.map((pillar) => {
-                const Icon = pillar.icon;
-                return (
-                  <div
-                    key={pillar.title}
-                    className="group rounded-[2rem] border border-white/10 bg-white/[0.055] p-8 text-white shadow-xl shadow-slate-950/20 backdrop-blur-xl transition hover:-translate-y-1 hover:border-cyan-300/30"
-                  >
-                    <div className="mb-6 inline-flex rounded-full border border-yellow-300/20 bg-yellow-300/10 px-4 py-2 text-sm font-black tracking-[0.18em] text-yellow-200">
-                      {pillar.label}
-                    </div>
-                    <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-cyan-300/10 text-cyan-200 ring-1 ring-cyan-300/20">
-                      <Icon className="h-7 w-7" />
-                    </div>
-                    <h3 className="text-2xl font-black">{pillar.title}</h3>
-                    <p className="mt-4 leading-7 text-slate-300">{pillar.description}</p>
-                  </div>
-                );
-              })}
-            </div>
           </div>
-        </section>
+        );
+      })}
+    </div>
+  </div>
+</section>
 
         <section id="systems" className="scroll-mt-24 px-6 py-20">
           <div className="mx-auto max-w-7xl">
