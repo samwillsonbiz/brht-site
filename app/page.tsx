@@ -823,17 +823,19 @@ function DataConnectionFlow() {
               </p>
             </div>
 
-            <div className="relative overflow-hidden rounded-[26px] border border-cyan-300/25 bg-cyan-300/[0.08] px-7 py-6 shadow-[0_0_55px_rgba(34,211,238,0.16)] backdrop-blur-xl">
-              <div className="pointer-events-none absolute -right-8 -top-8 h-28 w-28 rounded-full bg-cyan-300/25 blur-2xl" />
-              <div className="pointer-events-none absolute -bottom-10 left-10 h-24 w-24 rounded-full bg-emerald-300/15 blur-2xl" />
-              <div className="relative flex items-center gap-4">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-cyan-300 text-slate-950 shadow-[0_0_34px_rgba(103,232,249,0.35)]">
-                  <Sparkles className="h-7 w-7" />
+            <div className="relative overflow-hidden rounded-[30px] border border-cyan-300/25 bg-[linear-gradient(135deg,rgba(8,47,73,0.72),rgba(15,23,42,0.92))] px-8 py-7 shadow-[0_0_80px_rgba(34,211,238,0.10)] backdrop-blur-xl">
+              <div className="pointer-events-none absolute -right-10 -top-10 h-36 w-36 rounded-full bg-cyan-300/25 blur-3xl" />
+              <div className="pointer-events-none absolute -bottom-12 left-16 h-28 w-28 rounded-full bg-emerald-300/15 blur-3xl" />
+              <div className="relative flex items-center gap-6">
+                <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[24px] bg-gradient-to-br from-cyan-300 to-emerald-300 text-slate-950 shadow-[0_0_44px_rgba(34,211,238,0.36)]">
+                  <Sparkles className="h-10 w-10" />
                 </div>
                 <div>
-                  <p className="text-xs font-black uppercase tracking-[0.24em] text-cyan-100">Interactive Live Demo</p>
-                  <p className="mt-1 max-w-sm text-sm leading-6 text-slate-300">
-                    Toggle sources, change date ranges, and click dashboard cards to see the intelligence update.
+                  <p className="text-5xl font-black uppercase leading-none tracking-[0.12em] text-white">
+                    Live Demo
+                  </p>
+                  <p className="mt-3 max-w-[560px] text-sm leading-6 text-slate-300 md:text-base md:leading-7">
+                    Toggle systems, change time ranges, and click dashboard cards to watch the intelligence update.
                   </p>
                 </div>
               </div>
@@ -1057,13 +1059,13 @@ function DataConnectionFlow() {
                     <div
                       key={signal.key}
                       className={cx(
-                        "relative min-h-[78px] rounded-[18px] border px-4 py-3 transition",
+                        "relative min-h-[82px] rounded-[18px] border px-4 py-3 transition",
                         unlocked
                           ? "border-emerald-300/35 bg-emerald-400/[0.09] shadow-[0_0_30px_rgba(16,185,129,0.08)]"
                           : "border-white/10 bg-white/[0.025] opacity-50"
                       )}
                     >
-                      <div className="mb-1.5 flex items-center justify-between gap-2">
+                      <div className="mb-1 flex items-center justify-between gap-1">
                         <div className="flex items-center gap-1.5">
                           <SourceLogo source={first} size="sm" />
                           <span className="text-slate-500">+</span>
@@ -1078,7 +1080,7 @@ function DataConnectionFlow() {
                         )}
                       </div>
 
-                      <p className="line-clamp-1 text-[16px] font-black leading-5 text-white">
+                      <p className="line-clamp-2 text-[13px] font-black leading-4 tracking-[-0.01em] text-white">
                         {signal.title}
                       </p>
                     </div>
