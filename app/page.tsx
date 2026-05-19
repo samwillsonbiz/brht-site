@@ -364,6 +364,29 @@ const pricing = [
 
 const dashboardBars = [18, 24, 26, 34, 28, 31, 36, 46, 39, 51, 44, 68];
 
+const dashboardBarSets = {
+  today: [
+    [16, 22, 24, 32, 26, 28, 34, 44, 36, 49, 40, 63],
+    [18, 25, 27, 36, 30, 33, 38, 48, 41, 52, 45, 60],
+    [20, 24, 29, 38, 31, 34, 40, 46, 43, 52, 48, 59],
+  ],
+  yesterday: [
+    [28, 35, 31, 46, 39, 42, 50, 58, 54, 67, 61, 76],
+    [24, 32, 40, 48, 43, 51, 57, 65, 60, 73, 68, 82],
+    [22, 29, 37, 44, 49, 53, 59, 69, 63, 75, 70, 79],
+  ],
+  "7d": [
+    [18, 24, 26, 34, 28, 31, 36, 46, 39, 51, 44, 68],
+    [20, 29, 33, 43, 36, 40, 48, 58, 52, 65, 58, 74],
+    [23, 28, 34, 44, 37, 41, 49, 57, 53, 64, 60, 72],
+  ],
+  "30d": [
+    [30, 36, 42, 48, 54, 49, 58, 63, 70, 66, 76, 84],
+    [26, 34, 39, 45, 52, 47, 55, 61, 67, 64, 71, 78],
+    [22, 29, 35, 40, 45, 42, 48, 53, 57, 61, 65, 70],
+  ],
+} as const;
+
 function cx(...classes: Array<string | false | null | undefined>) {
   return classes.filter(Boolean).join(" ");
 }
@@ -540,7 +563,7 @@ function SourceLogo({
 }
 
 function DataConnectionFlow() {
-  const [activeSources, setActiveSources] = useState<SourceKey[]>(["shopify", "amazon", "meta"]);
+  const [activeSources, setActiveSources] = useState<SourceKey[]>(["shopify", "amazon", "meta", "google", "shipstation", "hubspot"]);
   const [activeRange, setActiveRange] = useState("7d");
   const flowPanelRef = useRef<HTMLDivElement | null>(null);
   const sourceButtonRefs = useRef<Record<SourceKey, HTMLButtonElement | null>>({
@@ -800,18 +823,19 @@ function DataConnectionFlow() {
               </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="rounded-[22px] border border-white/10 bg-white/[0.035] px-8 py-5 text-center shadow-inner shadow-white/5 backdrop-blur-xl">
-                <p className="text-xs font-black uppercase tracking-[0.18em] text-slate-300">Sources Connected</p>
-                <p className="mt-2 text-5xl font-semibold tracking-tight text-emerald-300">
-                  {activeSources.length}<span className="text-slate-500"> / 6</span>
-                </p>
-              </div>
-              <div className="rounded-[22px] border border-white/10 bg-white/[0.035] px-8 py-5 text-center shadow-inner shadow-white/5 backdrop-blur-xl">
-                <p className="text-xs font-black uppercase tracking-[0.18em] text-slate-300">Intelligence Signals</p>
-                <p className="mt-2 text-5xl font-semibold tracking-tight text-orange-300">
-                  {unlockedSignals.length}<span className="text-slate-500"> / 15</span>
-                </p>
+            <div className="relative overflow-hidden rounded-[26px] border border-cyan-300/25 bg-cyan-300/[0.08] px-7 py-6 shadow-[0_0_55px_rgba(34,211,238,0.16)] backdrop-blur-xl">
+              <div className="pointer-events-none absolute -right-8 -top-8 h-28 w-28 rounded-full bg-cyan-300/25 blur-2xl" />
+              <div className="pointer-events-none absolute -bottom-10 left-10 h-24 w-24 rounded-full bg-emerald-300/15 blur-2xl" />
+              <div className="relative flex items-center gap-4">
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-cyan-300 text-slate-950 shadow-[0_0_34px_rgba(103,232,249,0.35)]">
+                  <Sparkles className="h-7 w-7" />
+                </div>
+                <div>
+                  <p className="text-xs font-black uppercase tracking-[0.24em] text-cyan-100">Interactive Live Demo</p>
+                  <p className="mt-1 max-w-sm text-sm leading-6 text-slate-300">
+                    Toggle sources, change date ranges, and click dashboard cards to see the intelligence update.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -1033,7 +1057,7 @@ function DataConnectionFlow() {
                     <div
                       key={signal.key}
                       className={cx(
-                        "relative min-h-[88px] rounded-[18px] border px-4 py-3 transition",
+                        "relative min-h-[78px] rounded-[18px] border px-4 py-3 transition",
                         unlocked
                           ? "border-emerald-300/35 bg-emerald-400/[0.09] shadow-[0_0_30px_rgba(16,185,129,0.08)]"
                           : "border-white/10 bg-white/[0.025] opacity-50"
@@ -1054,11 +1078,8 @@ function DataConnectionFlow() {
                         )}
                       </div>
 
-                      <p className="line-clamp-1 text-[15px] font-black leading-5 text-white">
+                      <p className="line-clamp-1 text-[16px] font-black leading-5 text-white">
                         {signal.title}
-                      </p>
-                      <p className="mt-1 line-clamp-1 text-[11px] leading-4 text-slate-400">
-                        {signal.desc}
                       </p>
                     </div>
                   );
@@ -1143,7 +1164,12 @@ function DataConnectionFlow() {
                             {metric.trend} {metric.detail}
                           </p>
                         </div>
-                        <div className="relative h-24 w-24 shrink-0 rounded-full bg-[conic-gradient(from_0deg,#8b5cf6_0_32%,rgba(255,255,255,0.12)_32%_100%)]">
+                        <div
+                          className="relative h-24 w-24 shrink-0 rounded-full"
+                          style={{
+                            background: `conic-gradient(from 0deg, #8b5cf6 0 ${metric.trend}, rgba(255,255,255,0.12) ${metric.trend} 100%)`,
+                          }}
+                        >
                           <div className="absolute inset-4 grid place-items-center rounded-full bg-[#050917] text-sm font-black text-white">
                             {metric.trend}
                           </div>
@@ -1156,14 +1182,14 @@ function DataConnectionFlow() {
                         <p className="mt-1 text-sm font-bold text-emerald-300">{metric.trend}</p>
 
                         <div className="mt-4 flex h-14 items-end gap-1.5">
-                          {dashboardBars.map((height, barIndex) => (
+                          {(dashboardBarSets[activeRange as keyof typeof dashboardBarSets]?.[index] ?? dashboardBars).map((height, barIndex) => (
                             <div
                               key={barIndex}
                               className={cx(
                                 "flex-1 rounded-t-md shadow-[0_0_12px_rgba(34,211,238,0.25)]",
                                 `bg-gradient-to-t ${metric.chartTone}`
                               )}
-                              style={{ height: `${Math.max(12, height + index * 3)}%` }}
+                              style={{ height: `${height}%` }}
                             />
                           ))}
                         </div>
