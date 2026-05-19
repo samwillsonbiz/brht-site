@@ -1693,16 +1693,14 @@ export default function LandingPage() {
             <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-slate-300">
               Book a BRHT operations audit and see where better data, automation, and AI can create immediate leverage.
             </p>
-            <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
-              <PrimaryButton className="px-8" onClick={() => setModalOpen(true)}>
-                Book Meeting <ArrowRight className="ml-2 h-4 w-4" />
-              </PrimaryButton>
-              <a href={`mailto:${EMAIL_TO}?subject=${encodeURIComponent("BRHT Intelligence Inquiry")}`}>
-                <SecondaryButton className="w-full px-8 sm:w-auto">
-                  <MessageCircle className="mr-2 h-4 w-4" /> Contact BRHT
-                </SecondaryButton>
-              </a>
-            </div>
+           <div className="mt-10 flex justify-center">
+  <button className="group rounded-full bg-cyan-300 px-10 py-4 text-lg font-black text-slate-950 transition hover:scale-[1.02]">
+    <span className="flex items-center gap-3">
+      Book Meeting
+      <ArrowRight className="h-5 w-5 transition group-hover:translate-x-1" />
+    </span>
+  </button>
+</div>
           </div>
         </section>
       </main>
