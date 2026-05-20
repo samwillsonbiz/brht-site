@@ -125,7 +125,7 @@ const sources: Source[] = [
 const intelligenceOutcomeCards = [
   {
     title: "True ROAS",
-    desc: "See real return on ad spend with unified attribution.",
+    desc: "Unified ad attribution.",
     icon: CircleDollarSign,
     tone: "from-cyan-400 to-emerald-300",
     chartTone: "from-emerald-500 to-cyan-200",
@@ -133,7 +133,7 @@ const intelligenceOutcomeCards = [
   },
   {
     title: "Customer LTV",
-    desc: "Understand actual customer lifetime value and profitability.",
+    desc: "Customer value by channel.",
     icon: BrainCircuit,
     tone: "from-violet-400 to-purple-300",
     chartTone: "from-purple-600 to-violet-300",
@@ -141,7 +141,7 @@ const intelligenceOutcomeCards = [
   },
   {
     title: "Inventory Forecasting",
-    desc: "Predict demand and avoid stockouts or overstock.",
+    desc: "Predict demand before stockouts.",
     icon: Database,
     tone: "from-orange-400 to-yellow-300",
     chartTone: "from-orange-500 to-yellow-200",
@@ -149,7 +149,7 @@ const intelligenceOutcomeCards = [
   },
   {
     title: "Fulfillment Insights",
-    desc: "Identify shipping bottlenecks and delivery delays.",
+    desc: "Spot shipping delays early.",
     icon: Radar,
     tone: "from-blue-400 to-sky-300",
     chartTone: "from-blue-500 to-sky-200",
@@ -157,7 +157,7 @@ const intelligenceOutcomeCards = [
   },
   {
     title: "Channel Efficiency",
-    desc: "Find your most profitable sales and marketing channels.",
+    desc: "Find profitable growth channels.",
     icon: TrendingUp,
     tone: "from-emerald-400 to-green-300",
     chartTone: "from-emerald-500 to-green-200",
@@ -165,14 +165,13 @@ const intelligenceOutcomeCards = [
   },
   {
     title: "AI Recommendations",
-    desc: "Get AI-powered actions to increase profit and growth.",
+    desc: "Next-best actions for growth.",
     icon: Sparkles,
     tone: "from-purple-400 to-fuchsia-300",
     chartTone: "from-purple-600 to-fuchsia-300",
     bars: [70, 54, 62, 48, 58, 42, 51, 66],
   },
 ];
-
 const intelligenceSignals: Signal[] = [
   {
     key: "multiChannelRevenue",
@@ -1160,14 +1159,24 @@ function DataConnectionFlow() {
     </p>
   </div>
 
-  <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+  <div className="rounded-[26px] border border-white/10 bg-white/[0.025] p-4 backdrop-blur-xl md:p-5">
+  <div className="mb-5">
+    <p className="text-sm font-black uppercase tracking-[0.22em] text-slate-300">
+      Intelligence Unlocked
+    </p>
+    <p className="mt-2 max-w-xl text-sm leading-6 text-slate-300">
+      Clear business insights from every connected system.
+    </p>
+  </div>
+
+  <div className="grid gap-4 sm:grid-cols-2">
     {intelligenceOutcomeCards.map((card) => {
       const Icon = card.icon;
 
       return (
         <div
           key={card.title}
-          className="group relative min-h-[205px] overflow-hidden rounded-[22px] border border-white/10 bg-slate-950/45 p-5 transition hover:-translate-y-1 hover:border-cyan-300/30 hover:bg-white/[0.045] hover:shadow-[0_0_35px_rgba(34,211,238,0.12)]"
+          className="group relative min-h-[170px] overflow-hidden rounded-[22px] border border-white/10 bg-slate-950/45 p-5 pb-14 transition hover:-translate-y-1 hover:border-cyan-300/30 hover:bg-white/[0.045] hover:shadow-[0_0_35px_rgba(34,211,238,0.12)]"
         >
           <div
             className={cx(
@@ -1176,24 +1185,28 @@ function DataConnectionFlow() {
             )}
           />
 
-          <div
-            className={cx(
-              "relative mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br text-slate-950 shadow-[0_0_30px_rgba(34,211,238,0.16)]",
-              card.tone
-            )}
-          >
-            <Icon className="h-6 w-6" />
+          <div className="relative flex items-start gap-4">
+            <div
+              className={cx(
+                "flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br text-slate-950 shadow-[0_0_30px_rgba(34,211,238,0.16)]",
+                card.tone
+              )}
+            >
+              <Icon className="h-6 w-6" />
+            </div>
+
+            <div>
+              <h3 className="text-lg font-black tracking-tight text-white">
+                {card.title}
+              </h3>
+
+              <p className="mt-2 text-sm leading-6 text-slate-300">
+                {card.desc}
+              </p>
+            </div>
           </div>
 
-          <h3 className="relative text-lg font-black tracking-tight text-white">
-            {card.title}
-          </h3>
-
-          <p className="relative mt-2 text-sm leading-6 text-slate-300">
-            {card.desc}
-          </p>
-
-          <div className="absolute bottom-5 left-5 right-5 flex h-12 items-end gap-1.5">
+          <div className="absolute bottom-5 left-5 right-5 flex h-9 items-end gap-1.5">
             {card.bars.map((height, index) => (
               <div
                 key={index}
