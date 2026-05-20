@@ -125,51 +125,45 @@ const sources: Source[] = [
 const intelligenceOutcomeCards = [
   {
     title: "True ROAS",
-    desc: "Unified ad attribution.",
     icon: CircleDollarSign,
-    tone: "from-cyan-400 to-emerald-300",
-    chartTone: "from-emerald-500 to-cyan-200",
-    bars: [18, 24, 28, 36, 34, 42, 58, 72],
+    chart: "line" as const,
+    tone: "text-cyan-300",
+    chartTone: "from-cyan-500 to-emerald-200",
   },
   {
     title: "Customer LTV",
-    desc: "Customer value by channel.",
     icon: BrainCircuit,
-    tone: "from-violet-400 to-purple-300",
-    chartTone: "from-purple-600 to-violet-300",
-    bars: [20, 31, 34, 48, 58, 72, 84, 55],
+    chart: "donut" as const,
+    tone: "text-violet-300",
+    chartTone: "from-violet-500 to-purple-200",
   },
   {
     title: "Inventory Forecasting",
-    desc: "Predict demand before stockouts.",
     icon: Database,
-    tone: "from-orange-400 to-yellow-300",
+    chart: "steps" as const,
+    tone: "text-orange-300",
     chartTone: "from-orange-500 to-yellow-200",
-    bars: [22, 28, 24, 35, 31, 48, 42, 63],
   },
   {
-    title: "Fulfillment Insights",
-    desc: "Spot shipping delays early.",
+    title: "Fulfillment Delays",
     icon: Radar,
-    tone: "from-blue-400 to-sky-300",
+    chart: "spark" as const,
+    tone: "text-sky-300",
     chartTone: "from-blue-500 to-sky-200",
-    bars: [16, 22, 27, 24, 35, 42, 56, 51],
   },
   {
     title: "Channel Efficiency",
-    desc: "Find profitable growth channels.",
     icon: TrendingUp,
-    tone: "from-emerald-400 to-green-300",
+    chart: "stack" as const,
+    tone: "text-emerald-300",
     chartTone: "from-emerald-500 to-green-200",
-    bars: [14, 18, 29, 38, 46, 55, 68, 66],
   },
   {
-    title: "AI Recommendations",
-    desc: "Next-best actions for growth.",
+    title: "AI Next Actions",
     icon: Sparkles,
-    tone: "from-purple-400 to-fuchsia-300",
-    chartTone: "from-purple-600 to-fuchsia-300",
-    bars: [70, 54, 62, 48, 58, 42, 51, 66],
+    chart: "bars" as const,
+    tone: "text-fuchsia-300",
+    chartTone: "from-purple-500 to-fuchsia-200",
   },
 ];
 const intelligenceSignals: Signal[] = [
@@ -609,6 +603,106 @@ function SourceLogo({
     </div>
   );
 }
+function MiniOutcomeChart({
+  type,
+  tone,
+}: {
+  type: "bars" | "line" | "donut" | "stack" | "spark" | "steps";
+  tone: string;
+}) {
+  if (type === "line") {
+    return (
+      <svg viewBox="0 0 160 46" className="h-12 w-full overflow-visible">
+        <path
+          d="M4 36 C22 30, 28 34, 42 25 C56 15, 66 23, 78 18 C96 10, 106 16, 120 9 C138 2, 146 7, 156 3"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="4"
+          strokeLinecap="round"
+          className={tone}
+        />
+      </svg>
+    );
+  }
+
+  if (type === "donut") {
+    return (
+      <div className={cx("flex items-center gap-3", tone)}>
+        <div
+          className="relative h-14 w-14 rounded-full"
+          style={{
+            background:
+              "conic-gradient(currentColor 0 68%, rgba(255,255,255,0.13) 68% 100%)",
+          }}
+        >
+          <div className="absolute inset-3 rounded-full bg-[#050917]" />
+        </div>
+        <div className="space-y-1.5">
+          <div className="h-2 w-20 rounded-full bg-white/20" />
+          <div className="h-2 w-14 rounded-full bg-white/10" />
+          <div className="h-2 w-24 rounded-full bg-white/10" />
+        </div>
+      </div>
+    );
+  }
+
+  if (type === "stack") {
+    return (
+      <div className="space-y-2">
+        {[78, 58, 86].map((width, i) => (
+          <div key={i} className="h-2.5 rounded-full bg-white/10">
+            <div
+              className={cx("h-full rounded-full bg-gradient-to-r", tone)}
+              style={{ width: `${width}%` }}
+            />
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (type === "spark") {
+    return (
+      <div className="grid grid-cols-6 gap-1.5">
+        {[22, 36, 28, 54, 46, 72].map((height, i) => (
+          <div
+            key={i}
+            className={cx("rounded-t-md bg-gradient-to-t", tone)}
+            style={{ height: `${height}px` }}
+          />
+        ))}
+      </div>
+    );
+  }
+
+  if (type === "steps") {
+    return (
+      <div className="flex items-end gap-2">
+        {[28, 40, 54, 70].map((height, i) => (
+          <div key={i} className="flex flex-1 flex-col items-center gap-1">
+            <div
+              className={cx("w-full rounded-xl bg-gradient-to-t", tone)}
+              style={{ height: `${height}px` }}
+            />
+            <div className="h-1.5 w-1.5 rounded-full bg-white/40" />
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex h-12 items-end gap-1.5">
+      {[18, 24, 28, 36, 34, 42, 58, 72].map((height, i) => (
+        <div
+          key={i}
+          className={cx("flex-1 rounded-t-md bg-gradient-to-t", tone)}
+          style={{ height: `${height}%` }}
+        />
+      ))}
+    </div>
+  );
+}
 
 function DataConnectionFlow() {
   const [activeSources, setActiveSources] = useState<SourceKey[]>(["shopify", "amazon", "meta", "google", "shipstation", "hubspot"]);
@@ -882,7 +976,7 @@ function DataConnectionFlow() {
             </div>
           </div>
 
-          <div className="relative z-10 grid gap-5 xl:grid-cols-[0.58fr_0.42fr]">
+          <div className="relative z-10 grid gap-5 xl:grid-cols-[0.5fr_0.5fr]"></div>
             <div className="rounded-[26px] border border-white/10 bg-white/[0.035] p-4 backdrop-blur-xl md:hidden">
               <p className="mb-4 text-xs font-black uppercase tracking-[0.22em] text-slate-300">
                 Connect Your Data Sources
@@ -1195,29 +1289,14 @@ function DataConnectionFlow() {
               <Icon className="h-6 w-6" />
             </div>
 
-            <div>
-              <h3 className="text-lg font-black tracking-tight text-white">
-                {card.title}
-              </h3>
-
-              <p className="mt-2 text-sm leading-6 text-slate-300">
-                {card.desc}
-              </p>
-            </div>
+            <h3 className="text-lg font-black leading-tight tracking-tight text-white">
+  {card.title}
+</h3>
           </div>
 
-          <div className="absolute bottom-5 left-5 right-5 flex h-9 items-end gap-1.5">
-            {card.bars.map((height, index) => (
-              <div
-                key={index}
-                className={cx(
-                  "flex-1 rounded-t-md bg-gradient-to-t opacity-80 shadow-[0_0_12px_rgba(34,211,238,0.18)]",
-                  card.chartTone
-                )}
-                style={{ height: `${height}%` }}
-              />
-            ))}
-          </div>
+         <div className={cx("relative", card.tone)}>
+  <MiniOutcomeChart type={card.chart} tone={card.chartTone} />
+</div>
         </div>
       );
     })}
@@ -1293,26 +1372,61 @@ function DataConnectionFlow() {
                     )}
                   >
                     {isTopChannel ? (
-                      <div className="flex items-start justify-between gap-3">
-                        <div>
-                          <p className="text-sm font-black text-white">{metric.title}</p>
-                          <p className="mt-5 text-4xl font-semibold tracking-tight text-white">{metric.value}</p>
-                          <p className="mt-2 text-sm text-slate-300">
-                            {metric.trend} {metric.detail}
-                          </p>
-                        </div>
-                        <div
-                          className="relative h-24 w-24 shrink-0 rounded-full"
-                          style={{
-                            background: `conic-gradient(from 0deg, #8b5cf6 0 ${metric.trend}, rgba(255,255,255,0.12) ${metric.trend} 100%)`,
-                          }}
-                        >
-                          <div className="absolute inset-4 grid place-items-center rounded-full bg-[#050917] text-sm font-black text-white">
-                            {metric.trend}
-                          </div>
-                        </div>
-                      </div>
-                    ) : (
+  <div className="flex h-full flex-col justify-between">
+    <div className="flex items-start justify-between gap-4">
+      <div>
+        <p className="text-sm font-black text-white">
+          {metric.title}
+        </p>
+
+        <p className="mt-4 text-4xl font-semibold tracking-tight text-white">
+          {metric.value}
+        </p>
+
+        <p className="mt-2 text-sm text-slate-300">
+          {metric.trend} {metric.detail}
+        </p>
+      </div>
+
+      <div className="relative flex h-20 w-20 shrink-0 items-center justify-center">
+        <div
+          className="absolute inset-0 rounded-full"
+          style={{
+            background:
+              "conic-gradient(from 0deg, #8b5cf6 0 32%, rgba(255,255,255,0.12) 32% 100%)",
+          }}
+        />
+
+        <div className="absolute inset-[10px] rounded-full bg-[#050917]" />
+
+        <div className="relative text-sm font-black text-white">
+          32%
+        </div>
+      </div>
+    </div>
+
+    <div className="mt-5">
+      <div className="mb-2 flex items-center justify-between text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
+        <span>Revenue Share</span>
+        <span>Meta Leads</span>
+      </div>
+
+      <div className="h-3 overflow-hidden rounded-full bg-white/10">
+        <div className="h-full w-[32%] rounded-full bg-gradient-to-r from-violet-400 to-fuchsia-300 shadow-[0_0_16px_rgba(168,85,247,0.45)]" />
+      </div>
+
+      <div className="mt-4 flex items-end gap-1">
+        {[18, 26, 22, 34, 41, 38, 52, 58].map((height, i) => (
+          <div
+            key={i}
+            className="flex-1 rounded-t-md bg-gradient-to-t from-violet-500 to-fuchsia-300 opacity-90"
+            style={{ height: `${height}px` }}
+          />
+        ))}
+      </div>
+    </div>
+  </div>
+) : (
                       <>
                         <p className="font-black text-white">{metric.title}</p>
                         <p className="mt-3 text-4xl font-semibold tracking-tight text-white">{metric.value}</p>
