@@ -949,37 +949,7 @@ function DataConnectionFlow() {
               </p>
 
               <div className="relative mt-6 grid gap-3">
-                <svg
-                  className="pointer-events-none absolute inset-0 z-0 hidden h-full w-full md:block"
-                  viewBox="0 0 920 620"
-                  preserveAspectRatio="none"
-                >
-                  <defs>
-                    <linearGradient id="demoConnectorActive" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stopColor="rgba(14,165,233,0.36)" />
-                      <stop offset="100%" stopColor="rgba(139,92,246,0.18)" />
-                    </linearGradient>
-                  </defs>
-
-                  {sources.map((source, index) => {
-                    const active = activeSources.includes(source.key);
-                    const measuredStart = connectorStarts?.[source.key];
-                    const startX = measuredStart?.x ?? 700;
-                    const startY = measuredStart?.y ?? 56 + index * 88;
-                    const path = `M ${startX} ${startY} C 820 ${startY}, 760 300, 915 300`;
-
-                    return (
-                      <path
-                        key={source.key}
-                        d={path}
-                        stroke={active ? "url(#demoConnectorActive)" : "rgba(148,163,184,0.22)"}
-                        strokeWidth="2"
-                        strokeDasharray="6 8"
-                        fill="none"
-                      />
-                    );
-                  })}
-                </svg>
+                
 
                 {sources.map((source) => {
                   const active = activeSources.includes(source.key);
