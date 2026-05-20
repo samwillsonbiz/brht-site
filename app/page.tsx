@@ -56,18 +56,13 @@ type Signal = {
 
 type OutcomeCard = {
   title: string;
-  subtitle: string;
   requires: SourceKey[];
   icon: React.ElementType;
   chart: "bars" | "line" | "donut" | "stack" | "spark" | "steps";
   colorTone: string;
   chartTone: string;
-  metricLabel: string;
-  value: string;
-  trend: string;
-  aiTitle: string;
-  aiInsight: string;
-  recommendation: string;
+  unlockedText: string;
+  lockedText: string;
 };
 
 const navItems = [
@@ -136,72 +131,64 @@ const sources: Source[] = [
 
 const intelligenceOutcomeCards: OutcomeCard[] = [
   {
-    title: "Unified Revenue",
-    subtitle: "Shopify + Amazon",
-    requires: ["shopify", "amazon"],
+    title: "True ROAS",
+    requires: ["shopify", "meta", "google"],
     icon: CircleDollarSign,
     chart: "line",
-    colorTone: "text-cyan-500",
-    chartTone: "from-cyan-500 to-sky-200",
-    metricLabel: "Total net revenue",
-    value: "$482,216",
-    trend: "+18.6% vs prior 7 days",
-    aiTitle: "Revenue is lifting, but source quality is still unclear.",
-    aiInsight:
-      "Shopify and Amazon are now combined into one revenue view. Marketplace revenue is contributing to the lift, but you still need paid vs organic separation before increasing ad spend.",
-    recommendation:
-      "Next: connect Meta Ads and Google Ads so BRHT can identify which campaigns are actually creating the revenue lift.",
+    colorTone: "text-cyan-300",
+    chartTone: "from-cyan-500 to-emerald-200",
+    unlockedText: "Ad spend connected to real revenue.",
+    lockedText: "Connect Shopify + Meta/Google.",
   },
   {
-    title: "True Marketing ROAS",
-    subtitle: "+ Meta + Google",
-    requires: ["shopify", "amazon", "meta", "google"],
-    icon: TrendingUp,
-    chart: "line",
-    colorTone: "text-emerald-500",
-    chartTone: "from-emerald-500 to-green-200",
-    metricLabel: "Blended paid ROAS",
-    value: "4.21x",
-    trend: "+32.1% efficiency lift",
-    aiTitle: "Paid efficiency is improving across connected sales channels.",
-    aiInsight:
-      "Ad spend is now tied back to real Shopify and Amazon revenue. Meta is driving strong volume, while Google appears more intent-driven and efficient.",
-    recommendation:
-      "Next: shift budget toward the highest-return campaign cluster, but cap scaling until fulfillment cost is connected.",
+    title: "Customer LTV",
+    requires: ["shopify", "hubspot"],
+    icon: BrainCircuit,
+    chart: "donut",
+    colorTone: "text-violet-300",
+    chartTone: "from-violet-500 to-purple-200",
+    unlockedText: "Customer value visible by channel.",
+    lockedText: "Connect Shopify + HubSpot.",
   },
   {
-    title: "Fulfillment Profitability",
-    subtitle: "+ ShipStation",
-    requires: ["shopify", "amazon", "meta", "google", "shipstation"],
+    title: "Inventory Forecasting",
+    requires: ["shopify", "amazon"],
+    icon: Database,
+    chart: "steps",
+    colorTone: "text-orange-300",
+    chartTone: "from-orange-500 to-yellow-200",
+    unlockedText: "Demand signals across storefronts.",
+    lockedText: "Connect Shopify + Amazon.",
+  },
+  {
+    title: "Fulfillment Delays",
+    requires: ["shipstation", "shopify"],
     icon: Radar,
     chart: "spark",
-    colorTone: "text-orange-500",
-    chartTone: "from-orange-500 to-yellow-200",
-    metricLabel: "Avg delivery cost",
-    value: "$7.82",
-    trend: "-6.5% cost improvement",
-    aiTitle: "Some revenue is more expensive to fulfill than it looks.",
-    aiInsight:
-      "Shipping cost is now visible by channel. Certain paid orders appear profitable on ROAS alone, but lose margin after delivery cost and fulfillment drag.",
-    recommendation:
-      "Next: adjust campaign targets using contribution margin, not just revenue ROAS.",
+    colorTone: "text-sky-300",
+    chartTone: "from-blue-500 to-sky-200",
+    unlockedText: "Delivery drag surfaced early.",
+    lockedText: "Connect ShipStation + Shopify.",
   },
   {
-    title: "Customer Lifetime Value",
-    subtitle: "+ HubSpot",
+    title: "Channel Efficiency",
+    requires: ["shopify", "amazon", "meta", "google"],
+    icon: TrendingUp,
+    chart: "stack",
+    colorTone: "text-emerald-300",
+    chartTone: "from-emerald-500 to-green-200",
+    unlockedText: "Profitable channels ranked clearly.",
+    lockedText: "Connect sales + ad channels.",
+  },
+  {
+    title: "AI Next Actions",
     requires: ["shopify", "amazon", "meta", "google", "shipstation", "hubspot"],
-    icon: BrainCircuit,
-    chart: "line",
-    colorTone: "text-violet-500",
-    chartTone: "from-violet-500 to-purple-200",
-    metricLabel: "High-value segment LTV",
-    value: "$211",
-    trend: "+24.3% high-value segment",
-    aiTitle: "BRHT now has full-funnel customer context.",
-    aiInsight:
-      "Revenue, ads, fulfillment, and CRM are connected. You can now see which channels create customers who buy again, cost less to serve, and produce better lifetime value.",
-    recommendation:
-      "Next: scale campaigns that create high-LTV customers, not just first-purchase revenue.",
+    icon: Sparkles,
+    chart: "bars",
+    colorTone: "text-fuchsia-300",
+    chartTone: "from-purple-500 to-fuchsia-200",
+    unlockedText: "AI recommendations have full context.",
+    lockedText: "Connect all systems for full AI context.",
   },
 ];
 
@@ -752,112 +739,93 @@ function MiniOutcomeChart({
 function DataConnectionFlow() {
   const [activeSources, setActiveSources] = useState<SourceKey[]>([]);
   const [selectedStageKey, setSelectedStageKey] = useState<string | null>(null);
-  const [selectedOutcomeIndex, setSelectedOutcomeIndex] = useState(0);
-
-const unlockedOutcomeCards = intelligenceOutcomeCards.filter((card) =>
-  card.requires.every((key) => activeSources.includes(key))
-);
-
-const selectedOutcome =
-  intelligenceOutcomeCards[selectedOutcomeIndex] || intelligenceOutcomeCards[0];
+  const flowPanelRef = useRef<HTMLDivElement | null>(null);
+  const sourceButtonRefs = useRef<Record<SourceKey, HTMLButtonElement | null>>({
+    shopify: null,
+    amazon: null,
+    meta: null,
+    google: null,
+    shipstation: null,
+    hubspot: null,
+  });
+  const [connectorStarts, setConnectorStarts] = useState<Record<SourceKey, { x: number; y: number }> | null>(null);
 
   const demoStages = [
     {
       key: "unifiedRevenue",
       title: "Unified Revenue",
-      subtitle: "Shopify + Amazon",
-      metricLabel: "Total net revenue",
+      metricLabel: "Net revenue",
       value: "$482,216",
       trend: "+18.6% vs prior 7 days",
-      helper: "Storefront + marketplace revenue combined.",
       requires: ["shopify", "amazon"] as SourceKey[],
       icon: CircleDollarSign,
       colorTone: "text-cyan-500",
       bubbleTone: "bg-cyan-100",
-      lineTone: "stroke-cyan-500",
-      fillTone: "rgba(6,182,212,0.16)",
+      fillTone: "rgba(6,182,212,0.14)",
       chartData: [318, 344, 331, 372, 356, 391, 418, 437],
-      lockedText: "Connect Shopify + Amazon to unlock unified revenue.",
-      aiTitle: "Unified Revenue selected",
+      lockedText: "Connect Shopify + Amazon",
+      aiTitle: "Revenue lift is marketplace-heavy.",
       aiBody:
-        "Shopify and Amazon are now combined into one revenue view. BRHT would flag that marketplace revenue is lifting the total, but Shopify still needs to be separated by paid vs organic traffic before scaling spend.",
-      aiAction: "Next best action: connect Meta Ads and Google Ads to identify which campaigns are creating the revenue lift.",
+        "Total revenue is up 18.6%, but Amazon is contributing more of the increase than Shopify. That is good for volume, but margin may be thinner after marketplace fees and promo pressure.",
+      aiAction:
+        "Review product-level margin before scaling. Push higher-margin Shopify bundles if Amazon is driving lower-profit volume.",
     },
     {
       key: "marketingRoas",
       title: "True Marketing ROAS",
-      subtitle: "+ Meta + Google",
       metricLabel: "Blended paid ROAS",
       value: "4.21x",
       trend: "+32.1% efficiency lift",
-      helper: "Ad spend tied to real sales.",
       requires: ["shopify", "amazon", "meta", "google"] as SourceKey[],
       icon: TrendingUp,
       colorTone: "text-emerald-500",
       bubbleTone: "bg-emerald-100",
-      lineTone: "stroke-emerald-500",
-      fillTone: "rgba(16,185,129,0.16)",
+      fillTone: "rgba(16,185,129,0.14)",
       chartData: [2.74, 3.05, 2.91, 3.36, 3.22, 3.74, 3.92, 4.21],
-      lockedText: "Add Meta Ads + Google Ads to unlock true marketing ROAS.",
-      aiTitle: "True Marketing ROAS selected",
+      lockedText: "Add Meta Ads + Google Ads",
+      aiTitle: "Paid spend is working, but Meta and Google are playing different roles.",
       aiBody:
-        "Paid media is now connected to actual Shopify and Amazon revenue. BRHT would recommend shifting budget toward the campaigns producing profitable revenue, not just platform-reported conversions.",
-      aiAction: "Next best action: add ShipStation to see whether fulfillment cost is protecting or eroding that ROAS.",
+        "Blended ROAS is 4.21x. Meta appears to be driving volume, while Google is capturing higher-intent demand. Scaling both equally could waste budget because the channels are not doing the same job.",
+      aiAction:
+        "Increase Meta only on campaigns creating new customers. Keep Google focused on high-intent search terms and branded conversion capture.",
     },
     {
       key: "fulfillmentProfit",
       title: "Fulfillment Profitability",
-      subtitle: "+ ShipStation",
       metricLabel: "Avg delivery cost",
       value: "$7.82",
       trend: "-6.5% cost improvement",
-      helper: "Shipping cost by revenue channel.",
-      requires: [
-        "shopify",
-        "amazon",
-        "meta",
-        "google",
-        "shipstation",
-      ] as SourceKey[],
+      requires: ["shopify", "amazon", "meta", "google", "shipstation"] as SourceKey[],
       icon: Radar,
       colorTone: "text-orange-500",
       bubbleTone: "bg-orange-100",
-      lineTone: "stroke-orange-500",
-      fillTone: "rgba(249,115,22,0.16)",
+      fillTone: "rgba(249,115,22,0.14)",
       chartData: [9.14, 8.91, 9.02, 8.54, 8.31, 8.12, 7.96, 7.82],
-      lockedText: "Add ShipStation to unlock fulfillment profitability.",
-      aiTitle: "Fulfillment Profitability selected",
+      lockedText: "Add ShipStation",
+      aiTitle: "Shipping cost is quietly changing channel profitability.",
       aiBody:
-        "Shipping cost is now connected to revenue and ad source. BRHT would surface which channels create profitable orders after fulfillment drag and which campaigns look good before shipping but weak after delivery cost.",
-      aiAction: "Next best action: connect HubSpot to compare fulfillment experience against repeat purchase and customer value.",
+        "Average delivery cost is $7.82 and improving, but some paid channels may still look better than they really are before fulfillment cost is included. ROAS alone is no longer enough.",
+      aiAction:
+        "Judge campaigns by contribution margin, not revenue ROAS. Reduce spend on campaigns with high delivery cost or slow fulfillment.",
     },
     {
       key: "customerLtv",
       title: "Customer Lifetime Value",
-      subtitle: "+ HubSpot",
-      metricLabel: "High-value segment LTV",
+      metricLabel: "High-value LTV",
       value: "$211",
       trend: "+24.3% high-value segment",
-      helper: "CRM value tied to ads + orders.",
-      requires: [
-        "shopify",
-        "amazon",
-        "meta",
-        "google",
-        "shipstation",
-        "hubspot",
-      ] as SourceKey[],
+      requires: ["shopify", "amazon", "meta", "google", "shipstation", "hubspot"] as SourceKey[],
       icon: BrainCircuit,
       colorTone: "text-violet-500",
       bubbleTone: "bg-violet-100",
-      lineTone: "stroke-violet-500",
-      fillTone: "rgba(139,92,246,0.16)",
+      fillTone: "rgba(139,92,246,0.14)",
       chartData: [156, 164, 171, 169, 184, 193, 202, 211],
-      lockedText: "Add HubSpot to unlock customer lifetime value.",
-      aiTitle: "Customer Lifetime Value selected",
+      lockedText: "Add HubSpot",
+      aiTitle: "High-value customers are now identifiable.",
       aiBody:
-        "BRHT now has full-funnel context: revenue, ads, fulfillment, and CRM. AI can identify which channels create the most valuable customers instead of only the cheapest purchases.",
-      aiAction: "Next best action: scale the campaigns producing high-LTV customers and reduce spend on low-retention segments.",
+        "LTV is up 24.3% in the strongest customer segment. Some campaigns are producing customers who buy again, cost less to serve, and become more valuable after the first order.",
+      aiAction:
+        "Build retargeting and lookalike audiences from high-LTV customers. Prioritize repeat-purchase segments over one-time buyers.",
     },
   ];
 
@@ -865,37 +833,22 @@ const selectedOutcome =
     stage.requires.every((key) => activeSources.includes(key)),
   );
 
-  const highestStage = unlockedStages[unlockedStages.length - 1] ?? null;
-  const selectedUnlockedStage =
-    demoStages.find((stage) => stage.key === selectedStageKey && unlockedStages.some((item) => item.key === stage.key)) ??
-    highestStage;
+  const selectedStage =
+    selectedStageKey !== null
+      ? unlockedStages.find((stage) => stage.key === selectedStageKey) ?? null
+      : null;
 
   const nextStage = demoStages.find((stage) =>
     stage.requires.some((key) => !activeSources.includes(key)),
   );
 
-  useEffect(() => {
-    if (!selectedUnlockedStage && highestStage) {
-      setSelectedStageKey(highestStage.key);
-    }
-    if (selectedStageKey && !unlockedStages.some((stage) => stage.key === selectedStageKey)) {
-      setSelectedStageKey(highestStage?.key ?? null);
-    }
-  }, [highestStage, selectedStageKey, selectedUnlockedStage, unlockedStages]);
+  function sourceName(key: SourceKey) {
+    return sources.find((source) => source.key === key)?.name ?? key;
+  }
 
-  const aiFeedback = selectedUnlockedStage
-    ? {
-        title: selectedUnlockedStage.aiTitle,
-        body: selectedUnlockedStage.aiBody,
-        action: selectedUnlockedStage.aiAction,
-        focus: selectedUnlockedStage.title,
-      }
-    : {
-        title: "Connect your data sources to unlock AI insights",
-        body: "As each system connects, BRHT unlocks a richer layer of intelligence: unified revenue, true marketing ROAS, fulfillment profitability, and customer lifetime value.",
-        action: "Start by turning on Shopify + Amazon to create the first intelligence layer.",
-        focus: "No card selected yet",
-      };
+  function missingSourcesFor(stage: { requires: SourceKey[] }) {
+    return stage.requires.filter((key) => !activeSources.includes(key));
+  }
 
   function lineChartPath(values: number[]) {
     const min = Math.min(...values);
@@ -912,24 +865,58 @@ const selectedOutcome =
   }
 
   function lineChartFill(values: number[]) {
-    const path = lineChartPath(values);
-    return `${path} L 174 52 L 6 52 Z`;
+    return `${lineChartPath(values)} L 174 52 L 6 52 Z`;
   }
 
   function toggleSource(key: SourceKey) {
     setActiveSources((current) => {
-      if (current.includes(key)) return current.filter((item) => item !== key);
-      return [...current, key];
+      const next = current.includes(key)
+        ? current.filter((item) => item !== key)
+        : [...current, key];
+
+      setSelectedStageKey(null);
+      return next;
     });
   }
 
-  function missingSourcesFor(stage: { requires: SourceKey[] }) {
-    return stage.requires.filter((key) => !activeSources.includes(key));
-  }
+  useEffect(() => {
+    function calculateConnectorStarts() {
+      const panel = flowPanelRef.current;
+      if (!panel) return;
 
-  function sourceName(key: SourceKey) {
-    return sources.find((source) => source.key === key)?.name ?? key;
-  }
+      const panelRect = panel.getBoundingClientRect();
+      const nextStarts = sources.reduce((acc, source) => {
+        const button = sourceButtonRefs.current[source.key];
+        if (!button) return acc;
+
+        const buttonRect = button.getBoundingClientRect();
+
+        acc[source.key] = {
+          x: ((buttonRect.right - panelRect.left) / panelRect.width) * 920,
+          y: ((buttonRect.top + buttonRect.height / 2 - panelRect.top) / panelRect.height) * 620,
+        };
+
+        return acc;
+      }, {} as Record<SourceKey, { x: number; y: number }>);
+
+      setConnectorStarts(nextStarts);
+    }
+
+    calculateConnectorStarts();
+    window.addEventListener("resize", calculateConnectorStarts);
+
+    const observer = new ResizeObserver(calculateConnectorStarts);
+    if (flowPanelRef.current) observer.observe(flowPanelRef.current);
+    sources.forEach((source) => {
+      const button = sourceButtonRefs.current[source.key];
+      if (button) observer.observe(button);
+    });
+
+    return () => {
+      window.removeEventListener("resize", calculateConnectorStarts);
+      observer.disconnect();
+    };
+  }, []);
 
   return (
     <section id="demo" className="scroll-mt-24 px-4 py-12 md:px-6 md:py-20">
@@ -947,48 +934,75 @@ const selectedOutcome =
               </h2>
 
               <p className="mt-3 text-[clamp(14px,1.25vw,19px)] font-medium leading-7 text-slate-600 xl:whitespace-nowrap">
-                Toggle data sources below to see how BRHT progressively unlocks
-                deeper business intelligence.
+                Toggle data sources below to see how BRHT progressively unlocks deeper business intelligence.
               </p>
             </div>
           </div>
 
-          <div className="relative z-10 grid gap-6 xl:grid-cols-[0.31fr_0.69fr]">
-            <div className="relative overflow-hidden rounded-[28px] border border-slate-200 bg-white/90 p-5 shadow-[0_20px_60px_rgba(15,23,42,0.06)] backdrop-blur-xl md:p-7">
-              <div className="pointer-events-none absolute -right-20 top-36 hidden h-[420px] w-[220px] rounded-full border border-dashed border-slate-300 md:block" />
-              <div className="pointer-events-none absolute -right-28 top-56 hidden h-[320px] w-[240px] rounded-full border border-dashed border-slate-300 md:block" />
-
-              <p className="text-sm font-black uppercase tracking-[0.18em] text-slate-950">
+          <div className="relative z-10 grid gap-5 xl:grid-cols-[0.32fr_0.68fr]">
+            <div ref={flowPanelRef} className="relative overflow-hidden rounded-[28px] border border-slate-200 bg-white/90 p-5 shadow-[0_20px_60px_rgba(15,23,42,0.06)] backdrop-blur-xl md:p-7">
+              <p className="text-sm font-black uppercase tracking-[0.22em] text-slate-950">
                 Connect Your Data Sources
               </p>
               <p className="mt-2 text-sm leading-6 text-slate-500">
                 Toggle any source to see live intelligence update.
               </p>
 
-              <div className="mt-7 grid gap-3">
+              <div className="relative mt-6 grid gap-3">
+                <svg
+                  className="pointer-events-none absolute inset-0 z-0 hidden h-full w-full md:block"
+                  viewBox="0 0 920 620"
+                  preserveAspectRatio="none"
+                >
+                  <defs>
+                    <linearGradient id="demoConnectorActive" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="rgba(14,165,233,0.36)" />
+                      <stop offset="100%" stopColor="rgba(139,92,246,0.18)" />
+                    </linearGradient>
+                  </defs>
+
+                  {sources.map((source, index) => {
+                    const active = activeSources.includes(source.key);
+                    const measuredStart = connectorStarts?.[source.key];
+                    const startX = measuredStart?.x ?? 700;
+                    const startY = measuredStart?.y ?? 56 + index * 88;
+                    const path = `M ${startX} ${startY} C 820 ${startY}, 760 300, 915 300`;
+
+                    return (
+                      <path
+                        key={source.key}
+                        d={path}
+                        stroke={active ? "url(#demoConnectorActive)" : "rgba(148,163,184,0.22)"}
+                        strokeWidth="2"
+                        strokeDasharray="6 8"
+                        fill="none"
+                      />
+                    );
+                  })}
+                </svg>
+
                 {sources.map((source) => {
                   const active = activeSources.includes(source.key);
 
                   return (
                     <button
                       key={source.key}
+                      ref={(node) => {
+                        sourceButtonRefs.current[source.key] = node;
+                      }}
                       onClick={() => toggleSource(source.key)}
                       className={cx(
-                        "relative z-10 flex items-center justify-between rounded-[20px] border px-4 py-3 text-left transition",
+                        "relative z-10 flex h-[74px] items-center justify-between rounded-[22px] border px-4 text-left transition",
                         active
-                          ? `${source.borderTone} ${source.activeTone} shadow-[0_12px_35px_rgba(15,23,42,0.07)]`
+                          ? `${source.borderTone} ${source.activeTone} shadow-[0_12px_35px_rgba(15,23,42,0.06)]`
                           : "border-slate-200 bg-white hover:border-cyan-200 hover:bg-cyan-50/40",
                       )}
                     >
                       <div className="flex items-center gap-3">
                         <SourceLogo source={source} size="md" />
                         <div>
-                          <p className="text-base font-black text-slate-950">
-                            {source.name}
-                          </p>
-                          <p className="text-sm text-slate-500">
-                            {source.type}
-                          </p>
+                          <p className="text-base font-black text-slate-950">{source.name}</p>
+                          <p className="text-sm text-slate-500">{source.type}</p>
                         </div>
                       </div>
 
@@ -1010,13 +1024,13 @@ const selectedOutcome =
                 })}
               </div>
 
-              <div className="mt-7 border-t border-slate-200 pt-6 text-slate-950">
-                <div className="flex items-start gap-4">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-cyan-50 text-cyan-700 shadow-sm ring-1 ring-cyan-100">
+              <div className="mt-7 border-t border-slate-200 pt-5">
+                <div className="flex items-start gap-3">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-cyan-100 bg-cyan-50 text-cyan-700">
                     <Database className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="text-lg font-black leading-tight">
+                    <p className="text-lg font-black leading-tight text-slate-950">
                       Any data source. One intelligent system.
                     </p>
                     <p className="mt-2 text-sm leading-6 text-slate-500">
@@ -1028,149 +1042,185 @@ const selectedOutcome =
             </div>
 
             <div className="overflow-hidden rounded-[28px] border border-slate-200 bg-white/90 p-5 shadow-[0_20px_60px_rgba(15,23,42,0.06)] backdrop-blur-xl md:p-7">
-              <div className="mb-7 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+              <div className="mb-5 flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                 <div>
                   <p className="text-sm font-black uppercase tracking-[0.18em] text-slate-950">
                     Intelligence Unlocked
                   </p>
                   <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500">
-                    Each intelligence card unlocks only when the right stack of
-                    systems is connected.
+                    Cards appear only when the right stack of systems is connected. Click a card to generate the AI recommendation below.
                   </p>
                 </div>
 
                 <div className="shrink-0 rounded-full bg-cyan-100 px-4 py-2 text-xs font-black text-cyan-700">
-                  {unlockedStages.length} / 4 intelligence layers unlocked
+                  {unlockedStages.length} / 4 layers unlocked
                 </div>
               </div>
 
-              <div className="grid gap-4 lg:grid-cols-4">
-  {intelligenceOutcomeCards.map((card, index) => {
-    const Icon = card.icon;
-    const unlocked = card.requires.every((key) => activeSources.includes(key));
-    const selected = selectedOutcomeIndex === index;
+              {unlockedStages.length > 0 ? (
+                <motion.div layout className="grid gap-4 lg:grid-cols-4">
+                  {unlockedStages.map((stage) => {
+                    const selected = selectedStage?.key === stage.key;
+                    const Icon = stage.icon;
 
-    return (
-      <button
-        key={card.title}
-        disabled={!unlocked}
-        onClick={() => unlocked && setSelectedOutcomeIndex(index)}
-        className={cx(
-          "relative min-h-[300px] rounded-[24px] border p-5 text-left transition",
-          unlocked
-            ? selected
-              ? "border-cyan-300 bg-white shadow-[0_0_35px_rgba(34,211,238,0.22)]"
-              : "border-cyan-200 bg-white hover:-translate-y-1 hover:border-cyan-300"
-            : "border-slate-200 bg-slate-50 opacity-45"
-        )}
-      >
-        <div className="mb-6 flex items-start justify-between gap-3">
-          <div
-            className={cx(
-              "flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100",
-              card.colorTone
-            )}
-          >
-            <Icon className="h-7 w-7" />
-          </div>
+                    return (
+                      <motion.button
+                        layout
+                        key={stage.key}
+                        type="button"
+                        onClick={() => setSelectedStageKey(stage.key)}
+                        className={cx(
+                          "relative flex min-h-[220px] flex-col overflow-hidden rounded-[22px] border p-4 text-left transition",
+                          selected
+                            ? "border-cyan-300 bg-white shadow-[0_18px_45px_rgba(14,165,233,0.18)] ring-2 ring-cyan-100"
+                            : "border-cyan-200 bg-white shadow-[0_14px_35px_rgba(14,165,233,0.08)] hover:-translate-y-1 hover:border-cyan-300",
+                        )}
+                      >
+                        <div className="mb-3 flex items-center justify-between gap-3">
+                          <div className={cx("flex h-10 w-10 items-center justify-center rounded-xl", stage.bubbleTone)}>
+                            <Icon className={cx("h-5 w-5", stage.colorTone)} />
+                          </div>
 
-          <span
-            className={cx(
-              "rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em]",
-              selected
-                ? "bg-cyan-100 text-cyan-700"
-                : unlocked
-                  ? "bg-slate-100 text-slate-500"
-                  : "bg-slate-200 text-slate-400"
-            )}
-          >
-            {selected ? "AI Focus" : unlocked ? "Click" : "Locked"}
-          </span>
-        </div>
+                          <span
+                            className={cx(
+                              "rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.16em]",
+                              selected ? "bg-cyan-100 text-cyan-700" : "bg-slate-100 text-slate-500",
+                            )}
+                          >
+                            {selected ? "AI Focus" : "Click"}
+                          </span>
+                        </div>
 
-        <h3 className="text-xl font-black text-slate-950">{card.title}</h3>
-        <p className="mt-1 text-xs font-black uppercase tracking-[0.2em] text-slate-400">
-          {card.subtitle}
-        </p>
+                        <p className="text-lg font-black leading-tight text-slate-950">
+                          {stage.title}
+                        </p>
 
-        <p className="mt-7 text-xs font-black uppercase tracking-[0.2em] text-slate-400">
-          {card.metricLabel}
-        </p>
+                        <p className="mt-4 text-[11px] font-black uppercase tracking-[0.18em] text-slate-400">
+                          {stage.metricLabel}
+                        </p>
 
-        <p className="mt-2 text-5xl font-black tracking-tight text-slate-950">
-          {unlocked ? card.value : "—"}
-        </p>
+                        <p className="mt-1 text-4xl font-black tracking-tight text-slate-950">
+                          {stage.value}
+                        </p>
 
-        <p className="mt-2 text-sm font-bold text-slate-500">
-          {unlocked ? card.trend : "Connect required sources"}
-        </p>
+                        <p className="mt-1 text-sm font-bold text-slate-500">
+                          {stage.trend}
+                        </p>
 
-        <div className="mt-8">
-          <MiniOutcomeChart
-            type={card.chart}
-            chartTone={card.chartTone}
-            colorTone={card.colorTone}
-            active={unlocked}
-          />
-        </div>
-      </button>
-    );
-  })}
-</div>
+                        <div className="mt-auto pt-4">
+                          <div className="mb-1 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-400">
+                            7-day trend
+                          </div>
+                          <svg viewBox="0 0 180 54" className="h-14 w-full overflow-visible">
+                            <path d="M6 16 H174 M6 32 H174 M6 48 H174" stroke="rgba(148,163,184,0.22)" strokeWidth="1" />
+                            <path d={lineChartFill(stage.chartData)} fill={stage.fillTone} />
+                            <path
+                              d={lineChartPath(stage.chartData)}
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="3.4"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              className={stage.colorTone}
+                            />
+                          </svg>
+                        </div>
+                      </motion.button>
+                    );
+                  })}
+                </motion.div>
+              ) : (
+                <div className="rounded-[22px] border border-dashed border-cyan-200 bg-cyan-50/40 p-7 text-center">
+                  <Lock className="mx-auto h-8 w-8 text-slate-400" />
+                  <p className="mt-3 text-lg font-black text-slate-950">
+                    No intelligence cards unlocked yet
+                  </p>
+                  <p className="mx-auto mt-2 max-w-lg text-sm leading-6 text-slate-500">
+                    Start by connecting Shopify and Amazon. As more systems are toggled on, the intelligence cards will appear here.
+                  </p>
+                </div>
+              )}
 
-              <div className="mt-5 rounded-[28px] border border-purple-200 bg-purple-50/60 p-6">
-  <div className="mb-5 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-    <div className="flex items-center gap-4">
-      <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-purple-100 text-purple-600">
-        <Sparkles className="h-7 w-7" />
-      </div>
+              {nextStage && (
+                <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
+                  <span className="font-black text-slate-950">Next unlock:</span> {nextStage.title} needs{" "}
+                  {missingSourcesFor(nextStage).map(sourceName).join(" + ")}.
+                </div>
+              )}
 
-      <div>
-        <h3 className="text-2xl font-black text-slate-950">
-          AI Intelligence & Recommendation
-        </h3>
-        <p className="mt-1 text-sm text-slate-500">
-          Click a card above to change the recommendation.
-        </p>
-      </div>
-    </div>
+              <div className="mt-5 rounded-[28px] border border-purple-200 bg-purple-50/60 p-5">
+                <div className="mb-4 flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-purple-100 text-purple-600">
+                      <Sparkles className="h-6 w-6" />
+                    </div>
 
-    <span className="rounded-full bg-white px-4 py-2 text-sm font-black text-purple-600 shadow">
-      Focus: {selectedOutcome.title}
-    </span>
-  </div>
+                    <div>
+                      <h3 className="text-xl font-black text-slate-950">
+                        AI Intelligence & Recommendation
+                      </h3>
+                      <p className="text-sm text-slate-500">
+                        Select an unlocked card to generate operator guidance.
+                      </p>
+                    </div>
+                  </div>
 
-  <AnimatePresence mode="wait">
-    <motion.div
-      key={selectedOutcome.title}
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -8 }}
-      transition={{ duration: 0.18 }}
-      className="rounded-[24px] border border-purple-100 bg-white p-6 shadow-[0_15px_45px_rgba(15,23,42,0.06)]"
-    >
-      <p className="text-xl font-black text-slate-950">
-        {selectedOutcome.aiTitle}
-      </p>
+                  {selectedStage && (
+                    <span className="shrink-0 rounded-full bg-white px-4 py-2 text-sm font-black text-purple-600 shadow">
+                      Focus: {selectedStage.title}
+                    </span>
+                  )}
+                </div>
 
-      <p className="mt-4 max-w-4xl text-base leading-8 text-slate-600">
-        {selectedOutcome.aiInsight}
-      </p>
+                <AnimatePresence mode="wait">
+                  {selectedStage ? (
+                    <motion.div
+                      key={selectedStage.key}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8 }}
+                      transition={{ duration: 0.18 }}
+                      className="rounded-[22px] border border-purple-100 bg-white p-5 shadow-[0_15px_45px_rgba(15,23,42,0.06)]"
+                    >
+                      <p className="text-xl font-black text-slate-950">
+                        {selectedStage.aiTitle}
+                      </p>
 
-      <div className="mt-5 rounded-2xl bg-purple-100/70 px-5 py-4 text-base font-black leading-7 text-purple-700">
-        {selectedOutcome.recommendation}
-      </div>
-    </motion.div>
-  </AnimatePresence>
-</div>
+                      <p className="mt-3 max-w-5xl text-base leading-7 text-slate-600">
+                        {selectedStage.aiBody}
+                      </p>
+
+                      <div className="mt-4 rounded-2xl bg-purple-100/70 px-5 py-4 text-base font-black leading-7 text-purple-700">
+                        Recommendation: {selectedStage.aiAction}
+                      </div>
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="empty-ai-state"
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8 }}
+                      transition={{ duration: 0.18 }}
+                      className="rounded-[22px] border border-dashed border-purple-200 bg-white/70 p-6 text-center"
+                    >
+                      <p className="text-lg font-black text-slate-950">
+                        AI recommendation will appear here.
+                      </p>
+                      <p className="mt-2 text-sm text-slate-500">
+                        Unlock and click a data card above to see what BRHT would recommend.
+                      </p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
           </div>
-
         </div>
       </div>
     </section>
   );
 }
+
 
 export default function LandingPage() {
   const [menuOpen, setMenuOpen] = useState(false);
