@@ -122,6 +122,56 @@ const sources: Source[] = [
     line: "rgba(251, 146, 60, 0.9)",
   },
 ];
+const intelligenceOutcomeCards = [
+  {
+    title: "True ROAS",
+    desc: "See real return on ad spend with unified attribution.",
+    icon: CircleDollarSign,
+    tone: "from-cyan-400 to-emerald-300",
+    chartTone: "from-emerald-500 to-cyan-200",
+    bars: [18, 24, 28, 36, 34, 42, 58, 72],
+  },
+  {
+    title: "Customer LTV",
+    desc: "Understand actual customer lifetime value and profitability.",
+    icon: BrainCircuit,
+    tone: "from-violet-400 to-purple-300",
+    chartTone: "from-purple-600 to-violet-300",
+    bars: [20, 31, 34, 48, 58, 72, 84, 55],
+  },
+  {
+    title: "Inventory Forecasting",
+    desc: "Predict demand and avoid stockouts or overstock.",
+    icon: Database,
+    tone: "from-orange-400 to-yellow-300",
+    chartTone: "from-orange-500 to-yellow-200",
+    bars: [22, 28, 24, 35, 31, 48, 42, 63],
+  },
+  {
+    title: "Fulfillment Insights",
+    desc: "Identify shipping bottlenecks and delivery delays.",
+    icon: Radar,
+    tone: "from-blue-400 to-sky-300",
+    chartTone: "from-blue-500 to-sky-200",
+    bars: [16, 22, 27, 24, 35, 42, 56, 51],
+  },
+  {
+    title: "Channel Efficiency",
+    desc: "Find your most profitable sales and marketing channels.",
+    icon: TrendingUp,
+    tone: "from-emerald-400 to-green-300",
+    chartTone: "from-emerald-500 to-green-200",
+    bars: [14, 18, 29, 38, 46, 55, 68, 66],
+  },
+  {
+    title: "AI Recommendations",
+    desc: "Get AI-powered actions to increase profit and growth.",
+    icon: Sparkles,
+    tone: "from-purple-400 to-fuchsia-300",
+    chartTone: "from-purple-600 to-fuchsia-300",
+    bars: [70, 54, 62, 48, 58, 42, 51, 66],
+  },
+];
 
 const intelligenceSignals: Signal[] = [
   {
@@ -1101,56 +1151,65 @@ function DataConnectionFlow() {
             </div>
 
             <div className="rounded-[26px] border border-white/10 bg-white/[0.025] p-4 backdrop-blur-xl md:p-5">
-              <div className="mb-4 flex items-start justify-between gap-4">
-                <div>
-                  <p className="text-sm font-black uppercase tracking-[0.22em] text-slate-300">
-                    Intelligence Signals Unlocked
-                  </p>
-                </div>
-                <div className="rounded-full bg-emerald-400/10 px-3 py-1 text-xs font-black text-emerald-300">
-                  {unlockedSignals.length} active
-                </div>
-              </div>
+  <div className="mb-5">
+    <p className="text-sm font-black uppercase tracking-[0.22em] text-slate-300">
+      Intelligence Unlocked
+    </p>
+    <p className="mt-2 max-w-xl text-sm leading-6 text-slate-300">
+      Turn your connected data into the insights that drive profitable decisions.
+    </p>
+  </div>
 
-              <div className="grid max-h-none gap-3 overflow-visible sm:grid-cols-2 xl:max-h-[590px] xl:grid-cols-3 xl:overflow-hidden">
-                {intelligenceSignals.slice(0, 15).map((signal) => {
-                  const unlocked = signal.requires.every((source) => activeSources.includes(source));
-                  const first = getSource(signal.requires[0]);
-                  const second = getSource(signal.requires[1]);
+  <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+    {intelligenceOutcomeCards.map((card) => {
+      const Icon = card.icon;
 
-                  return (
-                    <div
-                      key={signal.key}
-                      className={cx(
-                        "relative min-h-[82px] rounded-[18px] border px-4 py-3 transition",
-                        unlocked
-                          ? "border-emerald-300/35 bg-emerald-400/[0.09] shadow-[0_0_30px_rgba(16,185,129,0.08)]"
-                          : "border-white/10 bg-white/[0.025] opacity-50"
-                      )}
-                    >
-                      <div className="mb-1 flex items-center justify-between gap-1">
-                        <div className="flex items-center gap-1.5">
-                          <SourceLogo source={first} size="sm" />
-                          <span className="text-slate-500">+</span>
-                          <SourceLogo source={second} size="sm" />
-                        </div>
-                        {unlocked ? (
-                          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-400/20 text-emerald-300">
-                            <CheckCircle2 className="h-4 w-4" />
-                          </div>
-                        ) : (
-                          <Lock className="h-4 w-4 text-slate-500" />
-                        )}
-                      </div>
+      return (
+        <div
+          key={card.title}
+          className="group relative min-h-[205px] overflow-hidden rounded-[22px] border border-white/10 bg-slate-950/45 p-5 transition hover:-translate-y-1 hover:border-cyan-300/30 hover:bg-white/[0.045] hover:shadow-[0_0_35px_rgba(34,211,238,0.12)]"
+        >
+          <div
+            className={cx(
+              "absolute -right-10 -top-10 h-32 w-32 rounded-full bg-gradient-to-br opacity-20 blur-2xl transition group-hover:opacity-30",
+              card.tone
+            )}
+          />
 
-                      <p className="line-clamp-2 text-[12px] font-black leading-[14px] tracking-[-0.01em] text-white">
-                        {signal.title}
-                      </p>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
+          <div
+            className={cx(
+              "relative mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br text-slate-950 shadow-[0_0_30px_rgba(34,211,238,0.16)]",
+              card.tone
+            )}
+          >
+            <Icon className="h-6 w-6" />
+          </div>
+
+          <h3 className="relative text-lg font-black tracking-tight text-white">
+            {card.title}
+          </h3>
+
+          <p className="relative mt-2 text-sm leading-6 text-slate-300">
+            {card.desc}
+          </p>
+
+          <div className="absolute bottom-5 left-5 right-5 flex h-12 items-end gap-1.5">
+            {card.bars.map((height, index) => (
+              <div
+                key={index}
+                className={cx(
+                  "flex-1 rounded-t-md bg-gradient-to-t opacity-80 shadow-[0_0_12px_rgba(34,211,238,0.18)]",
+                  card.chartTone
+                )}
+                style={{ height: `${height}%` }}
+              />
+            ))}
+          </div>
+        </div>
+      );
+    })}
+  </div>
+</div>
           </div>
 
           <div className="relative z-10 mt-5 rounded-[26px] border border-white/10 bg-white/[0.03] p-4 backdrop-blur-xl md:p-5">
