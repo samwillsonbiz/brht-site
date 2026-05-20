@@ -4,7 +4,6 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowRight,
-  BarChart3,
   Bot,
   BrainCircuit,
   CheckCircle2,
@@ -17,8 +16,6 @@ import {
   Lock,
   Mail,
   Menu,
-  MessageCircle,
-  PlugZap,
   Radar,
   ShieldCheck,
   Sparkles,
@@ -26,7 +23,6 @@ import {
   TrendingUp,
   Workflow,
   X,
-  Zap,
 } from "lucide-react";
 
 const EMAIL_TO = "samwillsonbiz@gmail.com";
@@ -122,6 +118,7 @@ const sources: Source[] = [
     line: "rgba(251, 146, 60, 0.9)",
   },
 ];
+
 const intelligenceOutcomeCards = [
   {
     title: "True ROAS",
@@ -166,6 +163,7 @@ const intelligenceOutcomeCards = [
     chartTone: "from-purple-500 to-fuchsia-200",
   },
 ];
+
 const intelligenceSignals: Signal[] = [
   {
     key: "multiChannelRevenue",
@@ -325,39 +323,6 @@ const pillars = [
     title: "AI operational insight",
     description:
       "Layer AI over business data to explain changes, surface risks, summarize performance, and recommend next actions.",
-  },
-];
-
-const systems = [
-  {
-    icon: CircleDollarSign,
-    title: "Revenue signal",
-    text: "Orders, refunds, margin, channel revenue, and customer value.",
-  },
-  {
-    icon: TrendingUp,
-    title: "Ad performance",
-    text: "Google, Meta, blended ROAS, spend pacing, and profitability alerts.",
-  },
-  {
-    icon: Radar,
-    title: "Fulfillment clarity",
-    text: "Shipping cost, delivery lag, operational drag, and post-purchase experience.",
-  },
-  {
-    icon: Bot,
-    title: "AI summaries",
-    text: "Daily executive briefings, anomaly notes, and next-action recommendations.",
-  },
-  {
-    icon: ClipboardCheck,
-    title: "Ops workflows",
-    text: "Task creation, owner handoff, alerts, reporting cadences, and SOP automation.",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Data governance",
-    text: "Source mapping, pipeline checks, error alerts, permissions, and documented logic.",
   },
 ];
 
@@ -603,6 +568,7 @@ function SourceLogo({
     </div>
   );
 }
+
 function MiniOutcomeChart({
   type,
   tone,
@@ -717,16 +683,6 @@ function DataConnectionFlow() {
     hubspot: null,
   });
   const [connectorStarts, setConnectorStarts] = useState<Record<SourceKey, { x: number; y: number }> | null>(null);
-
-  const unlockedSignals = intelligenceSignals.filter((signal) =>
-    signal.requires.every((source) => activeSources.includes(source))
-  );
-
-  const featuredSignals = unlockedSignals.length
-    ? unlockedSignals.slice(0, 3)
-    : intelligenceSignals.slice(0, 3);
-
-  const topSignal = unlockedSignals[1] || unlockedSignals[0];
 
   const ranges = [
     { key: "today", label: "Today" },
@@ -901,10 +857,6 @@ function DataConnectionFlow() {
     });
   }
 
-  function getSource(key: SourceKey) {
-    return sources.find((source) => source.key === key)!;
-  }
-
   useEffect(() => {
     function calculateConnectorStarts() {
       const panel = flowPanelRef.current;
@@ -917,9 +869,6 @@ function DataConnectionFlow() {
 
         const buttonRect = button.getBoundingClientRect();
 
-        // Convert real DOM pixel positions into the SVG's 920 x 620 viewBox.
-        // This keeps every connector locked to the exact vertical center of its card,
-        // even if card height, spacing, font rendering, or responsive width changes.
         acc[source.key] = {
           x: ((buttonRect.right - panelRect.left) / panelRect.width) * 920,
           y: ((buttonRect.top + buttonRect.height / 2 - panelRect.top) / panelRect.height) * 620,
@@ -950,7 +899,7 @@ function DataConnectionFlow() {
   return (
     <section id="demo" className="scroll-mt-24 px-4 py-12 md:px-6 md:py-20">
       <div className="mx-auto max-w-[1536px]">
-        <div className="relative overflow-hidden rounded-[28px] border border-white/10 bg-[#030712] px-4 py-5 md:rounded-[34px] md:px-8 md:py-8 shadow-[0_0_120px_rgba(0,0,0,0.55)]">
+        <div className="relative overflow-hidden rounded-[28px] border border-white/10 bg-[#030712] px-4 py-5 shadow-[0_0_120px_rgba(0,0,0,0.55)] md:rounded-[34px] md:px-8 md:py-8">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_38%_38%,rgba(34,211,238,0.22),transparent_30%),radial-gradient(circle_at_88%_84%,rgba(124,58,237,0.16),transparent_30%),radial-gradient(circle_at_18%_16%,rgba(16,185,129,0.13),transparent_26%)]" />
           <div className="pointer-events-none absolute inset-0 opacity-[0.075] [background-image:linear-gradient(to_right,#fff_1px,transparent_1px),linear-gradient(to_bottom,#fff_1px,transparent_1px)] [background-size:48px_48px]" />
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(2,6,23,0.24)_48%,rgba(2,6,23,0.78)_100%)]" />
@@ -961,12 +910,11 @@ function DataConnectionFlow() {
             <div className="relative mx-auto max-w-[1400px]">
               <div className="mb-3 flex items-center justify-center gap-3">
                 <span className="inline-flex animate-[liveDemoPulse_2.4s_ease-in-out_infinite] items-center gap-2 rounded-full border border-cyan-300/50 bg-cyan-300/15 px-4 py-1.5 text-xs font-black uppercase tracking-[0.22em] text-cyan-100 shadow-[0_0_26px_rgba(34,211,238,0.45)]">
-  <Sparkles className="h-3.5 w-3.5" />
-  Live Demo
-</span>
+                  <Sparkles className="h-3.5 w-3.5" /> Live Demo
+                </span>
               </div>
 
-              <h2 className="text-[clamp(32px,7.5vw,64px)] lg:whitespace-nowrap font-black leading-none tracking-[-0.055em] text-white drop-shadow-[0_0_28px_rgba(255,255,255,0.18)]">
+              <h2 className="text-[clamp(32px,7.5vw,64px)] font-black leading-none tracking-[-0.055em] text-white drop-shadow-[0_0_28px_rgba(255,255,255,0.18)] lg:whitespace-nowrap">
                 Connect your systems. Unlock intelligence.
               </h2>
 
@@ -976,7 +924,7 @@ function DataConnectionFlow() {
             </div>
           </div>
 
-          <div className="relative z-10 grid gap-5 xl:grid-cols-[0.5fr_0.5fr]"></div>
+          <div className="relative z-10 grid gap-5 xl:grid-cols-[0.58fr_0.42fr]">
             <div className="rounded-[26px] border border-white/10 bg-white/[0.035] p-4 backdrop-blur-xl md:hidden">
               <p className="mb-4 text-xs font-black uppercase tracking-[0.22em] text-slate-300">
                 Connect Your Data Sources
@@ -1036,24 +984,14 @@ function DataConnectionFlow() {
                 <p className="mt-2 text-sm leading-5 text-slate-300">
                   Unified operational intelligence from every connected source.
                 </p>
-
-                <div className="mt-5 rounded-[18px] border border-cyan-300/35 bg-cyan-300/10 px-4 py-3 text-sm text-cyan-100">
-                  <div className="flex items-center justify-center gap-3">
-                    <Database className="h-5 w-5" />
-                    <div className="text-left">
-                      <p className="font-black text-cyan-100">All your data.</p>
-                      <p className="text-xs text-slate-300">One source of truth.</p>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
 
-            <div ref={flowPanelRef} className="relative hidden md:block min-h-[600px] overflow-hidden rounded-[26px] border border-white/10 bg-white/[0.025] backdrop-blur-xl">
+            <div ref={flowPanelRef} className="relative hidden min-h-[600px] overflow-hidden rounded-[26px] border border-white/10 bg-white/[0.025] backdrop-blur-xl md:block">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_58%_50%,rgba(34,211,238,0.25),transparent_48%)]" />
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_45%,rgba(16,185,129,0.10),transparent_32%)]" />
 
-              <div className="absolute left-5 top-5 z-30 w-[360px]">
+              <div className="absolute left-5 top-5 z-30 w-[300px]">
                 <p className="mb-5 text-sm font-black uppercase tracking-[0.22em] text-slate-300">
                   Connect Your Data Sources
                 </p>
@@ -1103,7 +1041,7 @@ function DataConnectionFlow() {
                 </div>
               </div>
 
-              <div className="absolute left-[45%] top-1/2 h-[560px] w-[560px] -translate-y-1/2 rounded-full bg-cyan-300/20 blur-3xl" />
+              <div className="absolute left-[46%] top-1/2 h-[560px] w-[560px] -translate-y-1/2 rounded-full bg-cyan-300/20 blur-3xl" />
 
               <svg
                 className="absolute inset-0 z-0 h-full w-full"
@@ -1133,19 +1071,17 @@ function DataConnectionFlow() {
 
                 {sources.map((source, index) => {
                   const active = activeSources.includes(source.key);
-
                   const measuredStart = connectorStarts?.[source.key];
                   const fallbackCardTop = 57;
                   const fallbackCardHeight = 78;
                   const fallbackGap = 12;
-                  const startX = measuredStart?.x ?? 380;
+                  const startX = measuredStart?.x ?? 330;
                   const startY =
                     measuredStart?.y ?? fallbackCardTop + index * (fallbackCardHeight + fallbackGap) + fallbackCardHeight / 2;
-                  const elbowX = startX + 42;
-                  const endX = 620;
+                  const elbowX = startX + 50;
+                  const endX = 650;
                   const endY = 310;
-
-                  const path = `M ${startX} ${startY} L ${elbowX} ${startY} C ${elbowX + 70} ${startY}, 535 ${endY}, ${endX} ${endY}`;
+                  const path = `M ${startX} ${startY} L ${elbowX} ${startY} C ${elbowX + 90} ${startY}, 560 ${endY}, ${endX} ${endY}`;
 
                   return (
                     <g key={source.key}>
@@ -1194,10 +1130,6 @@ function DataConnectionFlow() {
                           <circle r="3.2" fill="rgba(103,232,249,1)" filter="url(#flowGlowCombined)">
                             <animateMotion dur="2.2s" begin="0.55s" repeatCount="indefinite" path={path} />
                           </circle>
-
-                          <circle r="2.4" fill="rgba(255,255,255,0.9)">
-                            <animateMotion dur="2.2s" begin="1.1s" repeatCount="indefinite" path={path} />
-                          </circle>
                         </>
                       )}
                     </g>
@@ -1205,7 +1137,7 @@ function DataConnectionFlow() {
                 })}
               </svg>
 
-              <div className="absolute left-[70%] top-1/2 z-20 -translate-x-1/2 -translate-y-1/2">
+              <div className="absolute left-[72%] top-1/2 z-20 -translate-x-1/2 -translate-y-1/2">
                 <div className="relative flex h-[250px] w-[250px] items-center justify-center rounded-full border border-cyan-300 bg-[#020617]/95 shadow-[0_0_120px_rgba(34,211,238,0.44)]">
                   <div className="absolute inset-[-14px] rounded-full border border-cyan-300/20" />
                   <div className="absolute inset-[-28px] rounded-full border border-cyan-300/10" />
@@ -1232,7 +1164,7 @@ function DataConnectionFlow() {
                 </div>
               </div>
 
-              <div className="absolute bottom-10 left-[70%] z-30 -translate-x-1/2 rounded-[18px] border border-cyan-300/35 bg-cyan-300/10 px-6 py-4 text-sm text-cyan-100 shadow-[0_0_30px_rgba(34,211,238,0.14)]">
+              <div className="absolute bottom-10 left-[72%] z-30 -translate-x-1/2 rounded-[18px] border border-cyan-300/35 bg-cyan-300/10 px-6 py-4 text-sm text-cyan-100 shadow-[0_0_30px_rgba(34,211,238,0.14)]">
                 <div className="flex items-center gap-3">
                   <Database className="h-6 w-6" />
                   <div>
@@ -1243,65 +1175,48 @@ function DataConnectionFlow() {
               </div>
             </div>
 
-            <div className="rounded-[26px] border border-white/10 bg-white/[0.025] p-4 backdrop-blur-xl md:p-5">
-  <div className="mb-5">
-    <p className="text-sm font-black uppercase tracking-[0.22em] text-slate-300">
-      Intelligence Unlocked
-    </p>
-    <p className="mt-2 max-w-xl text-sm leading-6 text-slate-300">
-      Turn your connected data into the insights that drive profitable decisions.
-    </p>
-  </div>
+            <div className="rounded-[26px] border border-white/10 bg-white/[0.025] p-5 backdrop-blur-xl">
+              <div className="mb-5">
+                <p className="text-sm font-black uppercase tracking-[0.22em] text-slate-300">
+                  Intelligence Unlocked
+                </p>
+                <p className="mt-2 text-sm leading-6 text-slate-300">
+                  Six executive signals created from your connected systems.
+                </p>
+              </div>
 
-  <div className="rounded-[26px] border border-white/10 bg-white/[0.025] p-4 backdrop-blur-xl md:p-5">
-  <div className="mb-5">
-    <p className="text-sm font-black uppercase tracking-[0.22em] text-slate-300">
-      Intelligence Unlocked
-    </p>
-    <p className="mt-2 max-w-xl text-sm leading-6 text-slate-300">
-      Clear business insights from every connected system.
-    </p>
-  </div>
+              <div className="grid gap-4 sm:grid-cols-2">
+                {intelligenceOutcomeCards.map((card) => {
+                  const Icon = card.icon;
 
-  <div className="grid gap-4 sm:grid-cols-2">
-    {intelligenceOutcomeCards.map((card) => {
-      const Icon = card.icon;
+                  return (
+                    <div
+                      key={card.title}
+                      className="group relative min-h-[150px] overflow-hidden rounded-[22px] border border-white/10 bg-slate-950/45 p-5 transition hover:-translate-y-1 hover:border-cyan-300/30 hover:bg-white/[0.045] hover:shadow-[0_0_35px_rgba(34,211,238,0.12)]"
+                    >
+                      <div className="mb-4 flex items-center gap-3">
+                        <div
+                          className={cx(
+                            "flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-white/90 shadow-[0_0_30px_rgba(34,211,238,0.12)]",
+                            card.tone
+                          )}
+                        >
+                          <Icon className="h-5 w-5" />
+                        </div>
 
-      return (
-        <div
-          key={card.title}
-          className="group relative min-h-[170px] overflow-hidden rounded-[22px] border border-white/10 bg-slate-950/45 p-5 pb-14 transition hover:-translate-y-1 hover:border-cyan-300/30 hover:bg-white/[0.045] hover:shadow-[0_0_35px_rgba(34,211,238,0.12)]"
-        >
-          <div
-            className={cx(
-              "absolute -right-10 -top-10 h-32 w-32 rounded-full bg-gradient-to-br opacity-20 blur-2xl transition group-hover:opacity-30",
-              card.tone
-            )}
-          />
+                        <h3 className="text-base font-black leading-tight tracking-tight text-white">
+                          {card.title}
+                        </h3>
+                      </div>
 
-          <div className="relative flex items-start gap-4">
-            <div
-              className={cx(
-                "flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br text-slate-950 shadow-[0_0_30px_rgba(34,211,238,0.16)]",
-                card.tone
-              )}
-            >
-              <Icon className="h-6 w-6" />
+                      <div className={cx("relative", card.tone)}>
+                        <MiniOutcomeChart type={card.chart} tone={card.chartTone} />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
-
-            <h3 className="text-lg font-black leading-tight tracking-tight text-white">
-  {card.title}
-</h3>
-          </div>
-
-         <div className={cx("relative", card.tone)}>
-  <MiniOutcomeChart type={card.chart} tone={card.chartTone} />
-</div>
-        </div>
-      );
-    })}
-  </div>
-</div>
           </div>
 
           <div className="relative z-10 mt-5 rounded-[26px] border border-white/10 bg-white/[0.03] p-4 backdrop-blur-xl md:p-5">
@@ -1331,7 +1246,7 @@ function DataConnectionFlow() {
               </div>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[0.72fr_1fr_1fr_1fr_1fr]">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[0.58fr_1fr_1fr_1fr_0.92fr]">
               <div className="rounded-[18px] border border-white/10 bg-white/[0.03] p-4">
                 <p className="text-xs font-black uppercase tracking-[0.18em] text-slate-400">Connected</p>
                 <div className="mt-4 flex flex-wrap gap-2">
@@ -1372,61 +1287,51 @@ function DataConnectionFlow() {
                     )}
                   >
                     {isTopChannel ? (
-  <div className="flex h-full flex-col justify-between">
-    <div className="flex items-start justify-between gap-4">
-      <div>
-        <p className="text-sm font-black text-white">
-          {metric.title}
-        </p>
+                      <div className="flex h-full flex-col justify-between">
+                        <div className="flex items-start justify-between gap-4">
+                          <div>
+                            <p className="text-sm font-black text-white">{metric.title}</p>
+                            <p className="mt-4 text-3xl font-semibold tracking-tight text-white">{metric.value}</p>
+                            <p className="mt-2 text-sm text-slate-300">
+                              {metric.trend} {metric.detail}
+                            </p>
+                          </div>
 
-        <p className="mt-4 text-4xl font-semibold tracking-tight text-white">
-          {metric.value}
-        </p>
+                          <div className="relative flex h-16 w-16 shrink-0 items-center justify-center">
+                            <div
+                              className="absolute inset-0 rounded-full"
+                              style={{
+                                background:
+                                  "conic-gradient(from 0deg, #8b5cf6 0 32%, rgba(255,255,255,0.12) 32% 100%)",
+                              }}
+                            />
+                            <div className="absolute inset-[9px] rounded-full bg-[#050917]" />
+                            <div className="relative text-xs font-black text-white">32%</div>
+                          </div>
+                        </div>
 
-        <p className="mt-2 text-sm text-slate-300">
-          {metric.trend} {metric.detail}
-        </p>
-      </div>
+                        <div className="mt-4">
+                          <div className="mb-2 flex items-center justify-between text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">
+                            <span>Revenue Share</span>
+                            <span>Meta Leads</span>
+                          </div>
 
-      <div className="relative flex h-20 w-20 shrink-0 items-center justify-center">
-        <div
-          className="absolute inset-0 rounded-full"
-          style={{
-            background:
-              "conic-gradient(from 0deg, #8b5cf6 0 32%, rgba(255,255,255,0.12) 32% 100%)",
-          }}
-        />
+                          <div className="h-2.5 overflow-hidden rounded-full bg-white/10">
+                            <div className="h-full w-[32%] rounded-full bg-gradient-to-r from-violet-400 to-fuchsia-300 shadow-[0_0_16px_rgba(168,85,247,0.45)]" />
+                          </div>
 
-        <div className="absolute inset-[10px] rounded-full bg-[#050917]" />
-
-        <div className="relative text-sm font-black text-white">
-          32%
-        </div>
-      </div>
-    </div>
-
-    <div className="mt-5">
-      <div className="mb-2 flex items-center justify-between text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
-        <span>Revenue Share</span>
-        <span>Meta Leads</span>
-      </div>
-
-      <div className="h-3 overflow-hidden rounded-full bg-white/10">
-        <div className="h-full w-[32%] rounded-full bg-gradient-to-r from-violet-400 to-fuchsia-300 shadow-[0_0_16px_rgba(168,85,247,0.45)]" />
-      </div>
-
-      <div className="mt-4 flex items-end gap-1">
-        {[18, 26, 22, 34, 41, 38, 52, 58].map((height, i) => (
-          <div
-            key={i}
-            className="flex-1 rounded-t-md bg-gradient-to-t from-violet-500 to-fuchsia-300 opacity-90"
-            style={{ height: `${height}px` }}
-          />
-        ))}
-      </div>
-    </div>
-  </div>
-) : (
+                          <div className="mt-3 flex items-end gap-1">
+                            {[18, 26, 22, 34, 41, 38, 52, 58].map((height, i) => (
+                              <div
+                                key={i}
+                                className="flex-1 rounded-t-md bg-gradient-to-t from-violet-500 to-fuchsia-300 opacity-90"
+                                style={{ height: `${height}px` }}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
                       <>
                         <p className="font-black text-white">{metric.title}</p>
                         <p className="mt-3 text-4xl font-semibold tracking-tight text-white">{metric.value}</p>
@@ -1647,7 +1552,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section className="relative left-1/2 right-1/2 w-screen -translate-x-1/2 border-y border-cyan-200/35 bg-[linear-gradient(90deg,#dffbff_0%,#cbf7ef_48%,#fff0c7_100%)] px-6 py-7 text-slate-950 md:py-9 shadow-[0_0_80px_rgba(34,211,238,0.12)]">
+        <section className="relative left-1/2 right-1/2 w-screen -translate-x-1/2 border-y border-cyan-200/35 bg-[linear-gradient(90deg,#dffbff_0%,#cbf7ef_48%,#fff0c7_100%)] px-6 py-7 text-slate-950 shadow-[0_0_80px_rgba(34,211,238,0.12)] md:py-9">
           <div className="mx-auto grid max-w-7xl gap-8 text-center md:grid-cols-4 md:divide-x md:divide-slate-950/15">
             <div className="px-4">
               <p className="text-[11px] font-black uppercase tracking-[0.24em] text-slate-600">Built for</p>
@@ -1663,7 +1568,7 @@ export default function LandingPage() {
 
             <div className="px-4">
               <p className="text-[11px] font-black uppercase tracking-[0.24em] text-slate-600">Unlock</p>
-              <p className="mt-2 text-3xl font-black tracking-tight text-slate-950">15 signals</p>
+              <p className="mt-2 text-3xl font-black tracking-tight text-slate-950">6 signals</p>
               <p className="mt-1 text-sm font-semibold text-slate-700">cross-platform intelligence no single app shows</p>
             </div>
 
@@ -1677,225 +1582,175 @@ export default function LandingPage() {
 
         <DataConnectionFlow />
 
-        <section id="platform" className="scroll-mt-24 bg-cyan-50 px-4 py-14 md:px-6 md:py-20 text-slate-950">
-  <div className="mx-auto max-w-7xl">
-    <div className="mx-auto max-w-3xl text-center">
-      <p className="font-black uppercase tracking-[0.24em] text-cyan-700">
-        The BRHT Layer
-      </p>
-      <h2 className="mt-4 text-4xl font-black tracking-tight md:text-6xl">
-        See. Move. Think.
-      </h2>
-      <p className="mt-5 text-lg leading-8 text-slate-600">
-        BRHT connects intelligence, automation, and AI into one progressive operating layer.
-      </p>
-    </div>
-
-    <div className="relative mt-14 grid gap-8 lg:grid-cols-3">
-      <div className="absolute left-[18%] right-[18%] top-1/2 hidden h-1 -translate-y-1/2 rounded-full bg-gradient-to-r from-cyan-300 via-emerald-300 to-yellow-300 lg:block" />
-
-      {pillars.map((pillar, index) => {
-        const Icon = pillar.icon;
-
-        return (
-          <div key={pillar.title} className="relative">
-            {index < 2 && (
-              <div className="absolute -right-7 top-1/2 z-20 hidden h-14 w-14 -translate-y-1/2 items-center justify-center rounded-full border border-cyan-200 bg-white shadow-xl lg:flex">
-                <ArrowRight className="h-6 w-6 text-cyan-700" />
-              </div>
-            )}
-
-            <div className="relative z-10 rounded-[2rem] border border-slate-200 bg-white p-8 shadow-[0_20px_60px_rgba(15,23,42,0.12)]">
-              <div className="mb-6 inline-flex rounded-full bg-slate-950 px-4 py-2 text-sm font-black uppercase tracking-[0.18em] text-cyan-200">
-                {pillar.label}
-              </div>
-
-              <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-300 to-emerald-300 text-slate-950 shadow-[0_0_30px_rgba(34,211,238,0.25)]">
-                <Icon className="h-8 w-8" />
-              </div>
-
-              <h3 className="text-2xl font-black text-slate-950">{pillar.title}</h3>
-
-              <p className="mt-4 leading-7 text-slate-600">
-                {pillar.description}
+        <section id="platform" className="scroll-mt-24 bg-cyan-50 px-4 py-14 text-slate-950 md:px-6 md:py-20">
+          <div className="mx-auto max-w-7xl">
+            <div className="mx-auto max-w-3xl text-center">
+              <p className="font-black uppercase tracking-[0.24em] text-cyan-700">The BRHT Layer</p>
+              <h2 className="mt-4 text-4xl font-black tracking-tight md:text-6xl">See. Move. Think.</h2>
+              <p className="mt-5 text-lg leading-8 text-slate-600">
+                BRHT connects intelligence, automation, and AI into one progressive operating layer.
               </p>
+            </div>
+
+            <div className="relative mt-14 grid gap-8 lg:grid-cols-3">
+              <div className="absolute left-[18%] right-[18%] top-1/2 hidden h-1 -translate-y-1/2 rounded-full bg-gradient-to-r from-cyan-300 via-emerald-300 to-yellow-300 lg:block" />
+
+              {pillars.map((pillar, index) => {
+                const Icon = pillar.icon;
+
+                return (
+                  <div key={pillar.title} className="relative">
+                    {index < 2 && (
+                      <div className="absolute -right-7 top-1/2 z-20 hidden h-14 w-14 -translate-y-1/2 items-center justify-center rounded-full border border-cyan-200 bg-white shadow-xl lg:flex">
+                        <ArrowRight className="h-6 w-6 text-cyan-700" />
+                      </div>
+                    )}
+
+                    <div className="relative z-10 rounded-[2rem] border border-slate-200 bg-white p-8 shadow-[0_20px_60px_rgba(15,23,42,0.12)]">
+                      <div className="mb-6 inline-flex rounded-full bg-slate-950 px-4 py-2 text-sm font-black uppercase tracking-[0.18em] text-cyan-200">
+                        {pillar.label}
+                      </div>
+
+                      <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-300 to-emerald-300 text-slate-950 shadow-[0_0_30px_rgba(34,211,238,0.25)]">
+                        <Icon className="h-8 w-8" />
+                      </div>
+
+                      <h3 className="text-2xl font-black text-slate-950">{pillar.title}</h3>
+                      <p className="mt-4 leading-7 text-slate-600">{pillar.description}</p>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
-        );
-      })}
-    </div>
-  </div>
-</section>
+        </section>
 
-<section id="process" className="scroll-mt-24 px-4 py-16 md:px-6 md:py-24">
-  <div className="mx-auto max-w-7xl">
-    <div className="mx-auto max-w-4xl text-center">
-      <p className="font-black uppercase tracking-[0.24em] text-cyan-200">
-        What Working With BRHT Looks Like
-      </p>
-
-      <h2 className="mt-4 text-4xl font-black tracking-tight text-white md:text-6xl">
-        From disconnected systems to operational clarity in four stages.
-      </h2>
-
-      <p className="mx-auto mt-5 max-w-3xl text-lg leading-8 text-slate-300">
-        BRHT becomes the operational layer between your tools, reporting, workflows,
-        and executive decision-making.
-      </p>
-    </div>
-
-    <div className="relative mt-10 md:mt-16">
-      <div className="absolute left-0 right-0 top-10 hidden h-px bg-gradient-to-r from-cyan-300/0 via-cyan-300/60 to-emerald-300/0 lg:block" />
-
-      <div className="grid gap-6 lg:grid-cols-4">
-        {[
-          {
-            step: "01",
-            title: "Discovery",
-            caption: "Usually completed in 1–2 strategy sessions.",
-            items: [
-              "Audit your operational stack",
-              "Identify reporting blind spots",
-              "Define the KPIs that matter",
-              "Prioritize highest-value integrations",
-            ],
-          },
-          {
-            step: "02",
-            title: "Integration",
-            caption: "Your systems begin speaking the same language.",
-            items: [
-              "Connect commerce, ads, CRM, and fulfillment",
-              "Centralize data into a warehouse",
-              "Validate source accuracy",
-              "Map business logic clearly",
-            ],
-          },
-          {
-            step: "03",
-            title: "Intelligence Layer",
-            caption: "Your business becomes measurable in real time.",
-            items: [
-              "Executive dashboards",
-              "Operational reporting",
-              "Automated alerts",
-              "AI summaries and anomaly detection",
-            ],
-          },
-          {
-            step: "04",
-            title: "Ongoing Operations",
-            caption: "BRHT evolves alongside your operations.",
-            items: [
-              "Continuous optimization",
-              "Dashboard iteration",
-              "Workflow refinement",
-              "Strategic operational insights",
-            ],
-          },
-        ].map((stage) => (
-          <div key={stage.step} className="relative">
-            <div className="relative z-10 mb-6 flex h-20 w-20 items-center justify-center rounded-full border border-cyan-300/35 bg-slate-950 text-cyan-200 shadow-[0_0_35px_rgba(34,211,238,0.18)]">
-              <span className="text-xl font-black">{stage.step}</span>
+        <section id="process" className="scroll-mt-24 px-4 py-16 md:px-6 md:py-24">
+          <div className="mx-auto max-w-7xl">
+            <div className="mx-auto max-w-4xl text-center">
+              <p className="font-black uppercase tracking-[0.24em] text-cyan-200">What Working With BRHT Looks Like</p>
+              <h2 className="mt-4 text-4xl font-black tracking-tight text-white md:text-6xl">
+                From disconnected systems to operational clarity in four stages.
+              </h2>
+              <p className="mx-auto mt-5 max-w-3xl text-lg leading-8 text-slate-300">
+                BRHT becomes the operational layer between your tools, reporting, workflows, and executive decision-making.
+              </p>
             </div>
 
-            <div className="rounded-[2rem] border border-white/10 bg-white/[0.045] p-7 shadow-xl shadow-slate-950/20 backdrop-blur-xl">
-              <h3 className="text-2xl font-black text-white">{stage.title}</h3>
+            <div className="relative mt-10 md:mt-16">
+              <div className="absolute left-0 right-0 top-10 hidden h-px bg-gradient-to-r from-cyan-300/0 via-cyan-300/60 to-emerald-300/0 lg:block" />
 
-              <p className="mt-3 text-sm leading-6 text-cyan-100">
-                {stage.caption}
-              </p>
+              <div className="grid gap-6 lg:grid-cols-4">
+                {[
+                  {
+                    step: "01",
+                    title: "Discovery",
+                    caption: "Usually completed in 1–2 strategy sessions.",
+                    items: ["Audit your operational stack", "Identify reporting blind spots", "Define the KPIs that matter", "Prioritize highest-value integrations"],
+                  },
+                  {
+                    step: "02",
+                    title: "Integration",
+                    caption: "Your systems begin speaking the same language.",
+                    items: ["Connect commerce, ads, CRM, and fulfillment", "Centralize data into a warehouse", "Validate source accuracy", "Map business logic clearly"],
+                  },
+                  {
+                    step: "03",
+                    title: "Intelligence Layer",
+                    caption: "Your business becomes measurable in real time.",
+                    items: ["Executive dashboards", "Operational reporting", "Automated alerts", "AI summaries and anomaly detection"],
+                  },
+                  {
+                    step: "04",
+                    title: "Ongoing Operations",
+                    caption: "BRHT evolves alongside your operations.",
+                    items: ["Continuous optimization", "Dashboard iteration", "Workflow refinement", "Strategic operational insights"],
+                  },
+                ].map((stage) => (
+                  <div key={stage.step} className="relative">
+                    <div className="relative z-10 mb-6 flex h-20 w-20 items-center justify-center rounded-full border border-cyan-300/35 bg-slate-950 text-cyan-200 shadow-[0_0_35px_rgba(34,211,238,0.18)]">
+                      <span className="text-xl font-black">{stage.step}</span>
+                    </div>
 
-              <div className="mt-6 space-y-3">
-                {stage.items.map((item) => (
-                  <div key={item} className="flex items-start gap-3">
-                    <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-cyan-200" />
-                    <p className="text-sm leading-6 text-slate-300">{item}</p>
+                    <div className="rounded-[2rem] border border-white/10 bg-white/[0.045] p-7 shadow-xl shadow-slate-950/20 backdrop-blur-xl">
+                      <h3 className="text-2xl font-black text-white">{stage.title}</h3>
+                      <p className="mt-3 text-sm leading-6 text-cyan-100">{stage.caption}</p>
+
+                      <div className="mt-6 space-y-3">
+                        {stage.items.map((item) => (
+                          <div key={item} className="flex items-start gap-3">
+                            <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-cyan-200" />
+                            <p className="text-sm leading-6 text-slate-300">{item}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
           </div>
-        ))}
-      </div>
-    </div>
-  </div>
-</section>
+        </section>
 
-<section className="relative left-1/2 right-1/2 w-screen -translate-x-1/2 overflow-hidden bg-[#eef6fb] py-10 text-slate-950">
-  <div className="mx-auto mb-7 max-w-7xl px-6 text-center">
-    <p className="text-sm font-black uppercase tracking-[0.24em] text-cyan-700">
-      Operator Feedback
-    </p>
-  </div>
-
-  <div className="relative flex overflow-hidden">
-    {[0, 1].map((row) => (
-      <div
-        key={row}
-        aria-hidden={row === 1}
-        className="testimonial-marquee flex min-w-full shrink-0 gap-5 px-4 md:gap-8"
-      >
-        {[
-          {
-            quote:
-              "BRHT finally gave us one clear place to see what was happening across revenue, ads, and operations.",
-            name: "Operations Lead",
-            company: "Commerce Brand",
-          },
-          {
-            quote:
-              "The biggest win was getting out of manual reporting. We can see problems earlier and act faster.",
-            name: "Founder",
-            company: "DTC Business",
-          },
-          {
-            quote:
-              "Our systems were creating data, but not clarity. BRHT connected the dots in a way our team could actually use.",
-            name: "CEO",
-            company: "Growth Company",
-          },
-          {
-            quote:
-              "The AI summaries make the dashboards easier to understand. We know what changed and what to look at next.",
-            name: "Marketing Director",
-            company: "Multi-Channel Seller",
-          },
-        ].map((item, i) => (
-          <div
-            key={i}
-            className="flex min-h-[250px] w-[300px] shrink-0 flex-col justify-between rounded-[1.5rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.10)] md:min-h-[280px] md:w-[420px] md:rounded-[2rem] md:p-8"
-          >
-            <div>
-              <div className="mb-7 text-xl tracking-[0.12em] text-yellow-400">
-                ★★★★★
-              </div>
-
-              <p className="text-base font-medium leading-7 text-slate-900 md:text-xl md:leading-8">
-                “{item.quote}”
-              </p>
-            </div>
-
-            <div className="mt-8 flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-cyan-500 text-lg font-black text-white">
-                {item.name[0]}
-              </div>
-
-              <div>
-                <p className="font-black uppercase tracking-[0.08em] text-slate-950">
-                  {item.name}
-                </p>
-                <p className="text-sm font-semibold text-slate-500">
-                  {item.company}
-                </p>
-              </div>
-            </div>
+        <section className="relative left-1/2 right-1/2 w-screen -translate-x-1/2 overflow-hidden bg-[#eef6fb] py-10 text-slate-950">
+          <div className="mx-auto mb-7 max-w-7xl px-6 text-center">
+            <p className="text-sm font-black uppercase tracking-[0.24em] text-cyan-700">Operator Feedback</p>
           </div>
-        ))}
-      </div>
-    ))}
-  </div>
-</section>
+
+          <div className="relative flex overflow-hidden">
+            {[0, 1].map((row) => (
+              <div
+                key={row}
+                aria-hidden={row === 1}
+                className="testimonial-marquee flex min-w-full shrink-0 gap-5 px-4 md:gap-8"
+              >
+                {[
+                  {
+                    quote: "BRHT finally gave us one clear place to see what was happening across revenue, ads, and operations.",
+                    name: "Operations Lead",
+                    company: "Commerce Brand",
+                  },
+                  {
+                    quote: "The biggest win was getting out of manual reporting. We can see problems earlier and act faster.",
+                    name: "Founder",
+                    company: "DTC Business",
+                  },
+                  {
+                    quote: "Our systems were creating data, but not clarity. BRHT connected the dots in a way our team could actually use.",
+                    name: "CEO",
+                    company: "Growth Company",
+                  },
+                  {
+                    quote: "The AI summaries make the dashboards easier to understand. We know what changed and what to look at next.",
+                    name: "Marketing Director",
+                    company: "Multi-Channel Seller",
+                  },
+                ].map((item, i) => (
+                  <div
+                    key={i}
+                    className="flex min-h-[250px] w-[300px] shrink-0 flex-col justify-between rounded-[1.5rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.10)] md:min-h-[280px] md:w-[420px] md:rounded-[2rem] md:p-8"
+                  >
+                    <div>
+                      <div className="mb-7 text-xl tracking-[0.12em] text-yellow-400">★★★★★</div>
+                      <p className="text-base font-medium leading-7 text-slate-900 md:text-xl md:leading-8">“{item.quote}”</p>
+                    </div>
+
+                    <div className="mt-8 flex items-center gap-4">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-cyan-500 text-lg font-black text-white">
+                        {item.name[0]}
+                      </div>
+
+                      <div>
+                        <p className="font-black uppercase tracking-[0.08em] text-slate-950">{item.name}</p>
+                        <p className="text-sm font-semibold text-slate-500">{item.company}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        </section>
 
         <section id="pricing" className="scroll-mt-24 px-4 py-16 md:px-6 md:py-20">
           <div className="mx-auto max-w-7xl">
