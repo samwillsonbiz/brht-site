@@ -17,7 +17,6 @@ import {
   Mail,
   Menu,
   Radar,
-  ShieldCheck,
   Sparkles,
   SunMedium,
   TrendingUp,
@@ -739,46 +738,59 @@ function MiniOutcomeChart({
 
 function DataConnectionFlow() {
   const [activeSources, setActiveSources] = useState<SourceKey[]>([]);
+  const [selectedStageKey, setSelectedStageKey] = useState<string | null>(null);
 
   const demoStages = [
     {
       key: "unifiedRevenue",
       title: "Unified Revenue",
       subtitle: "Shopify + Amazon",
+      metricLabel: "Total net revenue",
       value: "$482,216",
-      trend: "+18.6% vs last 7 days",
+      trend: "+18.6% vs prior 7 days",
+      helper: "Storefront + marketplace revenue combined.",
       requires: ["shopify", "amazon"] as SourceKey[],
       icon: CircleDollarSign,
       colorTone: "text-cyan-500",
       bubbleTone: "bg-cyan-100",
       lineTone: "stroke-cyan-500",
-      chartTone: "from-cyan-500 to-sky-200",
-      unlockedText:
-        "Storefront and marketplace revenue finally roll into one executive view.",
+      fillTone: "rgba(6,182,212,0.16)",
+      chartData: [318, 344, 331, 372, 356, 391, 418, 437],
       lockedText: "Connect Shopify + Amazon to unlock unified revenue.",
+      aiTitle: "Unified Revenue selected",
+      aiBody:
+        "Shopify and Amazon are now combined into one revenue view. BRHT would flag that marketplace revenue is lifting the total, but Shopify still needs to be separated by paid vs organic traffic before scaling spend.",
+      aiAction: "Next best action: connect Meta Ads and Google Ads to identify which campaigns are creating the revenue lift.",
     },
     {
       key: "marketingRoas",
       title: "True Marketing ROAS",
       subtitle: "+ Meta + Google",
+      metricLabel: "Blended paid ROAS",
       value: "4.21x",
       trend: "+32.1% efficiency lift",
+      helper: "Ad spend tied to real sales.",
       requires: ["shopify", "amazon", "meta", "google"] as SourceKey[],
       icon: TrendingUp,
       colorTone: "text-emerald-500",
       bubbleTone: "bg-emerald-100",
       lineTone: "stroke-emerald-500",
-      chartTone: "from-emerald-500 to-teal-200",
-      unlockedText:
-        "Ad spend is connected to real sales across both commerce channels.",
-      lockedText: "Add Meta Ads + Google Ads to unlock true ROAS.",
+      fillTone: "rgba(16,185,129,0.16)",
+      chartData: [2.74, 3.05, 2.91, 3.36, 3.22, 3.74, 3.92, 4.21],
+      lockedText: "Add Meta Ads + Google Ads to unlock true marketing ROAS.",
+      aiTitle: "True Marketing ROAS selected",
+      aiBody:
+        "Paid media is now connected to actual Shopify and Amazon revenue. BRHT would recommend shifting budget toward the campaigns producing profitable revenue, not just platform-reported conversions.",
+      aiAction: "Next best action: add ShipStation to see whether fulfillment cost is protecting or eroding that ROAS.",
     },
     {
       key: "fulfillmentProfit",
       title: "Fulfillment Profitability",
       subtitle: "+ ShipStation",
+      metricLabel: "Avg delivery cost",
       value: "$7.82",
-      trend: "avg delivery cost identified",
+      trend: "-6.5% cost improvement",
+      helper: "Shipping cost by revenue channel.",
       requires: [
         "shopify",
         "amazon",
@@ -790,17 +802,22 @@ function DataConnectionFlow() {
       colorTone: "text-orange-500",
       bubbleTone: "bg-orange-100",
       lineTone: "stroke-orange-500",
-      chartTone: "from-orange-500 to-yellow-200",
-      unlockedText:
-        "Shipping cost and delivery drag can be tied back to channel performance.",
+      fillTone: "rgba(249,115,22,0.16)",
+      chartData: [9.14, 8.91, 9.02, 8.54, 8.31, 8.12, 7.96, 7.82],
       lockedText: "Add ShipStation to unlock fulfillment profitability.",
+      aiTitle: "Fulfillment Profitability selected",
+      aiBody:
+        "Shipping cost is now connected to revenue and ad source. BRHT would surface which channels create profitable orders after fulfillment drag and which campaigns look good before shipping but weak after delivery cost.",
+      aiAction: "Next best action: connect HubSpot to compare fulfillment experience against repeat purchase and customer value.",
     },
     {
       key: "customerLtv",
       title: "Customer Lifetime Value",
       subtitle: "+ HubSpot",
+      metricLabel: "High-value segment LTV",
       value: "$211",
       trend: "+24.3% high-value segment",
+      helper: "CRM value tied to ads + orders.",
       requires: [
         "shopify",
         "amazon",
@@ -813,10 +830,13 @@ function DataConnectionFlow() {
       colorTone: "text-violet-500",
       bubbleTone: "bg-violet-100",
       lineTone: "stroke-violet-500",
-      chartTone: "from-violet-500 to-fuchsia-200",
-      unlockedText:
-        "Customer value is connected to ads, orders, fulfillment, and CRM context.",
+      fillTone: "rgba(139,92,246,0.16)",
+      chartData: [156, 164, 171, 169, 184, 193, 202, 211],
       lockedText: "Add HubSpot to unlock customer lifetime value.",
+      aiTitle: "Customer Lifetime Value selected",
+      aiBody:
+        "BRHT now has full-funnel context: revenue, ads, fulfillment, and CRM. AI can identify which channels create the most valuable customers instead of only the cheapest purchases.",
+      aiAction: "Next best action: scale the campaigns producing high-LTV customers and reduce spend on low-retention segments.",
     },
   ];
 
@@ -824,29 +844,56 @@ function DataConnectionFlow() {
     stage.requires.every((key) => activeSources.includes(key)),
   );
 
-  const highestStage = unlockedStages[unlockedStages.length - 1];
+  const highestStage = unlockedStages[unlockedStages.length - 1] ?? null;
+  const selectedUnlockedStage =
+    demoStages.find((stage) => stage.key === selectedStageKey && unlockedStages.some((item) => item.key === stage.key)) ??
+    highestStage;
+
   const nextStage = demoStages.find((stage) =>
     stage.requires.some((key) => !activeSources.includes(key)),
   );
 
-  const connectedCount = activeSources.length;
+  useEffect(() => {
+    if (!selectedUnlockedStage && highestStage) {
+      setSelectedStageKey(highestStage.key);
+    }
+    if (selectedStageKey && !unlockedStages.some((stage) => stage.key === selectedStageKey)) {
+      setSelectedStageKey(highestStage?.key ?? null);
+    }
+  }, [highestStage, selectedStageKey, selectedUnlockedStage, unlockedStages]);
 
-  const aiFeedback = highestStage
+  const aiFeedback = selectedUnlockedStage
     ? {
-        title: `${highestStage.title} unlocked`,
-        body:
-          highestStage.key === "unifiedRevenue"
-            ? "BRHT can now compare Shopify and Amazon performance in one view. Next, connect Meta and Google Ads to separate organic growth from paid-driven growth."
-            : highestStage.key === "marketingRoas"
-              ? "BRHT can now connect ad spend to real revenue across Shopify and Amazon. Next, add ShipStation to reveal whether fulfillment cost is protecting or eroding ROAS."
-              : highestStage.key === "fulfillmentProfit"
-                ? "BRHT can now show which channels create revenue after shipping drag. Next, add HubSpot to connect order behavior to customer value and retention."
-                : "BRHT now has full-funnel context: revenue, ads, fulfillment, and CRM. AI can recommend where to scale, where margin is leaking, and which customers are most valuable.",
+        title: selectedUnlockedStage.aiTitle,
+        body: selectedUnlockedStage.aiBody,
+        action: selectedUnlockedStage.aiAction,
+        focus: selectedUnlockedStage.title,
       }
     : {
         title: "Connect your data sources to unlock AI insights",
-        body: "As each system connects, BRHT unlocks a richer layer of intelligence: revenue, marketing efficiency, fulfillment profitability, and customer lifetime value.",
+        body: "As each system connects, BRHT unlocks a richer layer of intelligence: unified revenue, true marketing ROAS, fulfillment profitability, and customer lifetime value.",
+        action: "Start by turning on Shopify + Amazon to create the first intelligence layer.",
+        focus: "No card selected yet",
       };
+
+  function lineChartPath(values: number[]) {
+    const min = Math.min(...values);
+    const max = Math.max(...values);
+    const range = max - min || 1;
+
+    return values
+      .map((value, index) => {
+        const x = 6 + (index / (values.length - 1)) * 168;
+        const y = 46 - ((value - min) / range) * 34;
+        return `${index === 0 ? "M" : "L"} ${x.toFixed(1)} ${y.toFixed(1)}`;
+      })
+      .join(" ");
+  }
+
+  function lineChartFill(values: number[]) {
+    const path = lineChartPath(values);
+    return `${path} L 174 52 L 6 52 Z`;
+  }
 
   function toggleSource(key: SourceKey) {
     setActiveSources((current) => {
@@ -874,12 +921,6 @@ function DataConnectionFlow() {
             <div className="pointer-events-none absolute -left-16 -top-16 h-56 w-56 rounded-full bg-cyan-200/40 blur-3xl" />
             <div className="pointer-events-none absolute bottom-0 right-0 h-40 w-40 rounded-full bg-yellow-100/70 blur-3xl" />
             <div className="relative mx-auto max-w-[1400px]">
-              <div className="mb-3 flex items-center justify-center gap-3">
-                <span className="inline-flex animate-[liveDemoPulse_2.4s_ease-in-out_infinite] items-center gap-2 rounded-full border border-cyan-300/50 bg-cyan-100 px-4 py-1.5 text-xs font-black uppercase tracking-[0.22em] text-cyan-700 shadow-[0_0_26px_rgba(34,211,238,0.20)]">
-                  <Sparkles className="h-3.5 w-3.5" /> Live Demo
-                </span>
-              </div>
-
               <h2 className="text-[clamp(32px,7.5vw,64px)] font-black leading-none tracking-[-0.055em] text-slate-950 lg:whitespace-nowrap">
                 Connect your systems. Unlock intelligence.
               </h2>
@@ -948,15 +989,17 @@ function DataConnectionFlow() {
                 })}
               </div>
 
-              <div className="mt-7 rounded-[22px] border border-cyan-100 bg-cyan-50 p-5 text-slate-950 shadow-[0_15px_40px_rgba(14,165,233,0.08)]">
-                <div className="flex items-center gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-slate-700 shadow-sm">
-                    <Database className="h-6 w-6" />
+              <div className="mt-7 border-t border-slate-200 pt-6 text-slate-950">
+                <div className="flex items-start gap-4">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-cyan-50 text-cyan-700 shadow-sm ring-1 ring-cyan-100">
+                    <Database className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="font-black">All your data.</p>
-                    <p className="text-sm text-slate-500">
-                      One source of truth.
+                    <p className="text-lg font-black leading-tight">
+                      Any data source. One intelligent system.
+                    </p>
+                    <p className="mt-2 text-sm leading-6 text-slate-500">
+                      Shopify, ads, CRM, fulfillment, spreadsheets, finance tools, custom APIs — BRHT connects the stack you actually run on.
                     </p>
                   </div>
                 </div>
@@ -985,30 +1028,51 @@ function DataConnectionFlow() {
                   const unlocked = stage.requires.every((key) =>
                     activeSources.includes(key),
                   );
+                  const selected = selectedUnlockedStage?.key === stage.key;
                   const Icon = stage.icon;
                   const missing = missingSourcesFor(stage);
 
                   return (
-                    <motion.div
+                    <motion.button
                       layout
                       key={stage.key}
+                      type="button"
+                      disabled={!unlocked}
+                      onClick={() => unlocked && setSelectedStageKey(stage.key)}
                       className={cx(
-                        "relative flex min-h-[260px] flex-col overflow-hidden rounded-[24px] border p-5 transition",
+                        "relative flex min-h-[282px] flex-col overflow-hidden rounded-[24px] border p-5 text-left transition",
                         unlocked
-                          ? "border-cyan-200 bg-white shadow-[0_18px_50px_rgba(14,165,233,0.10)]"
-                          : "border-slate-200 bg-white/65 shadow-[0_10px_30px_rgba(15,23,42,0.04)]",
+                          ? selected
+                            ? "border-cyan-300 bg-white shadow-[0_22px_55px_rgba(14,165,233,0.16)] ring-2 ring-cyan-100"
+                            : "border-cyan-200 bg-white shadow-[0_18px_50px_rgba(14,165,233,0.10)] hover:-translate-y-1 hover:border-cyan-300"
+                          : "cursor-not-allowed border-slate-200 bg-white/65 opacity-70 shadow-[0_10px_30px_rgba(15,23,42,0.04)]",
                       )}
                     >
-                      <div
-                        className={cx(
-                          "mb-5 flex h-14 w-14 items-center justify-center rounded-2xl",
-                          unlocked ? stage.bubbleTone : "bg-slate-100",
-                        )}
-                      >
-                        {unlocked ? (
-                          <Icon className={cx("h-7 w-7", stage.colorTone)} />
-                        ) : (
-                          <Lock className="h-6 w-6 text-slate-400" />
+                      <div className="mb-4 flex items-start justify-between gap-3">
+                        <div
+                          className={cx(
+                            "flex h-12 w-12 items-center justify-center rounded-2xl p-3",
+                            unlocked ? stage.bubbleTone : "bg-slate-100",
+                          )}
+                        >
+                          {unlocked ? (
+                            <Icon className={cx("h-7 w-7", stage.colorTone)} />
+                          ) : (
+                            <Lock className="h-6 w-6 text-slate-400" />
+                          )}
+                        </div>
+
+                        {unlocked && (
+                          <span
+                            className={cx(
+                              "rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.14em]",
+                              selected
+                                ? "bg-cyan-100 text-cyan-700"
+                                : "bg-slate-100 text-slate-500",
+                            )}
+                          >
+                            {selected ? "AI Focus" : "Click"}
+                          </span>
                         )}
                       </div>
 
@@ -1021,54 +1085,47 @@ function DataConnectionFlow() {
 
                       {unlocked ? (
                         <>
-                          <p className="mt-5 text-4xl font-black tracking-tight text-slate-950">
-                            {stage.value}
-                          </p>
-                          <p className="mt-2 text-sm font-semibold text-slate-500">
-                            {stage.trend}
-                          </p>
+                          <div className="mt-5">
+                            <p className="text-xs font-bold uppercase tracking-[0.12em] text-slate-400">
+                              {stage.metricLabel}
+                            </p>
+                            <p className="mt-1 text-4xl font-black tracking-tight text-slate-950">
+                              {stage.value}
+                            </p>
+                            <p className="mt-2 text-sm font-semibold text-slate-500">
+                              {stage.trend}
+                            </p>
+                          </div>
 
-                          <div className="mt-auto pt-6">
-                            <svg
-                              viewBox="0 0 180 54"
-                              className="h-16 w-full overflow-visible"
-                            >
-                              <defs>
-                                <linearGradient
-                                  id={`${stage.key}Glow`}
-                                  x1="0"
-                                  y1="0"
-                                  x2="0"
-                                  y2="1"
-                                >
-                                  <stop
-                                    offset="0%"
-                                    stopColor="currentColor"
-                                    stopOpacity="0.22"
-                                  />
-                                  <stop
-                                    offset="100%"
-                                    stopColor="currentColor"
-                                    stopOpacity="0"
-                                  />
-                                </linearGradient>
-                              </defs>
+                          <div className="mt-auto pt-5">
+                            <div className="mb-2 flex items-center justify-between text-[10px] font-bold uppercase tracking-[0.14em] text-slate-400">
+                              <span>Last 8 periods</span>
+                              <span>{stage.helper}</span>
+                            </div>
+                            <svg viewBox="0 0 180 60" className="h-20 w-full overflow-visible">
+                              <path d="M6 14 H174 M6 30 H174 M6 46 H174" stroke="rgba(148,163,184,0.22)" strokeWidth="1" />
                               <path
-                                d="M4 38 C22 26, 34 23, 48 31 C64 42, 74 37, 88 26 C104 12, 116 26, 130 30 C148 36, 158 18, 176 14"
+                                d={lineChartFill(stage.chartData)}
+                                fill={stage.fillTone}
+                              />
+                              <path
+                                d={lineChartPath(stage.chartData)}
                                 fill="none"
                                 stroke="currentColor"
                                 strokeWidth="3.5"
                                 strokeLinecap="round"
-                                className={stage.lineTone}
-                              />
-                              <path
-                                d="M4 38 C22 26, 34 23, 48 31 C64 42, 74 37, 88 26 C104 12, 116 26, 130 30 C148 36, 158 18, 176 14 L176 54 L4 54 Z"
-                                fill={`url(#${stage.key}Glow)`}
+                                strokeLinejoin="round"
                                 className={stage.colorTone}
                               />
                               <circle
-                                cx="176"
-                                cy="14"
+                                cx="174"
+                                cy={(() => {
+                                  const values = stage.chartData;
+                                  const min = Math.min(...values);
+                                  const max = Math.max(...values);
+                                  const range = max - min || 1;
+                                  return 46 - ((values[values.length - 1] - min) / range) * 34;
+                                })()}
                                 r="4.5"
                                 fill="currentColor"
                                 className={stage.colorTone}
@@ -1101,19 +1158,19 @@ function DataConnectionFlow() {
                           </div>
                         </>
                       )}
-                    </motion.div>
+                    </motion.button>
                   );
                 })}
               </div>
 
-              <div className="mt-5 grid overflow-hidden rounded-[26px] border border-violet-100 bg-[linear-gradient(135deg,rgba(245,243,255,0.96),rgba(255,255,255,0.94))] shadow-[0_18px_50px_rgba(124,58,237,0.08)] lg:grid-cols-[1.1fr_0.9fr]">
-                <div className="p-6 md:p-7">
-                  <div className="mb-5 flex items-center gap-4">
+              <div className="mt-5 overflow-hidden rounded-[26px] border border-violet-100 bg-[linear-gradient(135deg,rgba(245,243,255,0.98),rgba(255,255,255,0.95))] p-6 shadow-[0_18px_50px_rgba(124,58,237,0.08)] md:p-7">
+                <div className="mb-5 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                  <div className="flex items-center gap-4">
                     <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-violet-100 text-violet-600 shadow-[0_12px_30px_rgba(124,58,237,0.14)]">
                       <Sparkles className="h-7 w-7" />
                     </div>
                     <div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-wrap items-center gap-2">
                         <p className="text-xl font-black tracking-tight text-slate-950">
                           AI Intelligence & Recommendations
                         </p>
@@ -1122,116 +1179,49 @@ function DataConnectionFlow() {
                         </span>
                       </div>
                       <p className="mt-1 text-sm text-slate-500">
-                        Contextual advice based on your connected stack.
+                        Click an unlocked card above to change the recommendation.
                       </p>
                     </div>
                   </div>
 
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={highestStage?.key ?? "empty"}
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -8 }}
-                      transition={{ duration: 0.18 }}
-                      className="rounded-[22px] border border-violet-100 bg-white/80 p-5"
-                    >
+                  <div className="rounded-full border border-violet-100 bg-white/80 px-4 py-2 text-xs font-black text-violet-600 shadow-sm">
+                    Focus: {aiFeedback.focus}
+                  </div>
+                </div>
+
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={selectedUnlockedStage?.key ?? "empty"}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={{ duration: 0.18 }}
+                    className="grid gap-4 rounded-[22px] border border-violet-100 bg-white/85 p-5 md:grid-cols-[0.78fr_0.22fr]"
+                  >
+                    <div>
                       <p className="text-lg font-black text-slate-950">
                         {aiFeedback.title}
                       </p>
                       <p className="mt-3 text-sm leading-7 text-slate-600">
                         {aiFeedback.body}
                       </p>
-                    </motion.div>
-                  </AnimatePresence>
-                </div>
-
-                <div className="border-t border-violet-100 p-6 md:p-7 lg:border-l lg:border-t-0">
-                  <p className="mb-4 text-sm font-black text-slate-950">
-                    Progressive intelligence path
-                  </p>
-                  <div className="space-y-3">
-                    {demoStages.map((stage, index) => {
-                      const unlocked = stage.requires.every((key) =>
-                        activeSources.includes(key),
-                      );
-
-                      return (
-                        <div
-                          key={stage.key}
-                          className="flex items-center gap-3"
-                        >
-                          <div
-                            className={cx(
-                              "flex h-7 w-7 items-center justify-center rounded-full border text-xs font-black",
-                              unlocked
-                                ? "border-violet-400 bg-violet-100 text-violet-600"
-                                : "border-slate-200 bg-white text-slate-400",
-                            )}
-                          >
-                            {unlocked ? (
-                              <CheckCircle2 className="h-4 w-4" />
-                            ) : (
-                              index + 1
-                            )}
-                          </div>
-                          <div>
-                            <p
-                              className={cx(
-                                "text-sm font-bold",
-                                unlocked ? "text-slate-950" : "text-slate-400",
-                              )}
-                            >
-                              {stage.title}
-                            </p>
-                            <p className="text-xs text-slate-400">
-                              {stage.subtitle}
-                            </p>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  {nextStage && (
-                    <div className="mt-6 rounded-2xl bg-white/80 p-4 text-sm leading-6 text-slate-600">
-                      <span className="font-black text-violet-600">
-                        Next unlock:
-                      </span>{" "}
-                      {nextStage.title} needs{" "}
-                      {missingSourcesFor(nextStage).map(sourceName).join(" + ")}
-                      .
+                      <div className="mt-4 rounded-2xl bg-violet-50 px-4 py-3 text-sm font-semibold leading-6 text-violet-700">
+                        {aiFeedback.action}
+                      </div>
                     </div>
-                  )}
-                </div>
+
+                    <div className="flex items-center justify-center rounded-2xl bg-[radial-gradient(circle_at_center,rgba(167,139,250,0.22),transparent_68%)] p-5">
+                      <div className="relative flex h-28 w-28 items-center justify-center rounded-full bg-violet-100 text-violet-600">
+                        <div className="absolute inset-[-10px] rounded-full border border-violet-200/70" />
+                        <Lightbulb className="h-10 w-10" />
+                      </div>
+                    </div>
+                  </motion.div>
+                </AnimatePresence>
               </div>
             </div>
           </div>
 
-          <div className="relative z-10 mt-5 grid gap-4 rounded-[24px] border border-slate-200 bg-white/75 p-4 text-slate-700 shadow-[0_14px_40px_rgba(15,23,42,0.05)] md:grid-cols-2">
-            <div className="flex items-center gap-3">
-              <Sparkles className="h-5 w-5 text-violet-500" />
-              <div>
-                <p className="font-black text-slate-950">
-                  Real-time intelligence that evolves with your business.
-                </p>
-                <p className="text-sm text-slate-500">
-                  Connect data. Get clarity. Drive growth.
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 md:justify-center">
-              <ShieldCheck className="h-5 w-5 text-slate-600" />
-              <div>
-                <p className="font-black text-slate-950">
-                  Your data is secure and never shared.
-                </p>
-                <p className="text-sm text-slate-500">
-                  Enterprise-grade security and privacy.
-                </p>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </section>
