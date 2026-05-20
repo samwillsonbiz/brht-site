@@ -707,7 +707,7 @@ function MiniOutcomeChart({
 }
 
 function DataConnectionFlow() {
-  const [activeSources, setActiveSources] = useState<SourceKey[]>(["shopify", "amazon", "meta", "google", "shipstation", "hubspot"]);
+  const [activeSources, setActiveSources] = useState<SourceKey[]>([]);
   const [activeRange, setActiveRange] = useState("7d");
   const flowPanelRef = useRef<HTMLDivElement | null>(null);
   const sourceButtonRefs = useRef<Record<SourceKey, HTMLButtonElement | null>>({
