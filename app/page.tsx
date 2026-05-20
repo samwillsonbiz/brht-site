@@ -753,7 +753,7 @@ function DataConnectionFlow() {
   const demoStages = [
     {
       key: "unifiedRevenue",
-      title: "Unified Revenue",
+      title: "Unified Ecommerce Revenue",
       metricLabel: "Net revenue",
       value: "$482,216",
       trend: "+18.6% vs prior 7 days",
