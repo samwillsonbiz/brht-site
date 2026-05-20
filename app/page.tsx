@@ -56,13 +56,18 @@ type Signal = {
 
 type OutcomeCard = {
   title: string;
+  subtitle: string;
   requires: SourceKey[];
   icon: React.ElementType;
   chart: "bars" | "line" | "donut" | "stack" | "spark" | "steps";
   colorTone: string;
   chartTone: string;
-  unlockedText: string;
-  lockedText: string;
+  metricLabel: string;
+  value: string;
+  trend: string;
+  aiTitle: string;
+  aiInsight: string;
+  recommendation: string;
 };
 
 const navItems = [
@@ -131,64 +136,72 @@ const sources: Source[] = [
 
 const intelligenceOutcomeCards: OutcomeCard[] = [
   {
-    title: "True ROAS",
-    requires: ["shopify", "meta", "google"],
+    title: "Unified Revenue",
+    subtitle: "Shopify + Amazon",
+    requires: ["shopify", "amazon"],
     icon: CircleDollarSign,
     chart: "line",
-    colorTone: "text-cyan-300",
-    chartTone: "from-cyan-500 to-emerald-200",
-    unlockedText: "Ad spend connected to real revenue.",
-    lockedText: "Connect Shopify + Meta/Google.",
+    colorTone: "text-cyan-500",
+    chartTone: "from-cyan-500 to-sky-200",
+    metricLabel: "Total net revenue",
+    value: "$482,216",
+    trend: "+18.6% vs prior 7 days",
+    aiTitle: "Revenue is lifting, but source quality is still unclear.",
+    aiInsight:
+      "Shopify and Amazon are now combined into one revenue view. Marketplace revenue is contributing to the lift, but you still need paid vs organic separation before increasing ad spend.",
+    recommendation:
+      "Next: connect Meta Ads and Google Ads so BRHT can identify which campaigns are actually creating the revenue lift.",
   },
   {
-    title: "Customer LTV",
-    requires: ["shopify", "hubspot"],
-    icon: BrainCircuit,
-    chart: "donut",
-    colorTone: "text-violet-300",
-    chartTone: "from-violet-500 to-purple-200",
-    unlockedText: "Customer value visible by channel.",
-    lockedText: "Connect Shopify + HubSpot.",
-  },
-  {
-    title: "Inventory Forecasting",
-    requires: ["shopify", "amazon"],
-    icon: Database,
-    chart: "steps",
-    colorTone: "text-orange-300",
-    chartTone: "from-orange-500 to-yellow-200",
-    unlockedText: "Demand signals across storefronts.",
-    lockedText: "Connect Shopify + Amazon.",
-  },
-  {
-    title: "Fulfillment Delays",
-    requires: ["shipstation", "shopify"],
-    icon: Radar,
-    chart: "spark",
-    colorTone: "text-sky-300",
-    chartTone: "from-blue-500 to-sky-200",
-    unlockedText: "Delivery drag surfaced early.",
-    lockedText: "Connect ShipStation + Shopify.",
-  },
-  {
-    title: "Channel Efficiency",
+    title: "True Marketing ROAS",
+    subtitle: "+ Meta + Google",
     requires: ["shopify", "amazon", "meta", "google"],
     icon: TrendingUp,
-    chart: "stack",
-    colorTone: "text-emerald-300",
+    chart: "line",
+    colorTone: "text-emerald-500",
     chartTone: "from-emerald-500 to-green-200",
-    unlockedText: "Profitable channels ranked clearly.",
-    lockedText: "Connect sales + ad channels.",
+    metricLabel: "Blended paid ROAS",
+    value: "4.21x",
+    trend: "+32.1% efficiency lift",
+    aiTitle: "Paid efficiency is improving across connected sales channels.",
+    aiInsight:
+      "Ad spend is now tied back to real Shopify and Amazon revenue. Meta is driving strong volume, while Google appears more intent-driven and efficient.",
+    recommendation:
+      "Next: shift budget toward the highest-return campaign cluster, but cap scaling until fulfillment cost is connected.",
   },
   {
-    title: "AI Next Actions",
+    title: "Fulfillment Profitability",
+    subtitle: "+ ShipStation",
+    requires: ["shopify", "amazon", "meta", "google", "shipstation"],
+    icon: Radar,
+    chart: "spark",
+    colorTone: "text-orange-500",
+    chartTone: "from-orange-500 to-yellow-200",
+    metricLabel: "Avg delivery cost",
+    value: "$7.82",
+    trend: "-6.5% cost improvement",
+    aiTitle: "Some revenue is more expensive to fulfill than it looks.",
+    aiInsight:
+      "Shipping cost is now visible by channel. Certain paid orders appear profitable on ROAS alone, but lose margin after delivery cost and fulfillment drag.",
+    recommendation:
+      "Next: adjust campaign targets using contribution margin, not just revenue ROAS.",
+  },
+  {
+    title: "Customer Lifetime Value",
+    subtitle: "+ HubSpot",
     requires: ["shopify", "amazon", "meta", "google", "shipstation", "hubspot"],
-    icon: Sparkles,
-    chart: "bars",
-    colorTone: "text-fuchsia-300",
-    chartTone: "from-purple-500 to-fuchsia-200",
-    unlockedText: "AI recommendations have full context.",
-    lockedText: "Connect all systems for full AI context.",
+    icon: BrainCircuit,
+    chart: "line",
+    colorTone: "text-violet-500",
+    chartTone: "from-violet-500 to-purple-200",
+    metricLabel: "High-value segment LTV",
+    value: "$211",
+    trend: "+24.3% high-value segment",
+    aiTitle: "BRHT now has full-funnel customer context.",
+    aiInsight:
+      "Revenue, ads, fulfillment, and CRM are connected. You can now see which channels create customers who buy again, cost less to serve, and produce better lifetime value.",
+    recommendation:
+      "Next: scale campaigns that create high-LTV customers, not just first-purchase revenue.",
   },
 ];
 
@@ -739,6 +752,14 @@ function MiniOutcomeChart({
 function DataConnectionFlow() {
   const [activeSources, setActiveSources] = useState<SourceKey[]>([]);
   const [selectedStageKey, setSelectedStageKey] = useState<string | null>(null);
+  const [selectedOutcomeIndex, setSelectedOutcomeIndex] = useState(0);
+
+const unlockedOutcomeCards = intelligenceOutcomeCards.filter((card) =>
+  card.requires.every((key) => activeSources.includes(key))
+);
+
+const selectedOutcome =
+  intelligenceOutcomeCards[selectedOutcomeIndex] || intelligenceOutcomeCards[0];
 
   const demoStages = [
     {
@@ -1023,202 +1044,125 @@ function DataConnectionFlow() {
                 </div>
               </div>
 
-              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-                {demoStages.map((stage) => {
-                  const unlocked = stage.requires.every((key) =>
-                    activeSources.includes(key),
-                  );
-                  const selected = selectedUnlockedStage?.key === stage.key;
-                  const Icon = stage.icon;
-                  const missing = missingSourcesFor(stage);
+              <div className="grid gap-4 lg:grid-cols-4">
+  {intelligenceOutcomeCards.map((card, index) => {
+    const Icon = card.icon;
+    const unlocked = card.requires.every((key) => activeSources.includes(key));
+    const selected = selectedOutcomeIndex === index;
 
-                  return (
-                    <motion.button
-                      layout
-                      key={stage.key}
-                      type="button"
-                      disabled={!unlocked}
-                      onClick={() => unlocked && setSelectedStageKey(stage.key)}
-                      className={cx(
-                        "relative flex min-h-[282px] flex-col overflow-hidden rounded-[24px] border p-5 text-left transition",
-                        unlocked
-                          ? selected
-                            ? "border-cyan-300 bg-white shadow-[0_22px_55px_rgba(14,165,233,0.16)] ring-2 ring-cyan-100"
-                            : "border-cyan-200 bg-white shadow-[0_18px_50px_rgba(14,165,233,0.10)] hover:-translate-y-1 hover:border-cyan-300"
-                          : "cursor-not-allowed border-slate-200 bg-white/65 opacity-70 shadow-[0_10px_30px_rgba(15,23,42,0.04)]",
-                      )}
-                    >
-                      <div className="mb-4 flex items-start justify-between gap-3">
-                        <div
-                          className={cx(
-                            "flex h-12 w-12 items-center justify-center rounded-2xl p-3",
-                            unlocked ? stage.bubbleTone : "bg-slate-100",
-                          )}
-                        >
-                          {unlocked ? (
-                            <Icon className={cx("h-7 w-7", stage.colorTone)} />
-                          ) : (
-                            <Lock className="h-6 w-6 text-slate-400" />
-                          )}
-                        </div>
+    return (
+      <button
+        key={card.title}
+        disabled={!unlocked}
+        onClick={() => unlocked && setSelectedOutcomeIndex(index)}
+        className={cx(
+          "relative min-h-[300px] rounded-[24px] border p-5 text-left transition",
+          unlocked
+            ? selected
+              ? "border-cyan-300 bg-white shadow-[0_0_35px_rgba(34,211,238,0.22)]"
+              : "border-cyan-200 bg-white hover:-translate-y-1 hover:border-cyan-300"
+            : "border-slate-200 bg-slate-50 opacity-45"
+        )}
+      >
+        <div className="mb-6 flex items-start justify-between gap-3">
+          <div
+            className={cx(
+              "flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100",
+              card.colorTone
+            )}
+          >
+            <Icon className="h-7 w-7" />
+          </div>
 
-                        {unlocked && (
-                          <span
-                            className={cx(
-                              "rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.14em]",
-                              selected
-                                ? "bg-cyan-100 text-cyan-700"
-                                : "bg-slate-100 text-slate-500",
-                            )}
-                          >
-                            {selected ? "AI Focus" : "Click"}
-                          </span>
-                        )}
-                      </div>
+          <span
+            className={cx(
+              "rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em]",
+              selected
+                ? "bg-cyan-100 text-cyan-700"
+                : unlocked
+                  ? "bg-slate-100 text-slate-500"
+                  : "bg-slate-200 text-slate-400"
+            )}
+          >
+            {selected ? "AI Focus" : unlocked ? "Click" : "Locked"}
+          </span>
+        </div>
 
-                      <p className="text-base font-black tracking-tight text-slate-950">
-                        {stage.title}
-                      </p>
-                      <p className="mt-1 text-xs font-bold uppercase tracking-[0.12em] text-slate-400">
-                        {stage.subtitle}
-                      </p>
+        <h3 className="text-xl font-black text-slate-950">{card.title}</h3>
+        <p className="mt-1 text-xs font-black uppercase tracking-[0.2em] text-slate-400">
+          {card.subtitle}
+        </p>
 
-                      {unlocked ? (
-                        <>
-                          <div className="mt-5">
-                            <p className="text-xs font-bold uppercase tracking-[0.12em] text-slate-400">
-                              {stage.metricLabel}
-                            </p>
-                            <p className="mt-1 text-4xl font-black tracking-tight text-slate-950">
-                              {stage.value}
-                            </p>
-                            <p className="mt-2 text-sm font-semibold text-slate-500">
-                              {stage.trend}
-                            </p>
-                          </div>
+        <p className="mt-7 text-xs font-black uppercase tracking-[0.2em] text-slate-400">
+          {card.metricLabel}
+        </p>
 
-                          <div className="mt-auto pt-5">
-                            <div className="mb-2 flex items-center justify-between text-[10px] font-bold uppercase tracking-[0.14em] text-slate-400">
-                              <span>Last 8 periods</span>
-                              <span>{stage.helper}</span>
-                            </div>
-                            <svg viewBox="0 0 180 60" className="h-20 w-full overflow-visible">
-                              <path d="M6 14 H174 M6 30 H174 M6 46 H174" stroke="rgba(148,163,184,0.22)" strokeWidth="1" />
-                              <path
-                                d={lineChartFill(stage.chartData)}
-                                fill={stage.fillTone}
-                              />
-                              <path
-                                d={lineChartPath(stage.chartData)}
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="3.5"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                className={stage.colorTone}
-                              />
-                              <circle
-                                cx="174"
-                                cy={(() => {
-                                  const values = stage.chartData;
-                                  const min = Math.min(...values);
-                                  const max = Math.max(...values);
-                                  const range = max - min || 1;
-                                  return 46 - ((values[values.length - 1] - min) / range) * 34;
-                                })()}
-                                r="4.5"
-                                fill="currentColor"
-                                className={stage.colorTone}
-                              />
-                            </svg>
-                          </div>
-                        </>
-                      ) : (
-                        <>
-                          <div className="mt-5 rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-4">
-                            <p className="text-sm font-semibold leading-6 text-slate-500">
-                              {stage.lockedText}
-                            </p>
-                          </div>
+        <p className="mt-2 text-5xl font-black tracking-tight text-slate-950">
+          {unlocked ? card.value : "—"}
+        </p>
 
-                          <div className="mt-auto pt-5">
-                            <p className="mb-2 text-[11px] font-black uppercase tracking-[0.16em] text-slate-400">
-                              Still needs
-                            </p>
-                            <div className="flex flex-wrap gap-2">
-                              {missing.map((key) => (
-                                <span
-                                  key={key}
-                                  className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-bold text-slate-500"
-                                >
-                                  {sourceName(key)}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                        </>
-                      )}
-                    </motion.button>
-                  );
-                })}
-              </div>
+        <p className="mt-2 text-sm font-bold text-slate-500">
+          {unlocked ? card.trend : "Connect required sources"}
+        </p>
 
-              <div className="mt-5 overflow-hidden rounded-[26px] border border-violet-100 bg-[linear-gradient(135deg,rgba(245,243,255,0.98),rgba(255,255,255,0.95))] p-6 shadow-[0_18px_50px_rgba(124,58,237,0.08)] md:p-7">
-                <div className="mb-5 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-violet-100 text-violet-600 shadow-[0_12px_30px_rgba(124,58,237,0.14)]">
-                      <Sparkles className="h-7 w-7" />
-                    </div>
-                    <div>
-                      <div className="flex flex-wrap items-center gap-2">
-                        <p className="text-xl font-black tracking-tight text-slate-950">
-                          AI Intelligence & Recommendations
-                        </p>
-                        <span className="rounded-full bg-violet-100 px-2 py-0.5 text-xs font-black text-violet-600">
-                          AI
-                        </span>
-                      </div>
-                      <p className="mt-1 text-sm text-slate-500">
-                        Click an unlocked card above to change the recommendation.
-                      </p>
-                    </div>
-                  </div>
+        <div className="mt-8">
+          <MiniOutcomeChart
+            type={card.chart}
+            chartTone={card.chartTone}
+            colorTone={card.colorTone}
+            active={unlocked}
+          />
+        </div>
+      </button>
+    );
+  })}
+</div>
 
-                  <div className="rounded-full border border-violet-100 bg-white/80 px-4 py-2 text-xs font-black text-violet-600 shadow-sm">
-                    Focus: {aiFeedback.focus}
-                  </div>
-                </div>
+              <div className="mt-5 rounded-[28px] border border-purple-200 bg-purple-50/60 p-6">
+  <div className="mb-5 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+    <div className="flex items-center gap-4">
+      <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-purple-100 text-purple-600">
+        <Sparkles className="h-7 w-7" />
+      </div>
 
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={selectedUnlockedStage?.key ?? "empty"}
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -8 }}
-                    transition={{ duration: 0.18 }}
-                    className="grid gap-4 rounded-[22px] border border-violet-100 bg-white/85 p-5 md:grid-cols-[0.78fr_0.22fr]"
-                  >
-                    <div>
-                      <p className="text-lg font-black text-slate-950">
-                        {aiFeedback.title}
-                      </p>
-                      <p className="mt-3 text-sm leading-7 text-slate-600">
-                        {aiFeedback.body}
-                      </p>
-                      <div className="mt-4 rounded-2xl bg-violet-50 px-4 py-3 text-sm font-semibold leading-6 text-violet-700">
-                        {aiFeedback.action}
-                      </div>
-                    </div>
+      <div>
+        <h3 className="text-2xl font-black text-slate-950">
+          AI Intelligence & Recommendation
+        </h3>
+        <p className="mt-1 text-sm text-slate-500">
+          Click a card above to change the recommendation.
+        </p>
+      </div>
+    </div>
 
-                    <div className="flex items-center justify-center rounded-2xl bg-[radial-gradient(circle_at_center,rgba(167,139,250,0.22),transparent_68%)] p-5">
-                      <div className="relative flex h-28 w-28 items-center justify-center rounded-full bg-violet-100 text-violet-600">
-                        <div className="absolute inset-[-10px] rounded-full border border-violet-200/70" />
-                        <Lightbulb className="h-10 w-10" />
-                      </div>
-                    </div>
-                  </motion.div>
-                </AnimatePresence>
-              </div>
+    <span className="rounded-full bg-white px-4 py-2 text-sm font-black text-purple-600 shadow">
+      Focus: {selectedOutcome.title}
+    </span>
+  </div>
+
+  <AnimatePresence mode="wait">
+    <motion.div
+      key={selectedOutcome.title}
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -8 }}
+      transition={{ duration: 0.18 }}
+      className="rounded-[24px] border border-purple-100 bg-white p-6 shadow-[0_15px_45px_rgba(15,23,42,0.06)]"
+    >
+      <p className="text-xl font-black text-slate-950">
+        {selectedOutcome.aiTitle}
+      </p>
+
+      <p className="mt-4 max-w-4xl text-base leading-8 text-slate-600">
+        {selectedOutcome.aiInsight}
+      </p>
+
+      <div className="mt-5 rounded-2xl bg-purple-100/70 px-5 py-4 text-base font-black leading-7 text-purple-700">
+        {selectedOutcome.recommendation}
+      </div>
+    </motion.div>
+  </AnimatePresence>
+</div>
             </div>
           </div>
 
