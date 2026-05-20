@@ -55,6 +55,17 @@ type Signal = {
   chartTone: string;
 };
 
+type OutcomeCard = {
+  title: string;
+  requires: SourceKey[];
+  icon: React.ElementType;
+  chart: "bars" | "line" | "donut" | "stack" | "spark" | "steps";
+  colorTone: string;
+  chartTone: string;
+  unlockedText: string;
+  lockedText: string;
+};
+
 const navItems = [
   { label: "Live Demo", href: "#demo" },
   { label: "BRHT Layer", href: "#platform" },
@@ -119,48 +130,66 @@ const sources: Source[] = [
   },
 ];
 
-const intelligenceOutcomeCards = [
+const intelligenceOutcomeCards: OutcomeCard[] = [
   {
     title: "True ROAS",
+    requires: ["shopify", "meta", "google"],
     icon: CircleDollarSign,
-    chart: "line" as const,
-    tone: "text-cyan-300",
+    chart: "line",
+    colorTone: "text-cyan-300",
     chartTone: "from-cyan-500 to-emerald-200",
+    unlockedText: "Ad spend connected to real revenue.",
+    lockedText: "Connect Shopify + Meta/Google.",
   },
   {
     title: "Customer LTV",
+    requires: ["shopify", "hubspot"],
     icon: BrainCircuit,
-    chart: "donut" as const,
-    tone: "text-violet-300",
+    chart: "donut",
+    colorTone: "text-violet-300",
     chartTone: "from-violet-500 to-purple-200",
+    unlockedText: "Customer value visible by channel.",
+    lockedText: "Connect Shopify + HubSpot.",
   },
   {
     title: "Inventory Forecasting",
+    requires: ["shopify", "amazon"],
     icon: Database,
-    chart: "steps" as const,
-    tone: "text-orange-300",
+    chart: "steps",
+    colorTone: "text-orange-300",
     chartTone: "from-orange-500 to-yellow-200",
+    unlockedText: "Demand signals across storefronts.",
+    lockedText: "Connect Shopify + Amazon.",
   },
   {
     title: "Fulfillment Delays",
+    requires: ["shipstation", "shopify"],
     icon: Radar,
-    chart: "spark" as const,
-    tone: "text-sky-300",
+    chart: "spark",
+    colorTone: "text-sky-300",
     chartTone: "from-blue-500 to-sky-200",
+    unlockedText: "Delivery drag surfaced early.",
+    lockedText: "Connect ShipStation + Shopify.",
   },
   {
     title: "Channel Efficiency",
+    requires: ["shopify", "amazon", "meta", "google"],
     icon: TrendingUp,
-    chart: "stack" as const,
-    tone: "text-emerald-300",
+    chart: "stack",
+    colorTone: "text-emerald-300",
     chartTone: "from-emerald-500 to-green-200",
+    unlockedText: "Profitable channels ranked clearly.",
+    lockedText: "Connect sales + ad channels.",
   },
   {
     title: "AI Next Actions",
+    requires: ["shopify", "amazon", "meta", "google", "shipstation", "hubspot"],
     icon: Sparkles,
-    chart: "bars" as const,
-    tone: "text-fuchsia-300",
+    chart: "bars",
+    colorTone: "text-fuchsia-300",
     chartTone: "from-purple-500 to-fuchsia-200",
+    unlockedText: "AI recommendations have full context.",
+    lockedText: "Connect all systems for full AI context.",
   },
 ];
 
@@ -571,29 +600,36 @@ function SourceLogo({
 
 function MiniOutcomeChart({
   type,
-  tone,
+  chartTone,
+  colorTone,
+  active = true,
 }: {
   type: "bars" | "line" | "donut" | "stack" | "spark" | "steps";
-  tone: string;
+  chartTone: string;
+  colorTone: string;
+  active?: boolean;
 }) {
+  const opacity = active ? "opacity-100" : "opacity-25";
+
   if (type === "line") {
     return (
-      <svg viewBox="0 0 160 46" className="h-12 w-full overflow-visible">
+      <svg viewBox="0 0 160 46" className={cx("h-12 w-full overflow-visible", opacity)}>
         <path
           d="M4 36 C22 30, 28 34, 42 25 C56 15, 66 23, 78 18 C96 10, 106 16, 120 9 C138 2, 146 7, 156 3"
           fill="none"
           stroke="currentColor"
           strokeWidth="4"
           strokeLinecap="round"
-          className={tone}
+          className={colorTone}
         />
+        <circle cx="156" cy="3" r="4" fill="currentColor" className={colorTone} />
       </svg>
     );
   }
 
   if (type === "donut") {
     return (
-      <div className={cx("flex items-center gap-3", tone)}>
+      <div className={cx("flex items-center gap-3", colorTone, opacity)}>
         <div
           className="relative h-14 w-14 rounded-full"
           style={{
@@ -614,11 +650,11 @@ function MiniOutcomeChart({
 
   if (type === "stack") {
     return (
-      <div className="space-y-2">
+      <div className={cx("space-y-2", opacity)}>
         {[78, 58, 86].map((width, i) => (
           <div key={i} className="h-2.5 rounded-full bg-white/10">
             <div
-              className={cx("h-full rounded-full bg-gradient-to-r", tone)}
+              className={cx("h-full rounded-full bg-gradient-to-r", chartTone)}
               style={{ width: `${width}%` }}
             />
           </div>
@@ -629,11 +665,11 @@ function MiniOutcomeChart({
 
   if (type === "spark") {
     return (
-      <div className="grid grid-cols-6 gap-1.5">
+      <div className={cx("grid grid-cols-6 gap-1.5", opacity)}>
         {[22, 36, 28, 54, 46, 72].map((height, i) => (
           <div
             key={i}
-            className={cx("rounded-t-md bg-gradient-to-t", tone)}
+            className={cx("rounded-t-md bg-gradient-to-t", chartTone)}
             style={{ height: `${height}px` }}
           />
         ))}
@@ -643,11 +679,11 @@ function MiniOutcomeChart({
 
   if (type === "steps") {
     return (
-      <div className="flex items-end gap-2">
+      <div className={cx("flex items-end gap-2", opacity)}>
         {[28, 40, 54, 70].map((height, i) => (
           <div key={i} className="flex flex-1 flex-col items-center gap-1">
             <div
-              className={cx("w-full rounded-xl bg-gradient-to-t", tone)}
+              className={cx("w-full rounded-xl bg-gradient-to-t", chartTone)}
               style={{ height: `${height}px` }}
             />
             <div className="h-1.5 w-1.5 rounded-full bg-white/40" />
@@ -658,11 +694,11 @@ function MiniOutcomeChart({
   }
 
   return (
-    <div className="flex h-12 items-end gap-1.5">
+    <div className={cx("flex h-12 items-end gap-1.5", opacity)}>
       {[18, 24, 28, 36, 34, 42, 58, 72].map((height, i) => (
         <div
           key={i}
-          className={cx("flex-1 rounded-t-md bg-gradient-to-t", tone)}
+          className={cx("flex-1 rounded-t-md bg-gradient-to-t", chartTone)}
           style={{ height: `${height}%` }}
         />
       ))}
@@ -850,11 +886,23 @@ function DataConnectionFlow() {
   const activeDashboardMetrics = dashboardMetrics[activeRange as keyof typeof dashboardMetrics];
   const selectedInsight = activeDashboardMetrics[selectedDashboardCard];
 
+  const activeOutcomeCards = intelligenceOutcomeCards.filter((card) =>
+    card.requires.every((key) => activeSources.includes(key))
+  );
+
+  const nextLockedOutcome = intelligenceOutcomeCards.find((card) =>
+    card.requires.some((key) => !activeSources.includes(key))
+  );
+
   function toggleSource(key: SourceKey) {
     setActiveSources((current) => {
       if (current.includes(key)) return current.filter((item) => item !== key);
       return [...current, key];
     });
+  }
+
+  function getSource(key: SourceKey) {
+    return sources.find((source) => source.key === key)!;
   }
 
   useEffect(() => {
@@ -1176,46 +1224,97 @@ function DataConnectionFlow() {
             </div>
 
             <div className="rounded-[26px] border border-white/10 bg-white/[0.025] p-5 backdrop-blur-xl">
-              <div className="mb-5">
-                <p className="text-sm font-black uppercase tracking-[0.22em] text-slate-300">
-                  Intelligence Unlocked
-                </p>
-                <p className="mt-2 text-sm leading-6 text-slate-300">
-                  Six executive signals created from your connected systems.
-                </p>
+              <div className="mb-5 flex items-start justify-between gap-4">
+                <div>
+                  <p className="text-sm font-black uppercase tracking-[0.22em] text-slate-300">
+                    Intelligence Unlocked
+                  </p>
+                  <p className="mt-2 text-sm leading-6 text-slate-300">
+                    Toggle sources on the left — the cards below appear and disappear based on what data is connected.
+                  </p>
+                </div>
+
+                <div className="shrink-0 rounded-full bg-emerald-400/10 px-3 py-1 text-xs font-black text-emerald-300">
+                  {activeOutcomeCards.length} / {intelligenceOutcomeCards.length} showing
+                </div>
               </div>
 
-              <div className="grid gap-4 sm:grid-cols-2">
-                {intelligenceOutcomeCards.map((card) => {
-                  const Icon = card.icon;
+              <AnimatePresence mode="popLayout">
+                {activeOutcomeCards.length > 0 ? (
+                  <motion.div layout className="grid gap-4 sm:grid-cols-2">
+                    {activeOutcomeCards.map((card) => {
+                      const Icon = card.icon;
 
-                  return (
-                    <div
-                      key={card.title}
-                      className="group relative min-h-[150px] overflow-hidden rounded-[22px] border border-white/10 bg-slate-950/45 p-5 transition hover:-translate-y-1 hover:border-cyan-300/30 hover:bg-white/[0.045] hover:shadow-[0_0_35px_rgba(34,211,238,0.12)]"
-                    >
-                      <div className="mb-4 flex items-center gap-3">
-                        <div
-                          className={cx(
-                            "flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-white/90 shadow-[0_0_30px_rgba(34,211,238,0.12)]",
-                            card.tone
-                          )}
+                      return (
+                        <motion.div
+                          layout
+                          key={card.title}
+                          initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: -8, scale: 0.98 }}
+                          transition={{ duration: 0.18 }}
+                          className="group relative min-h-[158px] overflow-hidden rounded-[22px] border border-cyan-300/25 bg-slate-950/45 p-5 transition hover:-translate-y-1 hover:border-cyan-300/40 hover:bg-white/[0.045] hover:shadow-[0_0_35px_rgba(34,211,238,0.12)]"
                         >
-                          <Icon className="h-5 w-5" />
-                        </div>
+                          <div className="mb-4 flex items-start justify-between gap-3">
+                            <div className="flex items-center gap-3">
+                              <div
+                                className={cx(
+                                  "flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-white/90 shadow-[0_0_30px_rgba(34,211,238,0.12)]",
+                                  card.colorTone
+                                )}
+                              >
+                                <Icon className="h-5 w-5" />
+                              </div>
 
-                        <h3 className="text-base font-black leading-tight tracking-tight text-white">
-                          {card.title}
-                        </h3>
-                      </div>
+                              <div>
+                                <h3 className="text-base font-black leading-tight tracking-tight text-white">
+                                  {card.title}
+                                </h3>
+                                <p className="mt-1 text-xs leading-5 text-slate-300">
+                                  {card.unlockedText}
+                                </p>
+                              </div>
+                            </div>
 
-                      <div className={cx("relative", card.tone)}>
-                        <MiniOutcomeChart type={card.chart} tone={card.chartTone} />
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+                            <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-emerald-300" />
+                          </div>
+
+                          <MiniOutcomeChart
+                            type={card.chart}
+                            chartTone={card.chartTone}
+                            colorTone={card.colorTone}
+                            active
+                          />
+                        </motion.div>
+                      );
+                    })}
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    className="rounded-[22px] border border-dashed border-cyan-300/25 bg-slate-950/35 p-8 text-center"
+                  >
+                    <Lock className="mx-auto h-8 w-8 text-slate-500" />
+                    <p className="mt-4 text-lg font-black text-white">No intelligence signals unlocked yet</p>
+                    <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-400">
+                      Turn on Shopify, Amazon, Meta Ads, Google Ads, ShipStation, or HubSpot to generate live business intelligence cards.
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {nextLockedOutcome && (
+                <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.035] px-4 py-3 text-sm text-slate-300">
+                  <span className="font-black text-cyan-100">Next unlock:</span> {nextLockedOutcome.title} needs{" "}
+                  {nextLockedOutcome.requires
+                    .filter((key) => !activeSources.includes(key))
+                    .map((key) => getSource(key).name)
+                    .join(" + ")}
+                  .
+                </div>
+              )}
             </div>
           </div>
 
@@ -1244,6 +1343,10 @@ function DataConnectionFlow() {
                   </button>
                 ))}
               </div>
+            </div>
+
+            <div className="mb-3 rounded-2xl border border-cyan-300/15 bg-cyan-300/[0.06] px-4 py-3 text-sm text-cyan-100">
+              Click any dashboard card below — the AI recommendation updates to explain that exact metric.
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[0.58fr_1fr_1fr_1fr_0.92fr]">
@@ -1276,7 +1379,7 @@ function DataConnectionFlow() {
                     key={metric.title}
                     onClick={() => setSelectedDashboardCard(index)}
                     className={cx(
-                      "overflow-hidden rounded-[18px] border p-4 text-left transition",
+                      "relative overflow-hidden rounded-[18px] border p-4 text-left transition",
                       isTopChannel
                         ? selected
                           ? "border-purple-300/35 bg-purple-400/[0.14] shadow-[0_0_35px_rgba(168,85,247,0.18)]"
@@ -1286,6 +1389,11 @@ function DataConnectionFlow() {
                           : "border-cyan-300/20 bg-[linear-gradient(180deg,rgba(8,47,73,0.45),rgba(2,6,23,0.65))] hover:border-cyan-300/35"
                     )}
                   >
+                    {selected && (
+                      <div className="absolute right-3 top-3 rounded-full bg-cyan-300 px-2 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-slate-950 shadow-[0_0_18px_rgba(103,232,249,0.35)]">
+                        AI focus
+                      </div>
+                    )}
                     {isTopChannel ? (
                       <div className="flex h-full flex-col justify-between">
                         <div className="flex items-start justify-between gap-4">
@@ -1356,15 +1464,31 @@ function DataConnectionFlow() {
               })}
             </div>
 
-            <div className="mt-4 rounded-2xl border border-purple-300/20 bg-purple-400/10 p-4">
-              <div className="flex items-start gap-3">
-                <Sparkles className="mt-1 h-5 w-5 shrink-0 text-purple-200" />
-                <p className="leading-7 text-slate-300">
-                  <span className="font-black text-purple-100">AI Insight:</span>{" "}
-                  <span className="font-black text-white">{selectedInsight.title}:</span>{" "}
-                  {selectedInsight.insight}
-                </p>
-              </div>
+            <div className="mt-4 overflow-hidden rounded-2xl border border-purple-300/20 bg-purple-400/10 p-4">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={`${activeRange}-${selectedDashboardCard}`}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.18 }}
+                  className="flex items-start gap-3"
+                >
+                  <Sparkles className="mt-1 h-5 w-5 shrink-0 text-purple-200" />
+                  <div>
+                    <div className="mb-1 flex flex-wrap items-center gap-2">
+                      <span className="font-black text-purple-100">AI Insight Updated</span>
+                      <span className="rounded-full border border-purple-300/20 bg-purple-300/10 px-2 py-0.5 text-xs font-bold text-purple-100">
+                        Focus: {selectedInsight.title}
+                      </span>
+                    </div>
+                    <p className="leading-7 text-slate-300">
+                      <span className="font-black text-white">{selectedInsight.title}:</span>{" "}
+                      {selectedInsight.insight}
+                    </p>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
             </div>
           </div>
         </div>
