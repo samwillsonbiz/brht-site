@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowRight,
@@ -739,16 +739,6 @@ function MiniOutcomeChart({
 function DataConnectionFlow() {
   const [activeSources, setActiveSources] = useState<SourceKey[]>([]);
   const [selectedStageKey, setSelectedStageKey] = useState<string | null>(null);
-  const flowPanelRef = useRef<HTMLDivElement | null>(null);
-  const sourceButtonRefs = useRef<Record<SourceKey, HTMLButtonElement | null>>({
-    shopify: null,
-    amazon: null,
-    meta: null,
-    google: null,
-    shipstation: null,
-    hubspot: null,
-  });
-  const [connectorStarts, setConnectorStarts] = useState<Record<SourceKey, { x: number; y: number }> | null>(null);
 
   const demoStages = [
     {
@@ -759,14 +749,14 @@ function DataConnectionFlow() {
       trend: "+18.6% vs prior 7 days",
       requires: ["shopify", "amazon"] as SourceKey[],
       icon: CircleDollarSign,
-      colorTone: "text-cyan-500",
-      bubbleTone: "bg-cyan-100",
-      fillTone: "rgba(6,182,212,0.14)",
+      colorTone: "text-cyan-300",
+      bubbleTone: "bg-cyan-300/15 border-cyan-300/25",
+      fillTone: "rgba(34,211,238,0.16)",
       chartData: [318, 344, 331, 372, 356, 391, 418, 437],
       lockedText: "Connect Shopify + Amazon",
       aiTitle: "Revenue lift is marketplace-heavy.",
       aiBody:
-        "Total revenue is up 18.6%, but Amazon is contributing more of the increase than Shopify. That is good for volume, but margin may be thinner after marketplace fees and promo pressure.",
+        "Total revenue is up 18.6%, but Amazon is contributing more of the increase than Shopify. Volume is healthy, but marketplace fees and promo pressure may be masking weaker margin.",
       aiAction:
         "Review product-level margin before scaling. Push higher-margin Shopify bundles if Amazon is driving lower-profit volume.",
     },
@@ -778,14 +768,14 @@ function DataConnectionFlow() {
       trend: "+32.1% efficiency lift",
       requires: ["shopify", "amazon", "meta", "google"] as SourceKey[],
       icon: TrendingUp,
-      colorTone: "text-emerald-500",
-      bubbleTone: "bg-emerald-100",
-      fillTone: "rgba(16,185,129,0.14)",
+      colorTone: "text-emerald-300",
+      bubbleTone: "bg-emerald-300/15 border-emerald-300/25",
+      fillTone: "rgba(16,185,129,0.16)",
       chartData: [2.74, 3.05, 2.91, 3.36, 3.22, 3.74, 3.92, 4.21],
       lockedText: "Add Meta Ads + Google Ads",
       aiTitle: "Paid spend is working, but Meta and Google are playing different roles.",
       aiBody:
-        "Blended ROAS is 4.21x. Meta appears to be driving volume, while Google is capturing higher-intent demand. Scaling both equally could waste budget because the channels are not doing the same job.",
+        "Blended ROAS is 4.21x. Meta is likely driving volume, while Google is capturing higher-intent demand. Scaling both equally could waste budget because the channels are not doing the same job.",
       aiAction:
         "Increase Meta only on campaigns creating new customers. Keep Google focused on high-intent search terms and branded conversion capture.",
     },
@@ -797,9 +787,9 @@ function DataConnectionFlow() {
       trend: "-6.5% cost improvement",
       requires: ["shopify", "amazon", "meta", "google", "shipstation"] as SourceKey[],
       icon: Radar,
-      colorTone: "text-orange-500",
-      bubbleTone: "bg-orange-100",
-      fillTone: "rgba(249,115,22,0.14)",
+      colorTone: "text-orange-300",
+      bubbleTone: "bg-orange-300/15 border-orange-300/25",
+      fillTone: "rgba(249,115,22,0.16)",
       chartData: [9.14, 8.91, 9.02, 8.54, 8.31, 8.12, 7.96, 7.82],
       lockedText: "Add ShipStation",
       aiTitle: "Shipping cost is quietly changing channel profitability.",
@@ -816,9 +806,9 @@ function DataConnectionFlow() {
       trend: "+24.3% high-value segment",
       requires: ["shopify", "amazon", "meta", "google", "shipstation", "hubspot"] as SourceKey[],
       icon: BrainCircuit,
-      colorTone: "text-violet-500",
-      bubbleTone: "bg-violet-100",
-      fillTone: "rgba(139,92,246,0.14)",
+      colorTone: "text-violet-300",
+      bubbleTone: "bg-violet-300/15 border-violet-300/25",
+      fillTone: "rgba(139,92,246,0.16)",
       chartData: [156, 164, 171, 169, 184, 193, 202, 211],
       lockedText: "Add HubSpot",
       aiTitle: "High-value customers are now identifiable.",
@@ -879,107 +869,64 @@ function DataConnectionFlow() {
     });
   }
 
-  useEffect(() => {
-    function calculateConnectorStarts() {
-      const panel = flowPanelRef.current;
-      if (!panel) return;
-
-      const panelRect = panel.getBoundingClientRect();
-      const nextStarts = sources.reduce((acc, source) => {
-        const button = sourceButtonRefs.current[source.key];
-        if (!button) return acc;
-
-        const buttonRect = button.getBoundingClientRect();
-
-        acc[source.key] = {
-          x: ((buttonRect.right - panelRect.left) / panelRect.width) * 920,
-          y: ((buttonRect.top + buttonRect.height / 2 - panelRect.top) / panelRect.height) * 620,
-        };
-
-        return acc;
-      }, {} as Record<SourceKey, { x: number; y: number }>);
-
-      setConnectorStarts(nextStarts);
-    }
-
-    calculateConnectorStarts();
-    window.addEventListener("resize", calculateConnectorStarts);
-
-    const observer = new ResizeObserver(calculateConnectorStarts);
-    if (flowPanelRef.current) observer.observe(flowPanelRef.current);
-    sources.forEach((source) => {
-      const button = sourceButtonRefs.current[source.key];
-      if (button) observer.observe(button);
-    });
-
-    return () => {
-      window.removeEventListener("resize", calculateConnectorStarts);
-      observer.disconnect();
-    };
-  }, []);
-
   return (
     <section id="demo" className="scroll-mt-24 px-4 py-12 md:px-6 md:py-20">
       <div className="mx-auto max-w-[1536px]">
-        <div className="relative overflow-hidden rounded-[28px] border border-cyan-100/60 bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(240,249,255,0.94))] px-4 py-5 text-slate-950 shadow-[0_30px_100px_rgba(34,211,238,0.16)] md:rounded-[34px] md:px-8 md:py-8">
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(34,211,238,0.14),transparent_26%),radial-gradient(circle_at_88%_82%,rgba(168,85,247,0.10),transparent_30%),linear-gradient(180deg,rgba(255,255,255,0.8),rgba(255,255,255,0.35))]" />
-          <div className="pointer-events-none absolute inset-0 opacity-[0.35] [background-image:linear-gradient(to_right,#bae6fd_1px,transparent_1px),linear-gradient(to_bottom,#bae6fd_1px,transparent_1px)] [background-size:54px_54px]" />
+        <div className="relative overflow-hidden rounded-[28px] border border-white/10 bg-[#030712] px-4 py-5 text-white shadow-[0_0_120px_rgba(0,0,0,0.55)] md:rounded-[34px] md:px-8 md:py-8">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_38%_38%,rgba(34,211,238,0.22),transparent_30%),radial-gradient(circle_at_88%_84%,rgba(124,58,237,0.16),transparent_30%),radial-gradient(circle_at_18%_16%,rgba(16,185,129,0.13),transparent_26%)]" />
+          <div className="pointer-events-none absolute inset-0 opacity-[0.075] [background-image:linear-gradient(to_right,#fff_1px,transparent_1px),linear-gradient(to_bottom,#fff_1px,transparent_1px)] [background-size:48px_48px]" />
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(2,6,23,0.22)_48%,rgba(2,6,23,0.82)_100%)]" />
 
-          <div className="relative z-10 mb-6 overflow-hidden rounded-[26px] border border-cyan-100 bg-white/80 px-6 py-6 text-center shadow-[0_18px_60px_rgba(15,23,42,0.06)] backdrop-blur-xl">
-            <div className="pointer-events-none absolute -left-16 -top-16 h-56 w-56 rounded-full bg-cyan-200/40 blur-3xl" />
-            <div className="pointer-events-none absolute bottom-0 right-0 h-40 w-40 rounded-full bg-yellow-100/70 blur-3xl" />
+          <div className="relative z-10 mb-6 overflow-hidden rounded-[26px] border border-cyan-300/20 bg-white/[0.025] px-6 py-6 text-center shadow-[0_0_70px_rgba(34,211,238,0.08)] backdrop-blur-xl">
+            <div className="pointer-events-none absolute -left-16 -top-16 h-56 w-56 rounded-full bg-cyan-300/10 blur-3xl" />
+            <div className="pointer-events-none absolute bottom-0 right-0 h-40 w-40 rounded-full bg-emerald-300/10 blur-3xl" />
             <div className="relative mx-auto max-w-[1400px]">
-              <h2 className="text-[clamp(32px,7.5vw,64px)] font-black leading-none tracking-[-0.055em] text-slate-950 lg:whitespace-nowrap">
+              <h2 className="text-[clamp(32px,7.5vw,64px)] font-black leading-none tracking-[-0.055em] text-white drop-shadow-[0_0_28px_rgba(255,255,255,0.18)] lg:whitespace-nowrap">
                 Connect your systems. Unlock intelligence.
               </h2>
 
-              <p className="mt-3 text-[clamp(14px,1.25vw,19px)] font-medium leading-7 text-slate-600 xl:whitespace-nowrap">
+              <p className="mt-3 text-[clamp(14px,1.25vw,19px)] font-medium leading-7 text-slate-300 xl:whitespace-nowrap">
                 Toggle data sources below to see how BRHT progressively unlocks deeper business intelligence.
               </p>
             </div>
           </div>
 
           <div className="relative z-10 grid gap-5 xl:grid-cols-[0.32fr_0.68fr]">
-            <div ref={flowPanelRef} className="relative overflow-hidden rounded-[28px] border border-slate-200 bg-white/90 p-5 shadow-[0_20px_60px_rgba(15,23,42,0.06)] backdrop-blur-xl md:p-7">
-              <p className="text-sm font-black uppercase tracking-[0.22em] text-slate-950">
+            <div className="relative overflow-hidden rounded-[28px] border border-white/10 bg-white/[0.035] p-5 shadow-[0_20px_60px_rgba(0,0,0,0.22)] backdrop-blur-xl md:p-7">
+              <p className="text-sm font-black uppercase tracking-[0.22em] text-white">
                 Connect Your Data Sources
               </p>
-              <p className="mt-2 text-sm leading-6 text-slate-500">
+              <p className="mt-2 text-sm leading-6 text-slate-300">
                 Toggle any source to see live intelligence update.
               </p>
 
               <div className="relative mt-6 grid gap-3">
-                
-
                 {sources.map((source) => {
                   const active = activeSources.includes(source.key);
 
                   return (
                     <button
                       key={source.key}
-                      ref={(node) => {
-                        sourceButtonRefs.current[source.key] = node;
-                      }}
                       onClick={() => toggleSource(source.key)}
                       className={cx(
                         "relative z-10 flex h-[74px] items-center justify-between rounded-[22px] border px-4 text-left transition",
                         active
-                          ? `${source.borderTone} ${source.activeTone} shadow-[0_12px_35px_rgba(15,23,42,0.06)]`
-                          : "border-slate-200 bg-white hover:border-cyan-200 hover:bg-cyan-50/40",
+                          ? `${source.borderTone} ${source.activeTone} shadow-[0_0_30px_rgba(34,211,238,0.08)]`
+                          : "border-white/10 bg-white/[0.035] hover:border-cyan-300/25 hover:bg-white/[0.06]",
                       )}
                     >
                       <div className="flex items-center gap-3">
                         <SourceLogo source={source} size="md" />
                         <div>
-                          <p className="text-base font-black text-slate-950">{source.name}</p>
-                          <p className="text-sm text-slate-500">{source.type}</p>
+                          <p className="text-base font-black text-white">{source.name}</p>
+                          <p className="text-sm text-slate-400">{source.type}</p>
                         </div>
                       </div>
 
                       <div
                         className={cx(
                           "flex h-8 w-14 items-center rounded-full p-1 transition",
-                          active ? "bg-emerald-400" : "bg-slate-300",
+                          active ? "bg-emerald-400" : "bg-slate-700",
                         )}
                       >
                         <div
@@ -994,16 +941,16 @@ function DataConnectionFlow() {
                 })}
               </div>
 
-              <div className="mt-7 border-t border-slate-200 pt-5">
+              <div className="mt-7 border-t border-white/10 pt-5">
                 <div className="flex items-start gap-3">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-cyan-100 bg-cyan-50 text-cyan-700">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-cyan-300/25 bg-cyan-300/10 text-cyan-200">
                     <Database className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="text-lg font-black leading-tight text-slate-950">
+                    <p className="text-lg font-black leading-tight text-white">
                       Any data source. One intelligent system.
                     </p>
-                    <p className="mt-2 text-sm leading-6 text-slate-500">
+                    <p className="mt-2 text-sm leading-6 text-slate-300">
                       Shopify, ads, CRM, fulfillment, spreadsheets, finance tools, custom APIs — BRHT connects the stack you actually run on.
                     </p>
                   </div>
@@ -1011,18 +958,18 @@ function DataConnectionFlow() {
               </div>
             </div>
 
-            <div className="overflow-hidden rounded-[28px] border border-slate-200 bg-white/90 p-5 shadow-[0_20px_60px_rgba(15,23,42,0.06)] backdrop-blur-xl md:p-7">
+            <div className="overflow-hidden rounded-[28px] border border-white/10 bg-white/[0.035] p-5 shadow-[0_20px_60px_rgba(0,0,0,0.22)] backdrop-blur-xl md:p-7">
               <div className="mb-5 flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                 <div>
-                  <p className="text-sm font-black uppercase tracking-[0.18em] text-slate-950">
+                  <p className="text-sm font-black uppercase tracking-[0.18em] text-white">
                     Intelligence Unlocked
                   </p>
-                  <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500">
-                    Cards appear only when the right stack of systems is connected. Click a card to generate the AI recommendation below.
+                  <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">
+                    Cards appear only when the right stack of systems is connected. Click a card to update the recommendation below.
                   </p>
                 </div>
 
-                <div className="shrink-0 rounded-full bg-cyan-100 px-4 py-2 text-xs font-black text-cyan-700">
+                <div className="shrink-0 rounded-full bg-cyan-300/15 px-4 py-2 text-xs font-black text-cyan-100">
                   {unlockedStages.length} / 4 layers unlocked
                 </div>
               </div>
@@ -1042,26 +989,26 @@ function DataConnectionFlow() {
                         className={cx(
                           "relative flex min-h-[220px] flex-col overflow-hidden rounded-[22px] border p-4 text-left transition",
                           selected
-                            ? "border-cyan-300 bg-white shadow-[0_18px_45px_rgba(14,165,233,0.18)] ring-2 ring-cyan-100"
-                            : "border-cyan-200 bg-white shadow-[0_14px_35px_rgba(14,165,233,0.08)] hover:-translate-y-1 hover:border-cyan-300",
+                            ? "border-cyan-300/70 bg-slate-950/70 shadow-[0_0_38px_rgba(34,211,238,0.22)] ring-1 ring-cyan-300/25"
+                            : "border-cyan-300/20 bg-slate-950/45 shadow-[0_14px_35px_rgba(0,0,0,0.18)] hover:-translate-y-1 hover:border-cyan-300/45",
                         )}
                       >
                         <div className="mb-3 flex items-center justify-between gap-3">
-                          <div className={cx("flex h-10 w-10 items-center justify-center rounded-xl", stage.bubbleTone)}>
+                          <div className={cx("flex h-10 w-10 items-center justify-center rounded-xl border", stage.bubbleTone)}>
                             <Icon className={cx("h-5 w-5", stage.colorTone)} />
                           </div>
 
                           <span
                             className={cx(
                               "rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.16em]",
-                              selected ? "bg-cyan-100 text-cyan-700" : "bg-slate-100 text-slate-500",
+                              selected ? "bg-cyan-300/15 text-cyan-100" : "bg-white/10 text-slate-300",
                             )}
                           >
-                            {selected ? "AI Focus" : "Click"}
+                            {selected ? "Selected" : "Click"}
                           </span>
                         </div>
 
-                        <p className="text-lg font-black leading-tight text-slate-950">
+                        <p className="text-lg font-black leading-tight text-white">
                           {stage.title}
                         </p>
 
@@ -1069,16 +1016,16 @@ function DataConnectionFlow() {
                           {stage.metricLabel}
                         </p>
 
-                        <p className="mt-1 text-4xl font-black tracking-tight text-slate-950">
+                        <p className="mt-1 text-4xl font-black tracking-tight text-white">
                           {stage.value}
                         </p>
 
-                        <p className="mt-1 text-sm font-bold text-slate-500">
+                        <p className="mt-1 text-sm font-bold text-slate-300">
                           {stage.trend}
                         </p>
 
                         <div className="mt-auto pt-4">
-                          <div className="mb-1 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-400">
+                          <div className="mb-1 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500">
                             7-day trend
                           </div>
                           <svg viewBox="0 0 180 54" className="h-14 w-full overflow-visible">
@@ -1100,44 +1047,39 @@ function DataConnectionFlow() {
                   })}
                 </motion.div>
               ) : (
-                <div className="rounded-[22px] border border-dashed border-cyan-200 bg-cyan-50/40 p-7 text-center">
-                  <Lock className="mx-auto h-8 w-8 text-slate-400" />
-                  <p className="mt-3 text-lg font-black text-slate-950">
+                <div className="rounded-[22px] border border-dashed border-cyan-300/25 bg-slate-950/45 p-7 text-center">
+                  <Lock className="mx-auto h-8 w-8 text-slate-500" />
+                  <p className="mt-3 text-lg font-black text-white">
                     No intelligence cards unlocked yet
                   </p>
-                  <p className="mx-auto mt-2 max-w-lg text-sm leading-6 text-slate-500">
+                  <p className="mx-auto mt-2 max-w-lg text-sm leading-6 text-slate-400">
                     Start by connecting Shopify and Amazon. As more systems are toggled on, the intelligence cards will appear here.
                   </p>
                 </div>
               )}
 
               {nextStage && (
-                <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
-                  <span className="font-black text-slate-950">Next unlock:</span> {nextStage.title} needs{" "}
+                <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-slate-300">
+                  <span className="font-black text-white">Next unlock:</span> {nextStage.title} needs{" "}
                   {missingSourcesFor(nextStage).map(sourceName).join(" + ")}.
                 </div>
               )}
 
-              <div className="mt-5 rounded-[28px] border border-purple-200 bg-purple-50/60 p-5">
+              <div className="mt-5 rounded-[28px] border border-purple-300/20 bg-purple-400/10 p-5">
                 <div className="mb-4 flex items-center justify-between gap-4">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-purple-100 text-purple-600">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-purple-300/15 text-purple-200">
                       <Sparkles className="h-6 w-6" />
                     </div>
 
-                    <div>
-                      <h3 className="text-xl font-black text-slate-950">
-                        AI Intelligence & Recommendation
-                      </h3>
-                      <p className="text-sm text-slate-500">
-                        Select an unlocked card to generate operator guidance.
-                      </p>
-                    </div>
+                    <h3 className="text-xl font-black text-white">
+                      AI Intelligence & Recommendation
+                    </h3>
                   </div>
 
                   {selectedStage && (
-                    <span className="shrink-0 rounded-full bg-white px-4 py-2 text-sm font-black text-purple-600 shadow">
-                      Focus: {selectedStage.title}
+                    <span className="shrink-0 rounded-full border border-purple-300/20 bg-slate-950/70 px-4 py-2 text-sm font-black text-purple-100 shadow-[0_10px_30px_rgba(0,0,0,0.22)]">
+                      {selectedStage.title}
                     </span>
                   )}
                 </div>
@@ -1150,19 +1092,19 @@ function DataConnectionFlow() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -8 }}
                       transition={{ duration: 0.18 }}
-                      className="rounded-[22px] border border-purple-100 bg-white p-5 shadow-[0_15px_45px_rgba(15,23,42,0.06)]"
+                      className="rounded-[22px] border border-purple-300/20 bg-slate-950/70 p-5 shadow-[0_15px_45px_rgba(0,0,0,0.22)]"
                     >
-                      <p className="text-xl font-black text-slate-950">
+                      <p className="text-lg font-black leading-7 text-white">
                         {selectedStage.aiTitle}
                       </p>
 
-                      <p className="mt-3 max-w-5xl text-base leading-7 text-slate-600">
+                      <p className="mt-3 text-base leading-7 text-slate-300">
                         {selectedStage.aiBody}
                       </p>
 
-                      <div className="mt-4 rounded-2xl bg-purple-100/70 px-5 py-4 text-base font-black leading-7 text-purple-700">
+                      <p className="mt-4 rounded-2xl border border-purple-300/20 bg-purple-400/10 px-5 py-4 text-base font-black leading-7 text-purple-100">
                         Recommendation: {selectedStage.aiAction}
-                      </div>
+                      </p>
                     </motion.div>
                   ) : (
                     <motion.div
@@ -1171,12 +1113,12 @@ function DataConnectionFlow() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -8 }}
                       transition={{ duration: 0.18 }}
-                      className="rounded-[22px] border border-dashed border-purple-200 bg-white/70 p-6 text-center"
+                      className="rounded-[22px] border border-dashed border-purple-300/20 bg-slate-950/50 p-6 text-center"
                     >
-                      <p className="text-lg font-black text-slate-950">
+                      <p className="text-lg font-black text-white">
                         AI recommendation will appear here.
                       </p>
-                      <p className="mt-2 text-sm text-slate-500">
+                      <p className="mt-2 text-sm text-slate-400">
                         Unlock and click a data card above to see what BRHT would recommend.
                       </p>
                     </motion.div>
@@ -1190,7 +1132,6 @@ function DataConnectionFlow() {
     </section>
   );
 }
-
 
 export default function LandingPage() {
   const [menuOpen, setMenuOpen] = useState(false);
