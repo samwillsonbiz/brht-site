@@ -1372,7 +1372,7 @@ export default function LandingPage() {
                 10+ hrs
               </p>
               <p className="mt-1 text-sm font-semibold text-slate-700">
-                Saved weekly on leadership reporting.
+                Saved weekly on company-wide reporting.
               </p>
             </div>
 
@@ -1396,7 +1396,7 @@ export default function LandingPage() {
                 100+ tasks
               </p>
               <p className="mt-1 text-sm font-semibold text-slate-700">
-                Automated across reporting & operations.
+                Automated across teams & operations.
               </p>
             </div>
 
