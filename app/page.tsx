@@ -1381,10 +1381,10 @@ export default function LandingPage() {
                 EARLY VISIBILITY
               </p>
               <p className="mt-2 text-3xl font-black tracking-tight text-slate-950">
-                72 hrs sooner
+                3+ days
               </p>
               <p className="mt-1 text-sm font-semibold text-slate-700">
-                Operational problems surface faster.
+                Margin created for operational remedies.
               </p>
             </div>
 
@@ -1405,10 +1405,10 @@ export default function LandingPage() {
                 EXECUTIVE CLARITY
               </p>
               <p className="mt-2 text-3xl font-black tracking-tight text-slate-950">
-                1 command center
+                One command center
               </p>
               <p className="mt-1 text-sm font-semibold text-slate-700">
-                One operational view across the business.
+                Centralizing leadership focus & action.
               </p>
             </div>
           </div>
