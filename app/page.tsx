@@ -951,7 +951,7 @@ function DataConnectionFlow() {
                       Any data source. One intelligent system.
                     </p>
                     <p className="mt-2 text-sm leading-6 text-slate-300">
-                      Shopify, ads, CRM, fulfillment, spreadsheets, finance tools, custom APIs — BRHT connects the stack you actually run on.
+                      Ecommerce, ads, CRM, fulfillment, spreadsheets, finance tools, custom APIs. BRHT connects the stack you actually run on.
                     </p>
                   </div>
                 </div>
@@ -1429,7 +1429,7 @@ export default function LandingPage() {
                 See. Move. Think.
               </h2>
               <p className="mt-5 text-lg leading-8 text-slate-600">
-                BRHT connects intelligence, automation, and AI into one
+                We connect intelligence, automation, and AI into one
                 progressive operating layer.
               </p>
             </div>
