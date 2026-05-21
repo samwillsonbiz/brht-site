@@ -1369,10 +1369,10 @@ export default function LandingPage() {
                 WHAT BRHT DOES
               </p>
               <p className="mt-2 text-3xl font-black tracking-tight text-slate-950">
-                We build your operational intelligence layer
+                We build your operational layer
               </p>
               <p className="mt-1 text-sm font-semibold text-slate-700">
-                Custom dashboards, reporting systems, workflow automation, and AI insight built around how your business actually operates.
+                Custom dashboards, automation, and AI insight built around your business.
               </p>
             </div>
 
