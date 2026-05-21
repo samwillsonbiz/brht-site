@@ -347,7 +347,7 @@ const pillars = [
       "Turn repetitive processes into connected workflows that trigger alerts, reports, handoffs, and tasks automatically.",
   },
   {
-    icon: Brain,
+    icon: Lightbulb,
     label: "THINK",
     title: "AI operational insight",
     description:
