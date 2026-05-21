@@ -1572,7 +1572,7 @@ export default function LandingPage() {
             key={stage.step}
             className="relative grid items-center gap-10 lg:grid-cols-2 lg:gap-16"
           >
-            <div className="pointer-events-none absolute left-1/2 top-full hidden h-20 w-px -translate-x-1/2 bg-gradient-to-b from-cyan-300/50 to-transparent lg:block" />
+            
 
             {stage.imageSide === "left" ? (
               <>
