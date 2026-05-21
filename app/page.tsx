@@ -538,7 +538,7 @@ function LeadModal({ open, onClose }: { open: boolean; onClose: () => void }) {
                 <Sparkles className="h-6 w-6" />
               </div>
               <h3 className="text-3xl font-black tracking-tight">
-                Book a BRHT operations audit
+                Schedule a BRHT strategy session
               </h3>
               <p className="mt-3 leading-7 text-slate-300">
                 Tell us what systems you use and where the business feels dark.
@@ -1186,7 +1186,7 @@ export default function LandingPage() {
               Live Demo
             </SecondaryButton>
             <PrimaryButton onClick={() => setModalOpen(true)}>
-              Book Meeting
+              Schedule Strategy Session
             </PrimaryButton>
           </div>
 
@@ -1224,7 +1224,7 @@ export default function LandingPage() {
                   className="mt-2"
                   onClick={() => setModalOpen(true)}
                 >
-                  Book Audit
+                  Schedule Strategy Session
                 </PrimaryButton>
               </div>
             </motion.div>
@@ -1233,9 +1233,10 @@ export default function LandingPage() {
       </header>
 
       <main id="top">
-        <section className="relative px-4 pb-14 pt-12 md:px-6 md:pb-24 md:pt-20">
-          <div className="absolute left-1/2 top-24 -z-10 h-[34rem] w-[34rem] -translate-x-1/2 rounded-full bg-cyan-300/10 blur-3xl" />
-          <div className="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-[1.03fr_0.97fr] lg:gap-14">
+        <section className="relative overflow-hidden px-4 pb-16 pt-14 md:px-6 md:pb-28 md:pt-24">
+          <div className="absolute left-1/2 top-24 -z-10 h-[38rem] w-[38rem] -translate-x-1/2 rounded-full bg-cyan-300/10 blur-3xl" />
+
+          <div className="mx-auto grid max-w-7xl items-center gap-14 lg:grid-cols-[1.02fr_0.98fr]">
             <motion.div
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
@@ -1243,31 +1244,57 @@ export default function LandingPage() {
             >
               <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-cyan-300/25 bg-white/5 px-4 py-2 text-sm font-medium text-cyan-100 shadow-[0_0_40px_rgba(34,211,238,0.12)] backdrop-blur">
                 <SunMedium className="h-4 w-4 text-yellow-300" />
-                BI + automation + AI for operators who need clarity
+                Operational intelligence for growing businesses
               </div>
 
-              <h1 className="max-w-5xl text-[clamp(48px,13vw,84px)] font-black leading-[0.92] tracking-[-0.055em] text-white lg:text-8xl">
-                Turn scattered data into a living command center.
+              <h1 className="max-w-5xl text-[clamp(50px,12vw,86px)] font-black leading-[0.92] tracking-[-0.06em] text-white">
+                Connect your systems.
+                <br />
+                Run with clarity.
               </h1>
 
-              <p className="mt-6 max-w-2xl text-base leading-7 text-slate-300 md:text-xl md:leading-8">
-                BRHT connects your tools, centralizes your data, automates the
-                busywork, and uses AI to reveal what changed, what matters, and
-                what to do next.
+              <p className="mt-7 max-w-2xl text-lg leading-8 text-slate-300 md:text-[22px] md:leading-9">
+                BRHT connects your commerce, marketing, fulfillment, CRM, and operational
+                systems into one intelligent operating layer — combining business
+                intelligence, automation, and AI-driven operational insight.
               </p>
 
-              <div className="mt-9 flex">
+              <div className="mt-7 space-y-4">
+                {[
+                  "Replace fragmented reporting with one trusted command center",
+                  "Automate repetitive operational workflows and alerts",
+                  "Understand what changed, why it changed, and what to do next",
+                ].map((item) => (
+                  <div key={item} className="flex items-start gap-3">
+                    <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-cyan-200" />
+                    <p className="text-base leading-7 text-slate-300">{item}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-10 flex flex-wrap gap-4">
                 <PrimaryButton
-                  className="px-9"
+                  className="px-8"
                   onClick={() => setModalOpen(true)}
                 >
-                  Book Meeting <ArrowRight className="ml-2 h-4 w-4" />
+                  Schedule Strategy Session
+                  <ArrowRight className="ml-2 h-4 w-4" />
                 </PrimaryButton>
+
+                <SecondaryButton onClick={() => handleNav("#demo")}>
+                  Explore Live Demo
+                </SecondaryButton>
               </div>
+
+              <p className="mt-5 text-sm leading-6 text-slate-500">
+                Built for operators, founders, and leadership teams managing
+                multi-platform businesses with growing operational complexity.
+              </p>
             </motion.div>
 
             <div className="relative">
               <div className="absolute -inset-5 -z-10 rounded-[2.5rem] bg-gradient-to-br from-cyan-300/18 via-cyan-300/16 to-indigo-500/14 blur-2xl" />
+
               <div className="overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.055] text-white shadow-2xl shadow-cyan-950/30 backdrop-blur-2xl">
                 <div className="border-b border-white/10 bg-slate-950/70 p-6">
                   <div className="mb-6 flex items-center justify-between">
@@ -1275,15 +1302,18 @@ export default function LandingPage() {
                       <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-cyan-300 text-slate-950">
                         <LineChart className="h-5 w-5" />
                       </div>
+
                       <div>
                         <p className="text-sm text-cyan-200">
-                          BRHT command center
+                          BRHT operational layer
                         </p>
+
                         <h3 className="mt-1 text-2xl font-black tracking-tight">
-                          Operational signal
+                          Executive visibility
                         </h3>
                       </div>
                     </div>
+
                     <div className="rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1 text-xs font-bold text-emerald-200">
                       Live
                     </div>
@@ -1291,17 +1321,19 @@ export default function LandingPage() {
 
                   <div className="grid gap-3 sm:grid-cols-3">
                     {[
-                      ["Revenue", "$18.4k", "+18%"],
-                      ["Blended ROAS", "3.7x", "+0.4"],
-                      ["Delivery Lag", "2.8d", "Watch"],
+                      ["Net Revenue", "$482k", "+18.6%"],
+                      ["Blended ROAS", "4.21x", "Improving"],
+                      ["Delivery Cost", "$7.82", "-6.5%"],
                     ].map(([label, value, note]) => (
                       <div
                         key={label}
                         className="rounded-2xl border border-white/10 bg-white/5 p-4"
                       >
                         <p className="text-xs text-slate-400">{label}</p>
+
                         <div className="mt-2 flex items-end justify-between gap-2">
                           <p className="text-2xl font-black">{value}</p>
+
                           <span className="text-xs font-bold text-yellow-200">
                             {note}
                           </span>
@@ -1315,13 +1347,15 @@ export default function LandingPage() {
                   <div className="rounded-3xl border border-white/10 bg-slate-950/40 p-5 shadow-sm">
                     <div className="mb-4 flex items-center justify-between">
                       <div className="flex items-center gap-2 text-sm font-bold text-slate-200">
-                        <LineChart className="h-4 w-4 text-cyan-300" /> Revenue
-                        clarity
+                        <LineChart className="h-4 w-4 text-cyan-300" />
+                        Cross-platform visibility
                       </div>
+
                       <span className="rounded-full bg-emerald-300/10 px-3 py-1 text-xs font-bold text-emerald-200">
                         Signal improving
                       </span>
                     </div>
+
                     <div className="flex h-28 items-end gap-2">
                       {[42, 55, 49, 68, 62, 81, 74, 96, 88, 100, 92, 116].map(
                         (height, i) => (
@@ -1330,7 +1364,7 @@ export default function LandingPage() {
                             initial={{ height: 8 }}
                             animate={{ height: `${height / 1.25}%` }}
                             transition={{ duration: 0.75, delay: i * 0.035 }}
-                            className="flex-1 rounded-t-xl bg-gradient-to-t from-cyan-400 via-cyan-200 to-yellow-200 shadow-[0_0_18px_rgba(103,232,249,0.18)]"
+                            className="flex-1 rounded-t-xl bg-gradient-to-t from-cyan-400 via-cyan-200 to-yellow-200"
                           />
                         ),
                       )}
@@ -1340,19 +1374,25 @@ export default function LandingPage() {
                   <div className="grid gap-4 md:grid-cols-2">
                     <div className="rounded-3xl border border-yellow-300/15 bg-yellow-300/10 p-5">
                       <div className="mb-3 flex items-center gap-2 text-sm font-bold text-yellow-100">
-                        <Workflow className="h-4 w-4 text-yellow-200" />{" "}
+                        <Workflow className="h-4 w-4 text-yellow-200" />
                         Automation
                       </div>
+
                       <p className="text-sm leading-6 text-slate-300">
-                        Shipping cost alert sent. Owner notified.
+                        Margin alert triggered after rising fulfillment costs on a paid
+                        acquisition campaign.
                       </p>
                     </div>
+
                     <div className="rounded-3xl border border-cyan-300/15 bg-cyan-300/10 p-5">
                       <div className="mb-3 flex items-center gap-2 text-sm font-bold text-cyan-100">
-                        <Bot className="h-4 w-4 text-cyan-200" /> AI insight
+                        <Bot className="h-4 w-4 text-cyan-200" />
+                        AI insight
                       </div>
+
                       <p className="text-sm leading-6 text-slate-300">
-                        Meta is driving efficient Shopify revenue.
+                        Google Ads is producing fewer customers than Meta, but higher
+                        long-term customer value.
                       </p>
                     </div>
                   </div>
@@ -1361,60 +1401,74 @@ export default function LandingPage() {
             </div>
           </div>
         </section>
-
-        <section className="relative left-1/2 right-1/2 w-screen -translate-x-1/2 border-y border-cyan-200/35 bg-[linear-gradient(90deg,#dffbff_0%,#cbf7ef_48%,#fff0c7_100%)] px-6 py-7 text-slate-950 shadow-[0_0_80px_rgba(34,211,238,0.12)] md:py-9">
+        <section className="relative left-1/2 right-1/2 w-screen -translate-x-1/2 border-y border-cyan-200/35 bg-[linear-gradient(90deg,#dffbff_0%,#cbf7ef_48%,#fff0c7_100%)] px-6 py-8 text-slate-950 shadow-[0_0_80px_rgba(34,211,238,0.12)] md:py-10">
           <div className="mx-auto grid max-w-7xl gap-8 text-center md:grid-cols-4 md:divide-x md:divide-slate-950/15">
             <div className="px-4">
               <p className="text-[11px] font-black uppercase tracking-[0.24em] text-slate-600">
-                Built for
+                Operational Focus
               </p>
               <p className="mt-2 text-3xl font-black tracking-tight text-slate-950">
-                Operators
+                Ecommerce + Ops
               </p>
-              <p className="mt-1 text-sm font-semibold text-slate-700">
-                founders, CFOs, and teams who need clarity fast
+              <p className="mt-1 text-sm font-semibold leading-6 text-slate-700">
+                Built for companies managing revenue, ads, fulfillment, CRM, and
+                reporting across multiple systems.
               </p>
             </div>
 
             <div className="px-4">
               <p className="text-[11px] font-black uppercase tracking-[0.24em] text-slate-600">
-                Connect
+                Typical Rollout
               </p>
               <p className="mt-2 text-3xl font-black tracking-tight text-slate-950">
-                6 core systems
+                6–12 Weeks
               </p>
-              <p className="mt-1 text-sm font-semibold text-slate-700">
-                commerce, ads, fulfillment, CRM, and operations
+              <p className="mt-1 text-sm font-semibold leading-6 text-slate-700">
+                Strategy, integrations, dashboards, operational automation, and AI
+                visibility layered progressively.
               </p>
             </div>
 
             <div className="px-4">
               <p className="text-[11px] font-black uppercase tracking-[0.24em] text-slate-600">
-                Unlock
+                Connected Systems
               </p>
               <p className="mt-2 text-3xl font-black tracking-tight text-slate-950">
-                6 signals
+                One Source Of Truth
               </p>
-              <p className="mt-1 text-sm font-semibold text-slate-700">
-                cross-platform intelligence no single app shows
+              <p className="mt-1 text-sm font-semibold leading-6 text-slate-700">
+                Shopify, Amazon, ads, fulfillment, CRM, finance tools,
+                spreadsheets, and custom operational systems.
               </p>
             </div>
 
             <div className="px-4">
               <p className="text-[11px] font-black uppercase tracking-[0.24em] text-slate-600">
-                Result
+                Outcome
               </p>
               <p className="mt-2 text-3xl font-black tracking-tight text-slate-950">
-                BI + AI
+                Faster Decisions
               </p>
-              <p className="mt-1 text-sm font-semibold text-slate-700">
-                one command center for smarter decisions
+              <p className="mt-1 text-sm font-semibold leading-6 text-slate-700">
+                Earlier visibility, reduced reporting chaos, and operational clarity
+                leadership teams can actually act on.
               </p>
             </div>
           </div>
         </section>
-
         <DataConnectionFlow />
+
+        <div className="px-4 pb-12 md:px-6 md:pb-16">
+          <div className="mx-auto flex max-w-7xl justify-center">
+            <PrimaryButton
+              className="px-8"
+              onClick={() => setModalOpen(true)}
+            >
+              Schedule Strategy Session
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </PrimaryButton>
+          </div>
+        </div>
 
         <section
           id="platform"
@@ -1473,103 +1527,108 @@ export default function LandingPage() {
 
         <section
           id="process"
-          className="scroll-mt-24 px-4 py-16 md:px-6 md:py-24"
+          className="scroll-mt-24 px-4 py-20 md:px-6 md:py-28"
         >
-          <div className="mx-auto max-w-7xl">
+          <div className="mx-auto max-w-6xl">
             <div className="mx-auto max-w-4xl text-center">
               <p className="font-black uppercase tracking-[0.24em] text-cyan-200">
                 What Working With BRHT Looks Like
               </p>
               <h2 className="mt-4 text-4xl font-black tracking-tight text-white md:text-6xl">
-                From disconnected systems to operational clarity in four stages.
+                From fragmented operations to operational clarity.
               </h2>
-              <p className="mx-auto mt-5 max-w-3xl text-lg leading-8 text-slate-300">
-                BRHT becomes the operational layer between your tools,
-                reporting, workflows, and executive decision-making.
+              <p className="mx-auto mt-6 max-w-3xl text-lg leading-8 text-slate-300">
+                BRHT becomes the operational layer between your systems, reporting,
+                workflows, and executive decision-making.
               </p>
             </div>
 
-            <div className="relative mt-10 md:mt-16">
-              <div className="absolute left-0 right-0 top-10 hidden h-px bg-gradient-to-r from-cyan-300/0 via-cyan-300/60 to-emerald-300/0 lg:block" />
-
-              <div className="grid gap-6 lg:grid-cols-4">
-                {[
-                  {
-                    step: "01",
-                    title: "Discovery",
-                    caption: "Usually completed in 1–2 strategy sessions.",
-                    items: [
-                      "Audit your operational stack",
-                      "Identify reporting blind spots",
-                      "Define the KPIs that matter",
-                      "Prioritize highest-value integrations",
-                    ],
-                  },
-                  {
-                    step: "02",
-                    title: "Integration",
-                    caption: "Your systems begin speaking the same language.",
-                    items: [
-                      "Connect commerce, ads, CRM, and fulfillment",
-                      "Centralize data into a warehouse",
-                      "Validate source accuracy",
-                      "Map business logic clearly",
-                    ],
-                  },
-                  {
-                    step: "03",
-                    title: "Intelligence Layer",
-                    caption: "Your business becomes measurable in real time.",
-                    items: [
-                      "Executive dashboards",
-                      "Operational reporting",
-                      "Automated alerts",
-                      "AI summaries and anomaly detection",
-                    ],
-                  },
-                  {
-                    step: "04",
-                    title: "Ongoing Operations",
-                    caption: "BRHT evolves alongside your operations.",
-                    items: [
-                      "Continuous optimization",
-                      "Dashboard iteration",
-                      "Workflow refinement",
-                      "Strategic operational insights",
-                    ],
-                  },
-                ].map((stage) => (
-                  <div key={stage.step} className="relative">
-                    <div className="relative z-10 mb-6 flex h-20 w-20 items-center justify-center rounded-full border border-cyan-300/35 bg-slate-950 text-cyan-200 shadow-[0_0_35px_rgba(34,211,238,0.18)]">
-                      <span className="text-xl font-black">{stage.step}</span>
+            <div className="mt-16 space-y-16">
+              {[
+                {
+                  phase: "Month 1",
+                  title: "Visibility & alignment",
+                  description:
+                    "We audit your operational stack, connect core systems, centralize reporting, and establish the KPIs leadership actually needs to trust.",
+                  bullets: [
+                    "Connect Shopify, Amazon, ads, CRM, fulfillment, and operations",
+                    "Create centralized dashboards and reporting",
+                    "Validate data consistency across systems",
+                    "Eliminate manual reporting bottlenecks",
+                  ],
+                },
+                {
+                  phase: "Month 2",
+                  title: "Operational automation",
+                  description:
+                    "Once visibility exists, BRHT begins automating repetitive operational workflows and creating earlier awareness around issues.",
+                  bullets: [
+                    "Automated alerts and anomaly detection",
+                    "Slack summaries and reporting workflows",
+                    "Inventory and fulfillment monitoring",
+                    "Operational handoffs and process automation",
+                  ],
+                },
+                {
+                  phase: "Month 3+",
+                  title: "AI operational intelligence",
+                  description:
+                    "With enough business context connected, AI begins surfacing meaningful operational insight leadership can act on.",
+                  bullets: [
+                    "AI summaries explaining performance changes",
+                    "Cross-platform operational recommendations",
+                    "Margin and efficiency visibility",
+                    "Strategic reporting for leadership teams",
+                  ],
+                },
+              ].map((stage) => (
+                <div
+                  key={stage.phase}
+                  className="grid gap-10 border-b border-white/10 pb-16 last:border-none last:pb-0 lg:grid-cols-[0.3fr_0.7fr]"
+                >
+                  <div>
+                    <div className="inline-flex rounded-full border border-cyan-300/20 bg-cyan-300/10 px-4 py-2 text-sm font-black uppercase tracking-[0.18em] text-cyan-100">
+                      {stage.phase}
                     </div>
+                    <h3 className="mt-5 text-3xl font-black text-white">
+                      {stage.title}
+                    </h3>
+                  </div>
 
-                    <div className="rounded-[2rem] border border-white/10 bg-white/[0.045] p-7 shadow-xl shadow-slate-950/20 backdrop-blur-xl">
-                      <h3 className="text-2xl font-black text-white">
-                        {stage.title}
-                      </h3>
-                      <p className="mt-3 text-sm leading-6 text-cyan-100">
-                        {stage.caption}
-                      </p>
+                  <div>
+                    <p className="text-lg leading-8 text-slate-300">
+                      {stage.description}
+                    </p>
 
-                      <div className="mt-6 space-y-3">
-                        {stage.items.map((item) => (
-                          <div key={item} className="flex items-start gap-3">
-                            <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-cyan-200" />
-                            <p className="text-sm leading-6 text-slate-300">
-                              {item}
-                            </p>
-                          </div>
-                        ))}
-                      </div>
+                    <div className="mt-8 grid gap-4 md:grid-cols-2">
+                      {stage.bullets.map((item) => (
+                        <div
+                          key={item}
+                          className="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-4"
+                        >
+                          <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-cyan-200" />
+                          <p className="text-sm leading-6 text-slate-300">
+                            {item}
+                          </p>
+                        </div>
+                      ))}
                     </div>
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-16 flex justify-center">
+              <PrimaryButton
+                className="px-8"
+                onClick={() => setModalOpen(true)}
+              >
+                Schedule Strategy Session
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </PrimaryButton>
             </div>
           </div>
         </section>
-
         <section className="relative left-1/2 right-1/2 w-screen -translate-x-1/2 overflow-hidden bg-[#eef6fb] py-10 text-slate-950">
           <div className="mx-auto mb-7 max-w-7xl px-6 text-center">
             <p className="text-sm font-black uppercase tracking-[0.24em] text-cyan-700">
@@ -1587,27 +1646,27 @@ export default function LandingPage() {
                 {[
                   {
                     quote:
-                      "BRHT finally gave us one clear place to see what was happening across revenue, ads, and operations.",
-                    name: "Operations Lead",
-                    company: "Commerce Brand",
+                      "Before BRHT, we were manually reconciling Shopify, Amazon, and ad reporting every Monday morning. Now leadership reviews one dashboard and sees issues before they become expensive.",
+                    name: "Operations Director",
+                    company: "Multi-Channel Ecommerce Brand",
                   },
                   {
                     quote:
-                      "The biggest win was getting out of manual reporting. We can see problems earlier and act faster.",
+                      "The biggest shift wasn’t the dashboards. It was finally understanding which channels were producing valuable customers instead of just revenue volume.",
                     name: "Founder",
-                    company: "DTC Business",
+                    company: "DTC Consumer Brand",
                   },
                   {
                     quote:
-                      "Our systems were creating data, but not clarity. BRHT connected the dots in a way our team could actually use.",
-                    name: "CEO",
-                    company: "Growth Company",
+                      "BRHT gave us operational visibility we simply didn’t have before. Fulfillment issues, rising delivery costs, and campaign inefficiencies now surface much earlier.",
+                    name: "COO",
+                    company: "Growth Commerce Company",
                   },
                   {
                     quote:
-                      "The AI summaries make the dashboards easier to understand. We know what changed and what to look at next.",
-                    name: "Marketing Director",
-                    company: "Multi-Channel Seller",
+                      "We stopped spending hours building reporting for leadership. The team now gets automated operational summaries and knows exactly where to focus attention.",
+                    name: "Head of Operations",
+                    company: "Omnichannel Retail Business",
                   },
                 ].map((item, i) => (
                   <div
@@ -1649,6 +1708,23 @@ export default function LandingPage() {
           className="scroll-mt-24 px-4 py-16 md:px-6 md:py-20"
         >
           <div className="mx-auto max-w-7xl">
+            <div className="mb-12 text-center">
+              <p className="mx-auto max-w-2xl text-lg leading-8 text-slate-300">
+                Every BRHT implementation is tailored to the operational complexity,
+                reporting needs, and systems already running your business.
+              </p>
+
+              <div className="mt-8">
+                <PrimaryButton
+                  className="px-8"
+                  onClick={() => setModalOpen(true)}
+                >
+                  Schedule Strategy Session
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </PrimaryButton>
+              </div>
+            </div>
+
             <div className="mx-auto max-w-3xl text-center">
               <p className="font-bold uppercase tracking-[0.24em] text-cyan-200">
                 Pricing direction
@@ -1707,7 +1783,7 @@ export default function LandingPage() {
               Ready to turn the lights on?
             </h2>
             <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-slate-300">
-              Book a BRHT operations audit and see where better data,
+              Schedule a BRHT strategy session and see where better data,
               automation, and AI can create immediate leverage.
             </p>
             <div className="mt-8 flex justify-center">
@@ -1715,7 +1791,7 @@ export default function LandingPage() {
                 className="px-8"
                 onClick={() => setModalOpen(true)}
               >
-                Book Meeting <ArrowRight className="ml-2 h-4 w-4" />
+                Schedule Strategy Session <ArrowRight className="ml-2 h-4 w-4" />
               </PrimaryButton>
             </div>
           </div>
