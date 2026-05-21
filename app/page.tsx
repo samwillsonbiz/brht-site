@@ -1497,7 +1497,7 @@ export default function LandingPage() {
         {
           step: "01",
           title: "Discovery & Operational Mapping",
-          image: "/process/discovery.jpg",
+          image: "/process/discovery.png",
           imageSide: "left",
           body: [
             "We begin by understanding how your business actually operates — where reporting breaks down, where teams lose visibility, and where operational friction slows decision-making.",
@@ -1507,7 +1507,7 @@ export default function LandingPage() {
         {
           step: "02",
           title: "System Integration & Data Centralization",
-          image: "/process/integration.jpg",
+          image: "/process/integration.png",
           imageSide: "right",
           body: [
             "Your operational systems are connected into a centralized intelligence layer that unifies reporting across commerce, marketing, fulfillment, CRM, finance, and operations.",
@@ -1517,7 +1517,7 @@ export default function LandingPage() {
         {
           step: "03",
           title: "Automation & Operational Intelligence",
-          image: "/process/automation.jpg",
+          image: "/process/automation.png",
           imageSide: "left",
           body: [
             "Once visibility exists, BRHT introduces operational workflows, automated reporting, alerts, AI summaries, and anomaly detection that reduce manual coordination across teams.",
@@ -1527,7 +1527,7 @@ export default function LandingPage() {
         {
           step: "04",
           title: "Continuous Operational Evolution",
-          image: "/process/evolution.jpg",
+          image: "/process/evolution.png",
           imageSide: "right",
           body: [
             "BRHT evolves alongside the business — refining dashboards, expanding automation, improving visibility, and adapting operational intelligence as the company grows.",
