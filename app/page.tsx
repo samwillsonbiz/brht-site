@@ -1366,49 +1366,49 @@ export default function LandingPage() {
           <div className="mx-auto grid max-w-7xl gap-8 text-center md:grid-cols-4 md:divide-x md:divide-slate-950/15">
             <div className="px-4">
               <p className="text-[11px] font-black uppercase tracking-[0.24em] text-slate-600">
-                REPORTING TIME
+                REPORTING EFFICIENCY
               </p>
               <p className="mt-2 text-3xl font-black tracking-tight text-slate-950">
-                6+ hours → 20 minutes
+                10+ hrs
               </p>
               <p className="mt-1 text-sm font-semibold text-slate-700">
-                Leadership reporting centralized into one operational dashboard.
+                Saved weekly on leadership reporting.
               </p>
             </div>
 
             <div className="px-4">
               <p className="text-[11px] font-black uppercase tracking-[0.24em] text-slate-600">
-                Connect
+                EARLY VISIBILITY
               </p>
               <p className="mt-2 text-3xl font-black tracking-tight text-slate-950">
-                6 core systems
+                72 hrs sooner
               </p>
               <p className="mt-1 text-sm font-semibold text-slate-700">
-                commerce, ads, fulfillment, CRM, and operations
+                Operational problems surface faster.
               </p>
             </div>
 
             <div className="px-4">
               <p className="text-[11px] font-black uppercase tracking-[0.24em] text-slate-600">
-                Unlock
+                AUTOMATION IMPACT
               </p>
               <p className="mt-2 text-3xl font-black tracking-tight text-slate-950">
-                6 signals
+                100+ tasks
               </p>
               <p className="mt-1 text-sm font-semibold text-slate-700">
-                cross-platform intelligence no single app shows
+                Automated across reporting and operations.
               </p>
             </div>
 
             <div className="px-4">
               <p className="text-[11px] font-black uppercase tracking-[0.24em] text-slate-600">
-                Result
+                EXECUTIVE CLARITY
               </p>
               <p className="mt-2 text-3xl font-black tracking-tight text-slate-950">
-                BI + AI
+                1 command center
               </p>
               <p className="mt-1 text-sm font-semibold text-slate-700">
-                one command center for smarter decisions
+                One operational view across the business.
               </p>
             </div>
           </div>
