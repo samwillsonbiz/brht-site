@@ -1378,13 +1378,13 @@ export default function LandingPage() {
 
             <div className="px-4">
               <p className="text-[11px] font-black uppercase tracking-[0.24em] text-slate-600">
-                EARLY VISIBILITY
+                OPERATIONAL AWARENESS
               </p>
               <p className="mt-2 text-3xl font-black tracking-tight text-slate-950">
                 3+ days
               </p>
               <p className="mt-1 text-sm font-semibold text-slate-700">
-                Margin created for operational remedies.
+                Earlier visibility into operational risks.
               </p>
             </div>
 
