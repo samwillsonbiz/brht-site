@@ -1396,7 +1396,7 @@ export default function LandingPage() {
                 100+ tasks
               </p>
               <p className="mt-1 text-sm font-semibold text-slate-700">
-                Automated across teams & operations.
+                Automated across teams & workflows.
               </p>
             </div>
 
