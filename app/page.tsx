@@ -1473,103 +1473,124 @@ export default function LandingPage() {
         </section>
 
         <section
-          id="process"
-          className="scroll-mt-24 px-4 py-16 md:px-6 md:py-24"
-        >
-          <div className="mx-auto max-w-7xl">
-            <div className="mx-auto max-w-4xl text-center">
-              <p className="font-black uppercase tracking-[0.24em] text-cyan-200">
-                What Working With BRHT Looks Like
-              </p>
-              <h2 className="mt-4 text-4xl font-black tracking-tight text-white md:text-6xl">
-                From disconnected systems to operational clarity in four stages.
-              </h2>
-              <p className="mx-auto mt-5 max-w-3xl text-lg leading-8 text-slate-300">
-                BRHT becomes the operational layer between your tools,
-                reporting, workflows, and executive decision-making.
-              </p>
-            </div>
+  id="process"
+  className="scroll-mt-24 px-4 py-20 md:px-6 md:py-28"
+>
+  <div className="mx-auto max-w-6xl">
+    <div className="mx-auto max-w-4xl text-center">
+      <p className="font-black uppercase tracking-[0.24em] text-cyan-200">
+        What Working With BRHT Looks Like
+      </p>
 
-            <div className="relative mt-10 md:mt-16">
-              <div className="absolute left-0 right-0 top-10 hidden h-px bg-gradient-to-r from-cyan-300/0 via-cyan-300/60 to-emerald-300/0 lg:block" />
+      <h2 className="mt-4 text-4xl font-black tracking-tight text-white md:text-6xl">
+        From disconnected systems to operational clarity in four stages.
+      </h2>
 
-              <div className="grid gap-6 lg:grid-cols-4">
-                {[
-                  {
-                    step: "01",
-                    title: "Discovery",
-                    caption: "Usually completed in 1–2 strategy sessions.",
-                    items: [
-                      "Audit your operational stack",
-                      "Identify reporting blind spots",
-                      "Define the KPIs that matter",
-                      "Prioritize highest-value integrations",
-                    ],
-                  },
-                  {
-                    step: "02",
-                    title: "Integration",
-                    caption: "Your systems begin speaking the same language.",
-                    items: [
-                      "Connect commerce, ads, CRM, and fulfillment",
-                      "Centralize data into a warehouse",
-                      "Validate source accuracy",
-                      "Map business logic clearly",
-                    ],
-                  },
-                  {
-                    step: "03",
-                    title: "Intelligence Layer",
-                    caption: "Your business becomes measurable in real time.",
-                    items: [
-                      "Executive dashboards",
-                      "Operational reporting",
-                      "Automated alerts",
-                      "AI summaries and anomaly detection",
-                    ],
-                  },
-                  {
-                    step: "04",
-                    title: "Ongoing Operations",
-                    caption: "BRHT evolves alongside your operations.",
-                    items: [
-                      "Continuous optimization",
-                      "Dashboard iteration",
-                      "Workflow refinement",
-                      "Strategic operational insights",
-                    ],
-                  },
-                ].map((stage) => (
-                  <div key={stage.step} className="relative">
-                    <div className="relative z-10 mb-6 flex h-20 w-20 items-center justify-center rounded-full border border-cyan-300/35 bg-slate-950 text-cyan-200 shadow-[0_0_35px_rgba(34,211,238,0.18)]">
-                      <span className="text-xl font-black">{stage.step}</span>
-                    </div>
+      <p className="mx-auto mt-6 max-w-3xl text-lg leading-8 text-slate-300">
+        BRHT becomes the operational layer between your tools, reporting,
+        workflows, and executive decision-making.
+      </p>
+    </div>
 
-                    <div className="rounded-[2rem] border border-white/10 bg-white/[0.045] p-7 shadow-xl shadow-slate-950/20 backdrop-blur-xl">
-                      <h3 className="text-2xl font-black text-white">
-                        {stage.title}
-                      </h3>
-                      <p className="mt-3 text-sm leading-6 text-cyan-100">
-                        {stage.caption}
-                      </p>
-
-                      <div className="mt-6 space-y-3">
-                        {stage.items.map((item) => (
-                          <div key={item} className="flex items-start gap-3">
-                            <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-cyan-200" />
-                            <p className="text-sm leading-6 text-slate-300">
-                              {item}
-                            </p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+    <div className="relative mt-20 space-y-20">
+      {[
+        {
+          step: "01",
+          title: "Discovery & Operational Mapping",
+          image: "/process/discovery.jpg",
+          imageSide: "left",
+          body: [
+            "We begin by understanding how your business actually operates — where reporting breaks down, where teams lose visibility, and where operational friction slows decision-making.",
+            "BRHT audits the systems, workflows, reporting structures, and executive processes that drive the business day to day.",
+          ],
+        },
+        {
+          step: "02",
+          title: "System Integration & Data Centralization",
+          image: "/process/integration.jpg",
+          imageSide: "right",
+          body: [
+            "Your operational systems are connected into a centralized intelligence layer that unifies reporting across commerce, marketing, fulfillment, CRM, finance, and operations.",
+            "Leadership stops working from fragmented dashboards and disconnected spreadsheets.",
+          ],
+        },
+        {
+          step: "03",
+          title: "Automation & Operational Intelligence",
+          image: "/process/automation.jpg",
+          imageSide: "left",
+          body: [
+            "Once visibility exists, BRHT introduces operational workflows, automated reporting, alerts, AI summaries, and anomaly detection that reduce manual coordination across teams.",
+            "Leadership gains earlier visibility into risks, inefficiencies, and performance shifts.",
+          ],
+        },
+        {
+          step: "04",
+          title: "Continuous Operational Evolution",
+          image: "/process/evolution.jpg",
+          imageSide: "right",
+          body: [
+            "BRHT evolves alongside the business — refining dashboards, expanding automation, improving visibility, and adapting operational intelligence as the company grows.",
+            "The result is a more aligned, measurable, and operationally aware organization.",
+          ],
+        },
+      ].map((stage) => {
+        const image = (
+          <div className="relative">
+            <div className="absolute -inset-4 rounded-[2rem] bg-cyan-300/10 blur-2xl" />
+            <div className="relative overflow-hidden rounded-[1.75rem] border border-cyan-300/20 bg-white/[0.04] shadow-[0_24px_80px_rgba(0,0,0,0.35)]">
+              <img
+                src={stage.image}
+                alt={stage.title}
+                className="h-[280px] w-full object-cover md:h-[340px]"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/25 to-transparent" />
             </div>
           </div>
-        </section>
+        );
+
+        const copy = (
+          <div className="relative">
+            <div className="mb-6 inline-flex h-14 w-14 items-center justify-center rounded-full border border-cyan-300/50 bg-slate-950 text-xl font-black text-cyan-200 shadow-[0_0_35px_rgba(34,211,238,0.22)]">
+              {stage.step}
+            </div>
+
+            <h3 className="text-3xl font-black leading-tight text-white md:text-4xl">
+              {stage.title}
+            </h3>
+
+            <div className="mt-6 space-y-5 text-base leading-8 text-slate-300 md:text-lg">
+              {stage.body.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+            </div>
+          </div>
+        );
+
+        return (
+          <div
+            key={stage.step}
+            className="relative grid items-center gap-10 lg:grid-cols-2 lg:gap-16"
+          >
+            <div className="pointer-events-none absolute left-1/2 top-full hidden h-20 w-px -translate-x-1/2 bg-gradient-to-b from-cyan-300/50 to-transparent lg:block" />
+
+            {stage.imageSide === "left" ? (
+              <>
+                {image}
+                {copy}
+              </>
+            ) : (
+              <>
+                <div className="lg:order-2">{image}</div>
+                <div className="lg:order-1">{copy}</div>
+              </>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  </div>
+</section>
 
         <section className="relative left-1/2 right-1/2 w-screen -translate-x-1/2 overflow-hidden bg-[#eef6fb] py-10 text-slate-950">
           <div className="mx-auto mb-7 max-w-7xl px-6 text-center">
