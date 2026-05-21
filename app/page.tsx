@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowRight,
   Bot,
+  Brain,
   BrainCircuit,
   CheckCircle2,
   CircleDollarSign,
@@ -346,7 +347,7 @@ const pillars = [
       "Turn repetitive processes into connected workflows that trigger alerts, reports, handoffs, and tasks automatically.",
   },
   {
-    icon: BrainCircuit,
+    icon: Brain,
     label: "THINK",
     title: "AI operational insight",
     description:
