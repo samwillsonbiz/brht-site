@@ -1277,7 +1277,7 @@ export default function LandingPage() {
                       </div>
                       <div>
                         <p className="text-sm text-cyan-200">
-                          YOUR BUSINESS command center
+                          Your Business
                         </p>
                         <h3 className="mt-1 text-2xl font-black tracking-tight">
                           Custom Dashboard
@@ -1366,13 +1366,13 @@ export default function LandingPage() {
           <div className="mx-auto grid max-w-7xl gap-8 text-center md:grid-cols-4 md:divide-x md:divide-slate-950/15">
             <div className="px-4">
               <p className="text-[11px] font-black uppercase tracking-[0.24em] text-slate-600">
-                Built for
+                WHAT BRHT DOES
               </p>
               <p className="mt-2 text-3xl font-black tracking-tight text-slate-950">
-                Operators
+                We build your operational intelligence layer
               </p>
               <p className="mt-1 text-sm font-semibold text-slate-700">
-                founders, CFOs, and teams who need clarity fast
+                Custom dashboards, reporting systems, workflow automation, and AI insight built around how your business actually operates.
               </p>
             </div>
 
