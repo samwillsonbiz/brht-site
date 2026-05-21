@@ -1277,10 +1277,10 @@ export default function LandingPage() {
                       </div>
                       <div>
                         <p className="text-sm text-cyan-200">
-                          BRHT command center
+                          YOUR BUSINESS command center
                         </p>
                         <h3 className="mt-1 text-2xl font-black tracking-tight">
-                          Operational signal
+                          Custom Dashboard
                         </h3>
                       </div>
                     </div>
