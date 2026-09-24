@@ -598,8 +598,15 @@ export default function CfoPage() {
               <div className="absolute inset-0 opacity-[0.18] [background-image:linear-gradient(rgba(255,255,255,0.045)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.045)_1px,transparent_1px)] [background-size:38px_38px]" />
               <div className="absolute left-1/2 top-1/2 h-56 w-56 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#b8f34a]/10 blur-[70px]" />
 
-              <div className="relative grid items-center gap-8 lg:grid-cols-[1fr_0.9fr_1fr] lg:gap-10">
-                <div className="relative mx-auto h-[320px] w-full max-w-[360px]">
+              <div className="relative grid items-center gap-7 lg:grid-cols-[1fr_0.86fr_0.94fr] lg:gap-4">
+                <div className="pointer-events-none absolute left-[18%] right-[14%] top-1/2 z-0 hidden -translate-y-1/2 lg:block">
+                  <div className="h-px w-full bg-gradient-to-r from-[#34d6c3]/10 via-[#34d6c3]/75 via-[42%] to-[#b8f34a]/80" />
+                  <span className="absolute left-[39%] top-1/2 h-2.5 w-2.5 -translate-y-1/2 rounded-full bg-[#34d6c3] shadow-[0_0_16px_rgba(52,214,195,0.85)]" />
+                  <span className="absolute left-[66%] top-1/2 h-2.5 w-2.5 -translate-y-1/2 rounded-full bg-[#b8f34a] shadow-[0_0_18px_rgba(184,243,74,0.85)]" />
+                  <span className="absolute left-[48%] top-1/2 -translate-y-1/2 text-[13px] font-black text-[#69e2cf]/80">›</span>
+                  <span className="absolute left-[76%] top-1/2 -translate-y-1/2 text-[13px] font-black text-[#b8f34a]/80">›</span>
+                </div>
+                <div className="relative z-10 mx-auto h-[320px] w-full max-w-[360px]">
                   <div className="absolute left-1/2 top-1/2 h-24 w-24 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/10 bg-[#0f1b17] shadow-[0_0_40px_rgba(52,214,195,0.08)]">
                     <div className="grid h-full place-items-center text-center">
                       <div>
@@ -640,11 +647,10 @@ export default function CfoPage() {
                   ))}
                 </div>
 
-                <div className="relative flex min-h-[320px] items-center justify-center">
-                  <div className="absolute left-0 top-1/2 hidden h-px w-[30%] -translate-y-1/2 bg-gradient-to-r from-transparent via-[#57d7c4]/70 to-[#b8f34a] lg:block" />
-                  <div className="absolute right-0 top-1/2 hidden h-px w-[30%] -translate-y-1/2 bg-gradient-to-r from-[#b8f34a] via-[#8fe54a]/70 to-transparent lg:block" />
-
+                <div className="relative z-10 flex min-h-[320px] items-center justify-center">
                   <div className="relative grid h-[225px] w-[225px] place-items-center rounded-full border border-[#b8f34a]/25 bg-[#0f1b16] shadow-[0_0_70px_rgba(184,243,74,0.10)]">
+                    <span className="absolute left-[-7px] top-1/2 h-3.5 w-3.5 -translate-y-1/2 rounded-full border border-[#34d6c3]/50 bg-[#12312b] shadow-[0_0_14px_rgba(52,214,195,0.55)]" />
+                    <span className="absolute right-[-7px] top-1/2 h-3.5 w-3.5 -translate-y-1/2 rounded-full border border-[#b8f34a]/55 bg-[#233516] shadow-[0_0_16px_rgba(184,243,74,0.55)]" />
                     <div className="absolute inset-[-18px] rounded-full border border-[#b8f34a]/10" />
                     <div className="absolute inset-[-38px] rounded-full border border-white/[0.045]" />
                     <div className="absolute left-1/2 top-[-10px] h-3 w-3 -translate-x-1/2 rounded-full bg-[#b8f34a] shadow-[0_0_18px_rgba(184,243,74,0.7)]" />
@@ -665,7 +671,7 @@ export default function CfoPage() {
                   </div>
                 </div>
 
-                <div className="relative mx-auto w-full max-w-[390px]">
+                <div className="relative z-10 mx-auto w-full max-w-[382px] lg:-ml-2">
                   <div className="overflow-hidden rounded-[24px] border border-[#9bd739]/40 bg-[#101b17] shadow-[0_0_54px_rgba(155,215,57,0.09)]">
                     <div className="border-b border-white/[0.08] px-5 py-4">
                       <div className="flex items-center justify-between gap-5">
@@ -733,12 +739,22 @@ export default function CfoPage() {
                 </div>
               </div>
 
-              <div className="relative mt-8 flex justify-center gap-7 text-[10px] font-bold uppercase tracking-[0.18em] text-white/28">
-                <span>Connect</span>
-                <span className="text-[#b8f34a]/55">→</span>
-                <span>Understand</span>
-                <span className="text-[#b8f34a]/55">→</span>
-                <span>Decide</span>
+              <div className="relative mt-7 hidden lg:block">
+                <div className="absolute left-[12%] right-[10%] top-[7px] h-px bg-gradient-to-r from-[#34d6c3]/15 via-[#6edbc8]/35 to-[#b8f34a]/35" />
+                <div className="relative grid grid-cols-[1fr_0.86fr_0.94fr] items-center gap-4 text-center text-[10px] font-bold uppercase tracking-[0.2em]">
+                  <div className="mx-auto flex items-center gap-2 bg-[#0a1512] px-3 text-[#65d7c5]/70">
+                    <span className="h-1.5 w-1.5 rounded-full bg-[#34d6c3]" />
+                    Connect
+                  </div>
+                  <div className="mx-auto flex items-center gap-2 bg-[#0a1512] px-3 text-white/38">
+                    <span className="h-1.5 w-1.5 rounded-full bg-[#86d973]" />
+                    Understand
+                  </div>
+                  <div className="mx-auto flex items-center gap-2 bg-[#0a1512] px-3 text-[#b8f34a]/70">
+                    <span className="h-1.5 w-1.5 rounded-full bg-[#b8f34a]" />
+                    Decide
+                  </div>
+                </div>
               </div>
             </div>
           </div>
