@@ -159,7 +159,7 @@ function DualLineChart() {
   const actual = "18,74 52,62 84,64 116,55 148,58 180,45 212,48 244,30";
   const forecast = "18,68 52,58 84,54 116,56 148,44 180,48 212,38 244,18";
   return (
-    <svg viewBox="0 0 264 110" className="h-[112px] w-full">
+    <svg viewBox="0 0 264 110" className="h-[86px] w-full">
       <defs>
         <linearGradient id="revGlow" x1="0" x2="0" y1="0" y2="1">
           <stop offset="0%" stopColor="#b8f34a" stopOpacity="0.22" />
@@ -194,7 +194,7 @@ function DualLineChart() {
 
 function BarChart({ values }: { values: number[] }) {
   return (
-    <div className="mt-6 flex h-[105px] items-end gap-3">
+    <div className="mt-4 flex h-[76px] items-end gap-2.5">
       {values.map((v, i) => (
         <div key={i} className="flex-1">
           <div
@@ -209,7 +209,7 @@ function BarChart({ values }: { values: number[] }) {
 
 function AreaChart() {
   return (
-    <svg viewBox="0 0 264 110" className="mt-2 h-[112px] w-full">
+    <svg viewBox="0 0 264 110" className="mt-1 h-[86px] w-full">
       <defs>
         <linearGradient id="areaFill" x1="0" x2="0" y1="0" y2="1">
           <stop offset="0%" stopColor="#34d6c3" stopOpacity="0.44" />
@@ -229,8 +229,8 @@ function AreaChart() {
 
 function Dashboard() {
   return (
-    <div className="rounded-[26px] border border-white/[0.1] bg-[#0d1615]/96 p-5 shadow-[0_40px_100px_rgba(0,0,0,0.48)] backdrop-blur">
-      <div className="mb-4 flex items-center justify-between">
+    <div className="rounded-[24px] border border-white/[0.1] bg-[#0d1615]/96 p-4 shadow-[0_32px_90px_rgba(0,0,0,0.42)] backdrop-blur">
+      <div className="mb-3 flex items-center justify-between">
         <p className="text-[11px] font-bold uppercase tracking-[0.26em] text-white/60">
           Financial Overview
         </p>
@@ -240,19 +240,19 @@ function Dashboard() {
       </div>
 
       <div className="grid grid-cols-2 gap-4">
-        <div className="rounded-[18px] border border-white/10 bg-[#101917] p-5">
+        <div className="rounded-[16px] border border-white/10 bg-[#101917] p-4">
           <p className="text-[12px] font-semibold text-white/72">Revenue vs Forecast</p>
           <div className="mt-3 flex items-end gap-3">
-            <span className="text-[29px] font-black leading-none text-white">$2.4M</span>
+            <span className="text-[25px] font-black leading-none text-white">$2.4M</span>
             <span className="rounded-full bg-[#173826] px-2.5 py-1 text-[12px] font-bold text-[#7df786]">↑ 12%</span>
           </div>
           <DualLineChart />
         </div>
 
-        <div className="rounded-[18px] border border-white/10 bg-[#101917] p-5">
+        <div className="rounded-[16px] border border-white/10 bg-[#101917] p-4">
           <p className="text-[12px] font-semibold text-white/72">Cash Runway</p>
           <div className="mt-3 flex items-end gap-2">
-            <span className="text-[29px] font-black leading-none text-white">14</span>
+            <span className="text-[25px] font-black leading-none text-white">14</span>
             <span className="mb-1 text-[14px] text-white/75">months</span>
           </div>
           <BarChart values={[34,45,56,70,62,80,88,100]} />
@@ -261,24 +261,24 @@ function Dashboard() {
           </div>
         </div>
 
-        <div className="rounded-[18px] border border-white/10 bg-[#101917] p-5">
+        <div className="rounded-[16px] border border-white/10 bg-[#101917] p-4">
           <p className="text-[12px] font-semibold text-white/72">Gross Margin</p>
           <div className="mt-3 flex items-end gap-3">
-            <span className="text-[29px] font-black leading-none text-white">68%</span>
+            <span className="text-[25px] font-black leading-none text-white">68%</span>
             <span className="rounded-full bg-[#10352f] px-2.5 py-1 text-[12px] font-bold text-[#34d6c3]">↑ 6%</span>
           </div>
           <AreaChart />
         </div>
 
-        <div className="rounded-[18px] border border-white/10 bg-[#101917] p-5">
+        <div className="rounded-[16px] border border-white/10 bg-[#101917] p-4">
           <p className="text-[12px] font-semibold text-white/72">Operating Cash Flow</p>
-          <div className="mt-3 text-[29px] font-black leading-none text-white">$412K</div>
+          <div className="mt-3 text-[25px] font-black leading-none text-white">$412K</div>
           <BarChart values={[12,22,28,44,56,60,74,92]} />
         </div>
 
-        <div className="rounded-[18px] border border-white/10 bg-[#101917] p-5">
-          <p className="mb-5 text-[12px] font-semibold text-white/72">Scenario Planning</p>
-          <div className="space-y-5">
+        <div className="rounded-[16px] border border-white/10 bg-[#101917] p-4">
+          <p className="mb-3 text-[12px] font-semibold text-white/72">Scenario Planning</p>
+          <div className="space-y-3.5">
             {[
               ["Base Case", "14 months", "#34d6c3"],
               ["Growth Case", "22 months", "#69f2b0"],
@@ -295,12 +295,12 @@ function Dashboard() {
           </div>
         </div>
 
-        <div className="rounded-[18px] border border-[#9ae63a]/55 bg-[#111c13] p-5 shadow-[0_0_26px_rgba(158,230,58,0.08)]">
-          <div className="mb-5 flex items-center gap-3 text-[#b8f34a]">
+        <div className="rounded-[16px] border border-[#9ae63a]/55 bg-[#111c13] p-4 shadow-[0_0_24px_rgba(158,230,58,0.07)]">
+          <div className="mb-3 flex items-center gap-3 text-[#b8f34a]">
             <Sparkles className="h-5 w-5 fill-current" />
             <span className="text-[14px] font-extrabold">BRHT AI Insights</span>
           </div>
-          <div className="space-y-4 text-[13px] leading-6 text-white/72">
+          <div className="space-y-2.5 text-[12px] leading-5 text-white/72">
             {[
               "Revenue is pacing 12% ahead of plan.",
               "Consider increasing inventory for Q4.",
@@ -452,11 +452,9 @@ export default function CfoPage() {
 
       <main id="top">
         <section className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_83%_14%,rgba(157,230,58,0.12),transparent_22%),radial-gradient(circle_at_18%_28%,rgba(0,175,155,0.06),transparent_28%),linear-gradient(180deg,#06100f_0%,#07110f_54%,#081413_100%)]" />
-          <div className="absolute inset-0 opacity-[0.18] [background-image:repeating-linear-gradient(90deg,transparent_0,transparent_58px,rgba(85,120,115,0.18)_59px,transparent_82px)]" />
-          <div className="absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-[#081312] to-transparent" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_82%_10%,rgba(165,235,69,0.10)_0%,rgba(120,200,60,0.045)_24%,transparent_48%),radial-gradient(ellipse_at_18%_25%,rgba(38,160,140,0.045)_0%,transparent_40%),linear-gradient(180deg,#07100e_0%,#07110f_62%,#081311_100%)]" />
 
-          <div className="pointer-events-none absolute inset-x-0 bottom-[132px] h-40 opacity-75">
+          <div className="pointer-events-none absolute inset-x-0 bottom-[126px] h-36 opacity-55">
             <svg viewBox="0 0 1600 260" preserveAspectRatio="none" className="h-full w-full">
               <g fill="none" stroke="#d7ddd8" strokeOpacity="0.26" strokeWidth="1.1">
                 <path d="M0 220 Q110 188 220 214 T440 208 T660 214 T880 205 T1100 216 T1320 203 T1600 214" />
@@ -469,40 +467,31 @@ export default function CfoPage() {
           </div>
 
           <div className="relative mx-auto max-w-[1440px] px-6 lg:px-8">
-            <div className="grid min-h-[690px] items-center gap-12 py-14 lg:grid-cols-[0.96fr_1.04fr] lg:gap-16 lg:py-16">
-              <div className="max-w-[650px]">
-                <p className="mb-7 text-[12px] font-bold uppercase tracking-[0.34em] text-white/60">
+            <div className="grid min-h-[610px] items-start gap-12 py-16 lg:grid-cols-[0.98fr_1.02fr] lg:gap-14 lg:py-16">
+              <div className="max-w-[650px] lg:pt-4">
+                <p className="mb-6 text-[12px] font-bold uppercase tracking-[0.34em] text-white/60">
                   Strategic finance for operators
                 </p>
                 <h1 className="text-[54px] font-black leading-[0.98] tracking-[-0.06em] text-white sm:text-[62px] lg:text-[66px] xl:text-[72px]">
                   See the numbers.
-                  <span className="mt-1 block text-[#b8f34a]">Know what to do next.</span>
+                  <span className="mt-1 block text-[#b8f34a]">Know what to do.</span>
                 </h1>
-                <p className="mt-8 max-w-[650px] text-[17px] leading-8 text-white/76">
+                <p className="mt-7 max-w-[640px] text-[17px] leading-8 text-white/76">
                   BRHT CFO provides outsourced CFO advisory for growing companies that need clearer financial insights, stronger forecasting, and a strategic partner to help make better decisions.
                 </p>
-                <div className="mt-9 flex flex-wrap items-center gap-7">
+                <div className="mt-9">
                   <a
                     href={bookingHref}
                     className="inline-flex items-center gap-2 rounded-[14px] bg-[#b8f34a] px-8 py-5 text-[15px] font-extrabold text-[#09110f] shadow-[0_0_28px_rgba(184,243,74,0.12)] transition hover:bg-[#c5f760]"
                   >
                     Book a Strategy Call <ArrowRight className="h-5 w-5" />
                   </a>
-                  <a
-                    href="#resources"
-                    className="inline-flex items-center gap-3 border-b border-white/35 pb-1 text-[15px] font-bold text-white/88 transition hover:text-white"
-                  >
-                    Explore CFO Resources <ArrowRight className="h-5 w-5" />
-                  </a>
                 </div>
-                <p className="mt-9 text-[13px] font-medium text-white/45">
-                  Strategic. Data-driven. Built for operators.
-                </p>
               </div>
 
-              <div className="relative">
-                <div className="absolute -inset-12 rounded-full bg-[#b8f34a]/[0.04] blur-3xl" />
-                <div className="relative"><Dashboard /></div>
+              <div className="relative lg:mt-2 lg:max-w-[680px] lg:justify-self-end">
+                <div className="absolute -inset-10 rounded-full bg-[#b8f34a]/[0.035] blur-3xl" />
+                <div className="relative lg:w-[106%] lg:origin-top-right lg:scale-[0.93]"><Dashboard /></div>
               </div>
             </div>
           </div>
