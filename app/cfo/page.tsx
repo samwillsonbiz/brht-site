@@ -162,43 +162,43 @@ function DualLineChart() {
     <svg viewBox="0 0 264 110" className="h-[86px] w-full">
       <defs>
         <linearGradient id="revGlow" x1="0" x2="0" y1="0" y2="1">
-          <stop offset="0%" stopColor="#b8f34a" stopOpacity="0.22" />
-          <stop offset="100%" stopColor="#b8f34a" stopOpacity="0" />
+          <stop offset="0%" stopColor="#a7e83f" stopOpacity="0.22" />
+          <stop offset="100%" stopColor="#a7e83f" stopOpacity="0" />
         </linearGradient>
       </defs>
-      <g opacity="0.12" stroke="#ffffff">
+      <g opacity="0.11" stroke="#15231f">
         <line x1="12" y1="88" x2="252" y2="88" />
         <line x1="12" y1="63" x2="252" y2="63" />
         <line x1="12" y1="38" x2="252" y2="38" />
       </g>
-      <polyline points={actual} fill="none" stroke="#34d6c3" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" opacity="0.84" />
-      <polyline points={forecast} fill="none" stroke="#b8f34a" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" />
+      <polyline points={actual} fill="none" stroke="#25b9aa" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" opacity="0.9" />
+      <polyline points={forecast} fill="none" stroke="#9fdc38" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" />
       <path d="M18 68 L52 58 L84 54 L116 56 L148 44 L180 48 L212 38 L244 18 L244 88 L18 88 Z" fill="url(#revGlow)" />
       {[[18,68],[52,58],[84,54],[116,56],[148,44],[180,48],[212,38],[244,18]].map(([cx, cy], i) => (
-        <circle key={i} cx={cx} cy={cy} r="3.1" fill="#b8f34a" />
+        <circle key={i} cx={cx} cy={cy} r="3.1" fill="#9fdc38" />
       ))}
-      <g fill="#82908c" fontSize="8.6" fontWeight="600">
+      <g fill="#6f7d78" fontSize="8.6" fontWeight="600">
         {["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug"].map((m, i) => (
           <text key={m} x={18 + i * 32} y="102">{m}</text>
         ))}
       </g>
       <g transform="translate(150,90)" fontSize="9.3" fontWeight="700">
-        <circle cx="0" cy="0" r="4" fill="#34d6c3" />
-        <text x="10" y="3" fill="#9eb0ab">Actual</text>
-        <circle cx="62" cy="0" r="4" fill="#b8f34a" />
-        <text x="72" y="3" fill="#9eb0ab">Forecast</text>
+        <circle cx="0" cy="0" r="4" fill="#25b9aa" />
+        <text x="10" y="3" fill="#62716c">Actual</text>
+        <circle cx="62" cy="0" r="4" fill="#9fdc38" />
+        <text x="72" y="3" fill="#62716c">Forecast</text>
       </g>
     </svg>
   );
 }
 
-function BarChart({ values }: { values: number[] }) {
+function BarChart({ values, compact = false }: { values: number[]; compact?: boolean }) {
   return (
-    <div className="mt-4 flex h-[76px] items-end gap-2.5">
+    <div className={"flex items-end gap-2 " + (compact ? "h-[54px]" : "mt-4 h-[76px]")}>
       {values.map((v, i) => (
         <div key={i} className="flex-1">
           <div
-            className="w-full rounded-t-[4px] bg-gradient-to-t from-[#24453f] via-[#2b9f92] to-[#62e7d4] shadow-[0_0_12px_rgba(52,214,195,0.08)]"
+            className="w-full rounded-t-[4px] bg-gradient-to-t from-[#21746b] via-[#2bb6a6] to-[#69ddce]"
             style={{ height: v + "%" }}
           />
         </div>
@@ -212,22 +212,23 @@ function AreaChart() {
     <svg viewBox="0 0 264 110" className="mt-1 h-[86px] w-full">
       <defs>
         <linearGradient id="areaFill" x1="0" x2="0" y1="0" y2="1">
-          <stop offset="0%" stopColor="#34d6c3" stopOpacity="0.44" />
-          <stop offset="100%" stopColor="#34d6c3" stopOpacity="0.02" />
+          <stop offset="0%" stopColor="#25b9aa" stopOpacity="0.35" />
+          <stop offset="100%" stopColor="#25b9aa" stopOpacity="0.02" />
         </linearGradient>
       </defs>
-      <g opacity="0.12" stroke="#ffffff">
+      <g opacity="0.11" stroke="#15231f">
         <line x1="12" y1="88" x2="252" y2="88" />
         <line x1="12" y1="60" x2="252" y2="60" />
         <line x1="12" y1="34" x2="252" y2="34" />
       </g>
       <path d="M12 84 L36 80 L60 80 L84 72 L108 78 L132 74 L156 78 L180 62 L204 64 L228 44 L252 52 L252 88 L12 88 Z" fill="url(#areaFill)" />
-      <path d="M12 84 L36 80 L60 80 L84 72 L108 78 L132 74 L156 78 L180 62 L204 64 L228 44 L252 52" fill="none" stroke="#34d6c3" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M12 84 L36 80 L60 80 L84 72 L108 78 L132 74 L156 78 L180 62 L204 64 L228 44 L252 52" fill="none" stroke="#25b9aa" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
 
 function Dashboard() {
+  const card = "rounded-[16px] border border-[#dfe5e1] bg-white shadow-[0_10px_26px_rgba(0,0,0,0.05)]";
   return (
     <div className="rounded-[24px] border border-white/[0.1] bg-[#0d1615]/96 p-4 shadow-[0_32px_90px_rgba(0,0,0,0.42)] backdrop-blur">
       <div className="mb-3 flex items-center justify-between">
@@ -239,75 +240,80 @@ function Dashboard() {
         </span>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div className="rounded-[16px] border border-white/10 bg-[#101917] p-4">
-          <p className="text-[12px] font-semibold text-white/72">Revenue vs Forecast</p>
+      <div className="grid grid-cols-2 gap-3">
+        <div className={card + " min-h-[166px] p-4"}>
+          <p className="text-[12px] font-semibold text-[#66716d]">Revenue vs Forecast</p>
           <div className="mt-3 flex items-end gap-3">
-            <span className="text-[25px] font-black leading-none text-white">$2.4M</span>
-            <span className="rounded-full bg-[#173826] px-2.5 py-1 text-[12px] font-bold text-[#7df786]">↑ 12%</span>
+            <span className="text-[25px] font-black leading-none text-[#0e1815]">$2.4M</span>
+            <span className="rounded-full bg-[#e8f7e4] px-2.5 py-1 text-[12px] font-bold text-[#27833b]">↑ 12%</span>
           </div>
           <DualLineChart />
         </div>
 
-        <div className="rounded-[16px] border border-white/10 bg-[#101917] p-4">
-          <p className="text-[12px] font-semibold text-white/72">Cash Runway</p>
-          <div className="mt-3 flex items-end gap-2">
-            <span className="text-[25px] font-black leading-none text-white">14</span>
-            <span className="mb-1 text-[14px] text-white/75">months</span>
-          </div>
-          <BarChart values={[34,45,56,70,62,80,88,100]} />
-          <div className="mt-3 flex justify-between text-[8.5px] font-semibold uppercase tracking-[0.12em] text-white/38">
-            {["Apr","May","Jun","Jul","Aug","Sep","Oct","Nov"].map((m) => <span key={m}>{m}</span>)}
-          </div>
-        </div>
-
-        <div className="rounded-[16px] border border-white/10 bg-[#101917] p-4">
-          <p className="text-[12px] font-semibold text-white/72">Gross Margin</p>
+        <div className={card + " min-h-[166px] p-4"}>
+          <p className="text-[12px] font-semibold text-[#66716d]">Gross Margin</p>
           <div className="mt-3 flex items-end gap-3">
-            <span className="text-[25px] font-black leading-none text-white">68%</span>
-            <span className="rounded-full bg-[#10352f] px-2.5 py-1 text-[12px] font-bold text-[#34d6c3]">↑ 6%</span>
+            <span className="text-[25px] font-black leading-none text-[#0e1815]">68%</span>
+            <span className="rounded-full bg-[#e2f5f1] px-2.5 py-1 text-[12px] font-bold text-[#168f82]">↑ 6%</span>
           </div>
           <AreaChart />
         </div>
 
-        <div className="rounded-[16px] border border-white/10 bg-[#101917] p-4">
-          <p className="text-[12px] font-semibold text-white/72">Operating Cash Flow</p>
-          <div className="mt-3 text-[25px] font-black leading-none text-white">$412K</div>
-          <BarChart values={[12,22,28,44,56,60,74,92]} />
+        <div className={card + " h-[92px] p-4"}>
+          <div className="grid h-full grid-cols-[0.78fr_1.22fr] items-end gap-4">
+            <div className="self-start">
+              <p className="text-[12px] font-semibold text-[#66716d]">Cash Runway</p>
+              <div className="mt-3 flex items-end gap-2">
+                <span className="text-[25px] font-black leading-none text-[#0e1815]">14</span>
+                <span className="mb-0.5 text-[12px] font-medium text-[#66716d]">months</span>
+              </div>
+            </div>
+            <BarChart compact values={[34,45,56,70,62,80,88,100]} />
+          </div>
         </div>
 
-        <div className="rounded-[16px] border border-white/10 bg-[#101917] p-4">
-          <p className="mb-3 text-[12px] font-semibold text-white/72">Scenario Planning</p>
+        <div className={card + " h-[92px] p-4"}>
+          <div className="grid h-full grid-cols-[0.78fr_1.22fr] items-end gap-4">
+            <div className="self-start">
+              <p className="text-[12px] font-semibold text-[#66716d]">Operating Cash Flow</p>
+              <div className="mt-3 text-[25px] font-black leading-none text-[#0e1815]">$412K</div>
+            </div>
+            <BarChart compact values={[12,22,28,44,56,60,74,92]} />
+          </div>
+        </div>
+
+        <div className={card + " min-h-[150px] p-4"}>
+          <p className="mb-4 text-[12px] font-semibold text-[#66716d]">Scenario Planning</p>
           <div className="space-y-3.5">
             {[
-              ["Base Case", "14 months", "#34d6c3"],
-              ["Growth Case", "22 months", "#69f2b0"],
-              ["Downside Case", "6 months", "#f2cf4f"],
+              ["Base Case", "14 months", "#25b9aa"],
+              ["Growth Case", "22 months", "#65dca7"],
+              ["Downside Case", "6 months", "#efc84f"],
             ].map(([label, value, dot]) => (
-              <div key={label} className="flex items-center justify-between text-[13px] text-white/66">
+              <div key={label} className="flex items-center justify-between text-[13px] text-[#5f6d68]">
                 <span className="flex items-center gap-3">
                   <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: dot }} />
                   {label}
                 </span>
-                <span>{value}</span>
+                <span className="font-medium text-[#303c38]">{value}</span>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="rounded-[16px] border border-[#9ae63a]/55 bg-[#111c13] p-4 shadow-[0_0_24px_rgba(158,230,58,0.07)]">
-          <div className="mb-3 flex items-center gap-3 text-[#b8f34a]">
+        <div className="min-h-[150px] rounded-[16px] border border-[#9bd739] bg-[#fbfff4] p-4 shadow-[0_10px_26px_rgba(116,155,55,0.07)]">
+          <div className="mb-3 flex items-center gap-3 text-[#6f9f19]">
             <Sparkles className="h-5 w-5 fill-current" />
             <span className="text-[14px] font-extrabold">BRHT AI Insights</span>
           </div>
-          <div className="space-y-2.5 text-[12px] leading-5 text-white/72">
+          <div className="space-y-2.5 text-[12px] leading-5 text-[#58645f]">
             {[
               "Revenue is pacing 12% ahead of plan.",
               "Consider increasing inventory for Q4.",
               "Your runway could extend to 22 months with the proposed pricing change.",
             ].map((item) => (
               <div key={item} className="flex items-start gap-3">
-                <span className="mt-1.5 grid h-4 w-4 place-items-center rounded-full border border-[#34d6c3]/50 text-[9px] text-[#34d6c3]">●</span>
+                <span className="mt-1.5 grid h-4 w-4 place-items-center rounded-full border border-[#25b9aa]/50 text-[9px] text-[#25b9aa]">●</span>
                 <p>{item}</p>
               </div>
             ))}
