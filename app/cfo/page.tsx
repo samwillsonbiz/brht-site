@@ -598,53 +598,66 @@ export default function CfoPage() {
               <div className="absolute inset-0 opacity-[0.18] [background-image:linear-gradient(rgba(255,255,255,0.045)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.045)_1px,transparent_1px)] [background-size:38px_38px]" />
               <div className="absolute left-1/2 top-1/2 h-56 w-56 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#b8f34a]/10 blur-[70px]" />
 
-              <div className="relative grid items-center gap-7 lg:grid-cols-[1fr_0.86fr_0.94fr] lg:gap-4">
-                <div className="pointer-events-none absolute left-[18%] right-[14%] top-1/2 z-0 hidden -translate-y-1/2 lg:block">
+              <div className="relative grid items-center gap-7 lg:grid-cols-[0.98fr_0.84fr_0.98fr] lg:gap-4">
+                <div className="pointer-events-none absolute left-[21%] right-[13%] top-1/2 z-0 hidden -translate-y-1/2 lg:block">
                   <div className="h-px w-full bg-gradient-to-r from-[#34d6c3]/10 via-[#34d6c3]/75 via-[42%] to-[#b8f34a]/80" />
                   <span className="absolute left-[39%] top-1/2 h-2.5 w-2.5 -translate-y-1/2 rounded-full bg-[#34d6c3] shadow-[0_0_16px_rgba(52,214,195,0.85)]" />
                   <span className="absolute left-[66%] top-1/2 h-2.5 w-2.5 -translate-y-1/2 rounded-full bg-[#b8f34a] shadow-[0_0_18px_rgba(184,243,74,0.85)]" />
                   <span className="absolute left-[48%] top-1/2 -translate-y-1/2 text-[13px] font-black text-[#69e2cf]/80">›</span>
                   <span className="absolute left-[76%] top-1/2 -translate-y-1/2 text-[13px] font-black text-[#b8f34a]/80">›</span>
                 </div>
-                <div className="relative z-10 mx-auto h-[320px] w-full max-w-[360px]">
-                  <div className="absolute left-1/2 top-1/2 h-24 w-24 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/10 bg-[#0f1b17] shadow-[0_0_40px_rgba(52,214,195,0.08)]">
-                    <div className="grid h-full place-items-center text-center">
-                      <div>
-                        <p className="text-[11px] font-black uppercase tracking-[0.22em] text-white/35">Your</p>
-                        <p className="mt-1 text-[19px] font-black text-white">DATA</p>
+                <div className="relative z-10 mx-auto w-full max-w-[382px] lg:mr-2">
+                  <div className="relative overflow-hidden rounded-[24px] border border-[#2b4b42] bg-[#101b17] shadow-[0_0_54px_rgba(52,214,195,0.07)]">
+                    <span className="absolute right-[-7px] top-1/2 h-3.5 w-3.5 -translate-y-1/2 rounded-full border border-[#34d6c3]/55 bg-[#12312b] shadow-[0_0_14px_rgba(52,214,195,0.6)]" />
+
+                    <div className="border-b border-white/[0.08] px-5 py-4">
+                      <div className="flex items-center justify-between gap-5">
+                        <div>
+                          <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-[#60d9c7]">
+                            Connected sources
+                          </p>
+                          <h3 className="mt-1 text-[28px] font-black leading-none text-white">
+                            Your Data
+                          </h3>
+                        </div>
+                        <div className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-[#34d6c3]/20 bg-[#34d6c3]/10 text-[#60d9c7]">
+                          <Settings2 className="h-5 w-5" />
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <svg viewBox="0 0 360 320" className="absolute inset-0 h-full w-full">
-                    <g fill="none" stroke="#3b5d53" strokeWidth="1.2" strokeDasharray="5 7" opacity="0.55">
-                      <path d="M88 54 C120 92 136 116 166 145" />
-                      <path d="M272 54 C238 92 220 116 194 145" />
-                      <path d="M66 160 C112 160 132 160 166 160" />
-                      <path d="M294 160 C248 160 228 160 194 160" />
-                      <path d="M92 266 C124 226 142 204 169 177" />
-                      <path d="M268 266 C236 226 218 204 191 177" />
-                    </g>
-                  </svg>
-
-                  {[
-                    { icon: CircleDollarSign, label: "Finance", cls: "left-[26px] top-[26px]" },
-                    { icon: BarChart3, label: "Commerce", cls: "right-[24px] top-[26px]" },
-                    { icon: Coins, label: "Banking", cls: "left-[2px] top-[126px]" },
-                    { icon: Users, label: "CRM", cls: "right-[2px] top-[126px]" },
-                    { icon: Gauge, label: "Operations", cls: "left-[30px] bottom-[18px]" },
-                    { icon: Settings2, label: "Systems", cls: "right-[30px] bottom-[18px]" },
-                  ].map(({ icon: Icon, label, cls }) => (
-                    <div
-                      key={label}
-                      className={"absolute " + cls + " flex h-[72px] w-[96px] flex-col items-center justify-center rounded-2xl border border-white/[0.09] bg-white/[0.045] shadow-[0_10px_30px_rgba(0,0,0,0.16)]"}
-                    >
-                      <Icon className="h-5 w-5 text-[#60d9c7]" strokeWidth={1.8} />
-                      <span className="mt-2 text-[10px] font-bold uppercase tracking-[0.12em] text-white/46">
-                        {label}
-                      </span>
+                    <div className="grid grid-cols-2 gap-0">
+                      {[
+                        { icon: CircleDollarSign, label: "Finance" },
+                        { icon: BarChart3, label: "Commerce" },
+                        { icon: Coins, label: "Banking" },
+                        { icon: Users, label: "CRM" },
+                        { icon: Gauge, label: "Operations" },
+                        { icon: Settings2, label: "Systems" },
+                      ].map(({ icon: Icon, label }, index) => (
+                        <div
+                          key={label}
+                          className={
+                            "flex items-center gap-3 px-5 py-3.5 " +
+                            (index % 2 === 0 ? "border-r border-white/[0.07] " : "") +
+                            (index < 4 ? "border-b border-white/[0.07]" : "")
+                          }
+                        >
+                          <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-[#34d6c3]/35 bg-[#34d6c3]/10 text-[#60d9c7]">
+                            <Icon className="h-[18px] w-[18px]" strokeWidth={1.9} />
+                          </div>
+                          <div>
+                            <p className="text-[8.5px] font-bold uppercase tracking-[0.18em] text-white/30">
+                              Source
+                            </p>
+                            <p className="mt-1 text-[12.5px] font-extrabold leading-[1.2] text-white/82">
+                              {label}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  ))}
+                  </div>
                 </div>
 
                 <div className="relative z-10 flex min-h-[320px] items-center justify-center">
@@ -741,7 +754,7 @@ export default function CfoPage() {
 
               <div className="relative mt-7 hidden lg:block">
                 <div className="absolute left-[12%] right-[10%] top-[7px] h-px bg-gradient-to-r from-[#34d6c3]/15 via-[#6edbc8]/35 to-[#b8f34a]/35" />
-                <div className="relative grid grid-cols-[1fr_0.86fr_0.94fr] items-center gap-4 text-center text-[10px] font-bold uppercase tracking-[0.2em]">
+                <div className="relative grid grid-cols-[0.98fr_0.84fr_0.98fr] items-center gap-4 text-center text-[10px] font-bold uppercase tracking-[0.2em]">
                   <div className="mx-auto flex items-center gap-2 bg-[#0a1512] px-3 text-[#65d7c5]/70">
                     <span className="h-1.5 w-1.5 rounded-full bg-[#34d6c3]" />
                     Connect
