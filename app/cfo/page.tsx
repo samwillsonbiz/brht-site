@@ -848,6 +848,146 @@ export default function CfoPage() {
           </div>
         </section>
 
+        <section id="pricing" className="relative overflow-hidden border-t border-white/[0.06] bg-[#07100e] py-20 text-white md:py-24">
+          <div className="absolute left-1/2 top-0 h-72 w-[720px] -translate-x-1/2 rounded-full bg-[#b8f34a]/[0.045] blur-[110px]" />
+          <div className="relative mx-auto max-w-[1240px] px-5 md:px-8">
+            <div className="text-center">
+              <p className="mb-4 text-[10px] font-extrabold uppercase tracking-[0.28em] text-[#b8f34a]">
+                Pricing
+              </p>
+              <h2 className="mx-auto max-w-3xl text-4xl font-black leading-[1.02] tracking-[-0.045em] md:text-5xl">
+                CFO support that scales with you.
+              </h2>
+              <p className="mx-auto mt-5 max-w-xl text-[14px] leading-6 text-white/52">
+                Start with the level of strategic finance support your business needs today. Scale the engagement as complexity grows.
+              </p>
+            </div>
+
+            <div className="mt-12 grid gap-5 lg:grid-cols-3">
+              {[
+                {
+                  name: "Advisory Core",
+                  eyebrow: "Essential CFO guidance",
+                  price: "$2,500",
+                  suffix: "/ month",
+                  description: "For growing businesses that need senior financial perspective without a full embedded CFO.",
+                  features: [
+                    "Monthly CFO strategy session",
+                    "KPI and management reporting review",
+                    "Cash flow and runway oversight",
+                    "Quarterly forecast refresh",
+                    "Async strategic finance support",
+                  ],
+                  featured: false,
+                },
+                {
+                  name: "Growth CFO",
+                  eyebrow: "Most popular",
+                  price: "$4,500",
+                  suffix: "/ month",
+                  description: "For leadership teams that need an active CFO partner across planning, reporting and decision-making.",
+                  features: [
+                    "Bi-weekly CFO strategy sessions",
+                    "Rolling forecasts and scenario planning",
+                    "Management reporting and KPI design",
+                    "Pricing and margin analysis",
+                    "Finance systems guidance",
+                    "Investor and lender support",
+                  ],
+                  featured: true,
+                },
+                {
+                  name: "Embedded CFO",
+                  eyebrow: "High-touch partnership",
+                  price: "$7,500",
+                  suffix: "/ month",
+                  description: "For more complex companies that need senior finance deeply involved in the leadership rhythm.",
+                  features: [
+                    "Weekly CFO partnership",
+                    "Leadership and board participation",
+                    "Capital planning and strategic modeling",
+                    "Board and investor reporting",
+                    "Fundraising and transaction support",
+                    "Priority strategic finance support",
+                  ],
+                  featured: false,
+                },
+              ].map((plan) => (
+                <article
+                  key={plan.name}
+                  className={
+                    "relative flex h-full flex-col rounded-[22px] border p-7 " +
+                    (plan.featured
+                      ? "border-[#9bd739]/70 bg-[#101d16] shadow-[0_0_55px_rgba(155,215,57,0.10)]"
+                      : "border-white/[0.09] bg-[#0d1815]")
+                  }
+                >
+                  {plan.featured && (
+                    <div className="absolute -top-3 left-7 rounded-full bg-[#b8f34a] px-3 py-1 text-[9px] font-black uppercase tracking-[0.15em] text-[#07100e]">
+                      Most popular
+                    </div>
+                  )}
+
+                  <div>
+                    <p
+                      className={
+                        "text-[10px] font-bold uppercase tracking-[0.2em] " +
+                        (plan.featured ? "text-[#b8f34a]/75" : "text-white/36")
+                      }
+                    >
+                      {plan.eyebrow}
+                    </p>
+                    <h3 className="mt-2 text-[24px] font-black tracking-[-0.03em] text-white">
+                      {plan.name}
+                    </h3>
+                    <p className="mt-4 min-h-[66px] text-[13px] leading-6 text-white/52">
+                      {plan.description}
+                    </p>
+                  </div>
+
+                  <div className="mt-7 flex items-end gap-2 border-b border-white/[0.08] pb-7">
+                    <span className="text-[42px] font-black leading-none tracking-[-0.045em] text-white">
+                      {plan.price}
+                    </span>
+                    <span className="mb-1 text-[12px] font-semibold text-white/38">
+                      {plan.suffix}
+                    </span>
+                  </div>
+
+                  <div className="mt-7 flex-1 space-y-4">
+                    {plan.features.map((feature) => (
+                      <div key={feature} className="flex items-start gap-3">
+                        <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-[#b8f34a]/10 text-[11px] font-black text-[#b8f34a]">
+                          ✓
+                        </span>
+                        <span className="text-[13px] leading-5 text-white/66">
+                          {feature}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <a
+                    href={bookingHref}
+                    className={
+                      "mt-8 inline-flex items-center justify-center gap-2 rounded-[12px] px-5 py-4 text-[13px] font-extrabold transition " +
+                      (plan.featured
+                        ? "bg-[#b8f34a] text-[#07100e] hover:bg-[#c5f760]"
+                        : "border border-white/15 bg-white/[0.035] text-white hover:bg-white/[0.07]")
+                    }
+                  >
+                    Book a Strategy Call <ArrowRight className="h-4 w-4" />
+                  </a>
+                </article>
+              ))}
+            </div>
+
+            <p className="mt-7 text-center text-[11px] leading-5 text-white/32">
+              Flexible monthly engagements. Final scope and pricing are tailored to your business, complexity and level of support required.
+            </p>
+          </div>
+        </section>
+
         <section id="resources" className="border-t border-black/[0.05] bg-[#f6f6f1] py-20 text-[#101714]">
           <div className="mx-auto max-w-[1240px] px-5 md:px-8">
             <div className="grid gap-6 lg:grid-cols-[1fr_0.75fr] lg:items-end">
