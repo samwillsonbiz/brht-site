@@ -4,9 +4,6 @@ import React, { useState } from "react";
 import {
   ArrowRight,
   BarChart3,
-  BriefcaseBusiness,
-  Building2,
-  Check,
   ChevronLeft,
   ChevronRight,
   CircleDollarSign,
@@ -19,7 +16,6 @@ import {
   Search,
   Settings2,
   Target,
-  TrendingUp,
   Users,
   X,
 } from "lucide-react";
@@ -138,7 +134,7 @@ function BrhtLogo({ cfo = false }: { cfo?: boolean }) {
   return (
     <div className="flex items-center gap-3">
       <div className="flex items-center">
-        <span className="text-[29px] font-black tracking-[-0.07em] text-white">
+        <span className="text-[27px] font-black tracking-[-0.055em] text-white">
           BRHT
         </span>
         <span className="ml-1 inline-flex -skew-x-12 gap-[2px]">
@@ -192,7 +188,7 @@ function MiniLine({ up = true }: { up?: boolean }) {
 function Dashboard() {
   const bars = [26, 34, 29, 42, 38, 51, 46, 61, 56, 72];
   return (
-    <div className="relative rounded-[24px] border border-white/10 bg-[#0e1715]/95 p-4 shadow-[0_30px_100px_rgba(0,0,0,0.45)]">
+    <div className="relative rounded-[22px] border border-white/[0.09] bg-[#0d1714]/95 p-4 shadow-[0_30px_90px_rgba(0,0,0,0.42)]">
       <div className="mb-3 flex items-center justify-between px-1">
         <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/50">
           Financial Overview
@@ -202,8 +198,8 @@ function Dashboard() {
         </span>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
-        <div className="rounded-xl border border-white/8 bg-white/[0.035] p-4">
+      <div className="grid grid-cols-2 gap-2.5">
+        <div className="rounded-xl border border-white/[0.075] bg-white/[0.03] p-4">
           <p className="text-[10px] text-white/55">Revenue vs Forecast</p>
           <div className="mt-1 flex items-end gap-2">
             <span className="text-2xl font-bold">$2.4M</span>
@@ -212,7 +208,7 @@ function Dashboard() {
           <MiniLine />
         </div>
 
-        <div className="rounded-xl border border-white/8 bg-white/[0.035] p-4">
+        <div className="rounded-xl border border-white/[0.075] bg-white/[0.03] p-4">
           <p className="text-[10px] text-white/55">Cash Runway</p>
           <div className="mt-1 flex items-end gap-2">
             <span className="text-2xl font-bold">14</span>
@@ -229,7 +225,7 @@ function Dashboard() {
           </div>
         </div>
 
-        <div className="rounded-xl border border-white/8 bg-white/[0.035] p-4">
+        <div className="rounded-xl border border-white/[0.075] bg-white/[0.03] p-4">
           <p className="text-[10px] text-white/55">Gross Margin</p>
           <div className="mt-1 flex items-end gap-2">
             <span className="text-2xl font-bold">68%</span>
@@ -238,7 +234,7 @@ function Dashboard() {
           <MiniLine />
         </div>
 
-        <div className="rounded-xl border border-white/8 bg-white/[0.035] p-4">
+        <div className="rounded-xl border border-white/[0.075] bg-white/[0.03] p-4">
           <p className="text-[10px] text-white/55">Operating Cash Flow</p>
           <div className="mt-1 text-2xl font-bold">$412K</div>
           <div className="mt-4 flex h-10 items-end gap-1.5">
@@ -252,7 +248,7 @@ function Dashboard() {
           </div>
         </div>
 
-        <div className="rounded-xl border border-white/8 bg-white/[0.035] p-4">
+        <div className="rounded-xl border border-white/[0.075] bg-white/[0.03] p-4">
           <p className="mb-3 text-[10px] text-white/55">Scenario Planning</p>
           {[
             ["Base Case", "14 months", "bg-teal-300"],
@@ -336,14 +332,14 @@ export default function CfoPage() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#07100e] font-sans text-white selection:bg-lime-300 selection:text-[#07100e]">
+    <div\n      className="min-h-screen bg-[#07100e] text-white selection:bg-lime-300 selection:text-[#07100e]"\n      style={{ fontFamily: "var(--font-geist-sans), Inter, ui-sans-serif, system-ui, sans-serif" }}\n    >
       <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-[#07100e]/90 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-[1240px] items-center justify-between px-5 py-4 md:px-8">
+        <div className="mx-auto flex max-w-[1240px] items-center justify-between px-5 py-3.5 md:px-8">
           <a href="#top" aria-label="BRHT CFO home">
             <BrhtLogo cfo />
           </a>
 
-          <nav className="hidden items-center gap-8 text-[13px] font-medium text-white/70 md:flex">
+          <nav className="hidden items-center gap-8 text-[12px] font-semibold text-white/70 md:flex">
             <a className="border-b border-lime-300 pb-1 text-lime-300" href="#services">
               CFO Advisory
             </a>
@@ -397,19 +393,19 @@ export default function CfoPage() {
             </svg>
           </div>
 
-          <div className="relative mx-auto grid max-w-[1240px] items-center gap-12 px-5 pb-28 pt-16 md:px-8 md:pb-36 md:pt-20 lg:grid-cols-[0.92fr_1.08fr]">
-            <div className="max-w-xl">
+          <div className="relative mx-auto grid max-w-[1240px] items-center gap-10 px-5 pb-24 pt-14 md:px-8 md:pb-28 md:pt-16 lg:grid-cols-[0.90fr_1.10fr] lg:gap-14">
+            <div className="max-w-[560px]">
               <p className="mb-5 text-[11px] font-bold uppercase tracking-[0.28em] text-white/55">
                 Strategic finance for operators
               </p>
-              <h1 className="text-5xl font-black leading-[0.98] tracking-[-0.05em] sm:text-6xl lg:text-[72px]">
+              <h1 className="text-[46px] font-black leading-[0.99] tracking-[-0.055em] sm:text-[56px] lg:text-[64px] xl:text-[68px]">
                 See the numbers.
                 <span className="mt-2 block text-lime-300">Know what to do next.</span>
               </h1>
-              <p className="mt-7 max-w-lg text-[16px] leading-7 text-white/68">
+              <p className="mt-6 max-w-[520px] text-[15px] leading-7 text-white/66">
                 BRHT CFO provides outsourced CFO advisory for growing companies that need clearer financial insights, stronger forecasting, and a strategic partner to help make better decisions.
               </p>
-              <div className="mt-8 flex flex-wrap items-center gap-5">
+              <div className="mt-7 flex flex-wrap items-center gap-5">
                 <a
                   href={bookingHref}
                   className="inline-flex items-center gap-2 rounded-md bg-lime-300 px-6 py-3.5 text-[13px] font-extrabold text-[#07100e] shadow-[0_0_28px_rgba(163,230,53,0.15)] transition hover:bg-lime-200"
@@ -423,7 +419,7 @@ export default function CfoPage() {
                   Explore CFO Resources <ArrowRight className="h-4 w-4" />
                 </a>
               </div>
-              <p className="mt-7 text-[11px] text-white/45">
+              <p className="mt-6 text-[11px] font-medium text-white/42">
                 Strategic. Data-driven. Built for operators.
               </p>
             </div>
@@ -459,7 +455,7 @@ export default function CfoPage() {
           </div>
         </section>
 
-        <section id="services" className="bg-[#f5f5f1] py-20 text-[#101714] md:py-24">
+        <section id="services" className="bg-[#f4f4ef] py-20 text-[#101714] md:py-24">
           <div className="mx-auto max-w-[1240px] px-5 md:px-8">
             <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
               <div>
@@ -568,7 +564,7 @@ export default function CfoPage() {
           </div>
         </section>
 
-        <section className="bg-[#f5f5f1] py-20 text-[#101714] md:py-24">
+        <section className="bg-[#f4f4ef] py-20 text-[#101714] md:py-24">
           <div className="mx-auto max-w-[1240px] px-5 md:px-8">
             <p className="mb-4 text-[10px] font-extrabold uppercase tracking-[0.25em] text-[#557064]">
               Our process
@@ -643,7 +639,7 @@ export default function CfoPage() {
           </div>
         </section>
 
-        <section id="resources" className="border-t border-black/[0.05] bg-[#f7f7f4] py-20 text-[#101714]">
+        <section id="resources" className="border-t border-black/[0.05] bg-[#f6f6f1] py-20 text-[#101714]">
           <div className="mx-auto max-w-[1240px] px-5 md:px-8">
             <div className="grid gap-6 lg:grid-cols-[1fr_0.75fr] lg:items-end">
               <div>
