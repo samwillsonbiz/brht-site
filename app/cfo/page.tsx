@@ -579,63 +579,169 @@ export default function CfoPage() {
           </div>
         </section>
 
-        <section id="about" className="relative overflow-hidden border-y border-white/[0.06] bg-[#08120f] py-20 md:py-24">
-          <div className="absolute -bottom-20 right-[-8%] h-52 w-96 rounded-full bg-lime-400/10 blur-[70px]" />
-          <div className="mx-auto max-w-[1240px] px-5 md:px-8">
-            <div className="grid gap-8 lg:grid-cols-[1fr_0.72fr]">
-              <div>
-                <p className="mb-4 text-[10px] font-extrabold uppercase tracking-[0.25em] text-lime-300/80">
-                  Built to work together
-                </p>
-                <h2 className="max-w-2xl text-4xl font-black leading-[1.02] tracking-[-0.04em] md:text-5xl">
-                  From connected data to better decisions.
-                </h2>
-              </div>
-              <p className="max-w-md text-[14px] leading-6 text-white/58 lg:justify-self-end">
-                BRHT Intelligence centralizes your operational and financial data. BRHT CFO turns that data into strategic insights, forecasts and guidance — so you can move faster with confidence.
+        <section id="about" className="relative overflow-hidden border-y border-white/[0.06] bg-[#07100e] py-24 md:py-28">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_55%,rgba(184,243,74,0.08),transparent_26%),radial-gradient(circle_at_18%_65%,rgba(52,214,195,0.05),transparent_24%)]" />
+          <div className="mx-auto max-w-[1320px] px-5 md:px-8">
+            <div className="relative text-center">
+              <p className="mb-4 text-[10px] font-extrabold uppercase tracking-[0.28em] text-[#b8f34a]">
+                Built to work together
+              </p>
+              <h2 className="mx-auto max-w-3xl text-4xl font-black leading-[1.02] tracking-[-0.045em] md:text-5xl">
+                From connected data to better decisions.
+              </h2>
+              <p className="mx-auto mt-4 max-w-xl text-[13px] leading-6 text-white/48">
+                One connected system. One clearer view of what to do next.
               </p>
             </div>
 
-            <div className="mt-12 grid items-center gap-5 lg:grid-cols-[1fr_auto_1.1fr_auto_1fr]">
-              <div className="rounded-xl border border-white/10 bg-white/[0.035] p-7">
-                <div className="flex items-center gap-4">
-                  <div className="grid h-12 w-12 place-items-center rounded-full bg-lime-300/10 text-lime-300">
-                    <Coins className="h-6 w-6" />
+            <div className="relative mt-14 overflow-hidden rounded-[28px] border border-white/[0.09] bg-[#0a1512]/80 px-5 py-8 shadow-[0_30px_90px_rgba(0,0,0,0.24)] md:px-8 md:py-10">
+              <div className="absolute inset-0 opacity-[0.18] [background-image:linear-gradient(rgba(255,255,255,0.045)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.045)_1px,transparent_1px)] [background-size:38px_38px]" />
+              <div className="absolute left-1/2 top-1/2 h-56 w-56 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#b8f34a]/10 blur-[70px]" />
+
+              <div className="relative grid items-center gap-8 lg:grid-cols-[1fr_0.9fr_1fr] lg:gap-10">
+                <div className="relative mx-auto h-[320px] w-full max-w-[360px]">
+                  <div className="absolute left-1/2 top-1/2 h-24 w-24 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/10 bg-[#0f1b17] shadow-[0_0_40px_rgba(52,214,195,0.08)]">
+                    <div className="grid h-full place-items-center text-center">
+                      <div>
+                        <p className="text-[11px] font-black uppercase tracking-[0.22em] text-white/35">Your</p>
+                        <p className="mt-1 text-[19px] font-black text-white">DATA</p>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="text-xl font-black">BRHT Intelligence</h3>
-                    <p className="mt-1 text-[12px] text-white/50">Connect your data.<br />See what’s happening.</p>
+
+                  <svg viewBox="0 0 360 320" className="absolute inset-0 h-full w-full">
+                    <g fill="none" stroke="#3b5d53" strokeWidth="1.2" strokeDasharray="5 7" opacity="0.55">
+                      <path d="M88 54 C120 92 136 116 166 145" />
+                      <path d="M272 54 C238 92 220 116 194 145" />
+                      <path d="M66 160 C112 160 132 160 166 160" />
+                      <path d="M294 160 C248 160 228 160 194 160" />
+                      <path d="M92 266 C124 226 142 204 169 177" />
+                      <path d="M268 266 C236 226 218 204 191 177" />
+                    </g>
+                  </svg>
+
+                  {[
+                    { icon: CircleDollarSign, label: "Finance", cls: "left-[26px] top-[26px]" },
+                    { icon: BarChart3, label: "Commerce", cls: "right-[24px] top-[26px]" },
+                    { icon: Coins, label: "Banking", cls: "left-[2px] top-[126px]" },
+                    { icon: Users, label: "CRM", cls: "right-[2px] top-[126px]" },
+                    { icon: Gauge, label: "Operations", cls: "left-[30px] bottom-[18px]" },
+                    { icon: Settings2, label: "Systems", cls: "right-[30px] bottom-[18px]" },
+                  ].map(({ icon: Icon, label, cls }) => (
+                    <div
+                      key={label}
+                      className={"absolute " + cls + " flex h-[72px] w-[96px] flex-col items-center justify-center rounded-2xl border border-white/[0.09] bg-white/[0.045] shadow-[0_10px_30px_rgba(0,0,0,0.16)]"}
+                    >
+                      <Icon className="h-5 w-5 text-[#60d9c7]" strokeWidth={1.8} />
+                      <span className="mt-2 text-[10px] font-bold uppercase tracking-[0.12em] text-white/46">
+                        {label}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="relative flex min-h-[320px] items-center justify-center">
+                  <div className="absolute left-0 top-1/2 hidden h-px w-[30%] -translate-y-1/2 bg-gradient-to-r from-transparent via-[#57d7c4]/70 to-[#b8f34a] lg:block" />
+                  <div className="absolute right-0 top-1/2 hidden h-px w-[30%] -translate-y-1/2 bg-gradient-to-r from-[#b8f34a] via-[#8fe54a]/70 to-transparent lg:block" />
+
+                  <div className="relative grid h-[225px] w-[225px] place-items-center rounded-full border border-[#b8f34a]/25 bg-[#0f1b16] shadow-[0_0_70px_rgba(184,243,74,0.10)]">
+                    <div className="absolute inset-[-18px] rounded-full border border-[#b8f34a]/10" />
+                    <div className="absolute inset-[-38px] rounded-full border border-white/[0.045]" />
+                    <div className="absolute left-1/2 top-[-10px] h-3 w-3 -translate-x-1/2 rounded-full bg-[#b8f34a] shadow-[0_0_18px_rgba(184,243,74,0.7)]" />
+                    <div className="absolute bottom-[26px] right-[-4px] h-2.5 w-2.5 rounded-full bg-[#34d6c3] shadow-[0_0_14px_rgba(52,214,195,0.7)]" />
+
+                    <div className="text-center">
+                      <div className="mx-auto flex w-fit items-center gap-1.5">
+                        <span className="text-[32px] font-black tracking-[-0.07em] text-white">BRHT</span>
+                        <span className="inline-flex -skew-x-12 gap-[2px]">
+                          <span className="h-4 w-[7px] rounded-full bg-[#b8f34a]" />
+                          <span className="mt-1 h-4 w-[7px] rounded-full bg-[#97e533]" />
+                        </span>
+                      </div>
+                      <p className="mt-3 text-[10px] font-bold uppercase tracking-[0.3em] text-[#b8f34a]">
+                        Intelligence
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <ArrowRight className="mx-auto hidden h-6 w-6 text-white/55 lg:block" />
+                <div className="relative mx-auto w-full max-w-[380px]">
+                  <div className="rounded-[22px] border border-[#9bd739]/35 bg-[#101b17] p-5 shadow-[0_0_55px_rgba(155,215,57,0.08)]">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#b8f34a]/70">
+                          BRHT CFO
+                        </p>
+                        <h3 className="mt-1 text-[22px] font-black text-white">Decision layer</h3>
+                      </div>
+                      <div className="grid h-11 w-11 place-items-center rounded-full bg-[#b8f34a]/10 text-[#b8f34a]">
+                        <Sparkles className="h-5 w-5" />
+                      </div>
+                    </div>
 
-              <div className="relative overflow-hidden rounded-xl border border-white/12 bg-[#0c1714] px-6 py-8 text-center">
-                <div className="absolute left-1/2 top-1/2 h-24 w-24 -translate-x-1/2 -translate-y-1/2 rounded-full bg-lime-300/10 blur-xl" />
-                <div className="relative">
-                  <p className="text-xs font-bold text-lime-300">Data → Insight → Decision</p>
-                  <div className="mx-auto my-5 flex w-fit">
-                    {[0,1,2].map((i) => (
-                      <span key={i} className="-ml-2 h-11 w-11 rounded-full border border-lime-300/30 bg-lime-300/[0.04] first:ml-0" />
+                    <div className="mt-5 grid gap-3">
+                      <div className="flex items-center justify-between rounded-xl border border-white/[0.08] bg-white/[0.035] px-4 py-3">
+                        <div className="flex items-center gap-3">
+                          <LineChart className="h-5 w-5 text-[#60d9c7]" />
+                          <span className="text-[12px] font-bold text-white/72">Forecast</span>
+                        </div>
+                        <svg viewBox="0 0 92 28" className="h-7 w-24">
+                          <polyline points="2,23 20,18 35,20 52,10 68,13 90,4" fill="none" stroke="#b8f34a" strokeWidth="2.6" strokeLinecap="round" />
+                        </svg>
+                      </div>
+
+                      <div className="flex items-center justify-between rounded-xl border border-white/[0.08] bg-white/[0.035] px-4 py-3">
+                        <div className="flex items-center gap-3">
+                          <Target className="h-5 w-5 text-[#60d9c7]" />
+                          <span className="text-[12px] font-bold text-white/72">Scenarios</span>
+                        </div>
+                        <div className="flex gap-1.5">
+                          <span className="h-6 w-2 rounded-sm bg-[#28564d]" />
+                          <span className="h-9 w-2 rounded-sm bg-[#3ea895]" />
+                          <span className="h-12 w-2 rounded-sm bg-[#b8f34a]" />
+                        </div>
+                      </div>
+
+                      <div className="relative overflow-hidden rounded-xl border border-[#9bd739]/40 bg-[#142216] px-4 py-4">
+                        <div className="absolute right-0 top-0 h-20 w-20 rounded-full bg-[#b8f34a]/10 blur-2xl" />
+                        <div className="relative flex items-center gap-3">
+                          <Sparkles className="h-5 w-5 fill-current text-[#b8f34a]" />
+                          <div>
+                            <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#b8f34a]/70">
+                              Recommended action
+                            </p>
+                            <p className="mt-1 text-[13px] font-extrabold text-white">
+                              Know what to do next.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 grid grid-cols-3 gap-2">
+                    {[
+                      ["Cash", Coins],
+                      ["Margin", Gauge],
+                      ["Capital", CircleDollarSign],
+                    ].map(([label, Icon]) => (
+                      <div key={label as string} className="rounded-xl border border-white/[0.07] bg-white/[0.025] py-3 text-center">
+                        <Icon className="mx-auto h-4 w-4 text-white/35" />
+                        <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.12em] text-white/32">
+                          {label as string}
+                        </p>
+                      </div>
                     ))}
                   </div>
-                  <p className="text-[10px] text-white/50">A complete view of your business.</p>
                 </div>
               </div>
 
-              <ArrowRight className="mx-auto hidden h-6 w-6 text-white/55 lg:block" />
-
-              <div className="rounded-xl border border-white/10 bg-white/[0.035] p-7">
-                <div className="flex items-center gap-4">
-                  <div className="grid h-12 w-12 place-items-center rounded-full bg-lime-300/10 text-lime-300">
-                    <BarChart3 className="h-6 w-6" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-black">BRHT CFO</h3>
-                    <p className="mt-1 text-[12px] text-white/50">Interpret the numbers.<br />Know what to do next.</p>
-                  </div>
-                </div>
+              <div className="relative mt-8 flex justify-center gap-7 text-[10px] font-bold uppercase tracking-[0.18em] text-white/28">
+                <span>Connect</span>
+                <span className="text-[#b8f34a]/55">→</span>
+                <span>Understand</span>
+                <span className="text-[#b8f34a]/55">→</span>
+                <span>Decide</span>
               </div>
             </div>
           </div>
