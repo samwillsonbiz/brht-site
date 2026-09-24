@@ -15,6 +15,7 @@ import {
   Menu,
   Search,
   Settings2,
+  Sparkles,
   Target,
   Users,
   X,
@@ -132,20 +133,20 @@ const resources = [
 
 function BrhtLogo({ cfo = false }: { cfo?: boolean }) {
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-3.5">
       <div className="flex items-center">
         <span className="text-[27px] font-black tracking-[-0.055em] text-white">
           BRHT
         </span>
-        <span className="ml-1 inline-flex -skew-x-12 gap-[2px]">
-          <span className="h-3 w-1.5 rounded-sm bg-lime-300" />
-          <span className="mt-1 h-3 w-1.5 rounded-sm bg-lime-400" />
+        <span className="inline-flex -skew-x-12 gap-[3px] pt-1">
+          <span className="h-4 w-[7px] rounded-full bg-[#b8f34a]" />
+          <span className="mt-1 h-4 w-[7px] rounded-full bg-[#97e533]" />
         </span>
       </div>
       {cfo && (
         <>
-          <span className="h-5 w-px bg-white/20" />
-          <span className="text-xs font-bold uppercase tracking-[0.22em] text-lime-300">
+          <span className="h-6 w-px bg-white/18" />
+          <span className="text-[12px] font-bold uppercase tracking-[0.33em] text-[#b8f34a]">
             CFO
           </span>
         </>
@@ -154,128 +155,192 @@ function BrhtLogo({ cfo = false }: { cfo?: boolean }) {
   );
 }
 
-function MiniLine({ up = true }: { up?: boolean }) {
-  const points = up
-    ? "2,32 18,27 34,29 50,18 66,22 82,13 98,16 114,8"
-    : "2,13 18,18 34,15 50,23 66,20 82,27 98,24 114,31";
+function DualLineChart() {
+  const actual = "18,74 52,62 84,64 116,55 148,58 180,45 212,48 244,30";
+  const forecast = "18,68 52,58 84,54 116,56 148,44 180,48 212,38 244,18";
   return (
-    <svg viewBox="0 0 116 38" className="h-10 w-full">
-      <polyline
-        points={points}
-        fill="none"
-        stroke="#9cff3b"
-        strokeWidth="2.2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      {points.split(" ").map((p, i) => {
-        const [cx, cy] = p.split(",");
-        return (
-          <circle
-            key={i}
-            cx={cx}
-            cy={cy}
-            r="2"
-            fill="#9cff3b"
-            opacity={i === 7 ? 1 : 0.6}
+    <svg viewBox="0 0 264 110" className="h-[112px] w-full">
+      <defs>
+        <linearGradient id="revGlow" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0%" stopColor="#b8f34a" stopOpacity="0.22" />
+          <stop offset="100%" stopColor="#b8f34a" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      <g opacity="0.12" stroke="#ffffff">
+        <line x1="12" y1="88" x2="252" y2="88" />
+        <line x1="12" y1="63" x2="252" y2="63" />
+        <line x1="12" y1="38" x2="252" y2="38" />
+      </g>
+      <polyline points={actual} fill="none" stroke="#34d6c3" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" opacity="0.84" />
+      <polyline points={forecast} fill="none" stroke="#b8f34a" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M18 68 L52 58 L84 54 L116 56 L148 44 L180 48 L212 38 L244 18 L244 88 L18 88 Z" fill="url(#revGlow)" />
+      {[[18,68],[52,58],[84,54],[116,56],[148,44],[180,48],[212,38],[244,18]].map(([cx, cy], i) => (
+        <circle key={i} cx={cx} cy={cy} r="3.1" fill="#b8f34a" />
+      ))}
+      <g fill="#82908c" fontSize="8.6" fontWeight="600">
+        {["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug"].map((m, i) => (
+          <text key={m} x={18 + i * 32} y="102">{m}</text>
+        ))}
+      </g>
+      <g transform="translate(150,90)" fontSize="9.3" fontWeight="700">
+        <circle cx="0" cy="0" r="4" fill="#34d6c3" />
+        <text x="10" y="3" fill="#9eb0ab">Actual</text>
+        <circle cx="62" cy="0" r="4" fill="#b8f34a" />
+        <text x="72" y="3" fill="#9eb0ab">Forecast</text>
+      </g>
+    </svg>
+  );
+}
+
+function BarChart({ values }: { values: number[] }) {
+  return (
+    <div className="mt-6 flex h-[105px] items-end gap-3">
+      {values.map((v, i) => (
+        <div key={i} className="flex-1">
+          <div
+            className="w-full rounded-t-[4px] bg-gradient-to-t from-[#24453f] via-[#2b9f92] to-[#62e7d4] shadow-[0_0_12px_rgba(52,214,195,0.08)]"
+            style={{ height: v + "%" }}
           />
-        );
-      })}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function AreaChart() {
+  return (
+    <svg viewBox="0 0 264 110" className="mt-2 h-[112px] w-full">
+      <defs>
+        <linearGradient id="areaFill" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0%" stopColor="#34d6c3" stopOpacity="0.44" />
+          <stop offset="100%" stopColor="#34d6c3" stopOpacity="0.02" />
+        </linearGradient>
+      </defs>
+      <g opacity="0.12" stroke="#ffffff">
+        <line x1="12" y1="88" x2="252" y2="88" />
+        <line x1="12" y1="60" x2="252" y2="60" />
+        <line x1="12" y1="34" x2="252" y2="34" />
+      </g>
+      <path d="M12 84 L36 80 L60 80 L84 72 L108 78 L132 74 L156 78 L180 62 L204 64 L228 44 L252 52 L252 88 L12 88 Z" fill="url(#areaFill)" />
+      <path d="M12 84 L36 80 L60 80 L84 72 L108 78 L132 74 L156 78 L180 62 L204 64 L228 44 L252 52" fill="none" stroke="#34d6c3" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
 
 function Dashboard() {
-  const bars = [26, 34, 29, 42, 38, 51, 46, 61, 56, 72];
   return (
-    <div className="relative rounded-[22px] border border-white/[0.09] bg-[#0d1714]/95 p-4 shadow-[0_30px_90px_rgba(0,0,0,0.42)]">
-      <div className="mb-3 flex items-center justify-between px-1">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/50">
+    <div className="rounded-[26px] border border-white/[0.1] bg-[#0d1615]/96 p-5 shadow-[0_40px_100px_rgba(0,0,0,0.48)] backdrop-blur">
+      <div className="mb-4 flex items-center justify-between">
+        <p className="text-[11px] font-bold uppercase tracking-[0.26em] text-white/60">
           Financial Overview
         </p>
-        <span className="rounded-md border border-white/10 px-2 py-1 text-[9px] text-white/50">
+        <span className="rounded-[12px] border border-white/12 px-4 py-2 text-[11px] font-medium text-white/56">
           Last 12 months
         </span>
       </div>
 
-      <div className="grid grid-cols-2 gap-2.5">
-        <div className="rounded-xl border border-white/[0.075] bg-white/[0.03] p-4">
-          <p className="text-[10px] text-white/55">Revenue vs Forecast</p>
-          <div className="mt-1 flex items-end gap-2">
-            <span className="text-2xl font-bold">$2.4M</span>
-            <span className="mb-1 text-[10px] font-bold text-lime-300">↑ 12%</span>
+      <div className="grid grid-cols-2 gap-4">
+        <div className="rounded-[18px] border border-white/10 bg-[#101917] p-5">
+          <p className="text-[12px] font-semibold text-white/72">Revenue vs Forecast</p>
+          <div className="mt-3 flex items-end gap-3">
+            <span className="text-[29px] font-black leading-none text-white">$2.4M</span>
+            <span className="rounded-full bg-[#173826] px-2.5 py-1 text-[12px] font-bold text-[#7df786]">↑ 12%</span>
           </div>
-          <MiniLine />
+          <DualLineChart />
         </div>
 
-        <div className="rounded-xl border border-white/[0.075] bg-white/[0.03] p-4">
-          <p className="text-[10px] text-white/55">Cash Runway</p>
-          <div className="mt-1 flex items-end gap-2">
-            <span className="text-2xl font-bold">14</span>
-            <span className="mb-1 text-xs text-white/60">months</span>
+        <div className="rounded-[18px] border border-white/10 bg-[#101917] p-5">
+          <p className="text-[12px] font-semibold text-white/72">Cash Runway</p>
+          <div className="mt-3 flex items-end gap-2">
+            <span className="text-[29px] font-black leading-none text-white">14</span>
+            <span className="mb-1 text-[14px] text-white/75">months</span>
           </div>
-          <div className="mt-4 flex h-10 items-end gap-1.5">
-            {bars.slice(0, 8).map((h, i) => (
-              <span
-                key={i}
-                className="w-full rounded-t-sm bg-gradient-to-t from-emerald-800 to-emerald-300"
-                style={{ height: `${h}%` }}
-              />
+          <BarChart values={[34,45,56,70,62,80,88,100]} />
+          <div className="mt-3 flex justify-between text-[8.5px] font-semibold uppercase tracking-[0.12em] text-white/38">
+            {["Apr","May","Jun","Jul","Aug","Sep","Oct","Nov"].map((m) => <span key={m}>{m}</span>)}
+          </div>
+        </div>
+
+        <div className="rounded-[18px] border border-white/10 bg-[#101917] p-5">
+          <p className="text-[12px] font-semibold text-white/72">Gross Margin</p>
+          <div className="mt-3 flex items-end gap-3">
+            <span className="text-[29px] font-black leading-none text-white">68%</span>
+            <span className="rounded-full bg-[#10352f] px-2.5 py-1 text-[12px] font-bold text-[#34d6c3]">↑ 6%</span>
+          </div>
+          <AreaChart />
+        </div>
+
+        <div className="rounded-[18px] border border-white/10 bg-[#101917] p-5">
+          <p className="text-[12px] font-semibold text-white/72">Operating Cash Flow</p>
+          <div className="mt-3 text-[29px] font-black leading-none text-white">$412K</div>
+          <BarChart values={[12,22,28,44,56,60,74,92]} />
+        </div>
+
+        <div className="rounded-[18px] border border-white/10 bg-[#101917] p-5">
+          <p className="mb-5 text-[12px] font-semibold text-white/72">Scenario Planning</p>
+          <div className="space-y-5">
+            {[
+              ["Base Case", "14 months", "#34d6c3"],
+              ["Growth Case", "22 months", "#69f2b0"],
+              ["Downside Case", "6 months", "#f2cf4f"],
+            ].map(([label, value, dot]) => (
+              <div key={label} className="flex items-center justify-between text-[13px] text-white/66">
+                <span className="flex items-center gap-3">
+                  <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: dot }} />
+                  {label}
+                </span>
+                <span>{value}</span>
+              </div>
             ))}
           </div>
         </div>
 
-        <div className="rounded-xl border border-white/[0.075] bg-white/[0.03] p-4">
-          <p className="text-[10px] text-white/55">Gross Margin</p>
-          <div className="mt-1 flex items-end gap-2">
-            <span className="text-2xl font-bold">68%</span>
-            <span className="mb-1 text-[10px] font-bold text-lime-300">↑ 6%</span>
+        <div className="rounded-[18px] border border-[#9ae63a]/55 bg-[#111c13] p-5 shadow-[0_0_26px_rgba(158,230,58,0.08)]">
+          <div className="mb-5 flex items-center gap-3 text-[#b8f34a]">
+            <Sparkles className="h-5 w-5 fill-current" />
+            <span className="text-[14px] font-extrabold">BRHT AI Insights</span>
           </div>
-          <MiniLine />
-        </div>
-
-        <div className="rounded-xl border border-white/[0.075] bg-white/[0.03] p-4">
-          <p className="text-[10px] text-white/55">Operating Cash Flow</p>
-          <div className="mt-1 text-2xl font-bold">$412K</div>
-          <div className="mt-4 flex h-10 items-end gap-1.5">
-            {bars.slice(2).map((h, i) => (
-              <span
-                key={i}
-                className="w-full rounded-t-sm bg-gradient-to-t from-emerald-900 to-teal-300"
-                style={{ height: `${h}%` }}
-              />
+          <div className="space-y-4 text-[13px] leading-6 text-white/72">
+            {[
+              "Revenue is pacing 12% ahead of plan.",
+              "Consider increasing inventory for Q4.",
+              "Your runway could extend to 22 months with the proposed pricing change.",
+            ].map((item) => (
+              <div key={item} className="flex items-start gap-3">
+                <span className="mt-1.5 grid h-4 w-4 place-items-center rounded-full border border-[#34d6c3]/50 text-[9px] text-[#34d6c3]">●</span>
+                <p>{item}</p>
+              </div>
             ))}
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
 
-        <div className="rounded-xl border border-white/[0.075] bg-white/[0.03] p-4">
-          <p className="mb-3 text-[10px] text-white/55">Scenario Planning</p>
-          {[
-            ["Base Case", "14 months", "bg-teal-300"],
-            ["Growth Case", "22 months", "bg-lime-300"],
-            ["Downside Case", "6 months", "bg-amber-300"],
-          ].map(([a, b, dot]) => (
-            <div key={a} className="mb-2 flex items-center justify-between text-[9px]">
-              <span className="flex items-center gap-2 text-white/60">
-                <i className={`h-1.5 w-1.5 rounded-full ${dot}`} />
-                {a}
-              </span>
-              <span className="text-white/80">{b}</span>
+function FeatureBar() {
+  const items = [
+    [LineChart, "Forward-looking forecasts", "Go beyond the numbers and see what’s next."],
+    [FileBarChart2, "Board-ready reporting", "Clear, concise reporting for confident decisions."],
+    [Coins, "Cash visibility", "Know your runway and key drivers in real time."],
+    [Users, "Senior strategic finance", "Experienced CFO advisors invested in your success."],
+  ] as const;
+
+  return (
+    <div className="border-t border-white/[0.08] bg-[#091312]/92">
+      <div className="mx-auto grid max-w-[1440px] px-6 md:grid-cols-2 lg:grid-cols-4 lg:px-8">
+        {items.map(([Icon, title, copy], index) => (
+          <div
+            key={title}
+            className={"flex gap-5 py-9 lg:px-8 " + (index !== 3 ? "lg:border-r lg:border-white/[0.08]" : "")}
+          >
+            <Icon className="mt-1 h-9 w-9 shrink-0 text-[#b8f34a]" strokeWidth={1.8} />
+            <div>
+              <h3 className="max-w-[180px] text-[16px] font-extrabold leading-6 text-white">{title}</h3>
+              <p className="mt-2 max-w-[230px] text-[13px] leading-6 text-white/54">{copy}</p>
             </div>
-          ))}
-        </div>
-
-        <div className="rounded-xl border border-lime-300/45 bg-lime-300/[0.045] p-4 shadow-[0_0_40px_rgba(163,230,53,0.08)]">
-          <div className="mb-3 flex items-center gap-2 text-[10px] font-bold text-lime-300">
-            <span className="text-sm">✦</span>
-            BRHT AI Insights
           </div>
-          <div className="space-y-2.5 text-[9px] leading-4 text-white/62">
-            <p>● Revenue is pacing 12% ahead of plan.</p>
-            <p>● Consider increasing inventory for Q4.</p>
-            <p>● Runway could extend to 22 months with the proposed pricing change.</p>
-          </div>
-        </div>
+        ))}
       </div>
     </div>
   );
@@ -334,12 +399,12 @@ export default function CfoPage() {
   return (
     <div\n      className="min-h-screen bg-[#07100e] text-white selection:bg-lime-300 selection:text-[#07100e]"\n      style={{ fontFamily: "var(--font-geist-sans), Inter, ui-sans-serif, system-ui, sans-serif" }}\n    >
       <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-[#07100e]/90 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-[1240px] items-center justify-between px-5 py-3.5 md:px-8">
+        <div className="mx-auto flex max-w-[1440px] items-center justify-between px-6 py-4 lg:px-8">
           <a href="#top" aria-label="BRHT CFO home">
             <BrhtLogo cfo />
           </a>
 
-          <nav className="hidden items-center gap-8 text-[12px] font-semibold text-white/70 md:flex">
+          <nav className="hidden items-center gap-10 text-[12px] font-semibold text-white/70 md:flex">
             <a className="border-b border-lime-300 pb-1 text-lime-300" href="#services">
               CFO Advisory
             </a>
@@ -350,7 +415,7 @@ export default function CfoPage() {
 
           <a
             href={bookingHref}
-            className="hidden items-center gap-2 rounded-md bg-lime-300 px-5 py-3 text-[12px] font-extrabold text-[#07100e] shadow-[0_0_30px_rgba(163,230,53,0.18)] transition hover:bg-lime-200 md:inline-flex"
+            className="hidden items-center gap-2 rounded-[12px] bg-[#b8f34a] px-7 py-4 text-[13px] font-extrabold text-[#09110f] shadow-[0_0_34px_rgba(184,243,74,0.12)] transition hover:bg-[#c5f760] md:inline-flex"
           >
             Book a Strategy Call <ArrowRight className="h-4 w-4" />
           </a>
@@ -383,76 +448,63 @@ export default function CfoPage() {
       </header>
 
       <main id="top">
-        <section className="relative overflow-hidden border-b border-white/[0.06]">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_12%,rgba(132,204,22,0.09),transparent_32%),radial-gradient(circle_at_15%_25%,rgba(16,185,129,0.06),transparent_28%)]" />
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 opacity-70">
+        <section className="relative overflow-hidden">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_83%_14%,rgba(157,230,58,0.12),transparent_22%),radial-gradient(circle_at_18%_28%,rgba(0,175,155,0.06),transparent_28%),linear-gradient(180deg,#06100f_0%,#07110f_54%,#081413_100%)]" />
+          <div className="absolute inset-0 opacity-[0.18] [background-image:repeating-linear-gradient(90deg,transparent_0,transparent_58px,rgba(85,120,115,0.18)_59px,transparent_82px)]" />
+          <div className="absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-[#081312] to-transparent" />
+
+          <div className="pointer-events-none absolute inset-x-0 bottom-[132px] h-40 opacity-75">
             <svg viewBox="0 0 1600 260" preserveAspectRatio="none" className="h-full w-full">
-              <path d="M0 220 L100 160 L180 192 L270 138 L355 182 L445 126 L520 168 L620 104 L720 160 L820 118 L930 174 L1010 136 L1110 178 L1210 112 L1310 150 L1410 104 L1600 174 L1600 260 L0 260Z" fill="#0c1714" />
-              <path d="M0 240 L130 190 L260 220 L380 168 L500 216 L650 158 L790 212 L930 164 L1060 214 L1190 160 L1320 208 L1450 154 L1600 205 L1600 260 L0 260Z" fill="#09120f" />
-              <path d="M0 220 L100 160 L180 192 L270 138 L355 182 L445 126 L520 168 L620 104 L720 160 L820 118 L930 174 L1010 136 L1110 178 L1210 112 L1310 150 L1410 104 L1600 174" fill="none" stroke="#2b4038" strokeWidth="2" />
+              <g fill="none" stroke="#d7ddd8" strokeOpacity="0.26" strokeWidth="1.1">
+                <path d="M0 220 Q110 188 220 214 T440 208 T660 214 T880 205 T1100 216 T1320 203 T1600 214" />
+                <path d="M0 236 Q110 206 220 228 T440 224 T660 230 T880 220 T1100 232 T1320 220 T1600 230" />
+                <path d="M0 248 Q110 224 220 242 T440 238 T660 246 T880 236 T1100 248 T1320 236 T1600 246" />
+                <path d="M0 260 L1600 260" strokeOpacity="0.15" />
+                <path d="M100 260 L180 212 L240 244 L310 208 L380 236 L462 205 L520 240 L602 212 L670 250 L745 210 L818 240 L898 206 L968 246 L1044 212 L1120 246 L1200 210 L1282 242 L1364 216 L1444 242 L1522 214" />
+              </g>
             </svg>
           </div>
 
-          <div className="relative mx-auto grid max-w-[1240px] items-center gap-10 px-5 pb-24 pt-14 md:px-8 md:pb-28 md:pt-16 lg:grid-cols-[0.90fr_1.10fr] lg:gap-14">
-            <div className="max-w-[560px]">
-              <p className="mb-5 text-[11px] font-bold uppercase tracking-[0.28em] text-white/55">
-                Strategic finance for operators
-              </p>
-              <h1 className="text-[46px] font-black leading-[0.99] tracking-[-0.055em] sm:text-[56px] lg:text-[64px] xl:text-[68px]">
-                See the numbers.
-                <span className="mt-2 block text-lime-300">Know what to do next.</span>
-              </h1>
-              <p className="mt-6 max-w-[520px] text-[15px] leading-7 text-white/66">
-                BRHT CFO provides outsourced CFO advisory for growing companies that need clearer financial insights, stronger forecasting, and a strategic partner to help make better decisions.
-              </p>
-              <div className="mt-7 flex flex-wrap items-center gap-5">
-                <a
-                  href={bookingHref}
-                  className="inline-flex items-center gap-2 rounded-md bg-lime-300 px-6 py-3.5 text-[13px] font-extrabold text-[#07100e] shadow-[0_0_28px_rgba(163,230,53,0.15)] transition hover:bg-lime-200"
-                >
-                  Book a Strategy Call <ArrowRight className="h-4 w-4" />
-                </a>
-                <a
-                  href="#resources"
-                  className="inline-flex items-center gap-2 border-b border-white/35 pb-1 text-[13px] font-semibold text-white/80 transition hover:text-white"
-                >
-                  Explore CFO Resources <ArrowRight className="h-4 w-4" />
-                </a>
-              </div>
-              <p className="mt-6 text-[11px] font-medium text-white/42">
-                Strategic. Data-driven. Built for operators.
-              </p>
-            </div>
-
-            <div className="relative">
-              <div className="absolute -inset-12 rounded-full bg-lime-300/[0.035] blur-3xl" />
-              <div className="relative">
-                <Dashboard />
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="border-b border-white/[0.06] bg-[#08110f]">
-          <div className="mx-auto grid max-w-[1240px] divide-y divide-white/10 px-5 md:grid-cols-4 md:divide-x md:divide-y-0 md:px-8">
-            {[
-              [LineChart, "Forward-looking forecasts", "Go beyond the numbers and see what’s next."],
-              [FileBarChart2, "Board-ready reporting", "Clear, concise reporting for confident decisions."],
-              [Coins, "Cash visibility", "Know your runway and key drivers in real time."],
-              [Users, "Senior strategic finance", "Experienced CFO advisors invested in your success."],
-            ].map(([Icon, title, copy]) => {
-              const I = Icon as React.ElementType;
-              return (
-                <div key={title as string} className="flex gap-4 py-7 md:px-6 first:md:pl-0">
-                  <I className="mt-1 h-6 w-6 shrink-0 text-lime-300" />
-                  <div>
-                    <h3 className="text-sm font-bold">{title as string}</h3>
-                    <p className="mt-1 text-[11px] leading-5 text-white/50">{copy as string}</p>
-                  </div>
+          <div className="relative mx-auto max-w-[1440px] px-6 lg:px-8">
+            <div className="grid min-h-[690px] items-center gap-12 py-14 lg:grid-cols-[0.96fr_1.04fr] lg:gap-16 lg:py-16">
+              <div className="max-w-[650px]">
+                <p className="mb-7 text-[12px] font-bold uppercase tracking-[0.34em] text-white/60">
+                  Strategic finance for operators
+                </p>
+                <h1 className="text-[54px] font-black leading-[0.98] tracking-[-0.06em] text-white sm:text-[62px] lg:text-[66px] xl:text-[72px]">
+                  See the numbers.
+                  <span className="mt-1 block text-[#b8f34a]">Know what to do next.</span>
+                </h1>
+                <p className="mt-8 max-w-[650px] text-[17px] leading-8 text-white/76">
+                  BRHT CFO provides outsourced CFO advisory for growing companies that need clearer financial insights, stronger forecasting, and a strategic partner to help make better decisions.
+                </p>
+                <div className="mt-9 flex flex-wrap items-center gap-7">
+                  <a
+                    href={bookingHref}
+                    className="inline-flex items-center gap-2 rounded-[14px] bg-[#b8f34a] px-8 py-5 text-[15px] font-extrabold text-[#09110f] shadow-[0_0_28px_rgba(184,243,74,0.12)] transition hover:bg-[#c5f760]"
+                  >
+                    Book a Strategy Call <ArrowRight className="h-5 w-5" />
+                  </a>
+                  <a
+                    href="#resources"
+                    className="inline-flex items-center gap-3 border-b border-white/35 pb-1 text-[15px] font-bold text-white/88 transition hover:text-white"
+                  >
+                    Explore CFO Resources <ArrowRight className="h-5 w-5" />
+                  </a>
                 </div>
-              );
-            })}
+                <p className="mt-9 text-[13px] font-medium text-white/45">
+                  Strategic. Data-driven. Built for operators.
+                </p>
+              </div>
+
+              <div className="relative">
+                <div className="absolute -inset-12 rounded-full bg-[#b8f34a]/[0.04] blur-3xl" />
+                <div className="relative"><Dashboard /></div>
+              </div>
+            </div>
           </div>
+
+          <FeatureBar />
         </section>
 
         <section id="services" className="bg-[#f4f4ef] py-20 text-[#101714] md:py-24">
