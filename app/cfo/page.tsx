@@ -228,7 +228,7 @@ function AreaChart() {
 }
 
 function Dashboard() {
-  const card = "rounded-[16px] border border-[#dfe5e1] bg-white shadow-[0_10px_26px_rgba(0,0,0,0.05)]";
+  const card = "rounded-[16px] border border-[#cbd6cf] bg-[#eef2ee] shadow-[0_10px_26px_rgba(0,0,0,0.06)]";
   return (
     <div className="rounded-[24px] border border-white/[0.1] bg-[#0d1615]/96 p-4 shadow-[0_32px_90px_rgba(0,0,0,0.42)] backdrop-blur">
       <div className="mb-3 flex items-center justify-between">
@@ -242,30 +242,30 @@ function Dashboard() {
 
       <div className="grid grid-cols-2 gap-3">
         <div className={card + " min-h-[166px] p-4"}>
-          <p className="text-[12px] font-semibold text-[#66716d]">Revenue vs Forecast</p>
+          <p className="text-[12px] font-semibold text-[#5e6b66]">Revenue vs Forecast</p>
           <div className="mt-3 flex items-end gap-3">
-            <span className="text-[25px] font-black leading-none text-[#0e1815]">$2.4M</span>
+            <span className="text-[25px] font-black leading-none text-[#101b17]">$2.4M</span>
             <span className="rounded-full bg-[#e8f7e4] px-2.5 py-1 text-[12px] font-bold text-[#27833b]">↑ 12%</span>
           </div>
           <DualLineChart />
         </div>
 
         <div className={card + " min-h-[166px] p-4"}>
-          <p className="text-[12px] font-semibold text-[#66716d]">Gross Margin</p>
+          <p className="text-[12px] font-semibold text-[#5e6b66]">Gross Margin</p>
           <div className="mt-3 flex items-end gap-3">
-            <span className="text-[25px] font-black leading-none text-[#0e1815]">68%</span>
+            <span className="text-[25px] font-black leading-none text-[#101b17]">68%</span>
             <span className="rounded-full bg-[#e2f5f1] px-2.5 py-1 text-[12px] font-bold text-[#168f82]">↑ 6%</span>
           </div>
           <AreaChart />
         </div>
 
         <div className={card + " h-[92px] p-4"}>
-          <div className="grid h-full grid-cols-[0.78fr_1.22fr] items-end gap-4">
+          <div className="grid h-full grid-cols-[0.9fr_1.1fr] items-end gap-4">
             <div className="self-start">
-              <p className="text-[12px] font-semibold text-[#66716d]">Cash Runway</p>
+              <p className="text-[12px] font-semibold text-[#5e6b66]">Cash Runway</p>
               <div className="mt-3 flex items-end gap-2">
-                <span className="text-[25px] font-black leading-none text-[#0e1815]">14</span>
-                <span className="mb-0.5 text-[12px] font-medium text-[#66716d]">months</span>
+                <span className="text-[25px] font-black leading-none text-[#101b17]">14</span>
+                <span className="mb-0.5 text-[12px] font-medium text-[#5e6b66]">months</span>
               </div>
             </div>
             <BarChart compact values={[34,45,56,70,62,80,88,100]} />
@@ -275,33 +275,33 @@ function Dashboard() {
         <div className={card + " h-[92px] p-4"}>
           <div className="grid h-full grid-cols-[0.78fr_1.22fr] items-end gap-4">
             <div className="self-start">
-              <p className="text-[12px] font-semibold text-[#66716d]">Operating Cash Flow</p>
-              <div className="mt-3 text-[25px] font-black leading-none text-[#0e1815]">$412K</div>
+              <p className="whitespace-nowrap text-[11.5px] font-semibold text-[#5e6b66]">Operating Cash Flow</p>
+              <div className="mt-3 text-[25px] font-black leading-none text-[#101b17]">$412K</div>
             </div>
             <BarChart compact values={[12,22,28,44,56,60,74,92]} />
           </div>
         </div>
 
         <div className={card + " min-h-[150px] p-4"}>
-          <p className="mb-4 text-[12px] font-semibold text-[#66716d]">Scenario Planning</p>
+          <p className="mb-4 text-[12px] font-semibold text-[#5e6b66]">Scenario Planning</p>
           <div className="space-y-3.5">
             {[
               ["Base Case", "14 months", "#25b9aa"],
               ["Growth Case", "22 months", "#65dca7"],
               ["Downside Case", "6 months", "#efc84f"],
             ].map(([label, value, dot]) => (
-              <div key={label} className="flex items-center justify-between text-[13px] text-[#5f6d68]">
+              <div key={label} className="flex items-center justify-between text-[13px] text-[#596660]">
                 <span className="flex items-center gap-3">
                   <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: dot }} />
                   {label}
                 </span>
-                <span className="font-medium text-[#303c38]">{value}</span>
+                <span className="font-medium text-[#25312d]">{value}</span>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="min-h-[150px] rounded-[16px] border border-[#9bd739] bg-[#fbfff4] p-4 shadow-[0_10px_26px_rgba(116,155,55,0.07)]">
+        <div className="min-h-[150px] rounded-[16px] border border-[#9bd739] bg-[#f2f7e9] p-4 shadow-[0_10px_26px_rgba(116,155,55,0.08)]">
           <div className="mb-3 flex items-center gap-3 text-[#6f9f19]">
             <Sparkles className="h-5 w-5 fill-current" />
             <span className="text-[14px] font-extrabold">BRHT AI Insights</span>
