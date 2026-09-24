@@ -368,7 +368,7 @@ function ResourceArtwork({ type }: { type: string }) {
       <div className="relative h-36 overflow-hidden bg-[#101817] p-5">
         <div className="absolute inset-0 opacity-30 [background-image:linear-gradient(to_right,#fff_1px,transparent_1px),linear-gradient(to_bottom,#fff_1px,transparent_1px)] [background-size:24px_24px]" />
         <div className="relative ml-auto mt-4 w-4/5 rounded-lg border border-white/10 bg-[#0a1110] p-3">
-          <MiniLine />
+          <AreaChart />
           <div className="mt-1 flex gap-1">
             {[20, 36, 27, 48, 40, 62, 52].map((h, i) => (
               <span
@@ -397,7 +397,10 @@ export default function CfoPage() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <div\n      className="min-h-screen bg-[#07100e] text-white selection:bg-lime-300 selection:text-[#07100e]"\n      style={{ fontFamily: "var(--font-geist-sans), Inter, ui-sans-serif, system-ui, sans-serif" }}\n    >
+    <div
+      className="min-h-screen bg-[#07100e] text-white selection:bg-lime-300 selection:text-[#07100e]"
+      style={{ fontFamily: 'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif' }}
+    >
       <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-[#07100e]/90 backdrop-blur-xl">
         <div className="mx-auto flex max-w-[1440px] items-center justify-between px-6 py-4 lg:px-8">
           <a href="#top" aria-label="BRHT CFO home">
