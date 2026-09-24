@@ -67,25 +67,25 @@ const process = [
     number: "01",
     title: "Discover",
     icon: Search,
-    copy: "We learn your business, goals and challenges, and assess your current financial systems and data.",
+    copy: "We learn your business, goals and challenges, then assess the financial systems and data behind them.",
   },
   {
     number: "02",
     title: "Model",
     icon: BarChart3,
-    copy: "We build tailored forecasts, reporting and scenario models based on your unique drivers.",
+    copy: "We build tailored forecasts, reporting and scenarios around the drivers that actually matter.",
   },
   {
     number: "03",
     title: "Advise",
     icon: Lightbulb,
-    copy: "We provide clear recommendations and strategic guidance to help you make better decisions.",
+    copy: "We turn the numbers into clear recommendations and strategic guidance.",
   },
   {
     number: "04",
     title: "Partner",
     icon: Users,
-    copy: "We stay embedded as a long-term partner, helping you adapt, grow and navigate what’s next.",
+    copy: "We stay alongside you as the business evolves, helping navigate what comes next.",
   },
 ];
 
@@ -773,31 +773,39 @@ export default function CfoPage() {
           </div>
         </section>
 
-        <section className="bg-[#f4f4ef] py-20 text-[#101714] md:py-24">
-          <div className="mx-auto max-w-[1240px] px-5 md:px-8">
-            <p className="mb-4 text-[10px] font-extrabold uppercase tracking-[0.25em] text-[#557064]">
+        <section className="bg-[#f4f4ef] py-16 text-[#101714] md:py-20">
+          <div className="mx-auto max-w-[1280px] px-5 md:px-8">
+            <p className="mb-3 text-[11px] font-extrabold uppercase tracking-[0.28em] text-[#557064]">
               Our process
             </p>
-            <h2 className="text-4xl font-black tracking-[-0.04em] md:text-5xl">
+            <h2 className="text-4xl font-black tracking-[-0.045em] md:text-[52px]">
               A simple, proven approach.
             </h2>
 
-            <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+            <div className="mt-10 grid gap-10 md:grid-cols-2 lg:grid-cols-4 lg:gap-7">
               {process.map((step, i) => {
                 const Icon = step.icon;
                 return (
-                  <div key={step.number} className="relative pr-5">
+                  <div key={step.number} className="relative pr-3 lg:pr-5">
                     {i < process.length - 1 && (
-                      <div className="absolute left-10 right-0 top-4 hidden h-px bg-lime-300/45 lg:block" />
+                      <div className="absolute left-[52px] right-[-12px] top-[21px] hidden h-[2px] bg-gradient-to-r from-[#b8f34a]/60 to-[#b8f34a]/20 lg:block" />
                     )}
+
                     <div className="relative flex items-center gap-4">
-                      <span className="grid h-8 w-8 place-items-center rounded-full bg-lime-300 text-[10px] font-black">
+                      <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[#b8f34a] text-[12px] font-black text-[#101714] shadow-[0_6px_18px_rgba(184,243,74,0.18)]">
                         {step.number}
                       </span>
-                      <h3 className="text-[15px] font-extrabold">{step.title}</h3>
+                      <h3 className="text-[20px] font-black tracking-[-0.025em]">
+                        {step.title}
+                      </h3>
                     </div>
-                    <Icon className="ml-1 mt-7 h-6 w-6 text-[#1e7b69]" strokeWidth={1.8} />
-                    <p className="mt-4 max-w-[230px] text-[12px] leading-5 text-[#65716b]">
+
+                    <Icon
+                      className="ml-1 mt-7 h-8 w-8 text-[#1e7b69]"
+                      strokeWidth={1.8}
+                    />
+
+                    <p className="mt-4 max-w-[270px] text-[15px] leading-7 text-[#586760]">
                       {step.copy}
                     </p>
                   </div>
