@@ -783,34 +783,26 @@ export default function CfoPage() {
             </h2>
 
             <div className="mt-10 grid gap-10 md:grid-cols-2 lg:grid-cols-4 lg:gap-7">
-              {process.map((step, i) => {
-                const Icon = step.icon;
-                return (
-                  <div key={step.number} className="relative pr-3 lg:pr-5">
-                    {i < process.length - 1 && (
-                      <div className="absolute left-[52px] right-[-12px] top-[21px] hidden h-[2px] bg-gradient-to-r from-[#b8f34a]/60 to-[#b8f34a]/20 lg:block" />
-                    )}
+              {process.map((step, i) => (
+                <div key={step.number} className="relative pr-3 lg:pr-5">
+                  {i < process.length - 1 && (
+                    <div className="absolute left-[52px] right-[-12px] top-[21px] hidden h-[2px] bg-gradient-to-r from-[#b8f34a]/60 to-[#b8f34a]/20 lg:block" />
+                  )}
 
-                    <div className="relative flex items-center gap-4">
-                      <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[#b8f34a] text-[12px] font-black text-[#101714] shadow-[0_6px_18px_rgba(184,243,74,0.18)]">
-                        {step.number}
-                      </span>
-                      <h3 className="text-[20px] font-black tracking-[-0.025em]">
-                        {step.title}
-                      </h3>
-                    </div>
-
-                    <Icon
-                      className="ml-1 mt-7 h-8 w-8 text-[#1e7b69]"
-                      strokeWidth={1.8}
-                    />
-
-                    <p className="mt-4 max-w-[270px] text-[15px] leading-7 text-[#586760]">
-                      {step.copy}
-                    </p>
+                  <div className="relative flex items-center gap-4">
+                    <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[#b8f34a] text-[12px] font-black text-[#101714] shadow-[0_6px_18px_rgba(184,243,74,0.18)]">
+                      {step.number}
+                    </span>
+                    <h3 className="text-[21px] font-black tracking-[-0.025em]">
+                      {step.title}
+                    </h3>
                   </div>
-                );
-              })}
+
+                  <p className="mt-6 max-w-[275px] text-[15px] leading-7 text-[#586760]">
+                    {step.copy}
+                  </p>
+                </div>
+              ))}
             </div>
           </div>
         </section>
