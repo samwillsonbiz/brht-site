@@ -665,73 +665,88 @@ export default function CfoPage() {
                   </div>
                 </div>
 
-                <div className="relative mx-auto w-full max-w-[380px]">
-                  <div className="rounded-[22px] border border-[#9bd739]/35 bg-[#101b17] p-5 shadow-[0_0_55px_rgba(155,215,57,0.08)]">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#b8f34a]/70">
-                          BRHT CFO
-                        </p>
-                        <h3 className="mt-1 text-[22px] font-black text-white">Decision layer</h3>
-                      </div>
-                      <div className="grid h-11 w-11 place-items-center rounded-full bg-[#b8f34a]/10 text-[#b8f34a]">
-                        <Sparkles className="h-5 w-5" />
+                <div className="relative mx-auto w-full max-w-[400px]">
+                  <div className="overflow-hidden rounded-[24px] border border-[#9bd739]/40 bg-[#101b17] shadow-[0_0_60px_rgba(155,215,57,0.10)]">
+                    <div className="border-b border-white/[0.08] px-6 py-5">
+                      <div className="flex items-start justify-between gap-5">
+                        <div>
+                          <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-[#b8f34a]">
+                            BRHT CFO
+                          </p>
+                          <h3 className="mt-1 text-[28px] font-black leading-none text-white">
+                            CFO Advisory
+                          </h3>
+                          <p className="mt-3 max-w-[285px] text-[12px] leading-5 text-white/52">
+                            A strategic finance partner for the decisions that shape the business.
+                          </p>
+                        </div>
+                        <div className="grid h-12 w-12 shrink-0 place-items-center rounded-full border border-[#b8f34a]/20 bg-[#b8f34a]/10 text-[#b8f34a]">
+                          <Sparkles className="h-5 w-5 fill-current" />
+                        </div>
                       </div>
                     </div>
 
-                    <div className="mt-5 grid gap-3">
-                      <div className="flex items-center justify-between rounded-xl border border-white/[0.08] bg-white/[0.035] px-4 py-3">
-                        <div className="flex items-center gap-3">
-                          <LineChart className="h-5 w-5 text-[#60d9c7]" />
-                          <span className="text-[12px] font-bold text-white/72">Forecast</span>
-                        </div>
-                        <svg viewBox="0 0 92 28" className="h-7 w-24">
-                          <polyline points="2,23 20,18 35,20 52,10 68,13 90,4" fill="none" stroke="#b8f34a" strokeWidth="2.6" strokeLinecap="round" />
-                        </svg>
-                      </div>
-
-                      <div className="flex items-center justify-between rounded-xl border border-white/[0.08] bg-white/[0.035] px-4 py-3">
-                        <div className="flex items-center gap-3">
-                          <Target className="h-5 w-5 text-[#60d9c7]" />
-                          <span className="text-[12px] font-bold text-white/72">Scenarios</span>
-                        </div>
-                        <div className="flex gap-1.5">
-                          <span className="h-6 w-2 rounded-sm bg-[#28564d]" />
-                          <span className="h-9 w-2 rounded-sm bg-[#3ea895]" />
-                          <span className="h-12 w-2 rounded-sm bg-[#b8f34a]" />
-                        </div>
-                      </div>
-
-                      <div className="relative overflow-hidden rounded-xl border border-[#9bd739]/40 bg-[#142216] px-4 py-4">
-                        <div className="absolute right-0 top-0 h-20 w-20 rounded-full bg-[#b8f34a]/10 blur-2xl" />
-                        <div className="relative flex items-center gap-3">
-                          <Sparkles className="h-5 w-5 fill-current text-[#b8f34a]" />
+                    <div className="grid gap-0">
+                      {[
+                        {
+                          icon: LineChart,
+                          kicker: "See ahead",
+                          title: "Understand where the business is going.",
+                          accent: "#60d9c7",
+                        },
+                        {
+                          icon: Target,
+                          kicker: "Weigh the tradeoffs",
+                          title: "See the financial impact before you decide.",
+                          accent: "#8ee468",
+                        },
+                        {
+                          icon: Sparkles,
+                          kicker: "Make the call",
+                          title: "Turn insight into a confident next move.",
+                          accent: "#b8f34a",
+                        },
+                      ].map(({ icon: Icon, kicker, title, accent }, index) => (
+                        <div
+                          key={kicker}
+                          className={"relative flex items-center gap-4 px-6 py-4 " + (index !== 2 ? "border-b border-white/[0.07]" : "")}
+                        >
+                          <div
+                            className="grid h-10 w-10 shrink-0 place-items-center rounded-full border"
+                            style={{
+                              borderColor: accent + "55",
+                              backgroundColor: accent + "14",
+                              color: accent,
+                            }}
+                          >
+                            <Icon className="h-5 w-5" strokeWidth={1.9} />
+                          </div>
                           <div>
-                            <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#b8f34a]/70">
-                              Recommended action
+                            <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-white/35">
+                              {kicker}
                             </p>
-                            <p className="mt-1 text-[13px] font-extrabold text-white">
-                              Know what to do next.
+                            <p className="mt-1 text-[13px] font-extrabold leading-5 text-white/82">
+                              {title}
                             </p>
                           </div>
                         </div>
+                      ))}
+                    </div>
+
+                    <div className="relative overflow-hidden border-t border-[#9bd739]/25 bg-[#142216] px-6 py-4">
+                      <div className="absolute right-0 top-0 h-20 w-28 rounded-full bg-[#b8f34a]/10 blur-2xl" />
+                      <div className="relative flex items-center justify-between gap-4">
+                        <div>
+                          <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-[#b8f34a]/65">
+                            Strategic finance partner
+                          </p>
+                          <p className="mt-1 text-[14px] font-black text-white">
+                            A CFO in the room when the decision matters.
+                          </p>
+                        </div>
+                        <ArrowRight className="h-5 w-5 shrink-0 text-[#b8f34a]" />
                       </div>
                     </div>
-                  </div>
-
-                  <div className="mt-4 grid grid-cols-3 gap-2">
-                    {[
-                      ["Cash", Coins],
-                      ["Margin", Gauge],
-                      ["Capital", CircleDollarSign],
-                    ].map(([label, Icon]) => (
-                      <div key={label as string} className="rounded-xl border border-white/[0.07] bg-white/[0.025] py-3 text-center">
-                        <Icon className="mx-auto h-4 w-4 text-white/35" />
-                        <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.12em] text-white/32">
-                          {label as string}
-                        </p>
-                      </div>
-                    ))}
                   </div>
                 </div>
               </div>
