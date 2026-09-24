@@ -440,25 +440,25 @@ export default function CfoPage() {
             <BrhtLogo cfo />
           </a>
 
-          <nav className="hidden items-center gap-10 text-[12px] font-semibold text-white/70 md:flex">
-            <a className="border-b border-lime-300 pb-1 text-lime-300" href="#services">
-              CFO Advisory
-            </a>
-            <a className="transition hover:text-white" href="#resources">Resources</a>
-            <a className="transition hover:text-white" href="#about">About</a>
-            <a className="transition hover:text-white" href="/">BRHT Intelligence</a>
+          <nav className="hidden items-center gap-6 text-[11.5px] font-semibold text-white/64 lg:flex">
+            <a className="transition hover:text-[#b8f34a]" href="#services">Services</a>
+            <a className="transition hover:text-[#b8f34a]" href="#how-it-works">How It Works</a>
+            <a className="transition hover:text-[#b8f34a]" href="#process">Process</a>
+            <a className="transition hover:text-[#b8f34a]" href="#results">Results</a>
+            <a className="transition hover:text-[#b8f34a]" href="#pricing">Pricing</a>
+            <a className="transition hover:text-[#b8f34a]" href="#resources">Resources</a>
           </nav>
 
           <a
             href={bookingHref}
-            className="hidden items-center gap-2 rounded-[12px] bg-[#b8f34a] px-7 py-4 text-[13px] font-extrabold text-[#09110f] shadow-[0_0_34px_rgba(184,243,74,0.12)] transition hover:bg-[#c5f760] md:inline-flex"
+            className="hidden items-center gap-2 rounded-[12px] bg-[#b8f34a] px-6 py-3.5 text-[12.5px] font-extrabold text-[#09110f] shadow-[0_0_34px_rgba(184,243,74,0.12)] transition hover:bg-[#c5f760] lg:inline-flex"
           >
             Book a Strategy Call <ArrowRight className="h-4 w-4" />
           </a>
 
           <button
             aria-label="Toggle menu"
-            className="rounded-md border border-white/10 p-2 md:hidden"
+            className="rounded-md border border-white/10 p-2 lg:hidden"
             onClick={() => setMenuOpen((v) => !v)}
           >
             {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -466,12 +466,14 @@ export default function CfoPage() {
         </div>
 
         {menuOpen && (
-          <div className="border-t border-white/10 px-5 py-4 md:hidden">
+          <div className="border-t border-white/10 px-5 py-4 lg:hidden">
             <div className="grid gap-3 text-sm text-white/75">
-              <a href="#services" onClick={() => setMenuOpen(false)}>CFO Advisory</a>
+              <a href="#services" onClick={() => setMenuOpen(false)}>Services</a>
+              <a href="#how-it-works" onClick={() => setMenuOpen(false)}>How It Works</a>
+              <a href="#process" onClick={() => setMenuOpen(false)}>Process</a>
+              <a href="#results" onClick={() => setMenuOpen(false)}>Results</a>
+              <a href="#pricing" onClick={() => setMenuOpen(false)}>Pricing</a>
               <a href="#resources" onClick={() => setMenuOpen(false)}>Resources</a>
-              <a href="#about" onClick={() => setMenuOpen(false)}>About</a>
-              <a href="/" onClick={() => setMenuOpen(false)}>BRHT Intelligence</a>
               <a
                 href={bookingHref}
                 className="mt-2 inline-flex items-center justify-center gap-2 rounded-md bg-lime-300 px-4 py-3 font-bold text-[#07100e]"
@@ -532,7 +534,7 @@ export default function CfoPage() {
           <FeatureBar />
         </section>
 
-        <section id="services" className="bg-[#f4f4ef] py-20 text-[#101714] md:py-24">
+        <section id="services" className="scroll-mt-24 bg-[#f4f4ef] py-20 text-[#101714] md:py-24">
           <div className="mx-auto max-w-[1240px] px-5 md:px-8">
             <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
               <div>
@@ -579,7 +581,7 @@ export default function CfoPage() {
           </div>
         </section>
 
-        <section id="about" className="relative overflow-hidden border-y border-white/[0.06] bg-[#07100e] py-24 md:py-28">
+        <section id="how-it-works" className="scroll-mt-24 relative overflow-hidden border-y border-white/[0.06] bg-[#07100e] py-24 md:py-28">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_55%,rgba(184,243,74,0.08),transparent_26%),radial-gradient(circle_at_18%_65%,rgba(52,214,195,0.05),transparent_24%)]" />
           <div className="mx-auto max-w-[1320px] px-5 md:px-8">
             <div className="relative text-center">
@@ -773,7 +775,7 @@ export default function CfoPage() {
           </div>
         </section>
 
-        <section className="bg-[#f4f4ef] py-16 text-[#101714] md:py-20">
+        <section id="process" className="scroll-mt-24 bg-[#f4f4ef] py-16 text-[#101714] md:py-20">
           <div className="mx-auto max-w-[1280px] px-5 md:px-8">
             <p className="mb-3 text-[11px] font-extrabold uppercase tracking-[0.28em] text-[#557064]">
               Our process
@@ -807,7 +809,7 @@ export default function CfoPage() {
           </div>
         </section>
 
-        <section className="border-t border-black/[0.05] bg-white py-20 text-[#101714]">
+        <section id="results" className="scroll-mt-24 border-t border-black/[0.05] bg-white py-20 text-[#101714]">
           <div className="mx-auto max-w-[1240px] px-5 md:px-8">
             <div className="flex items-end justify-between">
               <div>
@@ -848,7 +850,7 @@ export default function CfoPage() {
           </div>
         </section>
 
-        <section id="pricing" className="relative overflow-hidden border-t border-white/[0.06] bg-[#07100e] py-20 text-white md:py-24">
+        <section id="pricing" className="scroll-mt-24 relative overflow-hidden border-t border-white/[0.06] bg-[#07100e] py-20 text-white md:py-24">
           <div className="absolute left-1/2 top-0 h-72 w-[720px] -translate-x-1/2 rounded-full bg-[#b8f34a]/[0.045] blur-[110px]" />
           <div className="relative mx-auto max-w-[1240px] px-5 md:px-8">
             <div className="text-center">
@@ -988,7 +990,7 @@ export default function CfoPage() {
           </div>
         </section>
 
-        <section id="resources" className="border-t border-black/[0.05] bg-[#f6f6f1] py-20 text-[#101714]">
+        <section id="resources" className="scroll-mt-24 border-t border-black/[0.05] bg-[#f6f6f1] py-20 text-[#101714]">
           <div className="mx-auto max-w-[1240px] px-5 md:px-8">
             <div className="grid gap-6 lg:grid-cols-[1fr_0.75fr] lg:items-end">
               <div>
@@ -1077,7 +1079,7 @@ export default function CfoPage() {
             <a href="/">BRHT Intelligence</a>
             <a href="#top">BRHT CFO</a>
             <a href="#resources">Resources</a>
-            <a href="#about">About</a>
+            <a href="#how-it-works">How It Works</a>
             <a href={bookingHref}>Contact</a>
           </div>
           <div className="flex gap-6">
