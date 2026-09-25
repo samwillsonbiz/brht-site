@@ -10,6 +10,11 @@ const emailHref =
 
 export default function BookingModal() {
   const [open, setOpen] = useState(false);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [company, setCompany] = useState("");
+  const [website, setWebsite] = useState("");
+  const [help, setHelp] = useState("");
 
   useEffect(() => {
     const handler = () => setOpen(true);
@@ -29,6 +34,28 @@ export default function BookingModal() {
       document.body.style.overflow = "";
     };
   }, [open]);
+
+  const sendInquiry = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const subject = encodeURIComponent(
+      "BRHT CFO Strategy Call" + (company ? " — " + company : "")
+    );
+    const body = encodeURIComponent(
+      [
+        "Name: " + name,
+        "Email: " + email,
+        "Company: " + company,
+        website ? "Website: " + website : "",
+        "",
+        "What I'd like help with:",
+        help,
+      ]
+        .filter(Boolean)
+        .join("\n")
+    );
+    window.location.href =
+      "mailto:samwillsonbiz@gmail.com?subject=" + subject + "&body=" + body;
+  };
 
   if (!open) return null;
 
@@ -85,7 +112,7 @@ export default function BookingModal() {
                   </p>
                 </div>
                 <p className="mt-2 text-[11px] leading-5 text-white/55">
-                  New times are released on a rolling basis so the calendar stays focused and useful.
+                  Monday–Friday · 30 minutes · limited daily openings · 24-hour notice · rolling 14-day window.
                 </p>
               </div>
 
@@ -113,23 +140,93 @@ export default function BookingModal() {
                 className="h-full w-full border-0 bg-white"
               />
             ) : (
-              <div className="grid h-full place-items-center p-8 text-center">
-                <div className="max-w-md">
-                  <div className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-[#e9f7dc] text-[#6d9c26]">
-                    <CalendarDays className="h-6 w-6" />
+              <div className="h-full overflow-y-auto p-6 md:p-8">
+                <div className="mx-auto max-w-xl">
+                  <div className="flex items-start gap-4">
+                    <div className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-[#e9f7dc] text-[#6d9c26]">
+                      <Mail className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="text-[9px] font-black uppercase tracking-[0.16em] text-[#6b7a73]">
+                        Strategy call request
+                      </p>
+                      <h3 className="mt-1 text-[28px] font-black tracking-[-0.04em] text-[#14201c]">
+                        Tell us what you need.
+                      </h3>
+                      <p className="mt-2 text-[12px] leading-5 text-[#66736d]">
+                        Send a quick note now. We can coordinate the right time directly while live booking is being connected.
+                      </p>
+                    </div>
                   </div>
-                  <h3 className="mt-5 text-[26px] font-black tracking-[-0.035em] text-[#14201c]">
-                    Scheduling is almost ready.
-                  </h3>
-                  <p className="mt-3 text-[13px] leading-6 text-[#66736d]">
-                    The booking experience is built. Connect the live Google Calendar appointment-schedule link to show real availability here.
-                  </p>
-                  <a
-                    href={emailHref}
-                    className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[#b8f34a] px-5 py-3.5 text-[12px] font-black text-[#07100e]"
-                  >
-                    Email about a Strategy Call <ArrowRight className="h-4 w-4" />
-                  </a>
+
+                  <form onSubmit={sendInquiry} className="mt-7 space-y-4">
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <label className="grid gap-2">
+                        <span className="text-[10px] font-black uppercase tracking-[0.12em] text-[#65736c]">Name</span>
+                        <input
+                          required
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          className="rounded-xl border border-black/10 bg-white px-4 py-3 text-[13px] text-[#14201c] outline-none transition focus:border-[#83bc31]"
+                          placeholder="Your name"
+                        />
+                      </label>
+                      <label className="grid gap-2">
+                        <span className="text-[10px] font-black uppercase tracking-[0.12em] text-[#65736c]">Work email</span>
+                        <input
+                          required
+                          type="email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          className="rounded-xl border border-black/10 bg-white px-4 py-3 text-[13px] text-[#14201c] outline-none transition focus:border-[#83bc31]"
+                          placeholder="you@company.com"
+                        />
+                      </label>
+                    </div>
+
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <label className="grid gap-2">
+                        <span className="text-[10px] font-black uppercase tracking-[0.12em] text-[#65736c]">Company</span>
+                        <input
+                          required
+                          value={company}
+                          onChange={(e) => setCompany(e.target.value)}
+                          className="rounded-xl border border-black/10 bg-white px-4 py-3 text-[13px] text-[#14201c] outline-none transition focus:border-[#83bc31]"
+                          placeholder="Company name"
+                        />
+                      </label>
+                      <label className="grid gap-2">
+                        <span className="text-[10px] font-black uppercase tracking-[0.12em] text-[#65736c]">Website</span>
+                        <input
+                          value={website}
+                          onChange={(e) => setWebsite(e.target.value)}
+                          className="rounded-xl border border-black/10 bg-white px-4 py-3 text-[13px] text-[#14201c] outline-none transition focus:border-[#83bc31]"
+                          placeholder="company.com"
+                        />
+                      </label>
+                    </div>
+
+                    <label className="grid gap-2">
+                      <span className="text-[10px] font-black uppercase tracking-[0.12em] text-[#65736c]">
+                        What would you like help with?
+                      </span>
+                      <textarea
+                        required
+                        rows={5}
+                        value={help}
+                        onChange={(e) => setHelp(e.target.value)}
+                        className="resize-none rounded-xl border border-black/10 bg-white px-4 py-3 text-[13px] leading-5 text-[#14201c] outline-none transition focus:border-[#83bc31]"
+                        placeholder="Forecasting, cash flow, reporting, systems, pricing, fundraising..."
+                      />
+                    </label>
+
+                    <button
+                      type="submit"
+                      className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#b8f34a] px-5 py-4 text-[12px] font-black text-[#07100e] transition hover:bg-[#c5f760]"
+                    >
+                      Send Strategy Call Request <ArrowRight className="h-4 w-4" />
+                    </button>
+                  </form>
                 </div>
               </div>
             )}
