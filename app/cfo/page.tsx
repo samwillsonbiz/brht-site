@@ -16,6 +16,7 @@ import {
   Search,
   Settings2,
   Sparkles,
+  Star,
   Target,
   Users,
   X,
@@ -117,21 +118,21 @@ const testimonials = [
     quote:
       "BRHT CFO gave us the clarity we needed to make faster, more confident decisions. Our forecasting and reporting are now on a completely different level.",
     role: "Founder",
-    company: "Growth Company",
+    company: "Called to Surf",
     avatar: "https://i.pravatar.cc/96?img=12",
   },
   {
     quote:
       "The team quickly understood our business and built a reporting structure that actually helps us run the business. We finally have real visibility into cash and what’s next.",
     role: "CEO",
-    company: "Ecommerce Brand",
+    company: "Clarke Capital",
     avatar: "https://i.pravatar.cc/96?img=47",
   },
   {
     quote:
       "BRHT CFO has been an incredible strategic partner. They bring deep financial expertise, ask the right questions, and help us think through opportunities we wouldn’t have seen on our own.",
     role: "Operations Leader",
-    company: "Multi-Channel Business",
+    company: "Kiln",
     avatar: "https://i.pravatar.cc/96?img=33",
   },
 ];
@@ -837,8 +838,12 @@ export default function CfoPage() {
             <div className="mt-10 grid gap-4 md:grid-cols-3">
               {testimonials.map((item, i) => (
                 <article key={i} className="rounded-xl border border-black/[0.07] bg-[#fbfbf9] p-6">
-                  <div className="text-3xl leading-none text-[#1e9b7c]">“</div>
-                  <p className="mt-2 text-[13px] leading-6 text-[#4e5b55]">{item.quote}</p>
+                  <div className="flex gap-1 text-[#9fdc38]" aria-label="5 out of 5 stars">
+                    {Array.from({ length: 5 }).map((_, starIndex) => (
+                      <Star key={starIndex} className="h-4 w-4 fill-current" strokeWidth={1.6} />
+                    ))}
+                  </div>
+                  <p className="mt-4 text-[13px] leading-6 text-[#4e5b55]">{item.quote}</p>
                   <div className="mt-7 flex items-center gap-3">
                     <img
                       src={item.avatar}
