@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { openBrhtBooking } from "@/lib/booking";
 import {
   ArrowRight,
   BarChart3,
@@ -504,12 +505,16 @@ export default function CfoResourceLibrary() {
                   ))}
                 </div>
 
-                <a
-                  href="mailto:samwillsonbiz@gmail.com?subject=BRHT%20CFO%20Strategy%20Call"
+                <button
+                  type="button"
+                  onClick={() => {
+                    setOpenArticle(null);
+                    openBrhtBooking();
+                  }}
                   className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#b8f34a] px-5 py-3.5 text-[12px] font-black text-[#07100e] transition hover:bg-[#c5f760]"
                 >
                   Book a Strategy Call <ArrowRight className="h-4 w-4" />
-                </a>
+                </button>
               </aside>
             </div>
           </div>
