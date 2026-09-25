@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 
 import CfoServiceShowcase, { type CfoServiceId } from "@/components/CfoServiceShowcase";
+import CfoResourceLibrary from "@/components/CfoResourceLibrary";
 
 const bookingHref =
   "mailto:samwillsonbiz@gmail.com?subject=BRHT%20CFO%20Strategy%20Call";
@@ -129,27 +130,6 @@ const testimonials = [
       "BRHT CFO has been an incredible strategic partner. They bring deep financial expertise, ask the right questions, and help us think through opportunities we wouldn’t have seen on our own.",
     role: "Operations Leader",
     company: "Multi-Channel Business",
-  },
-];
-
-const resources = [
-  {
-    category: "FORECASTING",
-    read: "8 MIN READ",
-    title: "How to Build a 13-Week Cash Flow Forecast",
-    art: "forecast",
-  },
-  {
-    category: "REPORTING",
-    read: "6 MIN READ",
-    title: "What Your Monthly CFO Report Should Actually Include",
-    art: "reporting",
-  },
-  {
-    category: "SYSTEMS",
-    read: "7 MIN READ",
-    title: "Xero vs QuickBooks vs NetSuite: When to Use Each",
-    art: "systems",
   },
 ];
 
@@ -397,53 +377,6 @@ function FeatureBar() {
           </div>
         ))}
       </div>
-    </div>
-  );
-}
-
-function ResourceArtwork({ type }: { type: string }) {
-  if (type === "systems") {
-    return (
-      <div className="flex h-36 items-center justify-center gap-4 bg-[#111b1a]">
-        {["X", "qb", "N"].map((x, i) => (
-          <div
-            key={x}
-            className={`grid h-12 w-12 place-items-center rounded-full text-sm font-black text-white shadow-xl ${
-              i === 0 ? "bg-sky-500" : i === 1 ? "bg-lime-500" : "bg-slate-600"
-            }`}
-          >
-            {x}
-          </div>
-        ))}
-      </div>
-    );
-  }
-  if (type === "reporting") {
-    return (
-      <div className="relative h-36 overflow-hidden bg-[#101817] p-5">
-        <div className="absolute inset-0 opacity-30 [background-image:linear-gradient(to_right,#fff_1px,transparent_1px),linear-gradient(to_bottom,#fff_1px,transparent_1px)] [background-size:24px_24px]" />
-        <div className="relative ml-auto mt-4 w-4/5 rounded-lg border border-white/10 bg-[#0a1110] p-3">
-          <AreaChart />
-          <div className="mt-1 flex gap-1">
-            {[20, 36, 27, 48, 40, 62, 52].map((h, i) => (
-              <span
-                key={i}
-                className="w-full rounded-t bg-lime-300/70"
-                style={{ height: h / 2 }}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  }
-  return (
-    <div className="relative h-36 overflow-hidden bg-gradient-to-b from-[#283b3a] to-[#0b1312]">
-      <svg viewBox="0 0 500 180" className="absolute inset-0 h-full w-full">
-        <path d="M0 150 L70 90 L120 115 L180 62 L230 104 L300 48 L360 82 L430 36 L500 74 L500 180 L0 180Z" fill="#172623" />
-        <path d="M0 160 L82 110 L150 138 L220 82 L290 122 L355 70 L420 112 L500 68 L500 180 L0 180Z" fill="#0d1816" />
-        <polyline points="20,140 90,125 145,132 205,100 260,108 320,76 385,84 465,48" fill="none" stroke="#9cff3b" strokeWidth="4" />
-      </svg>
     </div>
   );
 }
@@ -1057,60 +990,7 @@ export default function CfoPage() {
           </div>
         </section>
 
-        <section id="resources" className="scroll-mt-24 border-t border-black/[0.05] bg-[#f6f6f1] py-20 text-[#101714]">
-          <div className="mx-auto max-w-[1240px] px-5 md:px-8">
-            <div className="grid gap-6 lg:grid-cols-[1fr_0.75fr] lg:items-end">
-              <div>
-                <p className="mb-4 text-[10px] font-extrabold uppercase tracking-[0.25em] text-[#557064]">
-                  The BRHT CFO Resource Library
-                </p>
-                <h2 className="max-w-2xl text-4xl font-black leading-[1.02] tracking-[-0.04em] md:text-5xl">
-                  Practical resources for building a stronger business.
-                </h2>
-              </div>
-              <p className="max-w-md text-[13px] leading-6 text-[#5d6963] lg:justify-self-end">
-                Guides, templates and insights on forecasting, reporting, finance systems and more. Everything you need to solve your biggest financial questions.
-              </p>
-            </div>
-
-            <div className="mt-9 flex overflow-hidden rounded-lg border border-black/10 bg-white">
-              <div className="flex flex-1 items-center gap-3 px-4">
-                <Search className="h-4 w-4 text-black/40" />
-                <span className="text-[12px] text-black/40">What are you trying to solve?</span>
-              </div>
-              <button className="inline-flex items-center gap-2 bg-lime-300 px-6 py-3 text-[12px] font-extrabold">
-                Search <ArrowRight className="h-4 w-4" />
-              </button>
-            </div>
-
-            <div className="mt-3 flex flex-wrap gap-2">
-              {["Cash Flow", "Forecasting", "Reporting", "KPIs", "Finance Systems", "Fundraising", "Accounting"].map((tag) => (
-                <span key={tag} className="rounded-full border border-black/10 bg-white px-4 py-2 text-[10px] font-semibold text-black/60">
-                  {tag}
-                </span>
-              ))}
-            </div>
-
-            <div className="mt-7 grid gap-5 md:grid-cols-3">
-              {resources.map((item) => (
-                <article key={item.title} className="group overflow-hidden rounded-xl border border-black/[0.08] bg-white">
-                  <ResourceArtwork type={item.art} />
-                  <div className="p-5">
-                    <div className="flex gap-3 text-[9px] font-bold uppercase tracking-[0.12em] text-black/38">
-                      <span>{item.category}</span>
-                      <span>•</span>
-                      <span>{item.read}</span>
-                    </div>
-                    <div className="mt-3 flex items-start justify-between gap-5">
-                      <h3 className="text-[16px] font-extrabold leading-5">{item.title}</h3>
-                      <ArrowRight className="mt-1 h-4 w-4 shrink-0 transition group-hover:translate-x-1" />
-                    </div>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
+        <CfoResourceLibrary />
 
         <section className="relative overflow-hidden border-t border-white/[0.07] bg-[#08110f] py-16">
           <div className="absolute -bottom-24 left-[-5%] h-56 w-96 rounded-full bg-lime-400/10 blur-[80px]" />
