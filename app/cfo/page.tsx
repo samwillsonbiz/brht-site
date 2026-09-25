@@ -21,44 +21,66 @@ import {
   X,
 } from "lucide-react";
 
+import CfoServiceShowcase, { type CfoServiceId } from "@/components/CfoServiceShowcase";
+
 const bookingHref =
   "mailto:samwillsonbiz@gmail.com?subject=BRHT%20CFO%20Strategy%20Call";
 
-const services = [
+const services: Array<{
+  id: CfoServiceId;
+  icon: React.ElementType;
+  title: string;
+  copy: string;
+  accent?: boolean;
+}> = [
   {
+    id: "forecasting",
     icon: LineChart,
     title: "Financial Forecasting",
     copy: "Build accurate, driver-based forecasts to plan for growth, stress test scenarios and make confident decisions.",
   },
   {
+    id: "cash-flow",
     icon: Coins,
     title: "Cash Flow & Runway",
     copy: "Get real visibility into cash, understand key drivers, and plan for the road ahead.",
   },
   {
+    id: "kpi-reporting",
     icon: Gauge,
     title: "KPI & Management Reporting",
     copy: "Track the metrics that matter with clear, actionable reporting tailored to your business.",
   },
   {
+    id: "board-reporting",
     icon: FileBarChart2,
     title: "Board & Investor Reporting",
     copy: "Professional, board-ready reporting to support investors, lenders and key stakeholders.",
   },
   {
+    id: "pricing-margin",
     icon: Target,
     title: "Pricing & Margin Analysis",
     copy: "Analyze margins, model pricing scenarios and find opportunities to increase profitability.",
   },
   {
+    id: "capital-planning",
     icon: CircleDollarSign,
     title: "Capital Planning & Fundraising Support",
     copy: "Build financial models, prepare investor materials and get strategic support for raising capital.",
   },
   {
+    id: "systems-data",
     icon: Settings2,
     title: "Finance Systems & Data",
     copy: "Design and optimize your finance stack, integrate your data and create scalable reporting systems.",
+  },
+  {
+    id: "strategic-partner",
+    icon: Sparkles,
+    title: "Not Bookkeeping. A Strategic Partner.",
+    copy: "See the difference between recording what happened and having a CFO help decide what happens next.",
+    accent: true,
   },
 ];
 
@@ -428,6 +450,14 @@ function ResourceArtwork({ type }: { type: string }) {
 
 export default function CfoPage() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [hoveredService, setHoveredService] = useState<CfoServiceId | null>(null);
+  const [pinnedService, setPinnedService] = useState<CfoServiceId | null>(null);
+  const activeService = pinnedService ?? hoveredService;
+
+  const closeServiceShowcase = () => {
+    setPinnedService(null);
+    setHoveredService(null);
+  };
 
   return (
     <div
@@ -545,41 +575,98 @@ export default function CfoPage() {
                   Strategic finance, not just financial reporting.
                 </h2>
               </div>
-              <p className="max-w-md text-[14px] leading-6 text-[#5a6660] lg:justify-self-end">
-                We help growing companies turn financial data into a strategic advantage — with the insights, systems and guidance to make better decisions at every stage.
-              </p>
+              <div className="max-w-md lg:justify-self-end">
+                <p className="text-[14px] leading-6 text-[#5a6660]">
+                  We help growing companies turn financial data into a strategic advantage — with the insights, systems and guidance to make better decisions at every stage.
+                </p>
+                <p className="mt-3 hidden text-[10px] font-bold uppercase tracking-[0.15em] text-[#718078] md:block">
+                  Hover to preview · Click to keep open
+                </p>
+              </div>
             </div>
 
             <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               {services.map((service) => {
                 const Icon = service.icon;
                 return (
-                  <article
-                    key={service.title}
-                    className="group min-h-[220px] rounded-xl border border-black/[0.06] bg-white p-6 shadow-[0_10px_35px_rgba(15,23,20,0.025)] transition hover:-translate-y-1 hover:shadow-[0_16px_45px_rgba(15,23,20,0.07)]"
+                  <button
+                    key={service.id}
+                    type="button"
+                    onMouseEnter={() => {
+                      if (!pinnedService) setHoveredService(service.id);
+                    }}
+                    onMouseLeave={() => {
+                      if (!pinnedService) setHoveredService(null);
+                    }}
+                    onFocus={() => {
+                      if (!pinnedService) setHoveredService(service.id);
+                    }}
+                    onBlur={() => {
+                      if (!pinnedService) setHoveredService(null);
+                    }}
+                    onClick={() => {
+                      setPinnedService(service.id);
+                      setHoveredService(service.id);
+                    }}
+                    className={
+                      "group relative min-h-[220px] overflow-hidden rounded-xl border p-6 text-left shadow-[0_10px_35px_rgba(15,23,20,0.025)] transition duration-200 hover:-translate-y-1 hover:shadow-[0_18px_50px_rgba(15,23,20,0.10)] focus:outline-none focus:ring-2 focus:ring-[#9bd739]/45 " +
+                      (service.accent
+                        ? "border-[#b7e765] bg-gradient-to-br from-white via-[#fbfff4] to-[#effbd4]"
+                        : "border-black/[0.06] bg-white hover:border-[#8fcf35]/35")
+                    }
                   >
-                    <div className="flex items-start justify-between">
-                      <Icon className="h-7 w-7 text-[#1e7b69]" strokeWidth={1.8} />
-                      <ArrowRight className="h-4 w-4 text-black/55 transition group-hover:translate-x-1" />
+                    {service.accent && (
+                      <div className="absolute right-[-40px] top-[-40px] h-28 w-28 rounded-full bg-[#b8f34a]/20 blur-2xl" />
+                    )}
+                    <div className="relative flex items-start justify-between">
+                      <Icon
+                        className={"h-7 w-7 " + (service.accent ? "text-[#77a920]" : "text-[#1e7b69]")}
+                        strokeWidth={1.8}
+                      />
+                      <ArrowRight className="h-4 w-4 text-black/45 transition duration-200 group-hover:translate-x-1 group-hover:text-[#6f9f19]" />
                     </div>
-                    <h3 className="mt-7 text-[16px] font-extrabold leading-5">{service.title}</h3>
-                    <p className="mt-3 text-[12px] leading-5 text-[#626d68]">{service.copy}</p>
-                  </article>
+                    <h3 className="relative mt-7 text-[16px] font-extrabold leading-5">
+                      {service.title}
+                    </h3>
+                    <p className="relative mt-3 text-[12px] leading-5 text-[#626d68]">
+                      {service.copy}
+                    </p>
+                    <div className="relative mt-5 flex items-center gap-2 text-[9px] font-black uppercase tracking-[0.14em] text-[#7c8983] opacity-0 transition group-hover:opacity-100 group-focus:opacity-100">
+                      View example <ArrowRight className="h-3 w-3" />
+                    </div>
+                  </button>
                 );
               })}
-              <article className="min-h-[220px] rounded-xl border border-lime-300/40 bg-gradient-to-br from-white to-lime-100 p-6">
-                <div className="mb-7 h-0.5 w-8 bg-lime-400" />
-                <p className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-[#53655d]">
-                  Not bookkeeping.
-                  <span className="mt-2 block">A strategic partner.</span>
-                </p>
-                <p className="mt-5 text-[12px] leading-5 text-[#53655d]">
-                  We focus on forward-looking insights and decision support — not bookkeeping, payroll or tax compliance.
-                </p>
-              </article>
             </div>
           </div>
         </section>
+
+        {activeService && (
+          <>
+            {pinnedService && (
+              <button
+                type="button"
+                aria-label="Close service showcase"
+                onClick={closeServiceShowcase}
+                className="fixed inset-0 z-[70] cursor-default bg-[#020807]/75 backdrop-blur-[3px]"
+              />
+            )}
+            <div
+              className={
+                "fixed left-1/2 top-[54%] z-[80] h-[min(72vh,690px)] w-[min(1180px,calc(100vw-36px))] -translate-x-1/2 -translate-y-1/2 transition duration-200 " +
+                (pinnedService
+                  ? "pointer-events-auto opacity-100"
+                  : "pointer-events-none hidden opacity-100 md:block")
+              }
+            >
+              <CfoServiceShowcase
+                serviceId={activeService}
+                pinned={Boolean(pinnedService)}
+                onClose={closeServiceShowcase}
+              />
+            </div>
+          </>
+        )}
 
         <section id="how-it-works" className="scroll-mt-24 relative overflow-hidden border-y border-white/[0.06] bg-[#07100e] py-24 md:py-28">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_55%,rgba(184,243,74,0.08),transparent_26%),radial-gradient(circle_at_18%_65%,rgba(52,214,195,0.05),transparent_24%)]" />
