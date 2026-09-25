@@ -24,9 +24,8 @@ import {
 
 import CfoServiceShowcase, { type CfoServiceId } from "@/components/CfoServiceShowcase";
 import CfoResourceLibrary from "@/components/CfoResourceLibrary";
-
-const bookingHref =
-  "mailto:samwillsonbiz@gmail.com?subject=BRHT%20CFO%20Strategy%20Call";
+import BookingModal from "@/components/BookingModal";
+import { openBrhtBooking } from "@/lib/booking";
 
 const services: Array<{
   id: CfoServiceId;
@@ -413,12 +412,13 @@ export default function CfoPage() {
             <a className="transition hover:text-[#b8f34a]" href="#resources">Resources</a>
           </nav>
 
-          <a
-            href={bookingHref}
+          <button
+            type="button"
+            onClick={openBrhtBooking}
             className="hidden items-center gap-2 rounded-[12px] bg-[#b8f34a] px-6 py-3.5 text-[12.5px] font-extrabold text-[#09110f] shadow-[0_0_34px_rgba(184,243,74,0.12)] transition hover:bg-[#c5f760] lg:inline-flex"
           >
             Book a Strategy Call <ArrowRight className="h-4 w-4" />
-          </a>
+          </button>
 
           <button
             aria-label="Toggle menu"
@@ -438,12 +438,16 @@ export default function CfoPage() {
               <a href="#results" onClick={() => setMenuOpen(false)}>Results</a>
               <a href="#pricing" onClick={() => setMenuOpen(false)}>Pricing</a>
               <a href="#resources" onClick={() => setMenuOpen(false)}>Resources</a>
-              <a
-                href={bookingHref}
+              <button
+                type="button"
+                onClick={() => {
+                  setMenuOpen(false);
+                  openBrhtBooking();
+                }}
                 className="mt-2 inline-flex items-center justify-center gap-2 rounded-md bg-lime-300 px-4 py-3 font-bold text-[#07100e]"
               >
                 Book a Strategy Call <ArrowRight className="h-4 w-4" />
-              </a>
+              </button>
             </div>
           </div>
         )}
@@ -479,12 +483,13 @@ export default function CfoPage() {
                   BRHT CFO provides outsourced CFO advisory for growing companies that need clearer financial insights, stronger forecasting, and a strategic partner to help make better decisions.
                 </p>
                 <div className="mt-9">
-                  <a
-                    href={bookingHref}
+                  <button
+                    type="button"
+                    onClick={openBrhtBooking}
                     className="inline-flex items-center gap-2 rounded-[14px] bg-[#b8f34a] px-8 py-5 text-[15px] font-extrabold text-[#09110f] shadow-[0_0_28px_rgba(184,243,74,0.12)] transition hover:bg-[#c5f760]"
                   >
                     Book a Strategy Call <ArrowRight className="h-5 w-5" />
-                  </a>
+                  </button>
                 </div>
               </div>
 
@@ -869,10 +874,10 @@ export default function CfoPage() {
                 Pricing
               </p>
               <h2 className="mx-auto max-w-3xl text-4xl font-black leading-[1.02] tracking-[-0.045em] md:text-5xl">
-                CFO Support.
+                Your CFO investment.
               </h2>
-              <p className="mx-auto mt-5 max-w-xl text-[14px] leading-6 text-white/52">
-                Start with the level of strategic finance support your business needs today. Scale the engagement as complexity grows.
+              <p className="mx-auto mt-5 max-w-2xl text-[14px] leading-6 text-white/52">
+                Senior CFO guidance without the cost or commitment of a full-time CFO. Choose the level of support that fits your business today.
               </p>
             </div>
 
@@ -980,8 +985,9 @@ export default function CfoPage() {
                     ))}
                   </div>
 
-                  <a
-                    href={bookingHref}
+                  <button
+                    type="button"
+                    onClick={openBrhtBooking}
                     className={
                       "mt-8 inline-flex items-center justify-center gap-2 rounded-[12px] px-5 py-4 text-[13px] font-extrabold transition " +
                       (plan.featured
@@ -990,7 +996,7 @@ export default function CfoPage() {
                     }
                   >
                     Book a Strategy Call <ArrowRight className="h-4 w-4" />
-                  </a>
+                  </button>
                 </article>
               ))}
             </div>
@@ -1019,12 +1025,13 @@ export default function CfoPage() {
               <p className="mb-6 text-[13px] leading-6 text-white/55">
                 A direct conversation about your numbers, systems, and what’s next for your business.
               </p>
-              <a
-                href={bookingHref}
+              <button
+                type="button"
+                onClick={openBrhtBooking}
                 className="inline-flex items-center gap-2 rounded-md bg-lime-300 px-6 py-3.5 text-[13px] font-extrabold text-[#07100e] transition hover:bg-lime-200"
               >
                 Book a Strategy Call <ArrowRight className="h-4 w-4" />
-              </a>
+              </button>
             </div>
           </div>
         </section>
@@ -1038,7 +1045,7 @@ export default function CfoPage() {
             <a href="#top">BRHT CFO</a>
             <a href="#resources">Resources</a>
             <a href="#how-it-works">How It Works</a>
-            <a href={bookingHref}>Contact</a>
+            <button type="button" onClick={openBrhtBooking} className="text-left">Contact</button>
           </div>
           <div className="flex gap-6">
             <span>Privacy</span>
@@ -1046,6 +1053,7 @@ export default function CfoPage() {
           </div>
         </div>
       </footer>
+      <BookingModal />
     </div>
   );
 }
