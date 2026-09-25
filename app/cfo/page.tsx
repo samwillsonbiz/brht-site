@@ -16,15 +16,16 @@ import {
   Search,
   Settings2,
   Sparkles,
+  Star,
   Target,
   Users,
   X,
 } from "lucide-react";
 
 import CfoServiceShowcase, { type CfoServiceId } from "@/components/CfoServiceShowcase";
-
-const bookingHref =
-  "mailto:samwillsonbiz@gmail.com?subject=BRHT%20CFO%20Strategy%20Call";
+import CfoResourceLibrary from "@/components/CfoResourceLibrary";
+import BookingModal from "@/components/BookingModal";
+import { openBrhtBooking } from "@/lib/booking";
 
 const services: Array<{
   id: CfoServiceId;
@@ -116,40 +117,22 @@ const testimonials = [
     quote:
       "BRHT CFO gave us the clarity we needed to make faster, more confident decisions. Our forecasting and reporting are now on a completely different level.",
     role: "Founder",
-    company: "Growth Company",
+    company: "Called to Surf",
+    avatar: "https://i.pravatar.cc/96?img=12",
   },
   {
     quote:
       "The team quickly understood our business and built a reporting structure that actually helps us run the business. We finally have real visibility into cash and what’s next.",
     role: "CEO",
-    company: "Ecommerce Brand",
+    company: "Clarke Capital",
+    avatar: "https://i.pravatar.cc/96?img=47",
   },
   {
     quote:
       "BRHT CFO has been an incredible strategic partner. They bring deep financial expertise, ask the right questions, and help us think through opportunities we wouldn’t have seen on our own.",
     role: "Operations Leader",
-    company: "Multi-Channel Business",
-  },
-];
-
-const resources = [
-  {
-    category: "FORECASTING",
-    read: "8 MIN READ",
-    title: "How to Build a 13-Week Cash Flow Forecast",
-    art: "forecast",
-  },
-  {
-    category: "REPORTING",
-    read: "6 MIN READ",
-    title: "What Your Monthly CFO Report Should Actually Include",
-    art: "reporting",
-  },
-  {
-    category: "SYSTEMS",
-    read: "7 MIN READ",
-    title: "Xero vs QuickBooks vs NetSuite: When to Use Each",
-    art: "systems",
+    company: "Kiln",
+    avatar: "https://i.pravatar.cc/96?img=33",
   },
 ];
 
@@ -401,53 +384,6 @@ function FeatureBar() {
   );
 }
 
-function ResourceArtwork({ type }: { type: string }) {
-  if (type === "systems") {
-    return (
-      <div className="flex h-36 items-center justify-center gap-4 bg-[#111b1a]">
-        {["X", "qb", "N"].map((x, i) => (
-          <div
-            key={x}
-            className={`grid h-12 w-12 place-items-center rounded-full text-sm font-black text-white shadow-xl ${
-              i === 0 ? "bg-sky-500" : i === 1 ? "bg-lime-500" : "bg-slate-600"
-            }`}
-          >
-            {x}
-          </div>
-        ))}
-      </div>
-    );
-  }
-  if (type === "reporting") {
-    return (
-      <div className="relative h-36 overflow-hidden bg-[#101817] p-5">
-        <div className="absolute inset-0 opacity-30 [background-image:linear-gradient(to_right,#fff_1px,transparent_1px),linear-gradient(to_bottom,#fff_1px,transparent_1px)] [background-size:24px_24px]" />
-        <div className="relative ml-auto mt-4 w-4/5 rounded-lg border border-white/10 bg-[#0a1110] p-3">
-          <AreaChart />
-          <div className="mt-1 flex gap-1">
-            {[20, 36, 27, 48, 40, 62, 52].map((h, i) => (
-              <span
-                key={i}
-                className="w-full rounded-t bg-lime-300/70"
-                style={{ height: h / 2 }}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  }
-  return (
-    <div className="relative h-36 overflow-hidden bg-gradient-to-b from-[#283b3a] to-[#0b1312]">
-      <svg viewBox="0 0 500 180" className="absolute inset-0 h-full w-full">
-        <path d="M0 150 L70 90 L120 115 L180 62 L230 104 L300 48 L360 82 L430 36 L500 74 L500 180 L0 180Z" fill="#172623" />
-        <path d="M0 160 L82 110 L150 138 L220 82 L290 122 L355 70 L420 112 L500 68 L500 180 L0 180Z" fill="#0d1816" />
-        <polyline points="20,140 90,125 145,132 205,100 260,108 320,76 385,84 465,48" fill="none" stroke="#9cff3b" strokeWidth="4" />
-      </svg>
-    </div>
-  );
-}
-
 export default function CfoPage() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [pinnedService, setPinnedService] = useState<CfoServiceId | null>(null);
@@ -476,12 +412,13 @@ export default function CfoPage() {
             <a className="transition hover:text-[#b8f34a]" href="#resources">Resources</a>
           </nav>
 
-          <a
-            href={bookingHref}
+          <button
+            type="button"
+            onClick={openBrhtBooking}
             className="hidden items-center gap-2 rounded-[12px] bg-[#b8f34a] px-6 py-3.5 text-[12.5px] font-extrabold text-[#09110f] shadow-[0_0_34px_rgba(184,243,74,0.12)] transition hover:bg-[#c5f760] lg:inline-flex"
           >
             Book a Strategy Call <ArrowRight className="h-4 w-4" />
-          </a>
+          </button>
 
           <button
             aria-label="Toggle menu"
@@ -501,12 +438,16 @@ export default function CfoPage() {
               <a href="#results" onClick={() => setMenuOpen(false)}>Results</a>
               <a href="#pricing" onClick={() => setMenuOpen(false)}>Pricing</a>
               <a href="#resources" onClick={() => setMenuOpen(false)}>Resources</a>
-              <a
-                href={bookingHref}
+              <button
+                type="button"
+                onClick={() => {
+                  setMenuOpen(false);
+                  openBrhtBooking();
+                }}
                 className="mt-2 inline-flex items-center justify-center gap-2 rounded-md bg-lime-300 px-4 py-3 font-bold text-[#07100e]"
               >
                 Book a Strategy Call <ArrowRight className="h-4 w-4" />
-              </a>
+              </button>
             </div>
           </div>
         )}
@@ -542,12 +483,13 @@ export default function CfoPage() {
                   BRHT CFO provides outsourced CFO advisory for growing companies that need clearer financial insights, stronger forecasting, and a strategic partner to help make better decisions.
                 </p>
                 <div className="mt-9">
-                  <a
-                    href={bookingHref}
+                  <button
+                    type="button"
+                    onClick={openBrhtBooking}
                     className="inline-flex items-center gap-2 rounded-[14px] bg-[#b8f34a] px-8 py-5 text-[15px] font-extrabold text-[#09110f] shadow-[0_0_28px_rgba(184,243,74,0.12)] transition hover:bg-[#c5f760]"
                   >
                     Book a Strategy Call <ArrowRight className="h-5 w-5" />
-                  </a>
+                  </button>
                 </div>
               </div>
 
@@ -656,7 +598,8 @@ export default function CfoPage() {
                 Built to work together
               </p>
               <h2 className="mx-auto max-w-3xl text-4xl font-black leading-[1.02] tracking-[-0.045em] md:text-5xl">
-                From connected data to better decisions.
+                <span className="block text-white">Connected data.</span>
+                <span className="block text-[#b8f34a]">Better decisions.</span>
               </h2>
               <p className="mx-auto mt-4 max-w-xl text-[13px] leading-6 text-white/48">
                 One connected system. One clearer view of what to do next.
@@ -848,7 +791,7 @@ export default function CfoPage() {
               Our process
             </p>
             <h2 className="text-4xl font-black tracking-[-0.045em] md:text-[52px]">
-              A simple, proven approach.
+              A simple approach.
             </h2>
 
             <div className="mt-10 grid gap-10 md:grid-cols-2 lg:grid-cols-4 lg:gap-7">
@@ -884,7 +827,7 @@ export default function CfoPage() {
                   Real perspective. Real impact.
                 </p>
                 <h2 className="text-4xl font-black tracking-[-0.04em] md:text-5xl">
-                  What operators are saying.
+                  Operators are saying.
                 </h2>
               </div>
               <div className="hidden gap-2 md:flex">
@@ -900,12 +843,18 @@ export default function CfoPage() {
             <div className="mt-10 grid gap-4 md:grid-cols-3">
               {testimonials.map((item, i) => (
                 <article key={i} className="rounded-xl border border-black/[0.07] bg-[#fbfbf9] p-6">
-                  <div className="text-3xl leading-none text-[#1e9b7c]">“</div>
-                  <p className="mt-2 text-[13px] leading-6 text-[#4e5b55]">{item.quote}</p>
+                  <div className="flex gap-1 text-[#9fdc38]" aria-label="5 out of 5 stars">
+                    {Array.from({ length: 5 }).map((_, starIndex) => (
+                      <Star key={starIndex} className="h-4 w-4 fill-current" strokeWidth={1.6} />
+                    ))}
+                  </div>
+                  <p className="mt-4 text-[13px] leading-6 text-[#4e5b55]">{item.quote}</p>
                   <div className="mt-7 flex items-center gap-3">
-                    <div className="grid h-9 w-9 place-items-center rounded-full bg-[#dfe7e1] text-[11px] font-bold">
-                      {item.role.split(" ").map((x) => x[0]).join("").slice(0,2)}
-                    </div>
+                    <img
+                      src={item.avatar}
+                      alt=""
+                      className="h-10 w-10 shrink-0 rounded-full border border-black/[0.06] object-cover shadow-sm"
+                    />
                     <div>
                       <p className="text-[12px] font-extrabold">{item.role}</p>
                       <p className="text-[10px] text-black/45">{item.company}</p>
@@ -925,10 +874,10 @@ export default function CfoPage() {
                 Pricing
               </p>
               <h2 className="mx-auto max-w-3xl text-4xl font-black leading-[1.02] tracking-[-0.045em] md:text-5xl">
-                CFO support that scales with you.
+                Your CFO investment.
               </h2>
-              <p className="mx-auto mt-5 max-w-xl text-[14px] leading-6 text-white/52">
-                Start with the level of strategic finance support your business needs today. Scale the engagement as complexity grows.
+              <p className="mx-auto mt-5 max-w-2xl text-[14px] leading-6 text-white/52">
+                Senior CFO guidance without the cost or commitment of a full-time CFO. Choose the level of support that fits your business today.
               </p>
             </div>
 
@@ -1036,8 +985,9 @@ export default function CfoPage() {
                     ))}
                   </div>
 
-                  <a
-                    href={bookingHref}
+                  <button
+                    type="button"
+                    onClick={openBrhtBooking}
                     className={
                       "mt-8 inline-flex items-center justify-center gap-2 rounded-[12px] px-5 py-4 text-[13px] font-extrabold transition " +
                       (plan.featured
@@ -1046,7 +996,7 @@ export default function CfoPage() {
                     }
                   >
                     Book a Strategy Call <ArrowRight className="h-4 w-4" />
-                  </a>
+                  </button>
                 </article>
               ))}
             </div>
@@ -1057,60 +1007,7 @@ export default function CfoPage() {
           </div>
         </section>
 
-        <section id="resources" className="scroll-mt-24 border-t border-black/[0.05] bg-[#f6f6f1] py-20 text-[#101714]">
-          <div className="mx-auto max-w-[1240px] px-5 md:px-8">
-            <div className="grid gap-6 lg:grid-cols-[1fr_0.75fr] lg:items-end">
-              <div>
-                <p className="mb-4 text-[10px] font-extrabold uppercase tracking-[0.25em] text-[#557064]">
-                  The BRHT CFO Resource Library
-                </p>
-                <h2 className="max-w-2xl text-4xl font-black leading-[1.02] tracking-[-0.04em] md:text-5xl">
-                  Practical resources for building a stronger business.
-                </h2>
-              </div>
-              <p className="max-w-md text-[13px] leading-6 text-[#5d6963] lg:justify-self-end">
-                Guides, templates and insights on forecasting, reporting, finance systems and more. Everything you need to solve your biggest financial questions.
-              </p>
-            </div>
-
-            <div className="mt-9 flex overflow-hidden rounded-lg border border-black/10 bg-white">
-              <div className="flex flex-1 items-center gap-3 px-4">
-                <Search className="h-4 w-4 text-black/40" />
-                <span className="text-[12px] text-black/40">What are you trying to solve?</span>
-              </div>
-              <button className="inline-flex items-center gap-2 bg-lime-300 px-6 py-3 text-[12px] font-extrabold">
-                Search <ArrowRight className="h-4 w-4" />
-              </button>
-            </div>
-
-            <div className="mt-3 flex flex-wrap gap-2">
-              {["Cash Flow", "Forecasting", "Reporting", "KPIs", "Finance Systems", "Fundraising", "Accounting"].map((tag) => (
-                <span key={tag} className="rounded-full border border-black/10 bg-white px-4 py-2 text-[10px] font-semibold text-black/60">
-                  {tag}
-                </span>
-              ))}
-            </div>
-
-            <div className="mt-7 grid gap-5 md:grid-cols-3">
-              {resources.map((item) => (
-                <article key={item.title} className="group overflow-hidden rounded-xl border border-black/[0.08] bg-white">
-                  <ResourceArtwork type={item.art} />
-                  <div className="p-5">
-                    <div className="flex gap-3 text-[9px] font-bold uppercase tracking-[0.12em] text-black/38">
-                      <span>{item.category}</span>
-                      <span>•</span>
-                      <span>{item.read}</span>
-                    </div>
-                    <div className="mt-3 flex items-start justify-between gap-5">
-                      <h3 className="text-[16px] font-extrabold leading-5">{item.title}</h3>
-                      <ArrowRight className="mt-1 h-4 w-4 shrink-0 transition group-hover:translate-x-1" />
-                    </div>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
+        <CfoResourceLibrary />
 
         <section className="relative overflow-hidden border-t border-white/[0.07] bg-[#08110f] py-16">
           <div className="absolute -bottom-24 left-[-5%] h-56 w-96 rounded-full bg-lime-400/10 blur-[80px]" />
@@ -1121,19 +1018,20 @@ export default function CfoPage() {
                 Let’s talk
               </p>
               <h2 className="max-w-2xl text-4xl font-black leading-[1.03] tracking-[-0.04em] md:text-5xl">
-                Make the next decision with better financial clarity.
+                The next decision.
               </h2>
             </div>
             <div className="max-w-sm">
               <p className="mb-6 text-[13px] leading-6 text-white/55">
                 A direct conversation about your numbers, systems, and what’s next for your business.
               </p>
-              <a
-                href={bookingHref}
+              <button
+                type="button"
+                onClick={openBrhtBooking}
                 className="inline-flex items-center gap-2 rounded-md bg-lime-300 px-6 py-3.5 text-[13px] font-extrabold text-[#07100e] transition hover:bg-lime-200"
               >
                 Book a Strategy Call <ArrowRight className="h-4 w-4" />
-              </a>
+              </button>
             </div>
           </div>
         </section>
@@ -1147,7 +1045,7 @@ export default function CfoPage() {
             <a href="#top">BRHT CFO</a>
             <a href="#resources">Resources</a>
             <a href="#how-it-works">How It Works</a>
-            <a href={bookingHref}>Contact</a>
+            <button type="button" onClick={openBrhtBooking} className="text-left">Contact</button>
           </div>
           <div className="flex gap-6">
             <span>Privacy</span>
@@ -1155,6 +1053,7 @@ export default function CfoPage() {
           </div>
         </div>
       </footer>
+      <BookingModal />
     </div>
   );
 }
