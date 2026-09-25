@@ -572,6 +572,8 @@ export default function CfoServiceShowcase({
   onClose: () => void;
 }) {
   const item = copy[serviceId];
+  const compactAside =
+    serviceId === "systems-data" || serviceId === "strategic-partner";
 
   return (
     <div className="grid h-full overflow-hidden rounded-[26px] border border-white/10 bg-[#0b1513] shadow-[0_35px_120px_rgba(0,0,0,0.45)] lg:grid-cols-[1.75fr_0.75fr]">
@@ -579,7 +581,12 @@ export default function CfoServiceShowcase({
         <ShowcaseVisual serviceId={serviceId} />
       </div>
 
-      <aside className="relative flex min-h-0 flex-col overflow-auto border-l border-white/[0.07] bg-[#0b1513] p-6 text-white">
+      <aside
+        className={
+          "relative flex min-h-0 flex-col overflow-auto border-l border-white/[0.07] bg-[#0b1513] text-white " +
+          (compactAside ? "p-5" : "p-6")
+        }
+      >
         {pinned && (
           <button
             onClick={onClose}
@@ -593,33 +600,64 @@ export default function CfoServiceShowcase({
         <p className="pr-12 text-[9px] font-black uppercase tracking-[0.22em] text-[#b8f34a]">
           {item.eyebrow}
         </p>
-        <h3 className="mt-3 pr-10 text-[27px] font-black leading-[1.05] tracking-[-0.04em]">
+        <h3
+          className={
+            "pr-10 font-black leading-[1.05] tracking-[-0.04em] " +
+            (compactAside ? "mt-2 text-[23px]" : "mt-3 text-[27px]")
+          }
+        >
           {item.title}
         </h3>
-        <p className="mt-4 text-[12px] leading-5 text-white/52">{item.tagline}</p>
+        <p
+          className={
+            "text-white/52 " +
+            (compactAside ? "mt-3 text-[11px] leading-[18px]" : "mt-4 text-[12px] leading-5")
+          }
+        >
+          {item.tagline}
+        </p>
 
-        <div className="mt-6 space-y-5">
+        <div className={compactAside ? "mt-4 space-y-3" : "mt-6 space-y-5"}>
           <div>
             <p className="text-[9px] font-black uppercase tracking-[0.16em] text-white/30">What you see</p>
-            <p className="mt-2 text-[12px] leading-5 text-white/70">{item.see}</p>
+            <p className={compactAside ? "mt-1.5 text-[11px] leading-[18px] text-white/70" : "mt-2 text-[12px] leading-5 text-white/70"}>
+              {item.see}
+            </p>
           </div>
           <div>
             <p className="text-[9px] font-black uppercase tracking-[0.16em] text-white/30">What it tells you</p>
-            <p className="mt-2 text-[12px] leading-5 text-white/70">{item.tells}</p>
+            <p className={compactAside ? "mt-1.5 text-[11px] leading-[18px] text-white/70" : "mt-2 text-[12px] leading-5 text-white/70"}>
+              {item.tells}
+            </p>
           </div>
         </div>
 
-        <div className="mt-6 rounded-2xl border border-[#9bd739]/35 bg-[#132116] p-4">
+        <div
+          className={
+            "rounded-2xl border border-[#9bd739]/35 bg-[#132116] " +
+            (compactAside ? "mt-4 p-3" : "mt-6 p-4")
+          }
+        >
           <div className="flex items-center gap-2 text-[#b8f34a]">
             <Sparkles className="h-4 w-4 fill-current" />
             <p className="text-[9px] font-black uppercase tracking-[0.16em]">CFO Insight</p>
           </div>
-          <p className="mt-3 text-[12px] font-semibold leading-5 text-white/78">{item.insight}</p>
+          <p
+            className={
+              "font-semibold text-white/78 " +
+              (compactAside ? "mt-2 text-[11px] leading-[18px]" : "mt-3 text-[12px] leading-5")
+            }
+          >
+            {item.insight}
+          </p>
         </div>
 
         <a
           href="mailto:samwillsonbiz@gmail.com?subject=BRHT%20CFO%20Strategy%20Call"
-          className="mt-auto inline-flex items-center justify-center gap-2 rounded-xl bg-[#b8f34a] px-5 py-3.5 text-[12px] font-black text-[#07100e] transition hover:bg-[#c5f760]"
+          className={
+            "inline-flex items-center justify-center gap-2 rounded-xl bg-[#b8f34a] px-5 text-[12px] font-black text-[#07100e] transition hover:bg-[#c5f760] " +
+            (compactAside ? "mt-4 py-3" : "mt-auto py-3.5")
+          }
         >
           Book a Strategy Call <ArrowRight className="h-4 w-4" />
         </a>
