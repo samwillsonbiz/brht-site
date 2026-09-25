@@ -118,18 +118,21 @@ const testimonials = [
       "BRHT CFO gave us the clarity we needed to make faster, more confident decisions. Our forecasting and reporting are now on a completely different level.",
     role: "Founder",
     company: "Growth Company",
+    avatar: "https://i.pravatar.cc/96?img=12",
   },
   {
     quote:
       "The team quickly understood our business and built a reporting structure that actually helps us run the business. We finally have real visibility into cash and what’s next.",
     role: "CEO",
     company: "Ecommerce Brand",
+    avatar: "https://i.pravatar.cc/96?img=47",
   },
   {
     quote:
       "BRHT CFO has been an incredible strategic partner. They bring deep financial expertise, ask the right questions, and help us think through opportunities we wouldn’t have seen on our own.",
     role: "Operations Leader",
     company: "Multi-Channel Business",
+    avatar: "https://i.pravatar.cc/96?img=33",
   },
 ];
 
@@ -589,7 +592,8 @@ export default function CfoPage() {
                 Built to work together
               </p>
               <h2 className="mx-auto max-w-3xl text-4xl font-black leading-[1.02] tracking-[-0.045em] md:text-5xl">
-                From connected data to better decisions.
+                <span className="block text-white">Connected data.</span>
+                <span className="block text-[#b8f34a]">Better decisions.</span>
               </h2>
               <p className="mx-auto mt-4 max-w-xl text-[13px] leading-6 text-white/48">
                 One connected system. One clearer view of what to do next.
@@ -781,7 +785,7 @@ export default function CfoPage() {
               Our process
             </p>
             <h2 className="text-4xl font-black tracking-[-0.045em] md:text-[52px]">
-              A simple, proven approach.
+              A simple approach.
             </h2>
 
             <div className="mt-10 grid gap-10 md:grid-cols-2 lg:grid-cols-4 lg:gap-7">
@@ -817,7 +821,7 @@ export default function CfoPage() {
                   Real perspective. Real impact.
                 </p>
                 <h2 className="text-4xl font-black tracking-[-0.04em] md:text-5xl">
-                  What operators are saying.
+                  Operators are saying.
                 </h2>
               </div>
               <div className="hidden gap-2 md:flex">
@@ -836,9 +840,11 @@ export default function CfoPage() {
                   <div className="text-3xl leading-none text-[#1e9b7c]">“</div>
                   <p className="mt-2 text-[13px] leading-6 text-[#4e5b55]">{item.quote}</p>
                   <div className="mt-7 flex items-center gap-3">
-                    <div className="grid h-9 w-9 place-items-center rounded-full bg-[#dfe7e1] text-[11px] font-bold">
-                      {item.role.split(" ").map((x) => x[0]).join("").slice(0,2)}
-                    </div>
+                    <img
+                      src={item.avatar}
+                      alt=""
+                      className="h-10 w-10 shrink-0 rounded-full border border-black/[0.06] object-cover shadow-sm"
+                    />
                     <div>
                       <p className="text-[12px] font-extrabold">{item.role}</p>
                       <p className="text-[10px] text-black/45">{item.company}</p>
@@ -858,7 +864,7 @@ export default function CfoPage() {
                 Pricing
               </p>
               <h2 className="mx-auto max-w-3xl text-4xl font-black leading-[1.02] tracking-[-0.045em] md:text-5xl">
-                CFO support that scales with you.
+                CFO Support.
               </h2>
               <p className="mx-auto mt-5 max-w-xl text-[14px] leading-6 text-white/52">
                 Start with the level of strategic finance support your business needs today. Scale the engagement as complexity grows.
@@ -1001,7 +1007,7 @@ export default function CfoPage() {
                 Let’s talk
               </p>
               <h2 className="max-w-2xl text-4xl font-black leading-[1.03] tracking-[-0.04em] md:text-5xl">
-                Make the next decision with better financial clarity.
+                The next decision.
               </h2>
             </div>
             <div className="max-w-sm">
