@@ -4,7 +4,9 @@ import { useEffect, useState } from "react";
 import { ArrowRight, CalendarDays, CheckCircle2, Mail, X } from "lucide-react";
 import { BRHT_BOOKING_EVENT } from "@/lib/booking";
 
-const bookingUrl = process.env.NEXT_PUBLIC_BRHT_BOOKING_URL?.trim() || "";
+const bookingUrl =
+  process.env.NEXT_PUBLIC_BRHT_BOOKING_URL?.trim() ||
+  "https://calendly.com/samwillsonbiz/brht-cfo-strategy-call";
 const emailHref =
   "mailto:samwillsonbiz@gmail.com?subject=BRHT%20CFO%20Strategy%20Call";
 
