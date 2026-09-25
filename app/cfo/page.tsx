@@ -450,13 +450,10 @@ function ResourceArtwork({ type }: { type: string }) {
 
 export default function CfoPage() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [hoveredService, setHoveredService] = useState<CfoServiceId | null>(null);
   const [pinnedService, setPinnedService] = useState<CfoServiceId | null>(null);
-  const activeService = pinnedService ?? hoveredService;
 
   const closeServiceShowcase = () => {
     setPinnedService(null);
-    setHoveredService(null);
   };
 
   return (
@@ -572,16 +569,17 @@ export default function CfoPage() {
                   Our services
                 </p>
                 <h2 className="max-w-2xl text-4xl font-black leading-[1.02] tracking-[-0.04em] md:text-5xl">
-                  Strategic finance, not just financial reporting.
+                  <span className="block text-[#101714]">Strategic finance.</span>
+                  <span className="block text-[#1e7b69]">Confident leadership.</span>
                 </h2>
               </div>
               <div className="max-w-md lg:justify-self-end">
                 <p className="text-[14px] leading-6 text-[#5a6660]">
-                  We help growing companies turn financial data into a strategic advantage — with the insights, systems and guidance to make better decisions at every stage.
+                  We help growing companies turn financial data into a strategic advantage with the insights, systems and guidance to make better decisions at every stage.
                 </p>
-                <p className="mt-3 hidden text-[10px] font-bold uppercase tracking-[0.15em] text-[#718078] md:block">
-                  Hover to preview · Click to keep open
-                </p>
+                <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-[#8fcf35]/35 bg-[#f4fbeb] px-3.5 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-[#567d23]">
+                  Click to open <ArrowRight className="h-3.5 w-3.5" />
+                </div>
               </div>
             </div>
 
@@ -592,27 +590,12 @@ export default function CfoPage() {
                   <button
                     key={service.id}
                     type="button"
-                    onMouseEnter={() => {
-                      if (!pinnedService) setHoveredService(service.id);
-                    }}
-                    onMouseLeave={() => {
-                      if (!pinnedService) setHoveredService(null);
-                    }}
-                    onFocus={() => {
-                      if (!pinnedService) setHoveredService(service.id);
-                    }}
-                    onBlur={() => {
-                      if (!pinnedService) setHoveredService(null);
-                    }}
-                    onClick={() => {
-                      setPinnedService(service.id);
-                      setHoveredService(service.id);
-                    }}
+                    onClick={() => setPinnedService(service.id)}
                     className={
-                      "group relative min-h-[220px] overflow-hidden rounded-xl border p-6 text-left shadow-[0_10px_35px_rgba(15,23,20,0.025)] transition duration-200 hover:-translate-y-1 hover:shadow-[0_18px_50px_rgba(15,23,20,0.10)] focus:outline-none focus:ring-2 focus:ring-[#9bd739]/45 " +
+                      "group relative min-h-[220px] overflow-hidden rounded-xl border p-6 text-left shadow-[0_10px_35px_rgba(15,23,20,0.025)] transition-all duration-200 hover:-translate-y-1.5 hover:scale-[1.01] hover:shadow-[0_20px_55px_rgba(15,23,20,0.12)] focus:outline-none focus:ring-2 focus:ring-[#9bd739]/45 " +
                       (service.accent
                         ? "border-[#b7e765] bg-gradient-to-br from-white via-[#fbfff4] to-[#effbd4]"
-                        : "border-black/[0.06] bg-white hover:border-[#8fcf35]/35")
+                        : "border-black/[0.06] bg-white hover:border-[#8fcf35]/55 hover:bg-[#fbfff8]")
                     }
                   >
                     {service.accent && (
@@ -631,8 +614,8 @@ export default function CfoPage() {
                     <p className="relative mt-3 text-[12px] leading-5 text-[#626d68]">
                       {service.copy}
                     </p>
-                    <div className="relative mt-5 flex items-center gap-2 text-[9px] font-black uppercase tracking-[0.14em] text-[#7c8983] opacity-0 transition group-hover:opacity-100 group-focus:opacity-100">
-                      View example <ArrowRight className="h-3 w-3" />
+                    <div className="relative mt-5 inline-flex items-center gap-2 rounded-full bg-[#f2f7ee] px-3 py-1.5 text-[9px] font-black uppercase tracking-[0.14em] text-[#68815f] opacity-55 transition group-hover:bg-[#eaf7d9] group-hover:text-[#567d23] group-hover:opacity-100 group-focus:opacity-100">
+                      Click to open <ArrowRight className="h-3 w-3" />
                     </div>
                   </button>
                 );
@@ -641,9 +624,9 @@ export default function CfoPage() {
           </div>
         </section>
 
-        {activeService && (
+        {pinnedService && (
           <>
-            {pinnedService && (
+            {(
               <button
                 type="button"
                 aria-label="Close service showcase"
@@ -653,15 +636,12 @@ export default function CfoPage() {
             )}
             <div
               className={
-                "fixed left-1/2 top-[54%] z-[80] h-[min(72vh,690px)] w-[min(1180px,calc(100vw-36px))] -translate-x-1/2 -translate-y-1/2 transition duration-200 " +
-                (pinnedService
-                  ? "pointer-events-auto opacity-100"
-                  : "pointer-events-none hidden opacity-100 md:block")
+                "fixed left-1/2 top-[54%] z-[80] h-[min(72vh,690px)] w-[min(1180px,calc(100vw-36px))] -translate-x-1/2 -translate-y-1/2 pointer-events-auto opacity-100 transition duration-200"
               }
             >
               <CfoServiceShowcase
-                serviceId={activeService}
-                pinned={Boolean(pinnedService)}
+                serviceId={pinnedService}
+                pinned={true}
                 onClose={closeServiceShowcase}
               />
             </div>
