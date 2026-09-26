@@ -9,25 +9,33 @@ export default function CfoTeamPolish() {
       if (!team) return;
 
       const cards = Array.from(team.querySelectorAll<HTMLElement>("article"));
-      const referenceCard = cards.find((card) => card.textContent?.includes("Brennan Roney"));
+      const brennanCard = cards.find((card) => card.textContent?.includes("Brennan Roney"));
+      const samCard = cards.find((card) => card.textContent?.includes("Sam Willson"));
       const steveCard = cards.find((card) => card.textContent?.includes("Steve Johnson"));
-      if (!referenceCard || !steveCard) return;
+      if (!brennanCard || !samCard || !steveCard) return;
 
-      steveCard.className = referenceCard.className;
+      const setHeadshot = (card: HTMLElement, src: string, alt: string) => {
+        const wrap = card.firstElementChild as HTMLElement | null;
+        const image = wrap?.querySelector<HTMLImageElement>("img");
+        if (!image) return;
 
-      const referenceImageWrap = referenceCard.firstElementChild as HTMLElement | null;
+        image.src = src;
+        image.alt = alt;
+        image.className =
+          "h-full w-full object-cover object-center transition duration-300 group-hover:scale-[1.025]";
+      };
+
+      setHeadshot(brennanCard, "/stock/team/brennan?v=20260926-stock-1", "Brennan Roney");
+      setHeadshot(samCard, "/stock/team/sam?v=20260926-stock-1", "Sam Willson");
+      setHeadshot(steveCard, "/stock/team/steve?v=20260926-stock-1", "Steve Johnson");
+
+      // Match the technology profile visually to the other two team cards.
+      steveCard.className = brennanCard.className;
+
+      const referenceImageWrap = brennanCard.firstElementChild as HTMLElement | null;
       const steveImageWrap = steveCard.firstElementChild as HTMLElement | null;
       if (referenceImageWrap && steveImageWrap) {
         steveImageWrap.className = referenceImageWrap.className;
-
-        const image = steveImageWrap.querySelector<HTMLImageElement>("img");
-        if (image) {
-          image.src = "/images/team/steve-johnson.jpg?v=20260926-tech-final";
-          image.alt = "Steve Johnson";
-          image.className =
-            "h-full w-full object-cover object-center transition duration-300 group-hover:scale-[1.025]";
-        }
-
         steveImageWrap.querySelectorAll("span").forEach((node) => node.remove());
 
         const gradient = steveImageWrap.querySelector<HTMLElement>("div.absolute");
@@ -55,7 +63,7 @@ export default function CfoTeamPolish() {
         const bio = paragraphs[1];
         if (bio) {
           bio.textContent =
-            "Technology and finance leader with 18+ years helping growing businesses modernize reporting, automate workflows and build scalable finance systems. Steve specializes in AI-enabled reporting, systems integration, dashboarding and turning operational data into faster, smarter decisions.";
+            "Technology and finance leader with 18+ years building modern reporting systems, automating finance workflows and connecting business data. Steve specializes in AI-enabled reporting, systems integration, dashboarding and scalable finance technology that helps leadership teams move faster with better information.";
           bio.className = "mt-4 text-[13px] leading-6 text-[#617069]";
         }
 
