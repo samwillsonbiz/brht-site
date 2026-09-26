@@ -12,6 +12,7 @@ import {
   Gauge,
   Lightbulb,
   LineChart,
+  Linkedin,
   Menu,
   Search,
   Settings2,
@@ -41,40 +42,16 @@ const services: Array<{
     copy: "Build accurate, driver-based forecasts to plan for growth, stress test scenarios and make confident decisions.",
   },
   {
-    id: "cash-flow",
-    icon: Coins,
-    title: "Cash Flow & Runway",
-    copy: "Get real visibility into cash, understand key drivers, and plan for the road ahead.",
-  },
-  {
-    id: "kpi-reporting",
-    icon: Gauge,
-    title: "KPI & Management Reporting",
-    copy: "Track the metrics that matter with clear, actionable reporting tailored to your business.",
-  },
-  {
-    id: "board-reporting",
-    icon: FileBarChart2,
-    title: "Board & Investor Reporting",
-    copy: "Professional, board-ready reporting to support investors, lenders and key stakeholders.",
-  },
-  {
-    id: "pricing-margin",
-    icon: Target,
-    title: "Pricing & Margin Analysis",
-    copy: "Analyze margins, model pricing scenarios and find opportunities to increase profitability.",
-  },
-  {
     id: "capital-planning",
     icon: CircleDollarSign,
     title: "Capital Planning & Fundraising Support",
     copy: "Build financial models, prepare investor materials and get strategic support for raising capital.",
   },
   {
-    id: "systems-data",
-    icon: Settings2,
-    title: "Finance Systems & Data",
-    copy: "Design and optimize your finance stack, integrate your data and create scalable reporting systems.",
+    id: "board-reporting",
+    icon: FileBarChart2,
+    title: "Board & Investor Reporting",
+    copy: "Professional, board-ready reporting to support investors, lenders and key stakeholders.",
   },
   {
     id: "strategic-partner",
@@ -417,7 +394,7 @@ export default function CfoPage() {
             onClick={openBrhtBooking}
             className="hidden items-center gap-2 rounded-[12px] bg-[#b8f34a] px-6 py-3.5 text-[12.5px] font-extrabold text-[#09110f] shadow-[0_0_34px_rgba(184,243,74,0.12)] transition hover:bg-[#c5f760] lg:inline-flex"
           >
-            Book a Strategy Call <ArrowRight className="h-4 w-4" />
+            Talk to a CFO <ArrowRight className="h-4 w-4" />
           </button>
 
           <button
@@ -446,7 +423,7 @@ export default function CfoPage() {
                 }}
                 className="mt-2 inline-flex items-center justify-center gap-2 rounded-md bg-lime-300 px-4 py-3 font-bold text-[#07100e]"
               >
-                Book a Strategy Call <ArrowRight className="h-4 w-4" />
+                Talk to a CFO <ArrowRight className="h-4 w-4" />
               </button>
             </div>
           </div>
@@ -480,7 +457,7 @@ export default function CfoPage() {
                   <span className="mt-1 block text-[#b8f34a]">Know what to do.</span>
                 </h1>
                 <p className="mt-7 max-w-[640px] text-[17px] leading-8 text-white/76">
-                  BRHT CFO provides outsourced CFO advisory for growing companies that need clearer financial insights, stronger forecasting, and a strategic partner to help make better decisions.
+                  For growing companies that need more than bookkeeping and historical reporting, but don't need a full-time CFO. Get the forecasting, financial visibility and senior guidance to make better decisions.
                 </p>
                 <div className="mt-9">
                   <button
@@ -488,7 +465,7 @@ export default function CfoPage() {
                     onClick={openBrhtBooking}
                     className="inline-flex items-center gap-2 rounded-[14px] bg-[#b8f34a] px-8 py-5 text-[15px] font-extrabold text-[#09110f] shadow-[0_0_28px_rgba(184,243,74,0.12)] transition hover:bg-[#c5f760]"
                   >
-                    Book a Strategy Call <ArrowRight className="h-5 w-5" />
+                    Talk to a CFO <ArrowRight className="h-5 w-5" />
                   </button>
                 </div>
               </div>
@@ -589,6 +566,106 @@ export default function CfoPage() {
             </div>
           </>
         )}
+
+        <section id="team" className="border-t border-black/[0.05] bg-white py-20 text-[#101714] md:py-24">
+          <div className="mx-auto max-w-[1240px] px-5 md:px-8">
+            <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-end">
+              <div>
+                <p className="mb-4 text-[10px] font-extrabold uppercase tracking-[0.25em] text-[#557064]">
+                  Who is BRHT CFO
+                </p>
+                <h2 className="max-w-2xl text-4xl font-black leading-[1.02] tracking-[-0.04em] md:text-5xl">
+                  <span className="block text-[#101714]">Real people.</span>
+                  <span className="block text-[#1e7b69]">Senior finance.</span>
+                </h2>
+              </div>
+              <p className="max-w-md text-[14px] leading-6 text-[#5a6660] lg:justify-self-end">
+                BRHT CFO is human-led. Technology helps us move faster, but the advice comes from experienced operators and finance leaders who have built, scaled and advised growing businesses.
+              </p>
+            </div>
+
+            <div className="mt-12 grid gap-5 lg:grid-cols-3">
+              <article className="rounded-2xl border border-black/[0.07] bg-[#f7f8f5] p-7">
+                <div className="flex items-start justify-between gap-5">
+                  <div className="grid h-14 w-14 place-items-center rounded-full bg-[#10201b] text-[15px] font-black text-[#b8f34a]">
+                    BR
+                  </div>
+                  <a
+                    href="https://www.linkedin.com/in/brennan-roney"
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label="Brennan Roney on LinkedIn"
+                    className="grid h-9 w-9 place-items-center rounded-full border border-black/10 bg-white text-[#52615a] transition hover:border-[#8fcf35]/50 hover:text-[#1e7b69]"
+                  >
+                    <Linkedin className="h-4 w-4" />
+                  </a>
+                </div>
+                <p className="mt-6 text-[10px] font-black uppercase tracking-[0.16em] text-[#658077]">
+                  Strategic Finance
+                </p>
+                <h3 className="mt-2 text-[24px] font-black tracking-[-0.035em]">
+                  Brennan Roney
+                </h3>
+                <p className="mt-4 text-[13px] leading-6 text-[#617069]">
+                  Strategic finance leader focused on growth organizations. His background includes CFO and partner leadership at ProvenCFO and finance operations across scaling companies.
+                </p>
+                <div className="mt-6 border-t border-black/[0.06] pt-4 text-[10px] font-bold uppercase tracking-[0.12em] text-[#7a8781]">
+                  ProvenCFO · CFO leadership · Strategic finance
+                </div>
+              </article>
+
+              <article className="rounded-2xl border border-black/[0.07] bg-[#f7f8f5] p-7">
+                <div className="flex items-start justify-between gap-5">
+                  <div className="grid h-14 w-14 place-items-center rounded-full bg-[#10201b] text-[15px] font-black text-[#60d9c7]">
+                    SW
+                  </div>
+                  <a
+                    href="https://www.linkedin.com/in/samwillson84"
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label="Sam Willson on LinkedIn"
+                    className="grid h-9 w-9 place-items-center rounded-full border border-black/10 bg-white text-[#52615a] transition hover:border-[#8fcf35]/50 hover:text-[#1e7b69]"
+                  >
+                    <Linkedin className="h-4 w-4" />
+                  </a>
+                </div>
+                <p className="mt-6 text-[10px] font-black uppercase tracking-[0.16em] text-[#658077]">
+                  Growth & Operations
+                </p>
+                <h3 className="mt-2 text-[24px] font-black tracking-[-0.035em]">
+                  Sam Willson
+                </h3>
+                <p className="mt-4 text-[13px] leading-6 text-[#617069]">
+                  Operations and growth executive with 15+ years scaling businesses. Sam joined ProvenCFO in 2018 and helped build a cloud finance practice that reached $100K in monthly recurring revenue in under two years.
+                </p>
+                <div className="mt-6 border-t border-black/[0.06] pt-4 text-[10px] font-bold uppercase tracking-[0.12em] text-[#7a8781]">
+                  ProvenCFO · Growth strategy · Business systems
+                </div>
+              </article>
+
+              <article className="relative overflow-hidden rounded-2xl border border-[#a9da58]/55 bg-[#10201b] p-7 text-white">
+                <div className="absolute right-[-40px] top-[-40px] h-40 w-40 rounded-full bg-[#b8f34a]/10 blur-3xl" />
+                <div className="relative">
+                  <div className="grid h-14 w-14 place-items-center rounded-full border border-[#b8f34a]/25 bg-[#b8f34a]/10 text-[#b8f34a]">
+                    <Users className="h-6 w-6" />
+                  </div>
+                  <p className="mt-6 text-[10px] font-black uppercase tracking-[0.16em] text-[#b8f34a]/75">
+                    Human-led by design
+                  </p>
+                  <h3 className="mt-2 text-[24px] font-black tracking-[-0.035em]">
+                    Technology supports the CFO. It doesn't replace one.
+                  </h3>
+                  <p className="mt-4 text-[13px] leading-6 text-white/58">
+                    BRHT Intelligence can organize data and surface insights, but forecasting, tradeoffs, recommendations and executive guidance are led by people.
+                  </p>
+                  <div className="mt-6 border-t border-white/[0.08] pt-4 text-[10px] font-bold uppercase tracking-[0.12em] text-white/35">
+                    CFO judgment · Operator context · Senior guidance
+                  </div>
+                </div>
+              </article>
+            </div>
+          </div>
+        </section>
 
         <section id="how-it-works" className="scroll-mt-24 relative overflow-hidden border-y border-white/[0.06] bg-[#07100e] py-24 md:py-28">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_55%,rgba(184,243,74,0.08),transparent_26%),radial-gradient(circle_at_18%_65%,rgba(52,214,195,0.05),transparent_24%)]" />
@@ -995,7 +1072,7 @@ export default function CfoPage() {
                         : "border border-white/15 bg-white/[0.035] text-white hover:bg-white/[0.07]")
                     }
                   >
-                    Book a Strategy Call <ArrowRight className="h-4 w-4" />
+                    Talk to a CFO <ArrowRight className="h-4 w-4" />
                   </button>
                 </article>
               ))}
@@ -1030,7 +1107,7 @@ export default function CfoPage() {
                 onClick={openBrhtBooking}
                 className="inline-flex items-center gap-2 rounded-md bg-lime-300 px-6 py-3.5 text-[13px] font-extrabold text-[#07100e] transition hover:bg-lime-200"
               >
-                Book a Strategy Call <ArrowRight className="h-4 w-4" />
+                Talk to a CFO <ArrowRight className="h-4 w-4" />
               </button>
             </div>
           </div>
