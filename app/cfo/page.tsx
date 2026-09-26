@@ -579,94 +579,148 @@ export default function CfoPage() {
                 </h2>
               </div>
               <p className="max-w-md text-[14px] leading-6 text-[#5a6660] lg:justify-self-end">
-                BRHT CFO is human-led. Technology helps us move faster, but the advice comes from experienced operators and finance leaders who have built, scaled and advised growing businesses.
+                BRHT CFO is a human advisory team, not an AI CFO app. Technology makes the work faster; experienced operators and finance leaders own the models, recommendations and conversations.
               </p>
             </div>
 
             <div className="mt-12 grid gap-5 lg:grid-cols-3">
-              <article className="rounded-2xl border border-black/[0.07] bg-[#f7f8f5] p-7">
-                <div className="flex items-start justify-between gap-5">
-                  <div className="grid h-14 w-14 place-items-center rounded-full bg-[#10201b] text-[15px] font-black text-[#b8f34a]">
-                    BR
-                  </div>
+              <article className="group overflow-hidden rounded-2xl border border-black/[0.07] bg-[#f7f8f5] shadow-[0_10px_35px_rgba(15,23,20,0.025)]">
+                <div className="relative h-[235px] overflow-hidden bg-[#10201b]">
+                  <img
+                    src="https://unavatar.io/linkedin/user:brennan-roney"
+                    alt="Brennan Roney"
+                    className="h-full w-full object-cover object-center transition duration-300 group-hover:scale-[1.025]"
+                  />
+                  <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-[#0b1513]/65 to-transparent" />
                   <a
                     href="https://www.linkedin.com/in/brennan-roney"
                     target="_blank"
                     rel="noreferrer"
                     aria-label="Brennan Roney on LinkedIn"
-                    className="grid h-9 w-9 place-items-center rounded-full border border-black/10 bg-white text-[#52615a] transition hover:border-[#8fcf35]/50 hover:text-[#1e7b69]"
+                    className="absolute right-4 top-4 grid h-9 w-9 place-items-center rounded-full border border-white/20 bg-[#0b1513]/75 text-white backdrop-blur transition hover:bg-[#b8f34a] hover:text-[#10201b]"
                   >
                     <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current" aria-hidden="true">
                       <path d="M6.5 8.3H3.2V21h3.3V8.3ZM4.85 3C3.79 3 3 3.79 3 4.82c0 1.02.77 1.82 1.81 1.82h.02c1.09 0 1.86-.8 1.86-1.82C6.67 3.79 5.92 3 4.85 3ZM21 13.72c0-3.83-2.04-5.61-4.76-5.61-2.19 0-3.17 1.2-3.72 2.05V8.3H9.2c.04 1.23 0 12.7 0 12.7h3.32v-7.09c0-.38.03-.76.14-1.03.24-.76.8-1.55 1.74-1.55 1.23 0 1.72.94 1.72 2.31V21H21v-7.28Z" />
                     </svg>
                   </a>
                 </div>
-                <p className="mt-6 text-[10px] font-black uppercase tracking-[0.16em] text-[#658077]">
-                  Strategic Finance
-                </p>
-                <h3 className="mt-2 text-[24px] font-black tracking-[-0.035em]">
-                  Brennan Roney
-                </h3>
-                <p className="mt-4 text-[13px] leading-6 text-[#617069]">
-                  Strategic finance leader focused on growth organizations. His background includes CFO and partner leadership at ProvenCFO and finance operations across scaling companies.
-                </p>
-                <div className="mt-6 border-t border-black/[0.06] pt-4 text-[10px] font-bold uppercase tracking-[0.12em] text-[#7a8781]">
-                  ProvenCFO · CFO leadership · Strategic finance
+                <div className="p-7">
+                  <p className="text-[10px] font-black uppercase tracking-[0.16em] text-[#658077]">
+                    CFO & Strategic Finance
+                  </p>
+                  <h3 className="mt-2 text-[24px] font-black tracking-[-0.035em]">
+                    Brennan Roney
+                  </h3>
+                  <p className="mt-4 text-[13px] leading-6 text-[#617069]">
+                    Finance leader with 15+ years across strategic finance, CFO leadership, FP&amp;A and growth-stage operations. Brennan specializes in forward planning, capital decisions and turning financial complexity into clear executive action.
+                  </p>
+                  <div className="mt-6 grid grid-cols-3 gap-2 border-t border-black/[0.06] pt-5">
+                    <div>
+                      <p className="text-[18px] font-black text-[#1e7b69]">15+</p>
+                      <p className="mt-1 text-[8px] font-black uppercase tracking-[0.1em] text-[#7a8781]">Years</p>
+                    </div>
+                    <div>
+                      <p className="text-[18px] font-black text-[#1e7b69]">CFO</p>
+                      <p className="mt-1 text-[8px] font-black uppercase tracking-[0.1em] text-[#7a8781]">Leadership</p>
+                    </div>
+                    <div>
+                      <p className="text-[18px] font-black text-[#1e7b69]">FP&amp;A</p>
+                      <p className="mt-1 text-[8px] font-black uppercase tracking-[0.1em] text-[#7a8781]">Planning</p>
+                    </div>
+                  </div>
                 </div>
               </article>
 
-              <article className="rounded-2xl border border-black/[0.07] bg-[#f7f8f5] p-7">
-                <div className="flex items-start justify-between gap-5">
-                  <div className="grid h-14 w-14 place-items-center rounded-full bg-[#10201b] text-[15px] font-black text-[#60d9c7]">
-                    SW
-                  </div>
+              <article className="group overflow-hidden rounded-2xl border border-black/[0.07] bg-[#f7f8f5] shadow-[0_10px_35px_rgba(15,23,20,0.025)]">
+                <div className="relative h-[235px] overflow-hidden bg-[#10201b]">
+                  <img
+                    src="https://unavatar.io/linkedin/user:samwillson84"
+                    alt="Sam Willson"
+                    className="h-full w-full object-cover object-center transition duration-300 group-hover:scale-[1.025]"
+                  />
+                  <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-[#0b1513]/65 to-transparent" />
                   <a
                     href="https://www.linkedin.com/in/samwillson84"
                     target="_blank"
                     rel="noreferrer"
                     aria-label="Sam Willson on LinkedIn"
-                    className="grid h-9 w-9 place-items-center rounded-full border border-black/10 bg-white text-[#52615a] transition hover:border-[#8fcf35]/50 hover:text-[#1e7b69]"
+                    className="absolute right-4 top-4 grid h-9 w-9 place-items-center rounded-full border border-white/20 bg-[#0b1513]/75 text-white backdrop-blur transition hover:bg-[#b8f34a] hover:text-[#10201b]"
                   >
                     <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current" aria-hidden="true">
                       <path d="M6.5 8.3H3.2V21h3.3V8.3ZM4.85 3C3.79 3 3 3.79 3 4.82c0 1.02.77 1.82 1.81 1.82h.02c1.09 0 1.86-.8 1.86-1.82C6.67 3.79 5.92 3 4.85 3ZM21 13.72c0-3.83-2.04-5.61-4.76-5.61-2.19 0-3.17 1.2-3.72 2.05V8.3H9.2c.04 1.23 0 12.7 0 12.7h3.32v-7.09c0-.38.03-.76.14-1.03.24-.76.8-1.55 1.74-1.55 1.23 0 1.72.94 1.72 2.31V21H21v-7.28Z" />
                     </svg>
                   </a>
                 </div>
-                <p className="mt-6 text-[10px] font-black uppercase tracking-[0.16em] text-[#658077]">
-                  Growth & Operations
-                </p>
-                <h3 className="mt-2 text-[24px] font-black tracking-[-0.035em]">
-                  Sam Willson
-                </h3>
-                <p className="mt-4 text-[13px] leading-6 text-[#617069]">
-                  Operations and growth executive with 15+ years scaling businesses. Sam joined ProvenCFO in 2018 and helped build a cloud finance practice that reached $100K in monthly recurring revenue in under two years.
-                </p>
-                <div className="mt-6 border-t border-black/[0.06] pt-4 text-[10px] font-bold uppercase tracking-[0.12em] text-[#7a8781]">
-                  ProvenCFO · Growth strategy · Business systems
+                <div className="p-7">
+                  <p className="text-[10px] font-black uppercase tracking-[0.16em] text-[#658077]">
+                    Growth & Operations
+                  </p>
+                  <h3 className="mt-2 text-[24px] font-black tracking-[-0.035em]">
+                    Sam Willson
+                  </h3>
+                  <p className="mt-4 text-[13px] leading-6 text-[#617069]">
+                    Growth and operations executive with 20+ years building businesses across CEO, chief growth, chief operations, general manager and managing partner roles. Sam has helped drive four successful business growth stories and served more than 400 businesses.
+                  </p>
+                  <div className="mt-6 grid grid-cols-3 gap-2 border-t border-black/[0.06] pt-5">
+                    <div>
+                      <p className="text-[18px] font-black text-[#1e7b69]">20+</p>
+                      <p className="mt-1 text-[8px] font-black uppercase tracking-[0.1em] text-[#7a8781]">Years</p>
+                    </div>
+                    <div>
+                      <p className="text-[18px] font-black text-[#1e7b69]">4</p>
+                      <p className="mt-1 text-[8px] font-black uppercase tracking-[0.1em] text-[#7a8781]">Growth stories</p>
+                    </div>
+                    <div>
+                      <p className="text-[18px] font-black text-[#1e7b69]">400+</p>
+                      <p className="mt-1 text-[8px] font-black uppercase tracking-[0.1em] text-[#7a8781]">Businesses</p>
+                    </div>
+                  </div>
                 </div>
               </article>
 
-              <article className="relative overflow-hidden rounded-2xl border border-[#a9da58]/55 bg-[#10201b] p-7 text-white">
-                <div className="absolute right-[-40px] top-[-40px] h-40 w-40 rounded-full bg-[#b8f34a]/10 blur-3xl" />
-                <div className="relative">
-                  <div className="grid h-14 w-14 place-items-center rounded-full border border-[#b8f34a]/25 bg-[#b8f34a]/10 text-[#b8f34a]">
-                    <Users className="h-6 w-6" />
-                  </div>
-                  <p className="mt-6 text-[10px] font-black uppercase tracking-[0.16em] text-[#b8f34a]/75">
-                    Human-led by design
+              <article className="group overflow-hidden rounded-2xl border border-[#a9da58]/55 bg-[#10201b] text-white shadow-[0_10px_35px_rgba(15,23,20,0.08)]">
+                <div className="relative h-[235px] overflow-hidden bg-[#0b1513]">
+                  <img
+                    src="data:image/jpeg;base64,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"
+                    alt="AI-generated placeholder portrait for Steve Johnson"
+                    className="h-full w-full object-cover object-center transition duration-300 group-hover:scale-[1.025]"
+                  />
+                  <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-[#0b1513]/80 to-transparent" />
+                  <span className="absolute left-4 top-4 rounded-full border border-[#b8f34a]/30 bg-[#0b1513]/80 px-3 py-1.5 text-[8px] font-black uppercase tracking-[0.13em] text-[#b8f34a] backdrop-blur">
+                    Placeholder advisor profile
+                  </span>
+                </div>
+                <div className="p-7">
+                  <p className="text-[10px] font-black uppercase tracking-[0.16em] text-[#b8f34a]/75">
+                    FP&amp;A & Finance Strategy
                   </p>
                   <h3 className="mt-2 text-[24px] font-black tracking-[-0.035em]">
-                    Technology supports the CFO. It doesn’t replace one.
+                    Steve Johnson
                   </h3>
-                  <p className="mt-4 text-[13px] leading-6 text-white/58">
-                    BRHT Intelligence can organize data and surface insights, but forecasting, tradeoffs, recommendations and executive guidance are led by people.
+                  <p className="mt-4 text-[13px] leading-6 text-white/62">
+                    Illustrative advisor profile with 18+ years across FP&amp;A, divisional finance leadership and CFO advisory. The placeholder background includes operating models, board planning, pricing analysis and capital strategy for scaling companies.
                   </p>
-                  <div className="mt-6 border-t border-white/[0.08] pt-4 text-[10px] font-bold uppercase tracking-[0.12em] text-white/35">
-                    CFO judgment · Operator context · Senior guidance
+                  <div className="mt-6 grid grid-cols-3 gap-2 border-t border-white/[0.08] pt-5">
+                    <div>
+                      <p className="text-[18px] font-black text-[#b8f34a]">18+</p>
+                      <p className="mt-1 text-[8px] font-black uppercase tracking-[0.1em] text-white/35">Years</p>
+                    </div>
+                    <div>
+                      <p className="text-[18px] font-black text-[#b8f34a]">FP&amp;A</p>
+                      <p className="mt-1 text-[8px] font-black uppercase tracking-[0.1em] text-white/35">Leadership</p>
+                    </div>
+                    <div>
+                      <p className="text-[18px] font-black text-[#b8f34a]">CFO</p>
+                      <p className="mt-1 text-[8px] font-black uppercase tracking-[0.1em] text-white/35">Advisory</p>
+                    </div>
                   </div>
                 </div>
               </article>
             </div>
+
+            <p className="mt-5 text-[10px] leading-5 text-[#7b8781]">
+              Steve Johnson is an AI-generated placeholder profile for design review and should be replaced with a real advisor before public use.
+            </p>
           </div>
         </section>
 
