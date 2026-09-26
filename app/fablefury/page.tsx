@@ -47,6 +47,8 @@ export default function FableFuryPage() {
       }
 
       preload() {
+        this.load.image("trapDungeon", "/fablefury/environment/trap-dungeon.png");
+
         this.makeTexture("hero", 56, 70, (g) => {
           g.fillStyle(0x4db7ff, 1);
           g.fillRoundedRect(8, 8, 40, 56, 12);
@@ -66,11 +68,11 @@ export default function FableFuryPage() {
         });
 
         this.makeTexture("stone", 128, 38, (g) => {
-          g.fillStyle(0x5b4739, 1);
+          g.fillStyle(0x44352d, 0.9);
           g.fillRoundedRect(0, 4, 128, 30, 7);
-          g.lineStyle(3, 0x7d6654, 1);
+          g.lineStyle(3, 0x8d715c, 0.85);
           g.strokeRoundedRect(0, 4, 128, 30, 7);
-          g.fillStyle(0x715948, 1);
+          g.fillStyle(0x715948, 0.75);
           g.fillRect(10, 12, 28, 5);
           g.fillRect(48, 20, 34, 5);
           g.fillRect(91, 11, 25, 5);
@@ -135,24 +137,30 @@ export default function FableFuryPage() {
         this.cameras.main.setBounds(0, 0, 3400, 720);
         this.cameras.main.setBackgroundColor("#100c14");
 
-        this.add.rectangle(1700, 360, 3400, 720, 0x130f19);
-        for (let i = 0; i < 18; i++) {
-          this.add.rectangle(120 + i * 195, 210, 38, 310, 0x251828).setAlpha(0.7);
-          this.add.circle(120 + i * 195, 330, 8, 0xff8a35).setAlpha(0.5);
-        }
-        this.add.rectangle(1700, 680, 3400, 80, 0x09080c);
+        const dungeon = this.add.image(0, 0, "trapDungeon").setOrigin(0, 0);
+        dungeon.setDisplaySize(1900, 720);
+        dungeon.setScrollFactor(0.2, 0);
+        dungeon.setDepth(-100);
+
+        this.add
+          .rectangle(640, 360, 1280, 720, 0x09060b, 0.12)
+          .setScrollFactor(0)
+          .setDepth(-90);
 
         this.platforms = this.physics.add.staticGroup();
-        const ground = [100, 228, 356, 484, 612, 900, 1028, 1156, 1284, 1510, 1638, 1766, 1894, 2022, 2320, 2448, 2576, 2704, 2995, 3123, 3251];
+        const ground = [
+          100, 228, 356, 484, 612, 900, 1028, 1156, 1284, 1510, 1638, 1766, 1894,
+          2022, 2320, 2448, 2576, 2704, 2995, 3123, 3251,
+        ];
         ground.forEach((x) => {
           const p = this.platforms.create(x, 628, "stone");
-          p.setOrigin(0, 0).refreshBody();
+          p.setOrigin(0, 0).setAlpha(0.5).refreshBody();
         });
 
         const step1 = this.platforms.create(1390, 550, "stone");
-        step1.setOrigin(0, 0).refreshBody();
+        step1.setOrigin(0, 0).setAlpha(0.5).refreshBody();
         const step2 = this.platforms.create(1518, 490, "stone");
-        step2.setOrigin(0, 0).refreshBody();
+        step2.setOrigin(0, 0).setAlpha(0.5).refreshBody();
 
         this.player = this.physics.add.sprite(135, 500, "hero");
         this.player.setCollideWorldBounds(true);
@@ -192,7 +200,14 @@ export default function FableFuryPage() {
         const saw = this.physics.add.image(1265, 300, "saw");
         saw.body.allowGravity = false;
         saw.setImmovable(true);
-        this.tweens.add({ targets: saw, y: 535, duration: 1250, yoyo: true, repeat: -1, ease: "Sine.easeInOut" });
+        this.tweens.add({
+          targets: saw,
+          y: 535,
+          duration: 1250,
+          yoyo: true,
+          repeat: -1,
+          ease: "Sine.easeInOut",
+        });
         this.tweens.add({ targets: saw, angle: 360, duration: 650, repeat: -1 });
 
         const flames: any[] = [];
@@ -208,13 +223,20 @@ export default function FableFuryPage() {
             delay: 2500 + index * 700,
             loop: true,
             callback: () => {
-              const warning = this.add.text(x, 390, "!", {
-                fontFamily: "Arial, sans-serif",
-                fontSize: "56px",
-                color: "#ffd166",
-                fontStyle: "bold",
-              }).setOrigin(0.5);
-              this.tweens.add({ targets: warning, alpha: 0, duration: 650, onComplete: () => warning.destroy() });
+              const warning = this.add
+                .text(x, 390, "!", {
+                  fontFamily: "Arial, sans-serif",
+                  fontSize: "56px",
+                  color: "#ffd166",
+                  fontStyle: "bold",
+                })
+                .setOrigin(0.5);
+              this.tweens.add({
+                targets: warning,
+                alpha: 0,
+                duration: 650,
+                onComplete: () => warning.destroy(),
+              });
               this.time.delayedCall(650, () => {
                 flame.setData("hot", true);
                 flame.setVisible(true);
@@ -246,31 +268,52 @@ export default function FableFuryPage() {
         this.cursors = this.input.keyboard?.createCursorKeys();
         this.keys = this.input.keyboard?.addKeys("W,A,D,SPACE,R");
 
-        this.healthText = this.add.text(24, 20, "Health 100", {
-          fontFamily: "Arial, sans-serif",
-          fontSize: "26px",
-          color: "#ffffff",
-          fontStyle: "bold",
-        }).setScrollFactor(0).setDepth(1000);
+        this.healthText = this.add
+          .text(24, 20, "Health 100", {
+            fontFamily: "Arial, sans-serif",
+            fontSize: "26px",
+            color: "#ffffff",
+            fontStyle: "bold",
+            backgroundColor: "rgba(0,0,0,0.35)",
+            padding: { x: 10, y: 6 },
+          })
+          .setScrollFactor(0)
+          .setDepth(1000);
 
-        this.add.text(24, 56, "A / D or arrows = move   Space / W / up = jump", {
-          fontFamily: "Arial, sans-serif",
-          fontSize: "18px",
-          color: "#eadfff",
-        }).setScrollFactor(0).setDepth(1000);
+        this.add
+          .text(24, 66, "A / D or arrows = move   Space / W / up = jump", {
+            fontFamily: "Arial, sans-serif",
+            fontSize: "18px",
+            color: "#ffffff",
+            backgroundColor: "rgba(0,0,0,0.35)",
+            padding: { x: 10, y: 6 },
+          })
+          .setScrollFactor(0)
+          .setDepth(1000);
 
-        this.add.text(24, 84, "Survive the trap corridor and reach the door.", {
-          fontFamily: "Arial, sans-serif",
-          fontSize: "18px",
-          color: "#ffd7a8",
-        }).setScrollFactor(0).setDepth(1000);
+        this.add
+          .text(24, 108, "Survive the trap corridor and reach the door.", {
+            fontFamily: "Arial, sans-serif",
+            fontSize: "18px",
+            color: "#ffd7a8",
+            backgroundColor: "rgba(0,0,0,0.35)",
+            padding: { x: 10, y: 6 },
+          })
+          .setScrollFactor(0)
+          .setDepth(1000);
 
-        this.messageText = this.add.text(640, 120, "FABLE FURY — TRAP CORRIDOR", {
-          fontFamily: "Arial, sans-serif",
-          fontSize: "31px",
-          color: "#ffd166",
-          fontStyle: "bold",
-        }).setOrigin(0.5).setScrollFactor(0).setDepth(1000);
+        this.messageText = this.add
+          .text(640, 154, "FABLE FURY — TRAP CORRIDOR", {
+            fontFamily: "Arial, sans-serif",
+            fontSize: "31px",
+            color: "#ffd166",
+            fontStyle: "bold",
+            backgroundColor: "rgba(0,0,0,0.28)",
+            padding: { x: 14, y: 8 },
+          })
+          .setOrigin(0.5)
+          .setScrollFactor(0)
+          .setDepth(1000);
       }
 
       takeDamage(amount: number) {
@@ -358,10 +401,12 @@ export default function FableFuryPage() {
 
       <div className="mx-auto max-w-7xl">
         <div className="mb-6">
-          <p className="text-sm font-semibold uppercase tracking-[0.28em] text-orange-300">Playable prototype</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.28em] text-orange-300">
+            Playable prototype
+          </p>
           <h1 className="mt-2 text-4xl font-bold sm:text-5xl">Fable Fury: Trap Corridor</h1>
           <p className="mt-3 max-w-3xl text-zinc-300">
-            First browser build based on the trap-level concept. The mechanics are live now; the next pass swaps these placeholders for the actual Fable Fury art, characters, UI and effects.
+            The trap corridor now uses the first Fable Fury environment art pass. The next step is replacing the placeholder heroes and hazards with the real game assets.
           </p>
         </div>
 
@@ -370,9 +415,15 @@ export default function FableFuryPage() {
         </div>
 
         <div className="mt-5 grid gap-3 text-sm text-zinc-300 sm:grid-cols-3">
-          <div className="rounded-xl border border-white/10 bg-white/5 p-4">Move with <b className="text-white">A / D</b> or arrow keys.</div>
-          <div className="rounded-xl border border-white/10 bg-white/5 p-4">Jump with <b className="text-white">Space / W / ↑</b>.</div>
-          <div className="rounded-xl border border-white/10 bg-white/5 p-4">If you die, press <b className="text-white">R</b> to restart.</div>
+          <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+            Move with <b className="text-white">A / D</b> or arrow keys.
+          </div>
+          <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+            Jump with <b className="text-white">Space / W / ↑</b>.
+          </div>
+          <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+            If you die, press <b className="text-white">R</b> to restart.
+          </div>
         </div>
       </div>
     </main>
