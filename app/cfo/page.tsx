@@ -12,7 +12,6 @@ import {
   Gauge,
   Lightbulb,
   LineChart,
-  Linkedin,
   Menu,
   Search,
   Settings2,
@@ -597,7 +596,9 @@ export default function CfoPage() {
                     aria-label="Brennan Roney on LinkedIn"
                     className="grid h-9 w-9 place-items-center rounded-full border border-black/10 bg-white text-[#52615a] transition hover:border-[#8fcf35]/50 hover:text-[#1e7b69]"
                   >
-                    <Linkedin className="h-4 w-4" />
+                    <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current" aria-hidden="true">
+                      <path d="M6.5 8.3H3.2V21h3.3V8.3ZM4.85 3C3.79 3 3 3.79 3 4.82c0 1.02.77 1.82 1.81 1.82h.02c1.09 0 1.86-.8 1.86-1.82C6.67 3.79 5.92 3 4.85 3ZM21 13.72c0-3.83-2.04-5.61-4.76-5.61-2.19 0-3.17 1.2-3.72 2.05V8.3H9.2c.04 1.23 0 12.7 0 12.7h3.32v-7.09c0-.38.03-.76.14-1.03.24-.76.8-1.55 1.74-1.55 1.23 0 1.72.94 1.72 2.31V21H21v-7.28Z" />
+                    </svg>
                   </a>
                 </div>
                 <p className="mt-6 text-[10px] font-black uppercase tracking-[0.16em] text-[#658077]">
@@ -626,7 +627,9 @@ export default function CfoPage() {
                     aria-label="Sam Willson on LinkedIn"
                     className="grid h-9 w-9 place-items-center rounded-full border border-black/10 bg-white text-[#52615a] transition hover:border-[#8fcf35]/50 hover:text-[#1e7b69]"
                   >
-                    <Linkedin className="h-4 w-4" />
+                    <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current" aria-hidden="true">
+                      <path d="M6.5 8.3H3.2V21h3.3V8.3ZM4.85 3C3.79 3 3 3.79 3 4.82c0 1.02.77 1.82 1.81 1.82h.02c1.09 0 1.86-.8 1.86-1.82C6.67 3.79 5.92 3 4.85 3ZM21 13.72c0-3.83-2.04-5.61-4.76-5.61-2.19 0-3.17 1.2-3.72 2.05V8.3H9.2c.04 1.23 0 12.7 0 12.7h3.32v-7.09c0-.38.03-.76.14-1.03.24-.76.8-1.55 1.74-1.55 1.23 0 1.72.94 1.72 2.31V21H21v-7.28Z" />
+                    </svg>
                   </a>
                 </div>
                 <p className="mt-6 text-[10px] font-black uppercase tracking-[0.16em] text-[#658077]">
