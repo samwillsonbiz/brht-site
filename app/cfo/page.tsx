@@ -587,7 +587,7 @@ export default function CfoPage() {
               <article className="group overflow-hidden rounded-2xl border border-black/[0.07] bg-[#f7f8f5] shadow-[0_10px_35px_rgba(15,23,20,0.025)]">
                 <div className="relative h-[235px] overflow-hidden bg-[#10201b]">
                   <img
-                    src="https://unavatar.io/linkedin/user:brennan-roney"
+                    src="/images/team/brennan-roney.jpg"
                     alt="Brennan Roney"
                     className="h-full w-full object-cover object-center transition duration-300 group-hover:scale-[1.025]"
                   />
@@ -634,7 +634,7 @@ export default function CfoPage() {
               <article className="group overflow-hidden rounded-2xl border border-black/[0.07] bg-[#f7f8f5] shadow-[0_10px_35px_rgba(15,23,20,0.025)]">
                 <div className="relative h-[235px] overflow-hidden bg-[#10201b]">
                   <img
-                    src="https://unavatar.io/linkedin/user:samwillson84"
+                    src="/images/team/sam-willson.jpg"
                     alt="Sam Willson"
                     className="h-full w-full object-cover object-center transition duration-300 group-hover:scale-[1.025]"
                   />
