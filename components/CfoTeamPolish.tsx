@@ -13,7 +13,6 @@ export default function CfoTeamPolish() {
       const steveCard = cards.find((card) => card.textContent?.includes("Steve Johnson"));
       if (!referenceCard || !steveCard) return;
 
-      // Match the third profile visually to the two human-led profile cards.
       steveCard.className = referenceCard.className;
 
       const referenceImageWrap = referenceCard.firstElementChild as HTMLElement | null;
@@ -23,15 +22,13 @@ export default function CfoTeamPolish() {
 
         const image = steveImageWrap.querySelector<HTMLImageElement>("img");
         if (image) {
+          image.src = "/images/team/steve-johnson.jpg?v=20260926-tech-final";
           image.alt = "Steve Johnson";
           image.className =
             "h-full w-full object-cover object-center transition duration-300 group-hover:scale-[1.025]";
         }
 
-        // Remove the temporary placeholder badge.
-        steveImageWrap
-          .querySelectorAll("span")
-          .forEach((node) => node.remove());
+        steveImageWrap.querySelectorAll("span").forEach((node) => node.remove());
 
         const gradient = steveImageWrap.querySelector<HTMLElement>("div.absolute");
         if (gradient) {
@@ -72,18 +69,17 @@ export default function CfoTeamPolish() {
               <p class="mt-1 text-[8px] font-black uppercase tracking-[0.1em] text-[#7a8781]">Years</p>
             </div>
             <div>
-              <p class="text-[18px] font-black text-[#1e7b69]">AI + Automation</p>
+              <p class="text-[14px] font-black leading-5 text-[#1e7b69]">AI + Automation</p>
               <p class="mt-1 text-[8px] font-black uppercase tracking-[0.1em] text-[#7a8781]">Enablement</p>
             </div>
             <div>
-              <p class="text-[18px] font-black text-[#1e7b69]">Systems + Data</p>
+              <p class="text-[14px] font-black leading-5 text-[#1e7b69]">Systems + Data</p>
               <p class="mt-1 text-[8px] font-black uppercase tracking-[0.1em] text-[#7a8781]">Strategy</p>
             </div>
           `;
         }
       }
 
-      // Remove the temporary disclaimer beneath the team cards.
       team.querySelectorAll<HTMLParagraphElement>("p").forEach((paragraph) => {
         if (paragraph.textContent?.includes("AI-generated placeholder profile")) {
           paragraph.remove();
@@ -92,12 +88,13 @@ export default function CfoTeamPolish() {
     };
 
     const frame = window.requestAnimationFrame(polishTeam);
-    const observer = new MutationObserver(polishTeam);
-    observer.observe(document.body, { childList: true, subtree: true });
+    const retry1 = window.setTimeout(polishTeam, 300);
+    const retry2 = window.setTimeout(polishTeam, 1000);
 
     return () => {
       window.cancelAnimationFrame(frame);
-      observer.disconnect();
+      window.clearTimeout(retry1);
+      window.clearTimeout(retry2);
     };
   }, []);
 
