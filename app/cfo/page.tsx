@@ -457,7 +457,7 @@ export default function CfoPage() {
                   <span className="mt-1 block text-[#b8f34a]">Know what to do.</span>
                 </h1>
                 <p className="mt-7 max-w-[640px] text-[17px] leading-8 text-white/76">
-                  For growing companies that need more than bookkeeping and historical reporting, but don't need a full-time CFO. Get the forecasting, financial visibility and senior guidance to make better decisions.
+                  For growing companies that need more than bookkeeping and historical reporting, but don’t need a full-time CFO. Get the forecasting, financial visibility and senior guidance to make better decisions.
                 </p>
                 <div className="mt-9">
                   <button
@@ -653,7 +653,7 @@ export default function CfoPage() {
                     Human-led by design
                   </p>
                   <h3 className="mt-2 text-[24px] font-black tracking-[-0.035em]">
-                    Technology supports the CFO. It doesn't replace one.
+                    Technology supports the CFO. It doesn’t replace one.
                   </h3>
                   <p className="mt-4 text-[13px] leading-6 text-white/58">
                     BRHT Intelligence can organize data and surface insights, but forecasting, tradeoffs, recommendations and executive guidance are led by people.
