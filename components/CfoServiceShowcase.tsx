@@ -665,7 +665,7 @@ export default function CfoServiceShowcase({
             (compactAside ? "mt-4 py-3" : "mt-auto py-3.5")
           }
         >
-          Book a Strategy Call <ArrowRight className="h-4 w-4" />
+          Talk to a CFO <ArrowRight className="h-4 w-4" />
         </button>
       </aside>
     </div>
