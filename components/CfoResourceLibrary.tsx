@@ -513,7 +513,7 @@ export default function CfoResourceLibrary() {
                   }}
                   className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#b8f34a] px-5 py-3.5 text-[12px] font-black text-[#07100e] transition hover:bg-[#c5f760]"
                 >
-                  Book a Strategy Call <ArrowRight className="h-4 w-4" />
+                  Talk to a CFO <ArrowRight className="h-4 w-4" />
                 </button>
               </aside>
             </div>
