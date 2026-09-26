@@ -87,7 +87,7 @@ export default function BookingModal() {
                 BRHT CFO
               </p>
               <h2 className="mt-4 max-w-sm text-[38px] font-black leading-[0.98] tracking-[-0.05em] md:text-[48px]">
-                Book a Strategy Call.
+                Talk to a CFO.
               </h2>
               <p className="mt-5 max-w-sm text-[13px] leading-6 text-white/55">
                 A focused conversation about your numbers, systems and the decisions in front of the business.
@@ -226,7 +226,7 @@ export default function BookingModal() {
                       type="submit"
                       className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#b8f34a] px-5 py-4 text-[12px] font-black text-[#07100e] transition hover:bg-[#c5f760]"
                     >
-                      Send Strategy Call Request <ArrowRight className="h-4 w-4" />
+                      Send CFO Call Request <ArrowRight className="h-4 w-4" />
                     </button>
                   </form>
                 </div>
