@@ -36,21 +36,20 @@ export default function CfoTeamPolish() {
           "h-full w-full object-cover object-center transition duration-300 group-hover:scale-[1.025]";
       };
 
-      // Direct Unsplash CDN URLs are used here instead of the old proxy routes.
-      // This avoids the image load failures we were seeing on Vercel.
+      // User-selected Unsplash portraits, in Brennan / Sam / Steve order.
       setHeadshot(
         brennanCard,
-        "https://images.unsplash.com/photo-1543132220-4bf3de6e10ae?auto=format&fit=crop&crop=faces&q=82&w=1400&h=900",
+        "https://plus.unsplash.com/premium_photo-1661374927471-24a90ebd5737?auto=format&fit=crop&crop=faces&q=82&w=1400&h=900",
         "Brennan Roney"
       );
       setHeadshot(
         samCard,
-        "https://images.unsplash.com/photo-1559718062-361155fad299?auto=format&fit=crop&crop=faces&q=82&w=1400&h=900",
+        "https://plus.unsplash.com/premium_photo-1682430259342-427ec43ebc38?auto=format&fit=crop&crop=faces&q=82&w=1400&h=900",
         "Sam Willson"
       );
       setHeadshot(
         steveCard,
-        "https://images.unsplash.com/photo-1560714759-60e6eb4e1db6?auto=format&fit=crop&crop=faces&q=82&w=1400&h=900",
+        "https://plus.unsplash.com/premium_photo-1682431020001-f2499d8c1b61?auto=format&fit=crop&crop=faces&q=82&w=1400&h=900",
         "Steve Johnson"
       );
 
