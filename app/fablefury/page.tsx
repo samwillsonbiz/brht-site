@@ -30,6 +30,13 @@ export default function FableFuryPage() {
       messageText: any;
       chaseText: any;
 
+      readonly worldW = 3400;
+      readonly worldH = 720;
+      readonly sourceW = 2048;
+      readonly sourceH = 682;
+      readonly sx = this.worldW / this.sourceW;
+      readonly sy = this.worldH / this.sourceH;
+
       health = 100;
       invulnerable = false;
       won = false;
@@ -49,6 +56,14 @@ export default function FableFuryPage() {
         super("TrapScene");
       }
 
+      wx(n: number) {
+        return n * this.sx;
+      }
+
+      wy(n: number) {
+        return n * this.sy;
+      }
+
       makeTexture(key: string, w: number, h: number, draw: (g: any) => void) {
         const g = this.make.graphics({ x: 0, y: 0, add: false });
         draw(g);
@@ -58,6 +73,7 @@ export default function FableFuryPage() {
 
       preload() {
         this.load.image("dungeon", "/fablefury/environment/trap-dungeon.png");
+
         this.load.image("harryIdle1", "/fablefury/characters/harry/idle-01.png");
         this.load.image("harryIdle2", "/fablefury/characters/harry/idle-02.png");
         this.load.image("harryRun1", "/fablefury/characters/harry/run-01.png");
@@ -68,44 +84,26 @@ export default function FableFuryPage() {
         this.load.image("harryDouble", "/fablefury/characters/harry/double%20jump.png");
         this.load.image("harryHit", "/fablefury/characters/harry/hit-01.png");
 
+        this.load.image("platformStart", "/fablefury/platforms/start-platform.png");
+        this.load.image("platformCenter", "/fablefury/platforms/center-platform.png");
+        this.load.image("platformHangingSmall", "/fablefury/platforms/hanging-platform-small.png");
+        this.load.image("platformHangingLarge", "/fablefury/platforms/hanging-platform-large.png");
+        this.load.image("platformTrapBridge", "/fablefury/platforms/trap-bridge.png");
+        this.load.image("platformRight", "/fablefury/platforms/right-platform.png");
+
+        this.load.image("spikesLeftArt", "/fablefury/hazards/spikes-left.png");
+        this.load.image("spikesMiddleArt", "/fablefury/hazards/spikes-middle.png");
+        this.load.image("sawLargeArt", "/fablefury/hazards/saw-large.png");
+        this.load.image("sawSmallArt", "/fablefury/hazards/saw-small.png");
+
         this.makeTexture("body", 42, 66, (g) => {
           g.fillStyle(0xffffff, 1);
           g.fillRect(0, 0, 42, 66);
         });
 
-        this.makeTexture("stone", 128, 38, (g) => {
-          g.fillStyle(0x44352d, 0.9);
-          g.fillRoundedRect(0, 4, 128, 30, 7);
-          g.lineStyle(3, 0x8d715c, 0.85);
-          g.strokeRoundedRect(0, 4, 128, 30, 7);
-        });
-
-        this.makeTexture("spikes", 72, 62, (g) => {
-          g.fillStyle(0xd9d9d9, 1);
-          [5, 27, 49].forEach((x) => {
-            g.beginPath();
-            g.moveTo(x, 56);
-            g.lineTo(x + 9, 8);
-            g.lineTo(x + 18, 56);
-            g.closePath();
-            g.fillPath();
-          });
-          g.fillStyle(0x4b4b4b, 1);
-          g.fillRect(0, 56, 72, 6);
-        });
-
-        this.makeTexture("saw", 88, 88, (g) => {
-          g.fillStyle(0xc5c5c5, 1);
-          g.fillCircle(44, 44, 30);
-          g.fillStyle(0x555555, 1);
-          g.fillCircle(44, 44, 8);
-        });
-
-        this.makeTexture("fire", 86, 150, (g) => {
-          g.fillStyle(0xff4d1f, 0.95);
-          g.fillRoundedRect(0, 0, 86, 150, 20);
-          g.fillStyle(0xffcf3f, 1);
-          g.fillRoundedRect(12, 15, 62, 120, 18);
+        this.makeTexture("solid", 2, 2, (g) => {
+          g.fillStyle(0xffffff, 0.01);
+          g.fillRect(0, 0, 2, 2);
         });
 
         this.makeTexture("inferno", 230, 210, (g) => {
@@ -125,13 +123,6 @@ export default function FableFuryPage() {
           g.fillTriangle(96, 70, 28, 60, 88, 103);
           g.fillTriangle(92, 125, 24, 150, 92, 151);
         });
-
-        this.makeTexture("door", 78, 132, (g) => {
-          g.fillStyle(0x4f2f1c, 1);
-          g.fillRect(0, 0, 78, 132);
-          g.fillStyle(0xc8914a, 1);
-          g.fillRect(10, 10, 58, 112);
-        });
       }
 
       resizeArt(key: string) {
@@ -147,6 +138,24 @@ export default function FableFuryPage() {
         this.resizeArt(key);
       }
 
+      addPiece(key: string, x: number, y: number, w: number, h: number, depth = 5) {
+        const piece = this.add.image(this.wx(x), this.wy(y), key).setOrigin(0, 0).setDepth(depth);
+        piece.setDisplaySize(this.wx(w), this.wy(h));
+        return piece;
+      }
+
+      addStaticBox(group: any, x: number, y: number, w: number, h: number) {
+        const box = group.create(
+          this.wx(x + w / 2),
+          this.wy(y + h / 2),
+          "solid"
+        );
+        box.setDisplaySize(this.wx(w), this.wy(h));
+        box.setVisible(false);
+        box.refreshBody();
+        return box;
+      }
+
       create() {
         this.health = 100;
         this.invulnerable = false;
@@ -160,73 +169,90 @@ export default function FableFuryPage() {
         this.chaseStart = this.time.now + 900;
         this.lastThreatShake = 0;
 
-        this.physics.world.setBounds(0, 0, 3400, 720);
-        this.cameras.main.setBounds(0, 0, 3400, 720);
+        this.physics.world.setBounds(0, 0, this.worldW, this.worldH);
+        this.cameras.main.setBounds(0, 0, this.worldW, this.worldH);
         this.cameras.main.setBackgroundColor("#100c14");
 
+        // The original 2048×682 scene becomes the coordinate map for the whole level.
+        // Keeping the full painting underneath means the cut-out pieces line up pixel-for-pixel.
         const bg = this.add.image(0, 0, "dungeon").setOrigin(0, 0).setDepth(-100);
-        bg.setDisplaySize(1900, 720);
-        bg.setScrollFactor(0.2, 0);
+        bg.setDisplaySize(this.worldW, this.worldH);
 
+        // Real foreground art cut directly from the source scene.
+        this.addPiece("platformStart", 0, 300, 675, 120, 6);
+        this.addPiece("platformCenter", 805, 345, 230, 100, 6);
+        this.addPiece("platformHangingSmall", 995, 220, 180, 95, 7);
+        this.addPiece("platformHangingLarge", 1205, 235, 230, 130, 7);
+        this.addPiece("platformTrapBridge", 1115, 405, 290, 110, 7);
+        this.addPiece("platformRight", 1380, 320, 668, 115, 6);
+
+        this.addPiece("spikesLeftArt", 500, 420, 350, 100, 12);
+        this.addPiece("spikesMiddleArt", 990, 425, 145, 95, 12);
+        this.addPiece("sawLargeArt", 535, 105, 190, 200, 11);
+        this.addPiece("sawSmallArt", 790, 165, 130, 145, 11);
+
+        // Collision strips are matched to the visible top edges of the cut-out platform art.
         const platforms = this.physics.add.staticGroup();
-        [100,228,356,484,612,900,1028,1156,1284,1510,1638,1766,1894,2022,2320,2448,2576,2704,2995,3123,3251]
-          .forEach((x) => platforms.create(x, 628, "stone").setOrigin(0, 0).setAlpha(0.32).refreshBody());
-        platforms.create(1390, 550, "stone").setOrigin(0, 0).setAlpha(0.32).refreshBody();
-        platforms.create(1518, 490, "stone").setOrigin(0, 0).setAlpha(0.32).refreshBody();
+        this.addStaticBox(platforms, 0, 327, 660, 22);
+        this.addStaticBox(platforms, 820, 370, 195, 18);
+        this.addStaticBox(platforms, 1005, 244, 150, 18);
+        this.addStaticBox(platforms, 1215, 260, 200, 18);
+        this.addStaticBox(platforms, 1130, 430, 255, 18);
+        this.addStaticBox(platforms, 1390, 346, 658, 22);
 
-        this.player = this.physics.add.sprite(260, 500, "body");
+        this.player = this.physics.add.sprite(this.wx(220), this.wy(288), "body");
         this.player.setAlpha(0.001).setCollideWorldBounds(true);
         this.physics.add.collider(this.player, platforms);
 
-        this.art = this.add.image(this.player.x, this.player.y, "harryIdle1").setOrigin(0.5, 1).setDepth(50);
+        this.art = this.add
+          .image(this.player.x, this.player.y, "harryIdle1")
+          .setOrigin(0.5, 1)
+          .setDepth(50);
         this.resizeArt("harryIdle1");
 
-        const spikes = this.physics.add.staticGroup();
-        [610, 682, 1815, 1887, 2515].forEach((x) => spikes.create(x, 590, "spikes").refreshBody());
+        // Hazard boxes match the visible spikes, saw blades and lava under the route.
+        const hazards = this.physics.add.staticGroup();
+        this.addStaticBox(hazards, 505, 438, 335, 55);
+        this.addStaticBox(hazards, 990, 440, 145, 54);
+        this.addStaticBox(hazards, 558, 135, 145, 145);
+        this.addStaticBox(hazards, 805, 182, 105, 108);
+        this.addStaticBox(hazards, 480, 500, 1568, 165);
 
-        const saw = this.physics.add.image(1265, 300, "saw").setImmovable(true);
-        saw.body.allowGravity = false;
-        this.tweens.add({ targets: saw, y: 535, duration: 1250, yoyo: true, repeat: -1, ease: "Sine.easeInOut" });
-        this.tweens.add({ targets: saw, angle: 360, duration: 650, repeat: -1 });
+        // Extra traps already painted into the right-hand platform.
+        this.addStaticBox(hazards, 1570, 305, 90, 45);
+        this.addStaticBox(hazards, 1660, 95, 42, 255);
 
-        const flames: any[] = [];
-        [2145, 2785].forEach((x, i) => {
-          const flame = this.physics.add.image(x, 550, "fire").setImmovable(true).setVisible(false);
-          flame.body.allowGravity = false;
-          flame.setData("hot", false);
-          flames.push(flame);
-          this.time.addEvent({
-            delay: 2200 + i * 650,
-            loop: true,
-            callback: () => {
-              const warn = this.add.text(x, 390, "!", { fontSize: "56px", color: "#ffd166", fontStyle: "bold" }).setOrigin(0.5);
-              this.tweens.add({ targets: warn, alpha: 0, duration: 550, onComplete: () => warn.destroy() });
-              this.time.delayedCall(550, () => {
-                flame.setData("hot", true).setVisible(true);
-                this.time.delayedCall(1050, () => flame.setData("hot", false).setVisible(false));
-              });
-            },
-          });
-        });
-
-        this.chaser = this.physics.add.image(0, 515, "inferno").setDepth(45);
+        this.chaser = this.physics.add.image(this.wx(18), this.wy(500), "inferno").setDepth(45);
         this.chaser.body.allowGravity = false;
         this.chaser.setImmovable(true);
         this.chaser.setScale(0.86);
         this.chaser.body.setSize(135, 150, true);
-        this.tweens.add({ targets: this.chaser, scaleX: 0.94, scaleY: 0.94, duration: 220, yoyo: true, repeat: -1 });
-        this.tweens.add({ targets: this.chaser, angle: 8, duration: 180, yoyo: true, repeat: -1 });
+        this.tweens.add({
+          targets: this.chaser,
+          scaleX: 0.94,
+          scaleY: 0.94,
+          duration: 220,
+          yoyo: true,
+          repeat: -1,
+        });
+        this.tweens.add({
+          targets: this.chaser,
+          angle: 8,
+          duration: 180,
+          yoyo: true,
+          repeat: -1,
+        });
 
-        const door = this.physics.add.image(3290, 535, "door").setImmovable(true);
-        door.body.allowGravity = false;
+        const finish = this.physics.add.staticImage(this.wx(2015), this.wy(330), "solid");
+        finish.setDisplaySize(this.wx(42), this.wy(330));
+        finish.setVisible(false);
+        finish.refreshBody();
 
-        this.physics.add.overlap(this.player, spikes, () => this.damage(18));
-        this.physics.add.overlap(this.player, saw, () => this.damage(26));
-        flames.forEach((f) => this.physics.add.overlap(this.player, f, () => f.getData("hot") && this.damage(22)));
+        this.physics.add.overlap(this.player, hazards, () => this.damage(24));
         this.physics.add.overlap(this.player, this.chaser, () => this.caught());
-        this.physics.add.overlap(this.player, door, () => this.win());
+        this.physics.add.overlap(this.player, finish, () => this.win());
 
-        // Tight, action-oriented camera. Harry sits left of centre so you see just enough of what is coming.
+        // Tight chase camera: Harry stays left of centre so upcoming hazards arrive fast.
         this.cameras.main.setZoom(1.55);
         this.cameras.main.startFollow(this.player, true, 0.14, 0.12, -95, 18);
         this.cameras.main.setDeadzone(110, 70);
@@ -234,20 +260,48 @@ export default function FableFuryPage() {
         this.cursors = this.input.keyboard?.createCursorKeys();
         this.keys = this.input.keyboard?.addKeys("W,A,D,SPACE,R");
 
-        this.healthText = this.add.text(24, 20, "Health 100", {
-          fontSize: "22px", color: "#fff", fontStyle: "bold", backgroundColor: "rgba(0,0,0,.45)", padding: { x: 9, y: 5 },
-        }).setScrollFactor(0).setDepth(1000).setScale(0.82);
+        this.healthText = this.add
+          .text(24, 20, "Health 100", {
+            fontSize: "22px",
+            color: "#fff",
+            fontStyle: "bold",
+            backgroundColor: "rgba(0,0,0,.45)",
+            padding: { x: 9, y: 5 },
+          })
+          .setScrollFactor(0)
+          .setDepth(1000)
+          .setScale(0.82);
 
-        this.chaseText = this.add.text(640, 55, "RUN! THE INFERNO IS COMING!", {
-          fontSize: "30px", color: "#ffcf4a", fontStyle: "bold", backgroundColor: "rgba(90,0,0,.62)", padding: { x: 15, y: 8 },
-        }).setOrigin(0.5).setScrollFactor(0).setDepth(1000).setScale(0.82);
+        this.chaseText = this.add
+          .text(640, 55, "RUN! THE INFERNO IS COMING!", {
+            fontSize: "30px",
+            color: "#ffcf4a",
+            fontStyle: "bold",
+            backgroundColor: "rgba(90,0,0,.62)",
+            padding: { x: 15, y: 8 },
+          })
+          .setOrigin(0.5)
+          .setScrollFactor(0)
+          .setDepth(1000)
+          .setScale(0.82);
 
-        this.messageText = this.add.text(640, 100, "KEEP MOVING", {
-          fontSize: "21px", color: "#fff", fontStyle: "bold", backgroundColor: "rgba(0,0,0,.28)", padding: { x: 10, y: 5 },
-        }).setOrigin(0.5).setScrollFactor(0).setDepth(1000).setScale(0.82);
+        this.messageText = this.add
+          .text(640, 100, "KEEP MOVING", {
+            fontSize: "21px",
+            color: "#fff",
+            fontStyle: "bold",
+            backgroundColor: "rgba(0,0,0,.28)",
+            padding: { x: 10, y: 5 },
+          })
+          .setOrigin(0.5)
+          .setScrollFactor(0)
+          .setDepth(1000)
+          .setScale(0.82);
 
         this.time.delayedCall(1700, () => {
-          if (this.chaseText && this.health > 0) this.chaseText.setText("DON'T LET IT CATCH YOU");
+          if (this.chaseText && this.health > 0) {
+            this.chaseText.setText("DON'T LET IT CATCH YOU");
+          }
         });
       }
 
@@ -259,6 +313,7 @@ export default function FableFuryPage() {
 
         if (this.isHit || this.health <= 0) return this.setArt("harryHit");
         if (time < this.doubleJumpUntil) return this.setArt("harryDouble");
+
         if (!grounded) {
           this.art.setAngle(0);
           return this.setArt("harryJump");
@@ -266,6 +321,7 @@ export default function FableFuryPage() {
 
         this.art.setAngle(0);
         this.animClock += delta;
+
         if (Math.abs(vx) > 10) {
           if (this.animClock > 82) {
             this.animClock = 0;
@@ -288,7 +344,13 @@ export default function FableFuryPage() {
         this.setArt("harryDouble");
         this.tweens.killTweensOf(this.art);
         this.art.setAngle(0);
-        this.tweens.add({ targets: this.art, angle: 360, duration: 380, ease: "Cubic.easeOut", onComplete: () => this.art?.setAngle(0) });
+        this.tweens.add({
+          targets: this.art,
+          angle: 360,
+          duration: 380,
+          ease: "Cubic.easeOut",
+          onComplete: () => this.art?.setAngle(0),
+        });
       }
 
       damage(amount: number) {
@@ -301,6 +363,7 @@ export default function FableFuryPage() {
         this.art.setTint(0xffb0b0);
         this.player.setVelocity(-220, -250);
         this.cameras.main.shake(130, 0.006);
+
         this.time.delayedCall(420, () => {
           if (this.health > 0) {
             this.art.clearTint();
@@ -308,6 +371,7 @@ export default function FableFuryPage() {
             this.invulnerable = false;
           }
         });
+
         if (this.health <= 0) {
           this.art.setTint(0x777777);
           this.messageText.setText("DEFEATED — PRESS R");
@@ -340,6 +404,7 @@ export default function FableFuryPage() {
 
       update(time: number, delta: number) {
         if (!this.player || !this.art || !this.keys || !this.cursors) return;
+
         this.syncArt(time, delta);
 
         if ((this.health <= 0 || this.won) && Phaser.Input.Keyboard.JustDown(this.keys.R)) {
@@ -350,6 +415,7 @@ export default function FableFuryPage() {
 
         const left = this.cursors.left.isDown || this.keys.A.isDown;
         const right = this.cursors.right.isDown || this.keys.D.isDown;
+
         if (left) this.player.setVelocityX(-285);
         else if (right) this.player.setVelocityX(305);
         else this.player.setVelocityX(0);
@@ -357,7 +423,11 @@ export default function FableFuryPage() {
         const grounded = this.player.body.blocked.down || this.player.body.touching.down;
         if (grounded) this.jumpsUsed = 0;
 
-        const jump = Phaser.Input.Keyboard.JustDown(this.cursors.up) || Phaser.Input.Keyboard.JustDown(this.keys.W) || Phaser.Input.Keyboard.JustDown(this.keys.SPACE);
+        const jump =
+          Phaser.Input.Keyboard.JustDown(this.cursors.up) ||
+          Phaser.Input.Keyboard.JustDown(this.keys.W) ||
+          Phaser.Input.Keyboard.JustDown(this.keys.SPACE);
+
         if (jump && grounded) {
           this.player.setVelocityY(-555);
           this.jumpsUsed = 1;
@@ -376,8 +446,12 @@ export default function FableFuryPage() {
             this.lastThreatShake = time;
             this.cameras.main.shake(90, gap < 150 ? 0.005 : 0.0025);
           }
-          if (gap < 200 && this.chaseText) this.chaseText.setText("MOVE! MOVE! MOVE!");
-          else if (gap > 360 && this.chaseText && chaseAge > 1800) this.chaseText.setText("DON'T LET IT CATCH YOU");
+
+          if (gap < 200 && this.chaseText) {
+            this.chaseText.setText("MOVE! MOVE! MOVE!");
+          } else if (gap > 360 && this.chaseText && chaseAge > 1800) {
+            this.chaseText.setText("DON'T LET IT CATCH YOU");
+          }
         }
       }
     }
@@ -388,8 +462,14 @@ export default function FableFuryPage() {
       width: 1280,
       height: 720,
       backgroundColor: "#100c14",
-      physics: { default: "arcade", arcade: { gravity: { y: 1200 }, debug: false } },
-      scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
+      physics: {
+        default: "arcade",
+        arcade: { gravity: { y: 1200 }, debug: false },
+      },
+      scale: {
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+      },
       scene: [TrapScene],
     });
 
@@ -401,20 +481,43 @@ export default function FableFuryPage() {
 
   return (
     <main className="min-h-screen bg-[#09070c] px-4 py-8 text-white sm:px-8">
-      <Script src="https://cdn.jsdelivr.net/npm/phaser@3.90.0/dist/phaser.min.js" strategy="afterInteractive" onLoad={() => setReady(true)} onReady={() => setReady(true)} />
+      <Script
+        src="https://cdn.jsdelivr.net/npm/phaser@3.90.0/dist/phaser.min.js"
+        strategy="afterInteractive"
+        onLoad={() => setReady(true)}
+        onReady={() => setReady(true)}
+      />
+
       <div className="mx-auto max-w-7xl">
         <div className="mb-6">
-          <p className="text-sm font-semibold uppercase tracking-[0.28em] text-orange-300">Playable prototype</p>
-          <h1 className="mt-2 text-4xl font-bold sm:text-5xl">Fable Fury: Trap Corridor</h1>
-          <p className="mt-3 max-w-3xl text-zinc-300">A tighter chase-camera version of the trap corridor. Keep moving, clear the hazards, and stay ahead of the inferno.</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.28em] text-orange-300">
+            Playable prototype
+          </p>
+          <h1 className="mt-2 text-4xl font-bold sm:text-5xl">
+            Fable Fury: Trap Corridor
+          </h1>
+          <p className="mt-3 max-w-3xl text-zinc-300">
+            The chase level now uses foreground platform and hazard art cut directly
+            from the dungeon scene, with collisions aligned to the visible surfaces.
+          </p>
         </div>
+
         <div className="overflow-hidden rounded-2xl border border-white/10 bg-black p-2 shadow-2xl">
           <div ref={mountRef} className="aspect-video w-full overflow-hidden rounded-xl bg-black" />
         </div>
+
         <div className="mt-5 grid gap-3 text-sm text-zinc-300 sm:grid-cols-3">
-          <div className="rounded-xl border border-white/10 bg-white/5 p-4">Move quickly with <b className="text-white">A / D</b> or arrow keys.</div>
-          <div className="rounded-xl border border-white/10 bg-white/5 p-4">Jump with <b className="text-white">Space / W / ↑</b>; press again in the air to double jump.</div>
-          <div className="rounded-xl border border-white/10 bg-white/5 p-4">The inferno never stops. Press <b className="text-white">R</b> after defeat or victory.</div>
+          <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+            Move quickly with <b className="text-white">A / D</b> or arrow keys.
+          </div>
+          <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+            Jump with <b className="text-white">Space / W / ↑</b>; press again in
+            the air to double jump.
+          </div>
+          <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+            The inferno never stops. Press <b className="text-white">R</b> after
+            defeat or victory.
+          </div>
         </div>
       </div>
     </main>
