@@ -106,22 +106,28 @@ export default function FableFuryPage() {
           g.fillRect(0, 0, 2, 2);
         });
 
-        this.makeTexture("inferno", 230, 210, (g) => {
-          g.fillStyle(0xff2d16, 0.38);
-          g.fillCircle(120, 108, 100);
-          g.fillStyle(0xff541f, 0.9);
-          g.fillCircle(125, 108, 78);
-          g.fillStyle(0xff9e1f, 1);
-          g.fillCircle(136, 108, 58);
-          g.fillStyle(0xfff08a, 1);
-          g.fillCircle(148, 108, 34);
-          g.fillStyle(0xff5a1f, 0.95);
-          g.fillTriangle(70, 55, 2, 28, 58, 96);
-          g.fillTriangle(67, 92, 0, 90, 62, 126);
-          g.fillTriangle(75, 132, 10, 180, 76, 157);
-          g.fillStyle(0xffc43d, 0.9);
-          g.fillTriangle(96, 70, 28, 60, 88, 103);
-          g.fillTriangle(92, 125, 24, 150, 92, 151);
+        // Tall chase wall rather than a floating fireball. It fills the lane vertically,
+        // so the threat is always visually attached to the player's route.
+        this.makeTexture("infernoWall", 270, 720, (g) => {
+          g.fillStyle(0xff2d13, 0.18);
+          g.fillRect(0, 0, 270, 720);
+
+          for (let y = 20; y < 720; y += 72) {
+            const wobble = ((y / 72) % 2) * 18;
+            g.fillStyle(0xff3a16, 0.72);
+            g.fillCircle(128 + wobble, y, 118);
+            g.fillStyle(0xff6a1f, 0.9);
+            g.fillCircle(162 - wobble * 0.35, y + 8, 88);
+            g.fillStyle(0xffad24, 0.96);
+            g.fillCircle(194, y + 4, 55);
+            g.fillStyle(0xfff2a0, 0.92);
+            g.fillCircle(220, y, 27);
+          }
+
+          g.fillStyle(0xff8a1f, 0.82);
+          for (let y = 0; y < 720; y += 90) {
+            g.fillTriangle(170, y + 8, 265, y + 34, 182, y + 67);
+          }
         });
       }
 
@@ -145,15 +151,63 @@ export default function FableFuryPage() {
       }
 
       addStaticBox(group: any, x: number, y: number, w: number, h: number) {
-        const box = group.create(
-          this.wx(x + w / 2),
-          this.wy(y + h / 2),
-          "solid"
-        );
+        const box = group.create(this.wx(x + w / 2), this.wy(y + h / 2), "solid");
         box.setDisplaySize(this.wx(w), this.wy(h));
         box.setVisible(false);
         box.refreshBody();
         return box;
+      }
+
+      addPlatformCue(x: number, y: number, w: number) {
+        const glow = this.add
+          .rectangle(this.wx(x + w / 2), this.wy(y), this.wx(w), 10, 0xffbd55, 0.16)
+          .setDepth(13)
+          .setBlendMode(Phaser.BlendModes.ADD);
+        const lip = this.add
+          .rectangle(this.wx(x + w / 2), this.wy(y), this.wx(w), 3, 0xffe2a3, 0.72)
+          .setDepth(14)
+          .setBlendMode(Phaser.BlendModes.ADD);
+
+        this.tweens.add({
+          targets: [glow, lip],
+          alpha: { from: 0.38, to: 0.9 },
+          duration: 760,
+          yoyo: true,
+          repeat: -1,
+          ease: "Sine.easeInOut",
+        });
+      }
+
+      addHazardCue(x: number, y: number, w: number, h: number) {
+        const cue = this.add
+          .rectangle(this.wx(x + w / 2), this.wy(y + h / 2), this.wx(w), this.wy(h), 0xff4a1c, 0.08)
+          .setDepth(10)
+          .setBlendMode(Phaser.BlendModes.ADD);
+
+        this.tweens.add({
+          targets: cue,
+          alpha: { from: 0.06, to: 0.22 },
+          duration: 520,
+          yoyo: true,
+          repeat: -1,
+          ease: "Sine.easeInOut",
+        });
+      }
+
+      addSawCue(x: number, y: number, radius: number) {
+        const ring = this.add
+          .ellipse(this.wx(x), this.wy(y), this.wx(radius * 2.25), this.wy(radius * 2.25), 0xff7b22, 0.09)
+          .setDepth(10)
+          .setBlendMode(Phaser.BlendModes.ADD);
+
+        this.tweens.add({
+          targets: ring,
+          scale: { from: 0.92, to: 1.08 },
+          alpha: { from: 0.05, to: 0.2 },
+          duration: 430,
+          yoyo: true,
+          repeat: -1,
+        });
       }
 
       create() {
@@ -173,12 +227,15 @@ export default function FableFuryPage() {
         this.cameras.main.setBounds(0, 0, this.worldW, this.worldH);
         this.cameras.main.setBackgroundColor("#100c14");
 
-        // The original 2048×682 scene becomes the coordinate map for the whole level.
-        // Keeping the full painting underneath means the cut-out pieces line up pixel-for-pixel.
         const bg = this.add.image(0, 0, "dungeon").setOrigin(0, 0).setDepth(-100);
         bg.setDisplaySize(this.worldW, this.worldH);
 
-        // Real foreground art cut directly from the source scene.
+        // Darken the painted plate slightly so gameplay art and cues separate from scenery.
+        this.add
+          .rectangle(this.worldW / 2, this.worldH / 2, this.worldW, this.worldH, 0x08060b, 0.22)
+          .setDepth(-80);
+
+        // Foreground art cut directly from the source scene.
         this.addPiece("platformStart", 0, 300, 675, 120, 6);
         this.addPiece("platformCenter", 805, 345, 230, 100, 6);
         this.addPiece("platformHangingSmall", 995, 220, 180, 95, 7);
@@ -186,12 +243,27 @@ export default function FableFuryPage() {
         this.addPiece("platformTrapBridge", 1115, 405, 290, 110, 7);
         this.addPiece("platformRight", 1380, 320, 668, 115, 6);
 
-        this.addPiece("spikesLeftArt", 500, 420, 350, 100, 12);
-        this.addPiece("spikesMiddleArt", 990, 425, 145, 95, 12);
-        this.addPiece("sawLargeArt", 535, 105, 190, 200, 11);
-        this.addPiece("sawSmallArt", 790, 165, 130, 145, 11);
+        const spikesLeft = this.addPiece("spikesLeftArt", 500, 420, 350, 100, 12);
+        const spikesMiddle = this.addPiece("spikesMiddleArt", 990, 425, 145, 95, 12);
+        const sawLarge = this.addPiece("sawLargeArt", 535, 105, 190, 200, 11);
+        const sawSmall = this.addPiece("sawSmallArt", 790, 165, 130, 145, 11);
 
-        // Collision strips are matched to the visible top edges of the cut-out platform art.
+        // Readability layer: standable surfaces get a warm top-edge pulse.
+        this.addPlatformCue(0, 327, 660);
+        this.addPlatformCue(820, 370, 195);
+        this.addPlatformCue(1005, 244, 150);
+        this.addPlatformCue(1215, 260, 200);
+        this.addPlatformCue(1130, 430, 255);
+        this.addPlatformCue(1390, 346, 658);
+
+        // Hazard art gets a restrained warning pulse instead of blending into the background.
+        this.addHazardCue(505, 438, 335, 55);
+        this.addHazardCue(990, 440, 145, 54);
+        this.addSawCue(630, 205, 75);
+        this.addSawCue(855, 235, 52);
+        this.tweens.add({ targets: [spikesLeft, spikesMiddle], alpha: { from: 0.82, to: 1 }, duration: 420, yoyo: true, repeat: -1 });
+        this.tweens.add({ targets: [sawLarge, sawSmall], alpha: { from: 0.84, to: 1 }, duration: 330, yoyo: true, repeat: -1 });
+
         const platforms = this.physics.add.staticGroup();
         this.addStaticBox(platforms, 0, 327, 660, 22);
         this.addStaticBox(platforms, 820, 370, 195, 18);
@@ -210,35 +282,29 @@ export default function FableFuryPage() {
           .setDepth(50);
         this.resizeArt("harryIdle1");
 
-        // Hazard boxes match the visible spikes, saw blades and lava under the route.
         const hazards = this.physics.add.staticGroup();
         this.addStaticBox(hazards, 505, 438, 335, 55);
         this.addStaticBox(hazards, 990, 440, 145, 54);
         this.addStaticBox(hazards, 558, 135, 145, 145);
         this.addStaticBox(hazards, 805, 182, 105, 108);
         this.addStaticBox(hazards, 480, 500, 1568, 165);
-
-        // Extra traps already painted into the right-hand platform.
         this.addStaticBox(hazards, 1570, 305, 90, 45);
         this.addStaticBox(hazards, 1660, 95, 42, 255);
 
-        this.chaser = this.physics.add.image(this.wx(18), this.wy(500), "inferno").setDepth(45);
+        // A full-height inferno wall now advances through the same vertical space as Harry.
+        this.chaser = this.physics.add.image(this.wx(14), this.worldH / 2, "infernoWall").setDepth(44);
         this.chaser.body.allowGravity = false;
         this.chaser.setImmovable(true);
-        this.chaser.setScale(0.86);
-        this.chaser.body.setSize(135, 150, true);
+        this.chaser.setDisplaySize(245, this.worldH + 80);
+        this.chaser.body.setSize(115, 700).setOffset(150, 10);
+        this.chaser.setAlpha(0.88);
+        this.chaser.setBlendMode(Phaser.BlendModes.ADD);
+
         this.tweens.add({
           targets: this.chaser,
-          scaleX: 0.94,
-          scaleY: 0.94,
-          duration: 220,
-          yoyo: true,
-          repeat: -1,
-        });
-        this.tweens.add({
-          targets: this.chaser,
-          angle: 8,
-          duration: 180,
+          alpha: { from: 0.72, to: 1 },
+          scaleX: { from: this.chaser.scaleX * 0.96, to: this.chaser.scaleX * 1.04 },
+          duration: 190,
           yoyo: true,
           repeat: -1,
         });
@@ -252,7 +318,6 @@ export default function FableFuryPage() {
         this.physics.add.overlap(this.player, this.chaser, () => this.caught());
         this.physics.add.overlap(this.player, finish, () => this.win());
 
-        // Tight chase camera: Harry stays left of centre so upcoming hazards arrive fast.
         this.cameras.main.setZoom(1.55);
         this.cameras.main.startFollow(this.player, true, 0.14, 0.12, -95, 18);
         this.cameras.main.setDeadzone(110, 70);
@@ -442,14 +507,14 @@ export default function FableFuryPage() {
           this.chaser.setVelocityX(speed);
 
           const gap = this.player.x - this.chaser.x;
-          if (gap < 245 && time - this.lastThreatShake > 280) {
+          if (gap < 275 && time - this.lastThreatShake > 260) {
             this.lastThreatShake = time;
-            this.cameras.main.shake(90, gap < 150 ? 0.005 : 0.0025);
+            this.cameras.main.shake(90, gap < 175 ? 0.006 : 0.0025);
           }
 
-          if (gap < 200 && this.chaseText) {
+          if (gap < 225 && this.chaseText) {
             this.chaseText.setText("MOVE! MOVE! MOVE!");
-          } else if (gap > 360 && this.chaseText && chaseAge > 1800) {
+          } else if (gap > 390 && this.chaseText && chaseAge > 1800) {
             this.chaseText.setText("DON'T LET IT CATCH YOU");
           }
         }
@@ -497,8 +562,7 @@ export default function FableFuryPage() {
             Fable Fury: Trap Corridor
           </h1>
           <p className="mt-3 max-w-3xl text-zinc-300">
-            The chase level now uses foreground platform and hazard art cut directly
-            from the dungeon scene, with collisions aligned to the visible surfaces.
+            A fast chase level with foreground platform cues, glowing hazards, and a full-height inferno wall forcing Harry forward.
           </p>
         </div>
 
@@ -511,12 +575,10 @@ export default function FableFuryPage() {
             Move quickly with <b className="text-white">A / D</b> or arrow keys.
           </div>
           <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-            Jump with <b className="text-white">Space / W / ↑</b>; press again in
-            the air to double jump.
+            Jump with <b className="text-white">Space / W / ↑</b>; press again in the air to double jump.
           </div>
           <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-            The inferno never stops. Press <b className="text-white">R</b> after
-            defeat or victory.
+            The inferno fills the lane behind you. Press <b className="text-white">R</b> after defeat or victory.
           </div>
         </div>
       </div>
