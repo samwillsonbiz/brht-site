@@ -8,6 +8,14 @@ export default function CfoTeamPolish() {
       const team = document.getElementById("team");
       if (!team) return;
 
+      // Keep the team headline short and consistent with the rest of the page.
+      const heading = team.querySelector<HTMLHeadingElement>("h2");
+      if (heading) {
+        const lines = heading.querySelectorAll<HTMLSpanElement>("span");
+        if (lines[0]) lines[0].textContent = "Real people.";
+        if (lines[1]) lines[1].textContent = "Serious results.";
+      }
+
       const cards = Array.from(team.querySelectorAll<HTMLElement>("article"));
       const brennanCard = cards.find((card) => card.textContent?.includes("Brennan Roney"));
       const samCard = cards.find((card) => card.textContent?.includes("Sam Willson"));
@@ -21,13 +29,30 @@ export default function CfoTeamPolish() {
 
         image.src = src;
         image.alt = alt;
+        image.loading = "eager";
+        image.decoding = "async";
+        image.referrerPolicy = "no-referrer";
         image.className =
           "h-full w-full object-cover object-center transition duration-300 group-hover:scale-[1.025]";
       };
 
-      setHeadshot(brennanCard, "/stock/team/brennan?v=20260926-stock-1", "Brennan Roney");
-      setHeadshot(samCard, "/stock/team/sam?v=20260926-stock-1", "Sam Willson");
-      setHeadshot(steveCard, "/stock/team/steve?v=20260926-stock-1", "Steve Johnson");
+      // Direct Unsplash CDN URLs are used here instead of the old proxy routes.
+      // This avoids the image load failures we were seeing on Vercel.
+      setHeadshot(
+        brennanCard,
+        "https://images.unsplash.com/photo-1543132220-4bf3de6e10ae?auto=format&fit=crop&crop=faces&q=82&w=1400&h=900",
+        "Brennan Roney"
+      );
+      setHeadshot(
+        samCard,
+        "https://images.unsplash.com/photo-1559718062-361155fad299?auto=format&fit=crop&crop=faces&q=82&w=1400&h=900",
+        "Sam Willson"
+      );
+      setHeadshot(
+        steveCard,
+        "https://images.unsplash.com/photo-1560714759-60e6eb4e1db6?auto=format&fit=crop&crop=faces&q=82&w=1400&h=900",
+        "Steve Johnson"
+      );
 
       // Match the technology profile visually to the other two team cards.
       steveCard.className = brennanCard.className;
