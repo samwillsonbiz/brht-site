@@ -26,14 +26,25 @@ export default function FableFuryPage() {
 
     class TrapScene extends Phaser.Scene {
       player: any;
+      playerArt: any;
       cursors: any;
       keys: any;
       platforms: any;
       healthText: any;
       messageText: any;
+
       health = 100;
       invulnerable = false;
       won = false;
+      isHit = false;
+      jumpsUsed = 0;
+      doubleJumpUntil = 0;
+      animTimer = 0;
+      runFrame = 0;
+      idleFrame = 0;
+
+      runTextures = ["harryRun1", "harryRun2", "harryRun3", "harryRun4"];
+      idleTextures = ["harryIdle1", "harryIdle2"];
 
       constructor() {
         super("TrapScene");
@@ -49,15 +60,19 @@ export default function FableFuryPage() {
       preload() {
         this.load.image("trapDungeon", "/fablefury/environment/trap-dungeon.png");
 
-        this.makeTexture("hero", 56, 70, (g) => {
-          g.fillStyle(0x4db7ff, 1);
-          g.fillRoundedRect(8, 8, 40, 56, 12);
-          g.lineStyle(4, 0x153e63, 1);
-          g.strokeRoundedRect(8, 8, 40, 56, 12);
+        this.load.image("harryIdle1", "/fablefury/characters/harry/idle-01.png");
+        this.load.image("harryIdle2", "/fablefury/characters/harry/idle-02.png");
+        this.load.image("harryRun1", "/fablefury/characters/harry/run-01.png");
+        this.load.image("harryRun2", "/fablefury/characters/harry/run-02.png");
+        this.load.image("harryRun3", "/fablefury/characters/harry/run-03.png");
+        this.load.image("harryRun4", "/fablefury/characters/harry/run-04.png");
+        this.load.image("harryJump", "/fablefury/characters/harry/jump.png");
+        this.load.image("harryDoubleJump", "/fablefury/characters/harry/double%20jump.png");
+        this.load.image("harryHit", "/fablefury/characters/harry/hit-01.png");
+
+        this.makeTexture("heroPhysics", 48, 72, (g) => {
           g.fillStyle(0xffffff, 1);
-          g.fillCircle(20, 26, 4);
-          g.fillCircle(36, 26, 4);
-          g.fillRect(18, 44, 20, 5);
+          g.fillRect(0, 0, 48, 72);
         });
 
         this.makeTexture("friend", 56, 70, (g) => {
@@ -133,6 +148,19 @@ export default function FableFuryPage() {
       }
 
       create() {
+        // Scene.restart() reuses the same Scene instance, so explicitly reset runtime state.
+        this.health = 100;
+        this.invulnerable = false;
+        this.won = false;
+        this.isHit = false;
+        this.jumpsUsed = 0;
+        this.doubleJumpUntil = 0;
+        this.animTimer = 0;
+        this.runFrame = 0;
+        this.idleFrame = 0;
+
+        this.input.keyboard?.resetKeys();
+
         this.physics.world.setBounds(0, 0, 3400, 720);
         this.cameras.main.setBounds(0, 0, 3400, 720);
         this.cameras.main.setBackgroundColor("#100c14");
@@ -162,10 +190,18 @@ export default function FableFuryPage() {
         const step2 = this.platforms.create(1518, 490, "stone");
         step2.setOrigin(0, 0).setAlpha(0.5).refreshBody();
 
-        this.player = this.physics.add.sprite(135, 500, "hero");
+        // Invisible physics body + separate Harry artwork keeps collision stable across differently-sized PNGs.
+        this.player = this.physics.add.sprite(135, 500, "heroPhysics");
+        this.player.setAlpha(0.001);
         this.player.setCollideWorldBounds(true);
-        this.player.body.setSize(38, 56).setOffset(9, 8);
+        this.player.body.setSize(40, 64).setOffset(4, 8);
         this.physics.add.collider(this.player, this.platforms);
+
+        this.playerArt = this.add
+          .image(this.player.x, this.player.y, "harryIdle1")
+          .setOrigin(0.5, 1)
+          .setDisplayHeight(170)
+          .setDepth(50);
 
         const friends = this.physics.add.group();
         const friend1 = friends.create(65, 500, "friend");
@@ -281,7 +317,7 @@ export default function FableFuryPage() {
           .setDepth(1000);
 
         this.add
-          .text(24, 66, "A / D or arrows = move   Space / W / up = jump", {
+          .text(24, 66, "A / D or arrows = move   Space / W / up = jump + double jump", {
             fontFamily: "Arial, sans-serif",
             fontSize: "18px",
             color: "#ffffff",
@@ -316,23 +352,93 @@ export default function FableFuryPage() {
           .setDepth(1000);
       }
 
+      setHarryTexture(key: string) {
+        if (!this.playerArt || this.playerArt.texture.key === key) return;
+        this.playerArt.setTexture(key);
+        this.playerArt.setDisplayHeight(key === "harryDoubleJump" ? 158 : 170);
+      }
+
+      syncHarryArt(time: number, delta: number) {
+        if (!this.playerArt || !this.player) return;
+
+        this.playerArt.setPosition(this.player.x, this.player.body.bottom + 2);
+
+        if (this.isHit || this.health <= 0) {
+          this.setHarryTexture("harryHit");
+          return;
+        }
+
+        if (time < this.doubleJumpUntil) {
+          this.setHarryTexture("harryDoubleJump");
+          return;
+        }
+
+        const grounded = this.player.body.blocked.down || this.player.body.touching.down;
+        const velocityX = this.player.body.velocity.x;
+
+        if (!grounded) {
+          this.setHarryTexture("harryJump");
+          return;
+        }
+
+        this.playerArt.setAngle(0);
+        this.playerArt.setFlipX(velocityX < -5);
+        this.animTimer += delta;
+
+        if (Math.abs(velocityX) > 10) {
+          if (this.animTimer >= 95) {
+            this.animTimer = 0;
+            this.runFrame = (this.runFrame + 1) % this.runTextures.length;
+          }
+          this.setHarryTexture(this.runTextures[this.runFrame]);
+        } else {
+          if (this.animTimer >= 520) {
+            this.animTimer = 0;
+            this.idleFrame = (this.idleFrame + 1) % this.idleTextures.length;
+          }
+          this.setHarryTexture(this.idleTextures[this.idleFrame]);
+        }
+      }
+
+      doDoubleJump(time: number) {
+        this.player.setVelocityY(-515);
+        this.jumpsUsed = 2;
+        this.doubleJumpUntil = time + 430;
+        this.setHarryTexture("harryDoubleJump");
+        this.playerArt.setAngle(0);
+        this.tweens.killTweensOf(this.playerArt);
+        this.tweens.add({
+          targets: this.playerArt,
+          angle: 360,
+          duration: 400,
+          ease: "Cubic.easeOut",
+          onComplete: () => this.playerArt?.setAngle(0),
+        });
+      }
+
       takeDamage(amount: number) {
         if (this.invulnerable || this.health <= 0 || this.won) return;
         this.invulnerable = true;
+        this.isHit = true;
         this.health = Math.max(0, this.health - amount);
         this.healthText.setText(`Health ${this.health}`);
-        this.player.setTint(0xff6262);
+        this.setHarryTexture("harryHit");
+        this.playerArt.setTint(0xffb0b0);
         this.player.setVelocity(-250, -260);
         this.cameras.main.shake(160, 0.006);
 
         this.time.delayedCall(500, () => {
-          this.player.clearTint();
-          this.invulnerable = false;
+          if (!this.playerArt) return;
+          if (this.health > 0) {
+            this.playerArt.clearTint();
+            this.isHit = false;
+            this.invulnerable = false;
+          }
         });
 
         if (this.health <= 0) {
           this.messageText.setText("DEFEATED — press R to restart");
-          this.player.setTint(0x666666);
+          this.playerArt.setTint(0x777777);
         }
       }
 
@@ -340,28 +446,45 @@ export default function FableFuryPage() {
         if (this.won) return;
         this.won = true;
         this.player.setVelocity(0, 0);
-        this.messageText.setText("VICTORY — TRAP CORRIDOR CLEARED");
+        this.messageText.setText("VICTORY — TRAP CORRIDOR CLEARED — press R to replay");
       }
 
-      update() {
+      update(time: number, delta: number) {
         if (!this.player) return;
 
-        if (this.health <= 0) {
-          if (Phaser.Input.Keyboard.JustDown(this.keys.R)) this.scene.restart();
+        this.syncHarryArt(time, delta);
+
+        const restartPressed = Phaser.Input.Keyboard.JustDown(this.keys.R);
+        if ((this.health <= 0 || this.won) && restartPressed) {
+          this.scene.restart();
           return;
         }
 
-        if (this.won) return;
+        if (this.health <= 0 || this.won) return;
 
         const left = this.cursors.left.isDown || this.keys.A.isDown;
         const right = this.cursors.right.isDown || this.keys.D.isDown;
-        const jump = this.cursors.up.isDown || this.keys.W.isDown || this.keys.SPACE.isDown;
+        const jumpPressed =
+          Phaser.Input.Keyboard.JustDown(this.cursors.up) ||
+          Phaser.Input.Keyboard.JustDown(this.keys.W) ||
+          Phaser.Input.Keyboard.JustDown(this.keys.SPACE);
 
         if (left) this.player.setVelocityX(-240);
         else if (right) this.player.setVelocityX(240);
         else this.player.setVelocityX(0);
 
-        if (jump && this.player.body.blocked.down) this.player.setVelocityY(-540);
+        const grounded = this.player.body.blocked.down || this.player.body.touching.down;
+        if (grounded) this.jumpsUsed = 0;
+
+        if (jumpPressed) {
+          if (grounded) {
+            this.player.setVelocityY(-540);
+            this.jumpsUsed = 1;
+            this.setHarryTexture("harryJump");
+          } else if (this.jumpsUsed < 2) {
+            this.doDoubleJump(time);
+          }
+        }
       }
     }
 
@@ -406,7 +529,7 @@ export default function FableFuryPage() {
           </p>
           <h1 className="mt-2 text-4xl font-bold sm:text-5xl">Fable Fury: Trap Corridor</h1>
           <p className="mt-3 max-w-3xl text-zinc-300">
-            The trap corridor now uses the first Fable Fury environment art pass. The next step is replacing the placeholder heroes and hazards with the real game assets.
+            Harry Thistlewhip is now playable with animated movement, jumping, a spinning double jump, and a dedicated hit pose.
           </p>
         </div>
 
@@ -419,10 +542,10 @@ export default function FableFuryPage() {
             Move with <b className="text-white">A / D</b> or arrow keys.
           </div>
           <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-            Jump with <b className="text-white">Space / W / ↑</b>.
+            Jump with <b className="text-white">Space / W / ↑</b>, then press again in the air to double jump.
           </div>
           <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-            If you die, press <b className="text-white">R</b> to restart.
+            Press <b className="text-white">R</b> after defeat or victory to restart cleanly.
           </div>
         </div>
       </div>
