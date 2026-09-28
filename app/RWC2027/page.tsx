@@ -5,9 +5,9 @@ import {
   CalendarDays,
   CheckCircle2,
   ChevronRight,
-  CircleDollarSign,
   Clock3,
   MapPin,
+  MessageCircle,
   RefreshCw,
   Ticket as TicketIcon,
   Trophy,
@@ -156,8 +156,8 @@ const fallbackTickets: SeatTicket[] = groups.flatMap((group) =>
 const matchupDetails: Record<string, string> = {
   "Australia v Hong Kong China": "Pool match",
   "South Africa v Romania": "Pool match",
-  "Round of 16 (4)": "Knockout match · teams TBD",
-  "Round of 16 (8)": "Knockout match · teams TBD",
+  "Round of 16 (4)": "Round of 16 · teams TBD",
+  "Round of 16 (8)": "Round of 16 · teams TBD",
   "Quarter-final 1": "Quarter-final · teams TBD",
   Final: "Rugby World Cup Final · teams TBD",
 };
@@ -182,6 +182,9 @@ const flagByTeam: Record<string, string> = {
   Tonga: "🇹🇴",
   Samoa: "🇼🇸",
 };
+
+const appleFont =
+  '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif';
 
 function formatDate(date: string) {
   return new Intl.DateTimeFormat("en-AU", {
@@ -289,12 +292,12 @@ function ticketsFromCsv(text: string): SeatTicket[] {
 function paymentClasses(status: string) {
   const normalized = status.toLowerCase();
   if (normalized === "paid") {
-    return "border-emerald-200 bg-emerald-50 text-emerald-700";
+    return "border-[#cfe9d6] bg-[#ecf8ef] text-[#23753a]";
   }
   if (normalized === "partial") {
-    return "border-amber-200 bg-amber-50 text-amber-700";
+    return "border-[#f0ddb3] bg-[#fff8e8] text-[#8a6400]";
   }
-  return "border-rose-200 bg-rose-50 text-rose-700";
+  return "border-[#e5e5ea] bg-[#f2f2f7] text-[#6e6e73]";
 }
 
 function splitTeams(match: string): [string, string] | null {
@@ -309,10 +312,10 @@ function TeamRow({ team }: { team: string }) {
   const flag = flagByTeam[team] ?? "🏉";
   return (
     <div className="flex items-center gap-3.5">
-      <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full border border-[#dfe5df] bg-[#f7f9f6] text-[28px] shadow-sm sm:h-14 sm:w-14 sm:text-[31px]">
+      <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full border border-black/[0.06] bg-[#f5f5f7] text-[28px] shadow-[0_1px_2px_rgba(0,0,0,0.04)] sm:h-13 sm:w-13 sm:text-[30px]">
         {flag}
       </span>
-      <span className="text-[22px] font-black leading-tight tracking-[-0.035em] text-[#111814] sm:text-[25px]">
+      <span className="text-[21px] font-semibold leading-tight tracking-[-0.03em] text-[#1d1d1f] sm:text-[23px]">
         {team}
       </span>
     </div>
@@ -395,7 +398,6 @@ export default function Rwc2027Page() {
   const paidCount = selectedTickets.filter(
     (ticket) => ticket.assignedTo && ticket.paymentStatus.toLowerCase() === "paid",
   ).length;
-  const matchValue = selectedTickets.reduce((total, ticket) => total + ticket.price, 0);
 
   const seatGroups = useMemo(() => {
     const grouped = new Map<string, SeatTicket[]>();
@@ -412,58 +414,49 @@ export default function Rwc2027Page() {
   }, [selectedTickets]);
 
   return (
-    <main className="min-h-screen bg-[#f4f6f2] text-[#152019]">
-      <div className="mx-auto w-full max-w-6xl px-4 pb-16 pt-5 sm:px-6 sm:pt-7 lg:px-8">
-        <header className="overflow-hidden rounded-[28px] border border-[#dde4dc] bg-white p-5 shadow-[0_12px_40px_rgba(22,48,31,0.07)] sm:p-8">
-          <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
-            <div className="max-w-3xl">
-              <div className="mb-4 flex items-center gap-3">
-                <div className="grid h-11 w-11 place-items-center rounded-2xl bg-[#0f6b42] text-white shadow-sm">
-                  <TicketIcon className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="text-xs font-black uppercase tracking-[0.22em] text-[#0f6b42]">
-                    Family & Friends
-                  </p>
-                  <p className="text-sm font-semibold text-[#6e7c73]">Rugby World Cup 2027</p>
-                </div>
-              </div>
-              <h1 className="text-3xl font-black tracking-[-0.045em] text-[#101713] sm:text-5xl">
-                Pick a match. See every seat.
-              </h1>
-              <p className="mt-4 max-w-2xl text-[15px] leading-7 text-[#657168] sm:text-base">
-                This is our shared read-only ticket view. Choose a game to see the exact seats, price, assignment and payment status. Message Sam or Tayla if you want a seat.
-              </p>
+    <main
+      className="min-h-screen bg-[#f5f5f7] pb-24 text-[#1d1d1f] antialiased md:pb-12"
+      style={{ fontFamily: appleFont }}
+    >
+      <div className="sticky top-0 z-50 border-b border-black/[0.06] bg-white/80 backdrop-blur-2xl supports-[backdrop-filter]:bg-white/72">
+        <div className="mx-auto flex h-[62px] w-full max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-3">
+            <div className="grid h-9 w-9 place-items-center rounded-[12px] bg-[#0b6b45] text-white shadow-[0_1px_2px_rgba(0,0,0,0.08)]">
+              <TicketIcon className="h-[18px] w-[18px]" strokeWidth={1.8} />
             </div>
-
-            <div className="flex shrink-0 items-center gap-2 self-start rounded-full border border-[#dfe5df] bg-[#f7f9f6] px-3.5 py-2 text-xs font-bold text-[#59665d]">
-              <span
-                className={`h-2 w-2 rounded-full ${
-                  source === "live" ? "bg-emerald-500" : "bg-amber-400"
-                }`}
-              />
-              {source === "live" ? "Live from Google Sheet" : "Current ticket snapshot"}
-              {refreshing && <RefreshCw className="h-3.5 w-3.5 animate-spin" />}
-            </div>
-          </div>
-        </header>
-
-        <section className="mt-8">
-          <div className="mb-4 flex items-end justify-between gap-4">
             <div>
-              <p className="text-xs font-black uppercase tracking-[0.2em] text-[#0f6b42]">
-                Choose a match
-              </p>
-              <h2 className="mt-1 text-2xl font-black tracking-[-0.035em] text-[#111814] sm:text-3xl">
-                Which game are you looking at?
-              </h2>
+              <p className="text-[15px] font-semibold leading-4 tracking-[-0.01em]">RWC 2027 Tickets</p>
+              <p className="mt-0.5 text-[11px] font-medium text-[#86868b]">Family & Friends</p>
             </div>
-            <span className="hidden text-sm font-semibold text-[#758178] sm:block">
-              {matches.length} games
-            </span>
           </div>
 
-          <div className="flex snap-x gap-4 overflow-x-auto pb-3 sm:grid sm:grid-cols-2 sm:overflow-visible lg:grid-cols-3">
+          <div className="flex items-center gap-2 rounded-full bg-[#f2f2f7] px-3 py-1.5 text-[11px] font-semibold text-[#6e6e73]">
+            <span className={`h-2 w-2 rounded-full ${source === "live" ? "bg-[#34c759]" : "bg-[#ff9f0a]"}`} />
+            <span className="hidden sm:inline">{source === "live" ? "Live from Google Sheet" : "Current snapshot"}</span>
+            <span className="sm:hidden">{source === "live" ? "Live" : "Snapshot"}</span>
+            {refreshing && <RefreshCw className="h-3 w-3 animate-spin" strokeWidth={1.8} />}
+          </div>
+        </div>
+      </div>
+
+      <div className="mx-auto w-full max-w-6xl px-4 pt-9 sm:px-6 sm:pt-12 lg:px-8">
+        <section className="max-w-3xl">
+          <p className="text-[13px] font-semibold text-[#0b6b45]">Rugby World Cup 2027</p>
+          <h1 className="mt-2 text-[34px] font-semibold leading-[1.03] tracking-[-0.045em] text-[#1d1d1f] sm:text-[48px]">
+            Choose a match.
+          </h1>
+          <p className="mt-3 max-w-2xl text-[16px] leading-6 tracking-[-0.01em] text-[#6e6e73] sm:text-[17px] sm:leading-7">
+            See the exact seats, price, who they’re assigned to, and whether they’ve been paid. To reserve a seat, message Sam or Tayla.
+          </p>
+        </section>
+
+        <section className="mt-7 sm:mt-9">
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-[20px] font-semibold tracking-[-0.025em] text-[#1d1d1f]">Matches</h2>
+            <span className="text-[13px] font-medium text-[#86868b]">{matches.length} games</span>
+          </div>
+
+          <div className="flex snap-x gap-3 overflow-x-auto pb-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:grid sm:grid-cols-2 sm:overflow-visible lg:grid-cols-3">
             {matches.map((match) => {
               const active = match.match === selectedMatch;
               const matchTickets = tickets.filter((ticket) => ticket.match === match.match);
@@ -479,73 +472,65 @@ export default function Rwc2027Page() {
                   type="button"
                   aria-pressed={active}
                   onClick={() => setSelectedMatch(match.match)}
-                  className={`group min-w-[84vw] snap-start rounded-[24px] border bg-white p-5 text-left shadow-[0_8px_24px_rgba(27,51,35,0.06)] transition duration-200 sm:min-w-0 ${
+                  className={`group min-w-[86vw] snap-start rounded-[22px] border bg-white p-5 text-left shadow-[0_1px_2px_rgba(0,0,0,0.03),0_8px_28px_rgba(0,0,0,0.035)] transition-[transform,box-shadow,border-color] duration-200 ease-out active:scale-[0.985] sm:min-w-0 ${
                     active
-                      ? "border-[#0f6b42] ring-2 ring-[#0f6b42]/10"
-                      : "border-[#dce4dc] hover:-translate-y-0.5 hover:border-[#b9c9bc] hover:shadow-[0_12px_30px_rgba(27,51,35,0.10)]"
+                      ? "border-[#0b6b45] ring-1 ring-[#0b6b45]/10"
+                      : "border-black/[0.07] hover:-translate-y-0.5 hover:shadow-[0_2px_3px_rgba(0,0,0,0.04),0_14px_34px_rgba(0,0,0,0.06)]"
                   }`}
                 >
                   <div className="mb-4 flex items-start justify-between gap-3">
                     <div>
-                      <p className="text-[11px] font-black uppercase tracking-[0.16em] text-[#7a877e]">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#86868b]">
                         {matchupDetails[match.match] ?? "Rugby World Cup 2027"}
                       </p>
-                      <p className="mt-1.5 text-sm font-bold text-[#344238]">
+                      <p className="mt-1.5 text-[13px] font-medium tracking-[-0.01em] text-[#6e6e73]">
                         {formatDate(match.date)} · {match.time}
                       </p>
                     </div>
                     <div
-                      className={`grid h-9 w-9 shrink-0 place-items-center rounded-full transition ${
-                        active
-                          ? "bg-[#0f6b42] text-white"
-                          : "bg-[#f2f5f1] text-[#657269] group-hover:bg-[#eaf0e9]"
+                      className={`grid h-8 w-8 shrink-0 place-items-center rounded-full transition-colors ${
+                        active ? "bg-[#0b6b45] text-white" : "bg-[#f2f2f7] text-[#86868b]"
                       }`}
                     >
-                      <ChevronRight className="h-4 w-4" />
+                      {active ? (
+                        <CheckCircle2 className="h-4 w-4" strokeWidth={1.9} />
+                      ) : (
+                        <ChevronRight className="h-4 w-4" strokeWidth={1.8} />
+                      )}
                     </div>
                   </div>
 
                   {teams ? (
-                    <div className="space-y-3.5 py-1">
+                    <div className="space-y-3 py-1">
                       <TeamRow team={teams[0]} />
                       <TeamRow team={teams[1]} />
                     </div>
                   ) : (
-                    <div className="flex min-h-[126px] items-center gap-4 py-2">
-                      <span className="grid h-14 w-14 shrink-0 place-items-center rounded-full border border-[#dfe5df] bg-[#f6f8f5] text-[#0f6b42] shadow-sm">
-                        <Trophy className="h-6 w-6" />
+                    <div className="flex min-h-[122px] items-center gap-4 py-2">
+                      <span className="grid h-13 w-13 shrink-0 place-items-center rounded-full bg-[#f2f2f7] text-[#0b6b45]">
+                        <Trophy className="h-5 w-5" strokeWidth={1.7} />
                       </span>
                       <div>
-                        <p className="text-[25px] font-black leading-tight tracking-[-0.04em] text-[#111814]">
-                          {match.match}
-                        </p>
-                        <p className="mt-1 text-sm font-semibold text-[#77837a]">Teams to be confirmed</p>
+                        <p className="text-[22px] font-semibold leading-tight tracking-[-0.035em] text-[#1d1d1f]">{match.match}</p>
+                        <p className="mt-1 text-[13px] font-medium text-[#86868b]">Teams to be confirmed</p>
                       </div>
                     </div>
                   )}
 
-                  <div className="mt-5 flex items-center justify-between border-t border-[#edf1ec] pt-4 text-sm">
-                    <div>
-                      <p className="font-bold text-[#344238]">{match.venue}</p>
-                      <p className="mt-0.5 text-xs font-semibold text-[#7b877f]">
-                        {available} of {matchTickets.length} seats available
+                  <div className="mt-5 flex items-end justify-between border-t border-black/[0.06] pt-4">
+                    <div className="min-w-0 pr-3">
+                      <p className="truncate text-[13px] font-medium text-[#3a3a3c]">{match.venue}</p>
+                      <p className="mt-0.5 text-[12px] text-[#86868b]">
+                        {available} of {matchTickets.length} available
                       </p>
                     </div>
-                    <div className="text-right">
-                      <p className="text-[11px] font-black uppercase tracking-[0.12em] text-[#8b958e]">
+                    <div className="shrink-0 text-right">
+                      <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[#86868b]">
                         {minPrice === maxPrice ? "Per seat" : "From"}
                       </p>
-                      <p className="mt-0.5 text-lg font-black text-[#0f6b42]">
-                        {formatCurrency(minPrice)}
-                      </p>
+                      <p className="mt-0.5 text-[17px] font-semibold tracking-[-0.02em] text-[#0b6b45]">{formatCurrency(minPrice)}</p>
                     </div>
                   </div>
-
-                  {active && (
-                    <div className="mt-4 rounded-xl bg-[#eaf5ee] px-3 py-2 text-center text-xs font-black uppercase tracking-[0.14em] text-[#0f6b42]">
-                      Selected
-                    </div>
-                  )}
                 </button>
               );
             })}
@@ -553,141 +538,144 @@ export default function Rwc2027Page() {
         </section>
 
         {selectedInfo && (
-          <section className="mt-7 overflow-hidden rounded-[28px] border border-[#dde4dc] bg-white shadow-[0_12px_40px_rgba(22,48,31,0.07)]">
-            <div className="border-b border-[#e8ede7] bg-[#fbfcfa] p-5 sm:p-7">
-              <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-                <div>
-                  <p className="text-xs font-black uppercase tracking-[0.2em] text-[#0f6b42]">
-                    Selected match
-                  </p>
-                  <h2 className="mt-2 text-3xl font-black tracking-[-0.045em] text-[#111814] sm:text-4xl">
-                    {selectedMatch}
-                  </h2>
-                  <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm font-semibold text-[#657168]">
-                    <span className="flex items-center gap-2">
-                      <CalendarDays className="h-4 w-4 text-[#0f6b42]" />
-                      {formatDate(selectedInfo.date)}
-                    </span>
-                    <span className="flex items-center gap-2">
-                      <Clock3 className="h-4 w-4 text-[#0f6b42]" />
-                      {selectedInfo.time}
-                    </span>
-                    <span className="flex items-center gap-2">
-                      <MapPin className="h-4 w-4 text-[#0f6b42]" />
-                      {selectedInfo.venue}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:min-w-[500px]">
-                  <div className="rounded-2xl border border-[#e1e7e0] bg-white p-3.5">
-                    <p className="text-[10px] font-black uppercase tracking-[0.14em] text-[#89938c]">Seats</p>
-                    <p className="mt-1 text-xl font-black text-[#19231d]">{selectedTickets.length}</p>
-                  </div>
-                  <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-3.5">
-                    <p className="text-[10px] font-black uppercase tracking-[0.14em] text-emerald-700">Available</p>
-                    <p className="mt-1 text-xl font-black text-emerald-800">{availableCount}</p>
-                  </div>
-                  <div className="rounded-2xl border border-[#e1e7e0] bg-white p-3.5">
-                    <p className="text-[10px] font-black uppercase tracking-[0.14em] text-[#89938c]">Assigned</p>
-                    <p className="mt-1 text-xl font-black text-[#19231d]">{assignedCount}</p>
-                  </div>
-                  <div className="rounded-2xl border border-[#e1e7e0] bg-white p-3.5">
-                    <p className="text-[10px] font-black uppercase tracking-[0.14em] text-[#89938c]">Paid</p>
-                    <p className="mt-1 text-xl font-black text-[#19231d]">{paidCount}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-5 sm:p-7">
-              <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-                <div>
-                  <h3 className="text-xl font-black tracking-[-0.03em] text-[#111814]">Seat availability</h3>
-                  <p className="mt-1 text-sm font-medium text-[#77837a]">Tap a match above to switch games. Seats here are read-only.</p>
-                </div>
-                <div className="flex items-center gap-2 text-sm font-bold text-[#59665d]">
-                  <CircleDollarSign className="h-4 w-4 text-[#0f6b42]" />
-                  Total ticket value {formatCurrency(matchValue)}
-                </div>
-              </div>
-
-              <div className="space-y-5">
-                {seatGroups.map((group) => (
-                  <div key={group.key} className="rounded-[22px] border border-[#e2e8e1] bg-[#fafbfa] p-4 sm:p-5">
-                    <div className="mb-4 flex items-center justify-between gap-3">
-                      <div>
-                        <p className="text-[11px] font-black uppercase tracking-[0.16em] text-[#8a948d]">Location</p>
-                        <p className="mt-1 text-lg font-black text-[#1b261f]">
-                          Section {group.section} · Row {group.row}
-                        </p>
-                      </div>
-                      <span className="rounded-full border border-[#dfe5df] bg-white px-3 py-1.5 text-xs font-bold text-[#69766d] shadow-sm">
-                        {group.seats.length} seats
+          <section className="mt-7 sm:mt-9">
+            <div className="rounded-[24px] border border-black/[0.07] bg-white shadow-[0_1px_2px_rgba(0,0,0,0.03),0_10px_32px_rgba(0,0,0,0.035)]">
+              <div className="border-b border-black/[0.06] p-5 sm:p-7">
+                <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+                  <div>
+                    <p className="text-[12px] font-semibold text-[#0b6b45]">Selected match</p>
+                    <h2 className="mt-1 text-[28px] font-semibold leading-tight tracking-[-0.04em] text-[#1d1d1f] sm:text-[34px]">{selectedMatch}</h2>
+                    <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2.5 text-[13px] font-medium text-[#6e6e73]">
+                      <span className="flex items-center gap-1.5">
+                        <CalendarDays className="h-4 w-4 text-[#86868b]" strokeWidth={1.7} />
+                        {formatDate(selectedInfo.date)}
+                      </span>
+                      <span className="flex items-center gap-1.5">
+                        <Clock3 className="h-4 w-4 text-[#86868b]" strokeWidth={1.7} />
+                        {selectedInfo.time}
+                      </span>
+                      <span className="flex items-center gap-1.5">
+                        <MapPin className="h-4 w-4 text-[#86868b]" strokeWidth={1.7} />
+                        {selectedInfo.venue}
                       </span>
                     </div>
+                  </div>
 
-                    <div className="grid grid-cols-1 gap-3 min-[440px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                      {group.seats.map((ticket) => {
-                        const assigned = Boolean(ticket.assignedTo);
-                        return (
-                          <div
-                            key={`${ticket.section}-${ticket.row}-${ticket.seat}`}
-                            className={`rounded-[18px] border p-4 shadow-sm ${
-                              assigned
-                                ? "border-[#dfe5df] bg-white"
-                                : "border-emerald-200 bg-emerald-50/60"
-                            }`}
-                          >
-                            <div className="flex items-start justify-between gap-3">
-                              <div>
-                                <p className="text-[10px] font-black uppercase tracking-[0.15em] text-[#8a948d]">Seat</p>
-                                <p className="mt-0.5 text-2xl font-black tracking-[-0.04em] text-[#111814]">{ticket.seat}</p>
-                              </div>
-                              <p className="text-base font-black text-[#0f6b42]">{formatCurrency(ticket.price)}</p>
-                            </div>
-
-                            <div className="mt-4 border-t border-[#e7ece6] pt-3">
-                              {assigned ? (
-                                <>
-                                  <div className="flex items-center gap-2 text-sm font-bold text-[#2f3c33]">
-                                    <Users className="h-4 w-4 text-[#69766d]" />
-                                    <span className="truncate">{ticket.assignedTo}</span>
-                                  </div>
-                                  <span className={`mt-2 inline-flex rounded-full border px-2.5 py-1 text-[11px] font-black uppercase tracking-[0.08em] ${paymentClasses(ticket.paymentStatus)}`}>
-                                    {ticket.paymentStatus}
-                                  </span>
-                                </>
-                              ) : (
-                                <div className="flex items-center gap-2 text-sm font-black text-emerald-700">
-                                  <CheckCircle2 className="h-4 w-4" />
-                                  Available
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        );
-                      })}
+                  <div className="grid grid-cols-3 overflow-hidden rounded-[16px] bg-[#f5f5f7] lg:min-w-[360px]">
+                    <div className="p-3.5 text-center">
+                      <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[#86868b]">Available</p>
+                      <p className="mt-1 text-[20px] font-semibold tracking-[-0.02em] text-[#1d1d1f]">{availableCount}</p>
+                    </div>
+                    <div className="border-x border-black/[0.06] p-3.5 text-center">
+                      <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[#86868b]">Assigned</p>
+                      <p className="mt-1 text-[20px] font-semibold tracking-[-0.02em] text-[#1d1d1f]">{assignedCount}</p>
+                    </div>
+                    <div className="p-3.5 text-center">
+                      <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[#86868b]">Paid</p>
+                      <p className="mt-1 text-[20px] font-semibold tracking-[-0.02em] text-[#1d1d1f]">{paidCount}</p>
                     </div>
                   </div>
-                ))}
+                </div>
               </div>
 
-              <div className="mt-6 rounded-[22px] border border-[#dce7dd] bg-[#f0f7f1] p-5 sm:flex sm:items-center sm:justify-between sm:gap-6">
-                <div>
-                  <p className="font-black text-[#17301f]">Want one of the available seats?</p>
-                  <p className="mt-1 text-sm leading-6 text-[#607066]">
-                    Message Sam or Tayla with the game and seat number. We’ll update the Google Sheet once it is assigned and again when payment is received.
-                  </p>
+              <div className="p-4 sm:p-7">
+                <div className="mb-5">
+                  <h3 className="text-[20px] font-semibold tracking-[-0.025em] text-[#1d1d1f]">Seats</h3>
+                  <p className="mt-1 text-[13px] leading-5 text-[#86868b]">The Google Sheet is the source of truth. This page is read-only.</p>
                 </div>
-                <div className="mt-4 flex shrink-0 items-center gap-2 rounded-full bg-white px-4 py-2.5 text-xs font-black uppercase tracking-[0.12em] text-[#0f6b42] shadow-sm sm:mt-0">
-                  <CheckCircle2 className="h-4 w-4" />
-                  Sheet is source of truth
+
+                <div className="space-y-5">
+                  {seatGroups.map((group) => (
+                    <div key={group.key} className="overflow-hidden rounded-[18px] bg-[#f5f5f7]">
+                      <div className="flex items-center justify-between px-4 py-3.5 sm:px-5">
+                        <div>
+                          <p className="text-[11px] font-medium text-[#86868b]">Section {group.section}</p>
+                          <p className="mt-0.5 text-[16px] font-semibold tracking-[-0.015em] text-[#1d1d1f]">Row {group.row}</p>
+                        </div>
+                        <span className="rounded-full bg-white px-2.5 py-1 text-[11px] font-medium text-[#6e6e73] shadow-[0_1px_1px_rgba(0,0,0,0.03)]">
+                          {group.seats.length} seats
+                        </span>
+                      </div>
+
+                      <div className="border-t border-black/[0.06] bg-white">
+                        {group.seats.map((ticket, index) => {
+                          const assigned = Boolean(ticket.assignedTo);
+                          return (
+                            <div
+                              key={`${ticket.section}-${ticket.row}-${ticket.seat}`}
+                              className={`flex min-h-[78px] items-center justify-between gap-4 px-4 py-3.5 sm:px-5 ${
+                                index !== group.seats.length - 1 ? "border-b border-black/[0.055]" : ""
+                              }`}
+                            >
+                              <div className="flex min-w-0 items-center gap-3.5">
+                                <div className={`grid h-10 w-10 shrink-0 place-items-center rounded-[12px] text-[15px] font-semibold ${assigned ? "bg-[#f2f2f7] text-[#3a3a3c]" : "bg-[#ecf8ef] text-[#23753a]"}`}>
+                                  {ticket.seat}
+                                </div>
+                                <div className="min-w-0">
+                                  <p className="text-[15px] font-semibold tracking-[-0.01em] text-[#1d1d1f]">Seat {ticket.seat}</p>
+                                  {assigned ? (
+                                    <div className="mt-0.5 flex min-w-0 items-center gap-1.5 text-[12px] text-[#6e6e73]">
+                                      <Users className="h-3.5 w-3.5 shrink-0" strokeWidth={1.7} />
+                                      <span className="truncate">{ticket.assignedTo}</span>
+                                    </div>
+                                  ) : (
+                                    <div className="mt-0.5 flex items-center gap-1.5 text-[12px] font-medium text-[#23753a]">
+                                      <CheckCircle2 className="h-3.5 w-3.5" strokeWidth={1.8} />
+                                      Available
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+
+                              <div className="flex shrink-0 items-center gap-3 text-right">
+                                {assigned && (
+                                  <span className={`hidden rounded-full border px-2.5 py-1 text-[10px] font-semibold sm:inline-flex ${paymentClasses(ticket.paymentStatus)}`}>
+                                    {ticket.paymentStatus}
+                                  </span>
+                                )}
+                                <div>
+                                  <p className="text-[15px] font-semibold tracking-[-0.015em] text-[#1d1d1f]">{formatCurrency(ticket.price)}</p>
+                                  {assigned && (
+                                    <span className={`mt-1 inline-flex rounded-full border px-2 py-0.5 text-[9px] font-semibold sm:hidden ${paymentClasses(ticket.paymentStatus)}`}>
+                                      {ticket.paymentStatus}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-6 flex items-start gap-3 rounded-[18px] bg-[#f5f5f7] p-4 sm:p-5">
+                  <MessageCircle className="mt-0.5 h-5 w-5 shrink-0 text-[#0b6b45]" strokeWidth={1.7} />
+                  <div>
+                    <p className="text-[14px] font-semibold text-[#1d1d1f]">Want an available seat?</p>
+                    <p className="mt-1 text-[13px] leading-5 text-[#6e6e73]">
+                      Message Sam or Tayla with the game and seat number. We’ll assign it in the Sheet and update payment status there when payment is received.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
           </section>
         )}
+      </div>
+
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-black/[0.06] bg-white/88 px-4 pb-[max(10px,env(safe-area-inset-bottom))] pt-2.5 backdrop-blur-2xl md:hidden">
+        <div className="mx-auto flex max-w-lg items-center justify-between gap-3">
+          <div className="min-w-0">
+            <p className="text-[13px] font-semibold text-[#1d1d1f]">Want a seat?</p>
+            <p className="truncate text-[11px] text-[#86868b]">Message Sam or Tayla to reserve</p>
+          </div>
+          <div className="flex shrink-0 items-center gap-2 rounded-full bg-[#0b6b45] px-4 py-2.5 text-[12px] font-semibold text-white shadow-[0_1px_2px_rgba(0,0,0,0.08)]">
+            <MessageCircle className="h-4 w-4" strokeWidth={1.8} />
+            Contact us
+          </div>
+        </div>
       </div>
     </main>
   );
