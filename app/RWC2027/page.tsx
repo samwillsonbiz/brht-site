@@ -420,8 +420,7 @@ export default function Rwc2027Page() {
           </div>
           <div className="flex items-center gap-2 rounded-full bg-[#f2f2f7] px-3 py-1.5 text-[11px] font-semibold text-[#6e6e73]">
             <span className={`h-2 w-2 rounded-full ${source === "live" ? "bg-[#34c759]" : "bg-[#ff9f0a]"}`} />
-            <span className="hidden sm:inline">{source === "live" ? "Live from Google Sheet" : "Current snapshot"}</span>
-            <span className="sm:hidden">{source === "live" ? "Live" : "Snapshot"}</span>
+            <span>{source === "live" ? "Live" : "Snapshot"}</span>
             {refreshing && <RefreshCw className="h-3 w-3 animate-spin" strokeWidth={1.8} />}
           </div>
         </div>
