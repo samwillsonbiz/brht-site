@@ -4,12 +4,13 @@ import { useEffect, useMemo, useState } from "react";
 import {
   CalendarDays,
   CheckCircle2,
+  ChevronRight,
   CircleDollarSign,
   Clock3,
-  Info,
   MapPin,
   RefreshCw,
   Ticket as TicketIcon,
+  Trophy,
   Users,
 } from "lucide-react";
 
@@ -32,7 +33,7 @@ type TicketGroup = Omit<SeatTicket, "seat" | "assignedTo" | "paymentStatus"> & {
   seats: Array<string | number>;
 };
 
-const LIVE_SHEET_CSV_URL = process.env.NEXT_PUBLIC_RWC2027_CSV_URL;
+const LIVE_SHEET_CSV_URL = "/api/rwc2027";
 
 const groups: TicketGroup[] = [
   {
@@ -155,10 +156,31 @@ const fallbackTickets: SeatTicket[] = groups.flatMap((group) =>
 const matchupDetails: Record<string, string> = {
   "Australia v Hong Kong China": "Pool match",
   "South Africa v Romania": "Pool match",
-  "Round of 16 (4)": "Teams TBD — knockout match",
-  "Round of 16 (8)": "Teams TBD — knockout match",
-  "Quarter-final 1": "Teams TBD — quarter-final",
-  Final: "Teams TBD — Rugby World Cup Final",
+  "Round of 16 (4)": "Knockout match · teams TBD",
+  "Round of 16 (8)": "Knockout match · teams TBD",
+  "Quarter-final 1": "Quarter-final · teams TBD",
+  Final: "Rugby World Cup Final · teams TBD",
+};
+
+const flagByTeam: Record<string, string> = {
+  Australia: "🇦🇺",
+  "Hong Kong China": "🇭🇰",
+  "South Africa": "🇿🇦",
+  Romania: "🇷🇴",
+  Wales: "🏴",
+  Zimbabwe: "🇿🇼",
+  England: "🏴",
+  Scotland: "🏴",
+  Ireland: "🇮🇪",
+  France: "🇫🇷",
+  Italy: "🇮🇹",
+  Georgia: "🇬🇪",
+  Japan: "🇯🇵",
+  "New Zealand": "🇳🇿",
+  Argentina: "🇦🇷",
+  Fiji: "🇫🇯",
+  Tonga: "🇹🇴",
+  Samoa: "🇼🇸",
 };
 
 function formatDate(date: string) {
@@ -267,12 +289,34 @@ function ticketsFromCsv(text: string): SeatTicket[] {
 function paymentClasses(status: string) {
   const normalized = status.toLowerCase();
   if (normalized === "paid") {
-    return "border-emerald-400/25 bg-emerald-400/10 text-emerald-200";
+    return "border-emerald-200 bg-emerald-50 text-emerald-700";
   }
   if (normalized === "partial") {
-    return "border-amber-300/25 bg-amber-300/10 text-amber-100";
+    return "border-amber-200 bg-amber-50 text-amber-700";
   }
-  return "border-rose-300/20 bg-rose-300/10 text-rose-100";
+  return "border-rose-200 bg-rose-50 text-rose-700";
+}
+
+function splitTeams(match: string): [string, string] | null {
+  const separator = match.includes(" v ") ? " v " : match.includes(" vs ") ? " vs " : null;
+  if (!separator) return null;
+  const teams = match.split(separator).map((team) => team.trim());
+  if (teams.length !== 2) return null;
+  return [teams[0], teams[1]];
+}
+
+function TeamRow({ team }: { team: string }) {
+  const flag = flagByTeam[team] ?? "🏉";
+  return (
+    <div className="flex items-center gap-3.5">
+      <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full border border-[#dfe5df] bg-[#f7f9f6] text-[28px] shadow-sm sm:h-14 sm:w-14 sm:text-[31px]">
+        {flag}
+      </span>
+      <span className="text-[22px] font-black leading-tight tracking-[-0.035em] text-[#111814] sm:text-[25px]">
+        {team}
+      </span>
+    </div>
+  );
 }
 
 export default function Rwc2027Page() {
@@ -282,8 +326,6 @@ export default function Rwc2027Page() {
   const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
-    if (!LIVE_SHEET_CSV_URL) return;
-
     let cancelled = false;
 
     const load = async () => {
@@ -349,6 +391,7 @@ export default function Rwc2027Page() {
 
   const selectedInfo = selectedTickets[0];
   const assignedCount = selectedTickets.filter((ticket) => ticket.assignedTo).length;
+  const availableCount = selectedTickets.length - assignedCount;
   const paidCount = selectedTickets.filter(
     (ticket) => ticket.assignedTo && ticket.paymentStatus.toLowerCase() === "paid",
   ).length;
@@ -369,39 +412,34 @@ export default function Rwc2027Page() {
   }, [selectedTickets]);
 
   return (
-    <main className="min-h-screen bg-[#07120f] text-white">
-      <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -left-28 -top-24 h-80 w-80 rounded-full bg-[#70d44b]/10 blur-3xl" />
-        <div className="absolute right-[-120px] top-[22rem] h-96 w-96 rounded-full bg-[#24b9a6]/10 blur-3xl" />
-      </div>
-
-      <div className="relative mx-auto w-full max-w-6xl px-4 pb-16 pt-6 sm:px-6 lg:px-8">
-        <header className="rounded-[28px] border border-white/10 bg-[#0d1b17]/90 p-5 shadow-2xl shadow-black/20 backdrop-blur sm:p-7">
-          <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
-            <div>
+    <main className="min-h-screen bg-[#f4f6f2] text-[#152019]">
+      <div className="mx-auto w-full max-w-6xl px-4 pb-16 pt-5 sm:px-6 sm:pt-7 lg:px-8">
+        <header className="overflow-hidden rounded-[28px] border border-[#dde4dc] bg-white p-5 shadow-[0_12px_40px_rgba(22,48,31,0.07)] sm:p-8">
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+            <div className="max-w-3xl">
               <div className="mb-4 flex items-center gap-3">
-                <div className="grid h-11 w-11 place-items-center rounded-2xl bg-[#b8f34a] text-[#0a1712] shadow-lg shadow-[#b8f34a]/10">
+                <div className="grid h-11 w-11 place-items-center rounded-2xl bg-[#0f6b42] text-white shadow-sm">
                   <TicketIcon className="h-5 w-5" />
                 </div>
                 <div>
-                  <p className="text-xs font-black uppercase tracking-[0.24em] text-[#b8f34a]">
+                  <p className="text-xs font-black uppercase tracking-[0.22em] text-[#0f6b42]">
                     Family & Friends
                   </p>
-                  <p className="text-sm text-white/55">Rugby World Cup 2027</p>
+                  <p className="text-sm font-semibold text-[#6e7c73]">Rugby World Cup 2027</p>
                 </div>
               </div>
-              <h1 className="max-w-3xl text-3xl font-black tracking-[-0.04em] sm:text-5xl">
-                Our RWC 2027 tickets, all in one place.
+              <h1 className="text-3xl font-black tracking-[-0.045em] text-[#101713] sm:text-5xl">
+                Pick a match. See every seat.
               </h1>
-              <p className="mt-4 max-w-2xl text-[15px] leading-7 text-white/62 sm:text-base">
-                Choose a match to see the seats, prices, who they are assigned to and payment status. This page is read-only — message Sam or Tayla if you want a seat or need to arrange payment.
+              <p className="mt-4 max-w-2xl text-[15px] leading-7 text-[#657168] sm:text-base">
+                This is our shared read-only ticket view. Choose a game to see the exact seats, price, assignment and payment status. Message Sam or Tayla if you want a seat.
               </p>
             </div>
 
-            <div className="flex shrink-0 items-center gap-2 self-start rounded-full border border-white/10 bg-white/[0.04] px-3.5 py-2 text-xs font-bold text-white/64">
+            <div className="flex shrink-0 items-center gap-2 self-start rounded-full border border-[#dfe5df] bg-[#f7f9f6] px-3.5 py-2 text-xs font-bold text-[#59665d]">
               <span
                 className={`h-2 w-2 rounded-full ${
-                  source === "live" ? "bg-emerald-400" : "bg-amber-300"
+                  source === "live" ? "bg-emerald-500" : "bg-amber-400"
                 }`}
               />
               {source === "live" ? "Live from Google Sheet" : "Current ticket snapshot"}
@@ -410,56 +448,104 @@ export default function Rwc2027Page() {
           </div>
         </header>
 
-        <section className="mt-6">
-          <div className="mb-3 flex items-end justify-between gap-4">
+        <section className="mt-8">
+          <div className="mb-4 flex items-end justify-between gap-4">
             <div>
-              <p className="text-xs font-black uppercase tracking-[0.2em] text-[#89b68e]">
-                Step 1
+              <p className="text-xs font-black uppercase tracking-[0.2em] text-[#0f6b42]">
+                Choose a match
               </p>
-              <h2 className="mt-1 text-xl font-black tracking-tight sm:text-2xl">
-                Pick a match
+              <h2 className="mt-1 text-2xl font-black tracking-[-0.035em] text-[#111814] sm:text-3xl">
+                Which game are you looking at?
               </h2>
             </div>
-            <p className="hidden text-sm text-white/40 sm:block">{tickets.length} tickets total</p>
+            <span className="hidden text-sm font-semibold text-[#758178] sm:block">
+              {matches.length} games
+            </span>
           </div>
 
-          <div className="-mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 lg:grid-cols-3">
+          <div className="flex snap-x gap-4 overflow-x-auto pb-3 sm:grid sm:grid-cols-2 sm:overflow-visible lg:grid-cols-3">
             {matches.map((match) => {
               const active = match.match === selectedMatch;
-              const matchSeats = tickets.filter((ticket) => ticket.match === match.match);
-              const matchAssigned = matchSeats.filter((ticket) => ticket.assignedTo).length;
+              const matchTickets = tickets.filter((ticket) => ticket.match === match.match);
+              const available = matchTickets.filter((ticket) => !ticket.assignedTo).length;
+              const prices = matchTickets.map((ticket) => ticket.price);
+              const minPrice = Math.min(...prices);
+              const maxPrice = Math.max(...prices);
+              const teams = splitTeams(match.match);
+
               return (
                 <button
                   key={match.match}
+                  type="button"
+                  aria-pressed={active}
                   onClick={() => setSelectedMatch(match.match)}
-                  className={`min-w-[82vw] snap-start rounded-[22px] border p-4 text-left transition sm:min-w-0 ${
+                  className={`group min-w-[84vw] snap-start rounded-[24px] border bg-white p-5 text-left shadow-[0_8px_24px_rgba(27,51,35,0.06)] transition duration-200 sm:min-w-0 ${
                     active
-                      ? "border-[#b8f34a]/55 bg-[#b8f34a]/10 shadow-lg shadow-[#b8f34a]/5"
-                      : "border-white/10 bg-[#0d1b17] hover:border-white/20 hover:bg-white/[0.05]"
+                      ? "border-[#0f6b42] ring-2 ring-[#0f6b42]/10"
+                      : "border-[#dce4dc] hover:-translate-y-0.5 hover:border-[#b9c9bc] hover:shadow-[0_12px_30px_rgba(27,51,35,0.10)]"
                   }`}
                 >
-                  <div className="flex items-start justify-between gap-3">
+                  <div className="mb-4 flex items-start justify-between gap-3">
                     <div>
-                      <p className={`text-xs font-black uppercase tracking-[0.16em] ${active ? "text-[#b8f34a]" : "text-white/40"}`}>
-                        {formatDate(match.date)}
+                      <p className="text-[11px] font-black uppercase tracking-[0.16em] text-[#7a877e]">
+                        {matchupDetails[match.match] ?? "Rugby World Cup 2027"}
                       </p>
-                      <h3 className="mt-2 text-lg font-black leading-tight">{match.match}</h3>
+                      <p className="mt-1.5 text-sm font-bold text-[#344238]">
+                        {formatDate(match.date)} · {match.time}
+                      </p>
                     </div>
-                    <span className={`rounded-full px-2.5 py-1 text-[11px] font-black ${active ? "bg-[#b8f34a] text-[#0a1712]" : "bg-white/8 text-white/55"}`}>
-                      {matchSeats.length} seats
-                    </span>
+                    <div
+                      className={`grid h-9 w-9 shrink-0 place-items-center rounded-full transition ${
+                        active
+                          ? "bg-[#0f6b42] text-white"
+                          : "bg-[#f2f5f1] text-[#657269] group-hover:bg-[#eaf0e9]"
+                      }`}
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </div>
                   </div>
-                  <p className="mt-2 text-sm text-white/48">
-                    {matchupDetails[match.match] ?? "Rugby World Cup 2027"}
-                  </p>
-                  <div className="mt-4 flex items-center gap-4 text-xs font-semibold text-white/55">
-                    <span className="flex items-center gap-1.5">
-                      <Clock3 className="h-3.5 w-3.5" /> {match.time}
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <Users className="h-3.5 w-3.5" /> {matchAssigned} assigned
-                    </span>
+
+                  {teams ? (
+                    <div className="space-y-3.5 py-1">
+                      <TeamRow team={teams[0]} />
+                      <TeamRow team={teams[1]} />
+                    </div>
+                  ) : (
+                    <div className="flex min-h-[126px] items-center gap-4 py-2">
+                      <span className="grid h-14 w-14 shrink-0 place-items-center rounded-full border border-[#dfe5df] bg-[#f6f8f5] text-[#0f6b42] shadow-sm">
+                        <Trophy className="h-6 w-6" />
+                      </span>
+                      <div>
+                        <p className="text-[25px] font-black leading-tight tracking-[-0.04em] text-[#111814]">
+                          {match.match}
+                        </p>
+                        <p className="mt-1 text-sm font-semibold text-[#77837a]">Teams to be confirmed</p>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="mt-5 flex items-center justify-between border-t border-[#edf1ec] pt-4 text-sm">
+                    <div>
+                      <p className="font-bold text-[#344238]">{match.venue}</p>
+                      <p className="mt-0.5 text-xs font-semibold text-[#7b877f]">
+                        {available} of {matchTickets.length} seats available
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-[11px] font-black uppercase tracking-[0.12em] text-[#8b958e]">
+                        {minPrice === maxPrice ? "Per seat" : "From"}
+                      </p>
+                      <p className="mt-0.5 text-lg font-black text-[#0f6b42]">
+                        {formatCurrency(minPrice)}
+                      </p>
+                    </div>
                   </div>
+
+                  {active && (
+                    <div className="mt-4 rounded-xl bg-[#eaf5ee] px-3 py-2 text-center text-xs font-black uppercase tracking-[0.14em] text-[#0f6b42]">
+                      Selected
+                    </div>
+                  )}
                 </button>
               );
             })}
@@ -467,113 +553,116 @@ export default function Rwc2027Page() {
         </section>
 
         {selectedInfo && (
-          <section className="mt-7 overflow-hidden rounded-[28px] border border-white/10 bg-[#0d1b17] shadow-2xl shadow-black/15">
-            <div className="border-b border-white/8 bg-gradient-to-r from-[#173225] to-[#0d1b17] p-5 sm:p-7">
-              <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+          <section className="mt-7 overflow-hidden rounded-[28px] border border-[#dde4dc] bg-white shadow-[0_12px_40px_rgba(22,48,31,0.07)]">
+            <div className="border-b border-[#e8ede7] bg-[#fbfcfa] p-5 sm:p-7">
+              <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
                 <div>
-                  <p className="text-xs font-black uppercase tracking-[0.2em] text-[#b8f34a]">
+                  <p className="text-xs font-black uppercase tracking-[0.2em] text-[#0f6b42]">
                     Selected match
                   </p>
-                  <h2 className="mt-2 text-2xl font-black tracking-[-0.03em] sm:text-4xl">
-                    {selectedInfo.match}
+                  <h2 className="mt-2 text-3xl font-black tracking-[-0.045em] text-[#111814] sm:text-4xl">
+                    {selectedMatch}
                   </h2>
-                  <p className="mt-2 text-sm font-semibold text-white/50">
-                    {matchupDetails[selectedInfo.match] ?? "Rugby World Cup 2027"}
-                  </p>
-                  <div className="mt-5 flex flex-col gap-2 text-sm text-white/66 sm:flex-row sm:flex-wrap sm:gap-x-6">
+                  <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm font-semibold text-[#657168]">
                     <span className="flex items-center gap-2">
-                      <CalendarDays className="h-4 w-4 text-[#b8f34a]" />
-                      {formatDate(selectedInfo.date)} at {selectedInfo.time}
+                      <CalendarDays className="h-4 w-4 text-[#0f6b42]" />
+                      {formatDate(selectedInfo.date)}
                     </span>
                     <span className="flex items-center gap-2">
-                      <MapPin className="h-4 w-4 text-[#b8f34a]" />
+                      <Clock3 className="h-4 w-4 text-[#0f6b42]" />
+                      {selectedInfo.time}
+                    </span>
+                    <span className="flex items-center gap-2">
+                      <MapPin className="h-4 w-4 text-[#0f6b42]" />
                       {selectedInfo.venue}
                     </span>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:min-w-[520px]">
-                  {[
-                    ["Seats", selectedTickets.length],
-                    ["Available", selectedTickets.length - assignedCount],
-                    ["Assigned", assignedCount],
-                    ["Paid", paidCount],
-                  ].map(([label, value]) => (
-                    <div key={label} className="rounded-2xl border border-white/8 bg-black/15 px-4 py-3">
-                      <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-white/38">{label}</p>
-                      <p className="mt-1 text-2xl font-black">{value}</p>
-                    </div>
-                  ))}
+                <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:min-w-[500px]">
+                  <div className="rounded-2xl border border-[#e1e7e0] bg-white p-3.5">
+                    <p className="text-[10px] font-black uppercase tracking-[0.14em] text-[#89938c]">Seats</p>
+                    <p className="mt-1 text-xl font-black text-[#19231d]">{selectedTickets.length}</p>
+                  </div>
+                  <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-3.5">
+                    <p className="text-[10px] font-black uppercase tracking-[0.14em] text-emerald-700">Available</p>
+                    <p className="mt-1 text-xl font-black text-emerald-800">{availableCount}</p>
+                  </div>
+                  <div className="rounded-2xl border border-[#e1e7e0] bg-white p-3.5">
+                    <p className="text-[10px] font-black uppercase tracking-[0.14em] text-[#89938c]">Assigned</p>
+                    <p className="mt-1 text-xl font-black text-[#19231d]">{assignedCount}</p>
+                  </div>
+                  <div className="rounded-2xl border border-[#e1e7e0] bg-white p-3.5">
+                    <p className="text-[10px] font-black uppercase tracking-[0.14em] text-[#89938c]">Paid</p>
+                    <p className="mt-1 text-xl font-black text-[#19231d]">{paidCount}</p>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div className="p-4 sm:p-7">
-              <div className="mb-6 flex flex-col gap-3 rounded-2xl border border-white/8 bg-white/[0.025] p-4 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex items-start gap-3">
-                  <Info className="mt-0.5 h-5 w-5 shrink-0 text-[#b8f34a]" />
-                  <div>
-                    <p className="font-bold">How reservations work</p>
-                    <p className="mt-1 text-sm leading-6 text-white/52">
-                      Available seats are not reserved by tapping this page. Message Sam or Tayla with the match and seat(s) you want; the Google Sheet will be updated once confirmed.
-                    </p>
-                  </div>
+            <div className="p-5 sm:p-7">
+              <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                  <h3 className="text-xl font-black tracking-[-0.03em] text-[#111814]">Seat availability</h3>
+                  <p className="mt-1 text-sm font-medium text-[#77837a]">Tap a match above to switch games. Seats here are read-only.</p>
                 </div>
-                <div className="shrink-0 rounded-xl bg-[#b8f34a]/10 px-4 py-3 text-right">
-                  <p className="text-[10px] font-black uppercase tracking-[0.14em] text-[#b8f34a]/65">Total ticket value</p>
-                  <p className="mt-1 text-xl font-black text-[#b8f34a]">{formatCurrency(matchValue)}</p>
+                <div className="flex items-center gap-2 text-sm font-bold text-[#59665d]">
+                  <CircleDollarSign className="h-4 w-4 text-[#0f6b42]" />
+                  Total ticket value {formatCurrency(matchValue)}
                 </div>
               </div>
 
-              <div className="space-y-7">
+              <div className="space-y-5">
                 {seatGroups.map((group) => (
-                  <div key={group.key}>
-                    <div className="mb-3 flex items-center justify-between gap-3">
+                  <div key={group.key} className="rounded-[22px] border border-[#e2e8e1] bg-[#fafbfa] p-4 sm:p-5">
+                    <div className="mb-4 flex items-center justify-between gap-3">
                       <div>
-                        <p className="text-sm font-black">Section {group.section} · Row {group.row}</p>
-                        <p className="mt-0.5 text-xs text-white/38">{group.seats.length} seat{group.seats.length === 1 ? "" : "s"}</p>
+                        <p className="text-[11px] font-black uppercase tracking-[0.16em] text-[#8a948d]">Location</p>
+                        <p className="mt-1 text-lg font-black text-[#1b261f]">
+                          Section {group.section} · Row {group.row}
+                        </p>
                       </div>
-                      <span className="rounded-full border border-white/8 bg-white/[0.04] px-3 py-1.5 text-xs font-bold text-white/48">
-                        {formatCurrency(group.seats[0].price)} each
+                      <span className="rounded-full border border-[#dfe5df] bg-white px-3 py-1.5 text-xs font-bold text-[#69766d] shadow-sm">
+                        {group.seats.length} seats
                       </span>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                    <div className="grid grid-cols-1 gap-3 min-[440px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                       {group.seats.map((ticket) => {
                         const assigned = Boolean(ticket.assignedTo);
-                        const paid = ticket.paymentStatus.toLowerCase() === "paid";
                         return (
                           <div
                             key={`${ticket.section}-${ticket.row}-${ticket.seat}`}
-                            className={`rounded-[18px] border p-3.5 transition ${
+                            className={`rounded-[18px] border p-4 shadow-sm ${
                               assigned
-                                ? paid
-                                  ? "border-emerald-400/22 bg-emerald-400/[0.055]"
-                                  : "border-amber-300/20 bg-amber-300/[0.05]"
-                                : "border-[#b8f34a]/18 bg-[#b8f34a]/[0.045]"
+                                ? "border-[#dfe5df] bg-white"
+                                : "border-emerald-200 bg-emerald-50/60"
                             }`}
                           >
-                            <div className="flex items-start justify-between gap-2">
+                            <div className="flex items-start justify-between gap-3">
                               <div>
-                                <p className="text-[10px] font-black uppercase tracking-[0.16em] text-white/34">Seat</p>
-                                <p className="mt-0.5 text-2xl font-black tracking-tight">{ticket.seat}</p>
+                                <p className="text-[10px] font-black uppercase tracking-[0.15em] text-[#8a948d]">Seat</p>
+                                <p className="mt-0.5 text-2xl font-black tracking-[-0.04em] text-[#111814]">{ticket.seat}</p>
                               </div>
-                              <span className="text-sm font-black text-white/76">{formatCurrency(ticket.price)}</span>
+                              <p className="text-base font-black text-[#0f6b42]">{formatCurrency(ticket.price)}</p>
                             </div>
 
-                            <div className="mt-4 border-t border-white/7 pt-3">
+                            <div className="mt-4 border-t border-[#e7ece6] pt-3">
                               {assigned ? (
                                 <>
-                                  <p className="truncate text-sm font-bold text-white/88">{ticket.assignedTo}</p>
-                                  <span className={`mt-2 inline-flex rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.11em] ${paymentClasses(ticket.paymentStatus)}`}>
+                                  <div className="flex items-center gap-2 text-sm font-bold text-[#2f3c33]">
+                                    <Users className="h-4 w-4 text-[#69766d]" />
+                                    <span className="truncate">{ticket.assignedTo}</span>
+                                  </div>
+                                  <span className={`mt-2 inline-flex rounded-full border px-2.5 py-1 text-[11px] font-black uppercase tracking-[0.08em] ${paymentClasses(ticket.paymentStatus)}`}>
                                     {ticket.paymentStatus}
                                   </span>
                                 </>
                               ) : (
-                                <>
-                                  <p className="text-sm font-black text-[#b8f34a]">Available</p>
-                                  <p className="mt-1 text-[11px] text-white/34">Not assigned</p>
-                                </>
+                                <div className="flex items-center gap-2 text-sm font-black text-emerald-700">
+                                  <CheckCircle2 className="h-4 w-4" />
+                                  Available
+                                </div>
                               )}
                             </div>
                           </div>
@@ -583,37 +672,22 @@ export default function Rwc2027Page() {
                   </div>
                 ))}
               </div>
+
+              <div className="mt-6 rounded-[22px] border border-[#dce7dd] bg-[#f0f7f1] p-5 sm:flex sm:items-center sm:justify-between sm:gap-6">
+                <div>
+                  <p className="font-black text-[#17301f]">Want one of the available seats?</p>
+                  <p className="mt-1 text-sm leading-6 text-[#607066]">
+                    Message Sam or Tayla with the game and seat number. We’ll update the Google Sheet once it is assigned and again when payment is received.
+                  </p>
+                </div>
+                <div className="mt-4 flex shrink-0 items-center gap-2 rounded-full bg-white px-4 py-2.5 text-xs font-black uppercase tracking-[0.12em] text-[#0f6b42] shadow-sm sm:mt-0">
+                  <CheckCircle2 className="h-4 w-4" />
+                  Sheet is source of truth
+                </div>
+              </div>
             </div>
           </section>
         )}
-
-        <section className="mt-7 grid gap-3 sm:grid-cols-3">
-          <div className="rounded-[22px] border border-white/8 bg-white/[0.025] p-4">
-            <div className="flex items-center gap-2 text-[#b8f34a]">
-              <TicketIcon className="h-4 w-4" />
-              <p className="text-xs font-black uppercase tracking-[0.14em]">Available</p>
-            </div>
-            <p className="mt-2 text-sm leading-6 text-white/48">Seat is free to be assigned. Message us before making plans around it.</p>
-          </div>
-          <div className="rounded-[22px] border border-white/8 bg-white/[0.025] p-4">
-            <div className="flex items-center gap-2 text-amber-200">
-              <CircleDollarSign className="h-4 w-4" />
-              <p className="text-xs font-black uppercase tracking-[0.14em]">Assigned / unpaid</p>
-            </div>
-            <p className="mt-2 text-sm leading-6 text-white/48">Seat has been allocated, but payment is still due or only partially received.</p>
-          </div>
-          <div className="rounded-[22px] border border-white/8 bg-white/[0.025] p-4">
-            <div className="flex items-center gap-2 text-emerald-300">
-              <CheckCircle2 className="h-4 w-4" />
-              <p className="text-xs font-black uppercase tracking-[0.14em]">Paid</p>
-            </div>
-            <p className="mt-2 text-sm leading-6 text-white/48">Seat is assigned and payment is recorded as complete in the master tracker.</p>
-          </div>
-        </section>
-
-        <footer className="mt-8 border-t border-white/8 pt-6 text-center text-xs leading-6 text-white/32">
-          Read-only family & friends ticket view · Master records are maintained in the Rugby World Cup 2027 Google Sheet.
-        </footer>
       </div>
     </main>
   );
