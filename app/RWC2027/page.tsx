@@ -7,7 +7,6 @@ import {
   ChevronRight,
   Clock3,
   MapPin,
-  MessageCircle,
   RefreshCw,
   Ticket as TicketIcon,
   Trophy,
@@ -72,8 +71,28 @@ const groups: TicketGroup[] = [
     time: "6:45 PM",
     venue: "Perth Stadium",
     section: "509",
+    row: "11",
+    seats: [34, 35, 36],
+    price: 95,
+  },
+  {
+    match: "Round of 16 (4)",
+    date: "2027-10-23",
+    time: "6:45 PM",
+    venue: "Perth Stadium",
+    section: "509",
     row: "12",
     seats: [31, 32, 33, 34, 35, 36],
+    price: 95,
+  },
+  {
+    match: "Round of 16 (4)",
+    date: "2027-10-23",
+    time: "6:45 PM",
+    venue: "Perth Stadium",
+    section: "509",
+    row: "13",
+    seats: [37, 38],
     price: 95,
   },
   {
@@ -156,10 +175,17 @@ const fallbackTickets: SeatTicket[] = groups.flatMap((group) =>
 const matchupDetails: Record<string, string> = {
   "Australia v Hong Kong China": "Pool match",
   "South Africa v Romania": "Pool match",
-  "Round of 16 (4)": "Round of 16 · teams TBD",
-  "Round of 16 (8)": "Round of 16 · teams TBD",
+  "Round of 16 (4)": "Round of 16",
+  "Round of 16 (8)": "Round of 16",
   "Quarter-final 1": "Quarter-final · teams TBD",
   Final: "Rugby World Cup Final · teams TBD",
+};
+
+const knockoutPairing: Record<string, string> = {
+  "Round of 16 (4)": "1st Pool B vs 3rd Pool D / E / F",
+  "Round of 16 (8)": "1st Pool F vs 2nd Pool B",
+  "Quarter-final 1": "Teams to be confirmed",
+  Final: "Teams to be confirmed",
 };
 
 const flagByTeam: Record<string, string> = {
@@ -167,20 +193,6 @@ const flagByTeam: Record<string, string> = {
   "Hong Kong China": "🇭🇰",
   "South Africa": "🇿🇦",
   Romania: "🇷🇴",
-  Wales: "🏴",
-  Zimbabwe: "🇿🇼",
-  England: "🏴",
-  Scotland: "🏴",
-  Ireland: "🇮🇪",
-  France: "🇫🇷",
-  Italy: "🇮🇹",
-  Georgia: "🇬🇪",
-  Japan: "🇯🇵",
-  "New Zealand": "🇳🇿",
-  Argentina: "🇦🇷",
-  Fiji: "🇫🇯",
-  Tonga: "🇹🇴",
-  Samoa: "🇼🇸",
 };
 
 const appleFont =
@@ -207,7 +219,6 @@ function parseCsv(text: string): string[][] {
 
   for (let i = 0; i < text.length; i += 1) {
     const char = text[i];
-
     if (char === '"') {
       if (inQuotes && text[i + 1] === '"') {
         field += '"';
@@ -217,13 +228,11 @@ function parseCsv(text: string): string[][] {
       }
       continue;
     }
-
     if (char === "," && !inQuotes) {
       row.push(field);
       field = "";
       continue;
     }
-
     if ((char === "\n" || char === "\r") && !inQuotes) {
       if (char === "\r" && text[i + 1] === "\n") i += 1;
       row.push(field);
@@ -232,7 +241,6 @@ function parseCsv(text: string): string[][] {
       field = "";
       continue;
     }
-
     field += char;
   }
 
@@ -240,7 +248,6 @@ function parseCsv(text: string): string[][] {
     row.push(field);
     if (row.some((value) => value.trim() !== "")) rows.push(row);
   }
-
   return rows;
 }
 
@@ -262,16 +269,12 @@ function ticketsFromCsv(text: string): SeatTicket[] {
     "Assigned To",
     "Payment Status",
   ];
-
   if (required.some((name) => column(name) === -1)) return [];
 
   return rows.slice(1).flatMap((values) => {
     const match = values[column("Match")]?.trim();
     if (!match) return [];
-
     const rawPrice = values[column("Ticket Price")] ?? "0";
-    const price = Number(rawPrice.replace(/[^0-9.-]/g, "")) || 0;
-
     return [
       {
         match,
@@ -281,7 +284,7 @@ function ticketsFromCsv(text: string): SeatTicket[] {
         section: values[column("Section")]?.trim() ?? "",
         row: values[column("Row")]?.trim() ?? "",
         seat: values[column("Seat")]?.trim() ?? "",
-        price,
+        price: Number(rawPrice.replace(/[^0-9.-]/g, "")) || 0,
         assignedTo: values[column("Assigned To")]?.trim() ?? "",
         paymentStatus: values[column("Payment Status")]?.trim() || "Unpaid",
       },
@@ -291,12 +294,8 @@ function ticketsFromCsv(text: string): SeatTicket[] {
 
 function paymentClasses(status: string) {
   const normalized = status.toLowerCase();
-  if (normalized === "paid") {
-    return "border-[#cfe9d6] bg-[#ecf8ef] text-[#23753a]";
-  }
-  if (normalized === "partial") {
-    return "border-[#f0ddb3] bg-[#fff8e8] text-[#8a6400]";
-  }
+  if (normalized === "paid") return "border-[#cfe9d6] bg-[#ecf8ef] text-[#23753a]";
+  if (normalized === "partial") return "border-[#f0ddb3] bg-[#fff8e8] text-[#8a6400]";
   return "border-[#e5e5ea] bg-[#f2f2f7] text-[#6e6e73]";
 }
 
@@ -304,16 +303,14 @@ function splitTeams(match: string): [string, string] | null {
   const separator = match.includes(" v ") ? " v " : match.includes(" vs ") ? " vs " : null;
   if (!separator) return null;
   const teams = match.split(separator).map((team) => team.trim());
-  if (teams.length !== 2) return null;
-  return [teams[0], teams[1]];
+  return teams.length === 2 ? [teams[0], teams[1]] : null;
 }
 
 function TeamRow({ team }: { team: string }) {
-  const flag = flagByTeam[team] ?? "🏉";
   return (
     <div className="flex items-center gap-3.5">
       <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full border border-black/[0.06] bg-[#f5f5f7] text-[28px] shadow-[0_1px_2px_rgba(0,0,0,0.04)] sm:h-13 sm:w-13 sm:text-[30px]">
-        {flag}
+        {flagByTeam[team] ?? "🏉"}
       </span>
       <span className="text-[21px] font-semibold leading-tight tracking-[-0.03em] text-[#1d1d1f] sm:text-[23px]">
         {team}
@@ -330,15 +327,10 @@ export default function Rwc2027Page() {
 
   useEffect(() => {
     let cancelled = false;
-
     const load = async () => {
       try {
         setRefreshing(true);
-        const separator = LIVE_SHEET_CSV_URL.includes("?") ? "&" : "?";
-        const response = await fetch(
-          `${LIVE_SHEET_CSV_URL}${separator}_=${Date.now()}`,
-          { cache: "no-store" },
-        );
+        const response = await fetch(`${LIVE_SHEET_CSV_URL}?_=${Date.now()}`, { cache: "no-store" });
         if (!response.ok) throw new Error("Sheet feed unavailable");
         const parsed = ticketsFromCsv(await response.text());
         if (!cancelled && parsed.length) {
@@ -351,7 +343,6 @@ export default function Rwc2027Page() {
         if (!cancelled) setRefreshing(false);
       }
     };
-
     load();
     const interval = window.setInterval(load, 60_000);
     return () => {
@@ -381,9 +372,7 @@ export default function Rwc2027Page() {
       tickets
         .filter((ticket) => ticket.match === selectedMatch)
         .sort((a, b) => {
-          const section = a.section.localeCompare(b.section, undefined, {
-            numeric: true,
-          });
+          const section = a.section.localeCompare(b.section, undefined, { numeric: true });
           if (section !== 0) return section;
           const row = a.row.localeCompare(b.row, undefined, { numeric: true });
           if (row !== 0) return row;
@@ -415,7 +404,7 @@ export default function Rwc2027Page() {
 
   return (
     <main
-      className="min-h-screen bg-[#f5f5f7] pb-24 text-[#1d1d1f] antialiased md:pb-12"
+      className="min-h-screen bg-[#f5f5f7] pb-12 text-[#1d1d1f] antialiased"
       style={{ fontFamily: appleFont }}
     >
       <div className="sticky top-0 z-50 border-b border-black/[0.06] bg-white/80 backdrop-blur-2xl supports-[backdrop-filter]:bg-white/72">
@@ -429,7 +418,6 @@ export default function Rwc2027Page() {
               <p className="mt-0.5 text-[11px] font-medium text-[#86868b]">Family & Friends</p>
             </div>
           </div>
-
           <div className="flex items-center gap-2 rounded-full bg-[#f2f2f7] px-3 py-1.5 text-[11px] font-semibold text-[#6e6e73]">
             <span className={`h-2 w-2 rounded-full ${source === "live" ? "bg-[#34c759]" : "bg-[#ff9f0a]"}`} />
             <span className="hidden sm:inline">{source === "live" ? "Live from Google Sheet" : "Current snapshot"}</span>
@@ -487,11 +475,7 @@ export default function Rwc2027Page() {
                         {formatDate(match.date)} · {match.time}
                       </p>
                     </div>
-                    <div
-                      className={`grid h-8 w-8 shrink-0 place-items-center rounded-full transition-colors ${
-                        active ? "bg-[#0b6b45] text-white" : "bg-[#f2f2f7] text-[#86868b]"
-                      }`}
-                    >
+                    <div className={`grid h-8 w-8 shrink-0 place-items-center rounded-full transition-colors ${active ? "bg-[#0b6b45] text-white" : "bg-[#f2f2f7] text-[#86868b]"}`}>
                       {active ? (
                         <CheckCircle2 className="h-4 w-4" strokeWidth={1.9} />
                       ) : (
@@ -512,7 +496,9 @@ export default function Rwc2027Page() {
                       </span>
                       <div>
                         <p className="text-[22px] font-semibold leading-tight tracking-[-0.035em] text-[#1d1d1f]">{match.match}</p>
-                        <p className="mt-1 text-[13px] font-medium text-[#86868b]">Teams to be confirmed</p>
+                        <p className="mt-1.5 text-[13px] font-medium leading-5 text-[#6e6e73]">
+                          {knockoutPairing[match.match] ?? "Teams to be confirmed"}
+                        </p>
                       </div>
                     </div>
                   )}
@@ -520,14 +506,10 @@ export default function Rwc2027Page() {
                   <div className="mt-5 flex items-end justify-between border-t border-black/[0.06] pt-4">
                     <div className="min-w-0 pr-3">
                       <p className="truncate text-[13px] font-medium text-[#3a3a3c]">{match.venue}</p>
-                      <p className="mt-0.5 text-[12px] text-[#86868b]">
-                        {available} of {matchTickets.length} available
-                      </p>
+                      <p className="mt-0.5 text-[12px] text-[#86868b]">{available} of {matchTickets.length} available</p>
                     </div>
                     <div className="shrink-0 text-right">
-                      <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[#86868b]">
-                        {minPrice === maxPrice ? "Per seat" : "From"}
-                      </p>
+                      <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[#86868b]">{minPrice === maxPrice ? "Per seat" : "From"}</p>
                       <p className="mt-0.5 text-[17px] font-semibold tracking-[-0.02em] text-[#0b6b45]">{formatCurrency(minPrice)}</p>
                     </div>
                   </div>
@@ -545,35 +527,20 @@ export default function Rwc2027Page() {
                   <div>
                     <p className="text-[12px] font-semibold text-[#0b6b45]">Selected match</p>
                     <h2 className="mt-1 text-[28px] font-semibold leading-tight tracking-[-0.04em] text-[#1d1d1f] sm:text-[34px]">{selectedMatch}</h2>
+                    {knockoutPairing[selectedMatch] && knockoutPairing[selectedMatch] !== "Teams to be confirmed" && (
+                      <p className="mt-1 text-[14px] font-medium text-[#6e6e73]">{knockoutPairing[selectedMatch]}</p>
+                    )}
                     <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2.5 text-[13px] font-medium text-[#6e6e73]">
-                      <span className="flex items-center gap-1.5">
-                        <CalendarDays className="h-4 w-4 text-[#86868b]" strokeWidth={1.7} />
-                        {formatDate(selectedInfo.date)}
-                      </span>
-                      <span className="flex items-center gap-1.5">
-                        <Clock3 className="h-4 w-4 text-[#86868b]" strokeWidth={1.7} />
-                        {selectedInfo.time}
-                      </span>
-                      <span className="flex items-center gap-1.5">
-                        <MapPin className="h-4 w-4 text-[#86868b]" strokeWidth={1.7} />
-                        {selectedInfo.venue}
-                      </span>
+                      <span className="flex items-center gap-1.5"><CalendarDays className="h-4 w-4 text-[#86868b]" strokeWidth={1.7} />{formatDate(selectedInfo.date)}</span>
+                      <span className="flex items-center gap-1.5"><Clock3 className="h-4 w-4 text-[#86868b]" strokeWidth={1.7} />{selectedInfo.time}</span>
+                      <span className="flex items-center gap-1.5"><MapPin className="h-4 w-4 text-[#86868b]" strokeWidth={1.7} />{selectedInfo.venue}</span>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-3 overflow-hidden rounded-[16px] bg-[#f5f5f7] lg:min-w-[360px]">
-                    <div className="p-3.5 text-center">
-                      <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[#86868b]">Available</p>
-                      <p className="mt-1 text-[20px] font-semibold tracking-[-0.02em] text-[#1d1d1f]">{availableCount}</p>
-                    </div>
-                    <div className="border-x border-black/[0.06] p-3.5 text-center">
-                      <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[#86868b]">Assigned</p>
-                      <p className="mt-1 text-[20px] font-semibold tracking-[-0.02em] text-[#1d1d1f]">{assignedCount}</p>
-                    </div>
-                    <div className="p-3.5 text-center">
-                      <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[#86868b]">Paid</p>
-                      <p className="mt-1 text-[20px] font-semibold tracking-[-0.02em] text-[#1d1d1f]">{paidCount}</p>
-                    </div>
+                    <div className="p-3.5 text-center"><p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[#86868b]">Available</p><p className="mt-1 text-[20px] font-semibold tracking-[-0.02em] text-[#1d1d1f]">{availableCount}</p></div>
+                    <div className="border-x border-black/[0.06] p-3.5 text-center"><p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[#86868b]">Assigned</p><p className="mt-1 text-[20px] font-semibold tracking-[-0.02em] text-[#1d1d1f]">{assignedCount}</p></div>
+                    <div className="p-3.5 text-center"><p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[#86868b]">Paid</p><p className="mt-1 text-[20px] font-semibold tracking-[-0.02em] text-[#1d1d1f]">{paidCount}</p></div>
                   </div>
                 </div>
               </div>
@@ -581,7 +548,6 @@ export default function Rwc2027Page() {
               <div className="p-4 sm:p-7">
                 <div className="mb-5">
                   <h3 className="text-[20px] font-semibold tracking-[-0.025em] text-[#1d1d1f]">Seats</h3>
-                  <p className="mt-1 text-[13px] leading-5 text-[#86868b]">The Google Sheet is the source of truth. This page is read-only.</p>
                 </div>
 
                 <div className="space-y-5">
@@ -592,9 +558,7 @@ export default function Rwc2027Page() {
                           <p className="text-[11px] font-medium text-[#86868b]">Section {group.section}</p>
                           <p className="mt-0.5 text-[16px] font-semibold tracking-[-0.015em] text-[#1d1d1f]">Row {group.row}</p>
                         </div>
-                        <span className="rounded-full bg-white px-2.5 py-1 text-[11px] font-medium text-[#6e6e73] shadow-[0_1px_1px_rgba(0,0,0,0.03)]">
-                          {group.seats.length} seats
-                        </span>
+                        <span className="rounded-full bg-white px-2.5 py-1 text-[11px] font-medium text-[#6e6e73] shadow-[0_1px_1px_rgba(0,0,0,0.03)]">{group.seats.length} seats</span>
                       </div>
 
                       <div className="border-t border-black/[0.06] bg-white">
@@ -603,43 +567,25 @@ export default function Rwc2027Page() {
                           return (
                             <div
                               key={`${ticket.section}-${ticket.row}-${ticket.seat}`}
-                              className={`flex min-h-[78px] items-center justify-between gap-4 px-4 py-3.5 sm:px-5 ${
-                                index !== group.seats.length - 1 ? "border-b border-black/[0.055]" : ""
-                              }`}
+                              className={`flex min-h-[78px] items-center justify-between gap-4 px-4 py-3.5 sm:px-5 ${index !== group.seats.length - 1 ? "border-b border-black/[0.055]" : ""}`}
                             >
                               <div className="flex min-w-0 items-center gap-3.5">
-                                <div className={`grid h-10 w-10 shrink-0 place-items-center rounded-[12px] text-[15px] font-semibold ${assigned ? "bg-[#f2f2f7] text-[#3a3a3c]" : "bg-[#ecf8ef] text-[#23753a]"}`}>
-                                  {ticket.seat}
-                                </div>
+                                <div className={`grid h-10 w-10 shrink-0 place-items-center rounded-[12px] text-[15px] font-semibold ${assigned ? "bg-[#f2f2f7] text-[#3a3a3c]" : "bg-[#ecf8ef] text-[#23753a]"}`}>{ticket.seat}</div>
                                 <div className="min-w-0">
                                   <p className="text-[15px] font-semibold tracking-[-0.01em] text-[#1d1d1f]">Seat {ticket.seat}</p>
                                   {assigned ? (
-                                    <div className="mt-0.5 flex min-w-0 items-center gap-1.5 text-[12px] text-[#6e6e73]">
-                                      <Users className="h-3.5 w-3.5 shrink-0" strokeWidth={1.7} />
-                                      <span className="truncate">{ticket.assignedTo}</span>
-                                    </div>
+                                    <div className="mt-0.5 flex min-w-0 items-center gap-1.5 text-[12px] text-[#6e6e73]"><Users className="h-3.5 w-3.5 shrink-0" strokeWidth={1.7} /><span className="truncate">{ticket.assignedTo}</span></div>
                                   ) : (
-                                    <div className="mt-0.5 flex items-center gap-1.5 text-[12px] font-medium text-[#23753a]">
-                                      <CheckCircle2 className="h-3.5 w-3.5" strokeWidth={1.8} />
-                                      Available
-                                    </div>
+                                    <div className="mt-0.5 flex items-center gap-1.5 text-[12px] font-medium text-[#23753a]"><CheckCircle2 className="h-3.5 w-3.5" strokeWidth={1.8} />Available</div>
                                   )}
                                 </div>
                               </div>
 
                               <div className="flex shrink-0 items-center gap-3 text-right">
-                                {assigned && (
-                                  <span className={`hidden rounded-full border px-2.5 py-1 text-[10px] font-semibold sm:inline-flex ${paymentClasses(ticket.paymentStatus)}`}>
-                                    {ticket.paymentStatus}
-                                  </span>
-                                )}
+                                {assigned && <span className={`hidden rounded-full border px-2.5 py-1 text-[10px] font-semibold sm:inline-flex ${paymentClasses(ticket.paymentStatus)}`}>{ticket.paymentStatus}</span>}
                                 <div>
                                   <p className="text-[15px] font-semibold tracking-[-0.015em] text-[#1d1d1f]">{formatCurrency(ticket.price)}</p>
-                                  {assigned && (
-                                    <span className={`mt-1 inline-flex rounded-full border px-2 py-0.5 text-[9px] font-semibold sm:hidden ${paymentClasses(ticket.paymentStatus)}`}>
-                                      {ticket.paymentStatus}
-                                    </span>
-                                  )}
+                                  {assigned && <span className={`mt-1 inline-flex rounded-full border px-2 py-0.5 text-[9px] font-semibold sm:hidden ${paymentClasses(ticket.paymentStatus)}`}>{ticket.paymentStatus}</span>}
                                 </div>
                               </div>
                             </div>
@@ -649,33 +595,10 @@ export default function Rwc2027Page() {
                     </div>
                   ))}
                 </div>
-
-                <div className="mt-6 flex items-start gap-3 rounded-[18px] bg-[#f5f5f7] p-4 sm:p-5">
-                  <MessageCircle className="mt-0.5 h-5 w-5 shrink-0 text-[#0b6b45]" strokeWidth={1.7} />
-                  <div>
-                    <p className="text-[14px] font-semibold text-[#1d1d1f]">Want an available seat?</p>
-                    <p className="mt-1 text-[13px] leading-5 text-[#6e6e73]">
-                      Message Sam or Tayla with the game and seat number. We’ll assign it in the Sheet and update payment status there when payment is received.
-                    </p>
-                  </div>
-                </div>
               </div>
             </div>
           </section>
         )}
-      </div>
-
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-black/[0.06] bg-white/88 px-4 pb-[max(10px,env(safe-area-inset-bottom))] pt-2.5 backdrop-blur-2xl md:hidden">
-        <div className="mx-auto flex max-w-lg items-center justify-between gap-3">
-          <div className="min-w-0">
-            <p className="text-[13px] font-semibold text-[#1d1d1f]">Want a seat?</p>
-            <p className="truncate text-[11px] text-[#86868b]">Message Sam or Tayla to reserve</p>
-          </div>
-          <div className="flex shrink-0 items-center gap-2 rounded-full bg-[#0b6b45] px-4 py-2.5 text-[12px] font-semibold text-white shadow-[0_1px_2px_rgba(0,0,0,0.08)]">
-            <MessageCircle className="h-4 w-4" strokeWidth={1.8} />
-            Contact us
-          </div>
-        </div>
       </div>
     </main>
   );
