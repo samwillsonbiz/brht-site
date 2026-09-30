@@ -14,6 +14,7 @@ export type NbaScheduleGame = {
   gameDateEt: string;
   status: string | null;
   completed: boolean;
+  seasonType: number | null;
   home: NbaScheduleTeam;
   away: NbaScheduleTeam;
 };
@@ -73,6 +74,16 @@ export async function fetchNbaSchedule(from: string, to: string) {
 
     if (!event?.id || !tipoffAt || !home || !away) return [];
 
+    const seasonTypeRaw =
+      event?.season?.type ??
+      competition?.season?.type ??
+      event?.seasonType ??
+      null;
+    const seasonType =
+      seasonTypeRaw === null || seasonTypeRaw === undefined
+        ? null
+        : Number(seasonTypeRaw);
+
     return [
       {
         id: String(event.id),
@@ -86,6 +97,7 @@ export async function fetchNbaSchedule(from: string, to: string) {
         completed: Boolean(
           event?.status?.type?.completed ?? competition?.status?.type?.completed,
         ),
+        seasonType: Number.isFinite(seasonType) ? seasonType : null,
         home: competitorToTeam(home),
         away: competitorToTeam(away),
       },
