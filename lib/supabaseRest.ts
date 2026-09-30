@@ -2,17 +2,21 @@ type JsonRecord = Record<string, unknown>;
 
 function getConfig() {
   const url = process.env.SUPABASE_URL;
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !serviceRoleKey) {
+  const serverKey =
+    process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !serverKey) {
     throw new Error(
-      "Supabase is not configured. Add SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY as server-only environment variables.",
+      "Supabase is not configured. Add SUPABASE_URL and SUPABASE_SECRET_KEY as server-only environment variables.",
     );
   }
-  return { url: url.replace(/\/$/, ""), serviceRoleKey };
+  return { url: url.replace(/\/$/, ""), serverKey };
 }
 
 export function isSupabaseConfigured() {
-  return Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
+  return Boolean(
+    process.env.SUPABASE_URL &&
+      (process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY),
+  );
 }
 
 async function request(
@@ -20,7 +24,7 @@ async function request(
   init: RequestInit = {},
   searchParams?: Record<string, string>,
 ) {
-  const { url, serviceRoleKey } = getConfig();
+  const { url, serverKey } = getConfig();
   const endpoint = new URL(`${url}/rest/v1/${path}`);
   Object.entries(searchParams ?? {}).forEach(([key, value]) =>
     endpoint.searchParams.set(key, value),
@@ -30,8 +34,8 @@ async function request(
     ...init,
     cache: "no-store",
     headers: {
-      apikey: serviceRoleKey,
-      Authorization: `Bearer ${serviceRoleKey}`,
+      apikey: serverKey,
+      Authorization: `Bearer ${serverKey}`,
       "Content-Type": "application/json",
       ...(init.headers ?? {}),
     },
