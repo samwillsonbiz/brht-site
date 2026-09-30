@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import FantasyMenu from "./FantasyMenu";
 
 export const metadata: Metadata = {
   title: "Fantasy Basketball Forecast | BRHT",
@@ -7,5 +8,10 @@ export const metadata: Metadata = {
 };
 
 export default function FantasyLayout({ children }: { children: React.ReactNode }) {
-  return children;
+  return (
+    <>
+      <FantasyMenu />
+      {children}
+    </>
+  );
 }
