@@ -38,6 +38,44 @@ export type EspnFantasyTeam = {
   };
 };
 
+export type EspnFantasyPlayerStat = {
+  id?: string;
+  appliedAverage?: number;
+  appliedTotal?: number;
+  scoringPeriodId?: number;
+  statSourceId?: number;
+  statSplitTypeId?: number;
+  proTeamId?: number;
+  stats?: Record<string, number>;
+};
+
+export type EspnFantasyPlayerPoolEntry = {
+  id?: number;
+  onTeamId?: number;
+  lineupLocked?: boolean;
+  player?: {
+    id?: number;
+    fullName?: string;
+    firstName?: string;
+    lastName?: string;
+    proTeamId?: number;
+    defaultPositionId?: number;
+    eligibleSlots?: number[];
+    injuryStatus?: string;
+    injured?: boolean;
+    percentOwned?: number;
+    percentStarted?: number;
+    ownership?: {
+      percentOwned?: number;
+      percentStarted?: number;
+      auctionValueAverage?: number;
+      averageDraftPosition?: number;
+    };
+    stats?: EspnFantasyPlayerStat[];
+    draftRanksByRankType?: Record<string, unknown>;
+  };
+};
+
 export type EspnFantasyLeague = {
   id?: number;
   seasonId?: number;
@@ -58,6 +96,7 @@ export type EspnFantasyLeague = {
     }>;
   };
   teams?: EspnFantasyTeam[];
+  players?: EspnFantasyPlayerPoolEntry[];
 };
 
 export function getEspnFantasyConfig(): EspnFantasyConfig {
@@ -75,6 +114,30 @@ function cookieHeader(config: EspnFantasyConfig) {
   return `SWID=${config.swid}; espn_s2=${config.espnS2}`;
 }
 
+async function espnFetch(url: URL, config: EspnFantasyConfig, extraHeaders?: Record<string, string>) {
+  const cookie = cookieHeader(config);
+  const response = await fetch(url, {
+    cache: "no-store",
+    headers: {
+      Accept: "application/json",
+      "User-Agent": "Mozilla/5.0 (compatible; FantasyLab/1.0)",
+      ...(cookie ? { Cookie: cookie } : {}),
+      ...extraHeaders,
+    },
+  });
+
+  if (!response.ok) {
+    const body = await response.text().catch(() => "");
+    const error = new Error(
+      `ESPN fantasy request failed (${response.status})${body ? `: ${body.slice(0, 180)}` : ""}`,
+    );
+    Object.assign(error, { status: response.status });
+    throw error;
+  }
+
+  return response;
+}
+
 async function fetchEspnLeagueView(
   config: EspnFantasyConfig,
   views: string[],
@@ -88,25 +151,7 @@ async function fetchEspnLeagueView(
     url.searchParams.set("scoringPeriodId", String(scoringPeriodId));
   }
 
-  const cookie = cookieHeader(config);
-  const response = await fetch(url, {
-    cache: "no-store",
-    headers: {
-      Accept: "application/json",
-      "User-Agent": "Mozilla/5.0 (compatible; FantasyLab/1.0)",
-      ...(cookie ? { Cookie: cookie } : {}),
-    },
-  });
-
-  if (!response.ok) {
-    const body = await response.text().catch(() => "");
-    const error = new Error(
-      `ESPN fantasy request failed (${response.status})${body ? `: ${body.slice(0, 180)}` : ""}`,
-    );
-    Object.assign(error, { status: response.status });
-    throw error;
-  }
-
+  const response = await espnFetch(url, config);
   return (await response.json()) as EspnFantasyLeague;
 }
 
@@ -151,6 +196,35 @@ export async function fetchEspnFantasyLeague(
     authenticated: Boolean(cookieHeader(config)),
     rosterScoringPeriodId,
   };
+}
+
+export async function fetchEspnPlayerPool(options?: {
+  limit?: number;
+  scoringPeriodId?: number;
+  status?: Array<"FREEAGENT" | "WAIVERS" | "ONTEAM">;
+}) {
+  const config = getEspnFantasyConfig();
+  const limit = Math.min(Math.max(options?.limit ?? 500, 1), 1500);
+  const scoringPeriodId = options?.scoringPeriodId ?? 0;
+  const url = new URL(
+    `${ESPN_BASE_URL}/seasons/${config.seasonId}/segments/0/leagues/${config.leagueId}`,
+  );
+  url.searchParams.set("view", "kona_player_info");
+  url.searchParams.set("scoringPeriodId", String(scoringPeriodId));
+
+  const playerFilter: Record<string, unknown> = {
+    limit,
+    sortPercOwned: { sortPriority: 1, sortAsc: false },
+  };
+  if (options?.status?.length) {
+    playerFilter.filterStatus = { value: options.status };
+  }
+
+  const response = await espnFetch(url, config, {
+    "X-Fantasy-Filter": JSON.stringify({ players: playerFilter }),
+  });
+  const body = (await response.json()) as EspnFantasyLeague;
+  return body.players ?? [];
 }
 
 export function teamDisplayName(team: EspnFantasyTeam) {
