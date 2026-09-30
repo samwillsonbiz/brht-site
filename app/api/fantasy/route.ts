@@ -1,16 +1,12 @@
 import { NextResponse } from "next/server";
 
+const DEFAULT_SHEET_CSV_URL =
+  "https://docs.google.com/spreadsheets/d/174l5TWQdzqHXHV112F15zFtfCW771ug439gZ66B6XHU/export?format=csv&gid=0";
+
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const sheetUrl = process.env.FANTASY_BASKETBALL_CSV_URL;
-
-  if (!sheetUrl) {
-    return NextResponse.json(
-      { error: "Fantasy basketball sheet feed is not configured." },
-      { status: 503 },
-    );
-  }
+  const sheetUrl = process.env.FANTASY_BASKETBALL_CSV_URL || DEFAULT_SHEET_CSV_URL;
 
   try {
     const response = await fetch(sheetUrl, { cache: "no-store" });
