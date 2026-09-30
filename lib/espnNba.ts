@@ -42,30 +42,8 @@ function competitorToTeam(competitor: any): NbaScheduleTeam {
   };
 }
 
-export async function fetchNbaSchedule(from: string, to: string) {
-  const url = new URL(NBA_SCOREBOARD_URL);
-  url.searchParams.set(
-    "dates",
-    `${from.replaceAll("-", "")}-${to.replaceAll("-", "")}`,
-  );
-  url.searchParams.set("limit", "1000");
-
-  const response = await fetch(url, {
-    cache: "no-store",
-    headers: {
-      Accept: "application/json",
-      "User-Agent": "Mozilla/5.0 (compatible; FantasyLab/1.0)",
-    },
-  });
-
-  if (!response.ok) {
-    const error = new Error(`ESPN NBA schedule request failed (${response.status})`);
-    Object.assign(error, { status: response.status });
-    throw error;
-  }
-
-  const body = (await response.json()) as { events?: any[] };
-  const games: NbaScheduleGame[] = (body.events ?? []).flatMap((event) => {
+function parseEvents(events: any[] = []) {
+  return events.flatMap((event): NbaScheduleGame[] => {
     const competition = event?.competitions?.[0];
     const competitors = competition?.competitors ?? [];
     const home = competitors.find((item: any) => item?.homeAway === "home");
@@ -103,6 +81,72 @@ export async function fetchNbaSchedule(from: string, to: string) {
       },
     ];
   });
+}
 
-  return games.sort((a, b) => a.tipoffAt.localeCompare(b.tipoffAt));
+function dateKeys(from: string, to: string) {
+  const start = new Date(`${from}T12:00:00Z`);
+  const end = new Date(`${to}T12:00:00Z`);
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime()) || end < start) {
+    throw new Error("Invalid NBA schedule date range.");
+  }
+
+  const dates: string[] = [];
+  const cursor = new Date(start);
+  while (cursor <= end && dates.length < 91) {
+    dates.push(cursor.toISOString().slice(0, 10));
+    cursor.setUTCDate(cursor.getUTCDate() + 1);
+  }
+  if (cursor <= end) {
+    throw new Error("NBA schedule requests are limited to 90 days at a time.");
+  }
+  return dates;
+}
+
+async function fetchScoreboardDate(date: string) {
+  const url = new URL(NBA_SCOREBOARD_URL);
+  url.searchParams.set("dates", date.replaceAll("-", ""));
+  url.searchParams.set("limit", "100");
+
+  const response = await fetch(url, {
+    cache: "no-store",
+    headers: {
+      Accept: "application/json, text/plain, */*",
+      "User-Agent":
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/151 Safari/537.36",
+      Referer: "https://www.espn.com/nba/schedule",
+      Origin: "https://www.espn.com",
+    },
+  });
+
+  if (!response.ok) {
+    const error = new Error(
+      `ESPN NBA schedule request failed for ${date} (${response.status})`,
+    );
+    Object.assign(error, { status: response.status, date });
+    throw error;
+  }
+
+  const body = (await response.json()) as { events?: any[] };
+  return parseEvents(body.events ?? []);
+}
+
+export async function fetchNbaSchedule(from: string, to: string) {
+  // ESPN's scoreboard date-range behavior changed in September 2026. Single-day
+  // requests remain reliable, so fetch the requested window in small concurrent
+  // batches and de-duplicate by ESPN event ID.
+  const dates = dateKeys(from, to);
+  const byId = new Map<string, NbaScheduleGame>();
+  const batchSize = 7;
+
+  for (let index = 0; index < dates.length; index += batchSize) {
+    const batch = dates.slice(index, index + batchSize);
+    const results = await Promise.all(batch.map(fetchScoreboardDate));
+    for (const games of results) {
+      for (const game of games) byId.set(game.id, game);
+    }
+  }
+
+  return Array.from(byId.values()).sort((a, b) =>
+    a.tipoffAt.localeCompare(b.tipoffAt),
+  );
 }
