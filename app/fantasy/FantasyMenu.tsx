@@ -73,7 +73,7 @@ export default function FantasyMenu() {
         aria-label="Open Fantasy Lab menu"
         aria-expanded={open}
         onClick={() => setOpen(true)}
-        className="fixed right-4 top-[72px] z-[70] inline-flex h-11 items-center gap-2 rounded-full border border-black/[0.08] bg-white/90 px-3.5 text-sm font-semibold text-[#1d1d1f] shadow-[0_8px_30px_rgba(0,0,0,0.10)] backdrop-blur-2xl transition hover:bg-white md:right-5 md:top-5"
+        className="fixed right-4 top-[72px] z-[70] inline-flex h-11 items-center gap-2 rounded-full border border-black/[0.08] bg-white/90 px-3.5 text-sm font-semibold text-[#1d1d1f] shadow-[0_8px_30px_rgba(0,0,0,0.10)] backdrop-blur-2xl transition hover:bg-white md:right-5"
       >
         <Menu className="h-4 w-4" />
         <span className="hidden sm:inline">Menu</span>
