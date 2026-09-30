@@ -8,28 +8,33 @@ export type EspnFantasyConfig = {
   espnS2?: string;
 };
 
+export type EspnFantasyRosterEntry = {
+  playerId?: number;
+  lineupSlotId?: number;
+  acquisitionDate?: number;
+  acquisitionType?: string;
+  playerPoolEntry?: {
+    player?: {
+      id?: number;
+      fullName?: string;
+      proTeamId?: number;
+      defaultPositionId?: number;
+      eligibleSlots?: number[];
+      injuryStatus?: string;
+    };
+  };
+};
+
 export type EspnFantasyTeam = {
   id?: number;
   abbrev?: string;
   location?: string;
   nickname?: string;
+  name?: string;
   owners?: string[];
   primaryOwner?: string;
   roster?: {
-    entries?: Array<{
-      playerId?: number;
-      lineupSlotId?: number;
-      playerPoolEntry?: {
-        player?: {
-          id?: number;
-          fullName?: string;
-          proTeamId?: number;
-          defaultPositionId?: number;
-          eligibleSlots?: number[];
-          injuryStatus?: string;
-        };
-      };
-    }>;
+    entries?: EspnFantasyRosterEntry[];
   };
 };
 
@@ -39,6 +44,19 @@ export type EspnFantasyLeague = {
   scoringPeriodId?: number;
   status?: { currentMatchupPeriod?: number };
   settings?: { name?: string };
+  draftDetail?: {
+    drafted?: boolean;
+    inProgress?: boolean;
+    completeDate?: number;
+    picks?: Array<{
+      id?: number;
+      playerId?: number;
+      teamId?: number;
+      overallPickNumber?: number;
+      roundId?: number;
+      roundPickNumber?: number;
+    }>;
+  };
   teams?: EspnFantasyTeam[];
 };
 
@@ -57,21 +75,18 @@ function cookieHeader(config: EspnFantasyConfig) {
   return `SWID=${config.swid}; espn_s2=${config.espnS2}`;
 }
 
-export async function fetchEspnFantasyLeague(
-  config = getEspnFantasyConfig(),
-): Promise<{ league: EspnFantasyLeague; authenticated: boolean }> {
-  const views = [
-    "mTeam",
-    "mRoster",
-    "mSettings",
-    "mMatchup",
-    "mMatchupScore",
-    "mScoreboard",
-  ];
+async function fetchEspnLeagueView(
+  config: EspnFantasyConfig,
+  views: string[],
+  scoringPeriodId?: number,
+): Promise<EspnFantasyLeague> {
   const url = new URL(
     `${ESPN_BASE_URL}/seasons/${config.seasonId}/segments/0/leagues/${config.leagueId}`,
   );
   views.forEach((view) => url.searchParams.append("view", view));
+  if (scoringPeriodId !== undefined) {
+    url.searchParams.set("scoringPeriodId", String(scoringPeriodId));
+  }
 
   const cookie = cookieHeader(config);
   const response = await fetch(url, {
@@ -92,12 +107,57 @@ export async function fetchEspnFantasyLeague(
     throw error;
   }
 
+  return (await response.json()) as EspnFantasyLeague;
+}
+
+export async function fetchEspnFantasyLeague(
+  config = getEspnFantasyConfig(),
+): Promise<{
+  league: EspnFantasyLeague;
+  authenticated: boolean;
+  rosterScoringPeriodId: number;
+}> {
+  // ESPN's mRoster view is scoring-period-sensitive. Fetch league metadata first,
+  // then explicitly request the roster for the current scoring period. This also
+  // works in preseason, where scoringPeriodId is normally 0.
+  const league = await fetchEspnLeagueView(config, [
+    "mTeam",
+    "mSettings",
+    "mMatchup",
+    "mMatchupScore",
+    "mScoreboard",
+    "mDraftDetail",
+    "mStatus",
+  ]);
+
+  const rosterScoringPeriodId = league.scoringPeriodId ?? 0;
+  const rosterLeague = await fetchEspnLeagueView(
+    config,
+    ["mRoster"],
+    rosterScoringPeriodId,
+  );
+
+  const rostersByTeam = new Map(
+    (rosterLeague.teams ?? []).map((team) => [team.id, team.roster]),
+  );
+
+  league.teams = (league.teams ?? rosterLeague.teams ?? []).map((team) => ({
+    ...team,
+    roster: rostersByTeam.get(team.id) ?? team.roster,
+  }));
+
   return {
-    league: (await response.json()) as EspnFantasyLeague,
-    authenticated: Boolean(cookie),
+    league,
+    authenticated: Boolean(cookieHeader(config)),
+    rosterScoringPeriodId,
   };
 }
 
 export function teamDisplayName(team: EspnFantasyTeam) {
-  return [team.location, team.nickname].filter(Boolean).join(" ") || team.abbrev || `Team ${team.id ?? ""}`;
+  return (
+    team.name ||
+    [team.location, team.nickname].filter(Boolean).join(" ") ||
+    team.abbrev ||
+    `Team ${team.id ?? ""}`
+  );
 }
