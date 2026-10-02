@@ -201,7 +201,6 @@ function sentimentForText(text: string) {
   if (raw > 0) raw += punctuationBoost;
   if (raw < 0) raw -= punctuationBoost;
 
-  // Compress arbitrarily large lexical totals to a stable -1..1 interval.
   const sentiment = Math.tanh(raw / 3.5);
   const confidence = clamp(42 + hits * 11 + Math.min(18, text.length / 28), 42, 94) / 100;
   const label: SentimentLabel = sentiment > 0.12 ? "positive" : sentiment < -0.12 ? "negative" : "neutral";
@@ -222,13 +221,11 @@ function recencyWeight(publishedAt?: string) {
 }
 
 function engagementWeight(engagement = 0) {
-  // Log scaling means 10,000 likes matters more than 10 likes, but never 1,000x more.
   return clamp(1 + Math.log10(1 + Math.max(0, engagement)) * 0.42, 1, 2.7);
 }
 
 function consensusFromShares(positive: number, neutral: number, negative: number) {
   const dominant = Math.max(positive, neutral, negative);
-  // 33/33/33 => 0 consensus, 100/0/0 => 100 consensus.
   return clamp(((dominant - 1 / 3) / (2 / 3)) * 100);
 }
 
@@ -320,7 +317,7 @@ export function scoreConversation(inputItems: ScorableItem[]): ScoreSummary {
     .map(summarizeClassified)
     .sort((a, b) => b.sampleSize - a.sampleSize);
 
-  const eligibleBubbleSources = sourceScores.filter((score) => score.sampleSize >= 3);
+  const eligibleBubbleSources = sourceScores.filter((score) => score.sampleSize >= 25);
   const bubbleGap = eligibleBubbleSources.length >= 2
     ? Math.max(...eligibleBubbleSources.map((score) => score.vibe)) - Math.min(...eligibleBubbleSources.map((score) => score.vibe))
     : null;
@@ -330,8 +327,12 @@ export function scoreConversation(inputItems: ScorableItem[]): ScoreSummary {
   const classifiedPct = nonNeutral / classified.length;
   const avgClassifierConfidence = classified.reduce((sum, item) => sum + item.classifierConfidence, 0) / classified.length;
 
-  const sampleFactor = clamp(Math.log10(1 + classified.length) / Math.log10(501) * 100);
-  const sourceFactor = clamp(sourceScores.length / 4 * 100);
+  // Prototype confidence used to saturate around 500 reactions. The product goal is
+  // much broader: tens of thousands of reactions across many platforms. Sample
+  // confidence therefore keeps improving until roughly 50k reactions, and source
+  // breadth keeps improving until roughly six independently measured platforms.
+  const sampleFactor = clamp(Math.log10(1 + classified.length) / Math.log10(50_001) * 100);
+  const sourceFactor = clamp(sourceScores.length / 6 * 100);
   const authorFactor = classified.length ? clamp((uniqueAuthors / classified.length) * 110) : 0;
   const confidence = round(
     sampleFactor * 0.38 +
@@ -347,9 +348,9 @@ export function scoreConversation(inputItems: ScorableItem[]): ScoreSummary {
     return Number.isFinite(time) && Date.now() - time <= 24 * 3_600_000;
   }).length;
   const recentShare = veryRecent / classified.length;
-  const volumeHeat = clamp(Math.log10(1 + classified.length) / Math.log10(201) * 50);
+  const volumeHeat = clamp(Math.log10(1 + classified.length) / Math.log10(50_001) * 50);
   const engagementHeat = clamp(Math.log10(1 + totalEngagement) / Math.log10(100001) * 28);
-  const breadthHeat = clamp(sourceScores.length / 4 * 14);
+  const breadthHeat = clamp(sourceScores.length / 6 * 14);
   const recencyHeat = recentShare * 8;
   const heat = round(clamp(volumeHeat + engagementHeat + breadthHeat + recencyHeat));
 
@@ -367,6 +368,6 @@ export function scoreConversation(inputItems: ScorableItem[]): ScoreSummary {
     negativePct: overall.negativePct,
     sourcesMeasured: sourceScores.length,
     sourceScores,
-    methodology: "V0.1 deterministic lexical stance proxy. Near-duplicate reactions are removed; repeat authors are discounted; engagement is logarithmically weighted; recency and classifier confidence affect weight. News/GDELT is context only and never enters the sentiment score.",
+    methodology: "V0.1 deterministic lexical stance proxy. Near-duplicate reactions are removed; repeat authors are discounted; engagement is logarithmically weighted; recency and classifier confidence affect weight. Confidence scales toward roughly 50k reactions across six independently measured platforms. News/GDELT is context only and never enters sentiment.",
   };
 }
