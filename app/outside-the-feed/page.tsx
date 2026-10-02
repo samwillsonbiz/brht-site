@@ -4,6 +4,8 @@ import { LockKeyhole, Menu, Search, ShieldCheck, X } from "lucide-react";
 import { useState } from "react";
 import AutoTrendingFeed from "./auto-trending-feed";
 
+const PLATFORMS = ["Google", "Reddit", "Instagram", "TikTok", "X", "Bluesky", "YouTube", "OpenAI"];
+
 export default function OutsideTheFeedPage() {
   const [paywallOpen, setPaywallOpen] = useState(false);
   const [mobileMenu, setMobileMenu] = useState(false);
@@ -49,7 +51,7 @@ export default function OutsideTheFeedPage() {
         )}
       </header>
 
-      <section className="mx-auto max-w-[1180px] px-5 pb-9 pt-14 text-center lg:px-8 lg:pb-10 lg:pt-20">
+      <section className="mx-auto max-w-[1180px] px-5 pb-6 pt-14 text-center lg:px-8 lg:pb-7 lg:pt-20">
         <h1 className="mx-auto max-w-[980px] text-[clamp(3.2rem,6.4vw,6rem)] font-[760] leading-[0.95] tracking-[-0.065em]">
           <span className="text-[#101a33]">Get outside </span>
           <span className="text-[#2878ff]">your feed.</span>
@@ -60,6 +62,17 @@ export default function OutsideTheFeedPage() {
           <span className="flex-1 py-3 text-[15px] text-[#17213a]/36 md:text-[16px]">Search a topic...</span>
           <span className="hidden rounded-2xl bg-[#2878ff] px-4 py-3 text-xs font-bold text-white sm:block">Search</span>
         </button>
+
+        <div className="mx-auto mt-4 flex max-w-[920px] flex-wrap items-center justify-center gap-x-1.5 gap-y-1.5 text-[11px] font-bold text-[#17213a]/42">
+          <span className="mr-1 text-[10px] font-extrabold uppercase tracking-[0.09em] text-[#17213a]/28">Across</span>
+          {PLATFORMS.map((platform, index) => (
+            <span key={platform} className="inline-flex items-center gap-1.5">
+              <span className="rounded-full border border-[#17213a]/[0.07] bg-white px-2.5 py-1.5 shadow-sm">{platform}</span>
+              {index < PLATFORMS.length - 1 && <span className="text-[#17213a]/16">·</span>}
+            </span>
+          ))}
+        </div>
+        <p className="mx-auto mt-2 max-w-2xl text-[11px] font-semibold leading-5 text-[#17213a]/35">One public view of what is actually getting attention — and how people are reacting across the internet.</p>
       </section>
 
       <AutoTrendingFeed />
@@ -67,7 +80,7 @@ export default function OutsideTheFeedPage() {
       <section id="principles" className="border-y border-[#17213a]/[0.06] bg-white">
         <div className="mx-auto grid max-w-[1120px] gap-10 px-5 py-16 md:grid-cols-[0.9fr_1.1fr] md:items-center lg:px-8 lg:py-20">
           <div>
-            <h2 className="text-4xl font-[750] leading-[1] tracking-[-0.055em] md:text-5xl">No Ads.<br />No algorithm</h2>
+            <h2 className="text-4xl font-[750] leading-[1] tracking-[-0.055em] md:text-5xl">No ads.<br />No algorithm.<br />No propaganda.</h2>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             {[
