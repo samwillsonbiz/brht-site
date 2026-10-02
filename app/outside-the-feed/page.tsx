@@ -20,7 +20,7 @@ export default function OutsideTheFeedPage() {
               <span className="h-3.5 w-3.5 rounded-full border-[3px] border-white" />
               <span className="absolute -right-1 -top-1 h-3 w-3 rounded-full bg-[#9ec3ff]" />
             </span>
-            <span className="text-[17px] font-bold">Outside the Feed</span>
+            <span className="text-[17px] font-bold">Global Reacts</span>
           </a>
 
           <nav className="hidden flex-1 items-center gap-6 text-[13px] font-semibold text-[#17213a]/52 md:flex">
@@ -67,7 +67,7 @@ export default function OutsideTheFeedPage() {
       <section id="principles" className="border-y border-[#17213a]/[0.06] bg-white">
         <div className="mx-auto grid max-w-[1120px] gap-10 px-5 py-16 md:grid-cols-[0.9fr_1.1fr] md:items-center lg:px-8 lg:py-20">
           <div>
-            <h2 className="text-4xl font-[750] leading-[1] tracking-[-0.055em] md:text-5xl">You pay us.<br />Advertisers don&apos;t.</h2>
+            <h2 className="text-4xl font-[750] leading-[1] tracking-[-0.055em] md:text-5xl">No Ads.<br />No algorithm</h2>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             {[
@@ -93,7 +93,7 @@ export default function OutsideTheFeedPage() {
               <div className="grid h-11 w-11 place-items-center rounded-[14px] bg-[#2878ff]/10 text-[#2878ff]"><LockKeyhole className="h-5 w-5" /></div>
               <button type="button" onClick={() => setPaywallOpen(false)} className="grid h-9 w-9 place-items-center rounded-full bg-[#f6f8fc]"><X className="h-4 w-4" /></button>
             </div>
-            <div className="mt-6 text-xs font-extrabold uppercase tracking-[0.08em] text-[#2878ff]">Outside the Feed membership</div>
+            <div className="mt-6 text-xs font-extrabold uppercase tracking-[0.08em] text-[#2878ff]">Global Reacts membership</div>
             <h2 className="mt-2 text-3xl font-[750] leading-[1.05] tracking-[-0.045em]">Go deeper on anything.</h2>
             <p className="mt-4 text-sm leading-6 text-[#17213a]/52">Search topics, compare communities, follow changes over time and inspect the conversation behind the score.</p>
             <button type="button" className="mt-7 w-full rounded-2xl bg-[#2878ff] px-5 py-4 text-sm font-extrabold text-white">Join the early membership</button>
