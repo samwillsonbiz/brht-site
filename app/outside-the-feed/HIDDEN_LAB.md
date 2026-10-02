@@ -1,0 +1,1 @@
+The former "Now we count the room" live scoring lab is intentionally hidden from the public Outside the Feed homepage for now. The underlying scoring code remains available for future iteration.
