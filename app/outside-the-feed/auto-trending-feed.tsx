@@ -8,6 +8,7 @@ type SourceSignal = {
   source: string;
   detail: string;
   url?: string;
+  items?: number;
 };
 
 type Trend = {
@@ -16,8 +17,10 @@ type Trend = {
   description?: string;
   query: string;
   attention: number;
+  platformCount?: number;
   sourceCount: number;
   sources: SourceSignal[];
+  observedSocialItems?: number;
   observedItems?: number;
   observedComments?: number;
   observedViews?: number;
@@ -37,6 +40,15 @@ function attentionStyle(value: number) {
 
 function compactNumber(value: number) {
   return new Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 }).format(value);
+}
+
+function sourceLabel(signal: SourceSignal) {
+  const count = signal.items ?? 0;
+  if (!count) return signal.source;
+  if (signal.source === "YouTube") return `${signal.source} · ${count} video${count === 1 ? "" : "s"}`;
+  if (signal.source === "Bluesky") return `${signal.source} · ${count} post${count === 1 ? "" : "s"}`;
+  if (signal.source === "Hacker News") return `${signal.source} · ${count} discussion${count === 1 ? "" : "s"}`;
+  return signal.source;
 }
 
 export default function AutoTrendingFeed() {
@@ -95,19 +107,23 @@ export default function AutoTrendingFeed() {
         <div className="overflow-hidden rounded-[24px] border border-[#17213a]/[0.07] bg-white shadow-[0_18px_50px_rgba(33,56,108,0.05)]">
           {result.topics.map((topic) => {
             const breadth: string[] = [];
-            if ((topic.observedItems ?? 0) > 1) breadth.push(`${compactNumber(topic.observedItems ?? 0)} posts/videos seen`);
+            const socialItems = topic.observedSocialItems ?? topic.observedItems ?? 0;
+            if (socialItems > 0) breadth.push(`${compactNumber(socialItems)} social posts/videos observed`);
             if ((topic.observedComments ?? 0) > 0) breadth.push(`${compactNumber(topic.observedComments ?? 0)} comments`);
             if ((topic.observedViews ?? 0) > 0) breadth.push(`${compactNumber(topic.observedViews ?? 0)} views`);
+
+            const platformCount = topic.platformCount ?? topic.sourceCount;
 
             return (
               <div key={`${topic.rank}-${topic.title}`} className="grid gap-4 border-b border-[#17213a]/[0.07] px-5 py-5 last:border-b-0 md:grid-cols-[38px_minmax(0,1fr)_138px_190px] md:items-center md:px-7">
                 <div className="hidden text-center text-base font-semibold text-[#17213a]/28 md:block">{topic.rank}</div>
+
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2 text-[10px] font-extrabold uppercase tracking-[0.06em] text-[#17213a]/34">
                     <span className="md:hidden">#{topic.rank}</span>
                     <span className="inline-flex items-center gap-1 text-rose-500"><Flame className="h-3 w-3" /> {topic.attention} attention</span>
                     <span>·</span>
-                    <span>{topic.sourceCount} source{topic.sourceCount === 1 ? "" : "s"}</span>
+                    <span>{platformCount} platform{platformCount === 1 ? "" : "s"}</span>
                   </div>
 
                   <h3 className="mt-1.5 text-[21px] font-[750] leading-[1.14] tracking-[-0.03em] text-[#101a33] md:text-[24px]">{topic.title}</h3>
@@ -121,12 +137,12 @@ export default function AutoTrendingFeed() {
                   )}
 
                   <div className="mt-2.5 flex flex-wrap gap-2">
-                    {topic.sources.slice(0, 4).map((signal, index) => signal.url ? (
-                      <a key={`${signal.source}-${index}`} href={signal.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-full border border-[#2878ff]/10 bg-[#2878ff]/[0.045] px-2.5 py-1.5 text-[10px] font-bold text-[#2878ff] hover:bg-[#2878ff]/10" onClick={(event) => event.stopPropagation()}>
-                        {signal.source} <ExternalLink className="h-2.5 w-2.5" />
+                    {topic.sources.slice(0, 4).map((signal) => signal.url ? (
+                      <a key={signal.source} href={signal.url} target="_blank" rel="noreferrer" title={signal.detail} className="inline-flex items-center gap-1 rounded-full border border-[#2878ff]/10 bg-[#2878ff]/[0.045] px-2.5 py-1.5 text-[10px] font-bold text-[#2878ff] hover:bg-[#2878ff]/10" onClick={(event) => event.stopPropagation()}>
+                        {sourceLabel(signal)} <ExternalLink className="h-2.5 w-2.5" />
                       </a>
                     ) : (
-                      <span key={`${signal.source}-${index}`} className="rounded-full border border-[#17213a]/7 bg-[#f6f8fc] px-2.5 py-1.5 text-[10px] font-bold text-[#17213a]/46">{signal.source}</span>
+                      <span key={signal.source} title={signal.detail} className="rounded-full border border-[#17213a]/7 bg-[#f6f8fc] px-2.5 py-1.5 text-[10px] font-bold text-[#17213a]/46">{sourceLabel(signal)}</span>
                     ))}
                   </div>
                 </div>
