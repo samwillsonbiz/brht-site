@@ -9,9 +9,16 @@ export const metadata: Metadata = {
 
 export default function FantasyLayout({ children }: { children: React.ReactNode }) {
   return (
-    <>
+    <div
+      className="fantasy-shell min-h-screen bg-[#f5f5f7] text-[#1d1d1f]"
+      style={{
+        fontFamily:
+          '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif',
+      }}
+    >
+      <style>{`.fantasy-shell main > header { display: none !important; }`}</style>
       <FantasyMenu />
       {children}
-    </>
+    </div>
   );
 }
