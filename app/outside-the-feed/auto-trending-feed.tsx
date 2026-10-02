@@ -105,6 +105,58 @@ function mergeSources(sources: SourceSignal[]) {
   return [...merged.values()];
 }
 
+function log10(value: number) {
+  return Math.log10(Math.max(1, value));
+}
+
+function evidenceForSource(signal: SourceSignal) {
+  const items = signal.items ?? 0;
+  const comments = signal.comments ?? 0;
+  const views = signal.views ?? 0;
+
+  if (signal.source === "TikTok") {
+    return 12 + log10(views + 1) * 8.5 + log10(items + 1) * 7.5;
+  }
+  if (signal.source === "YouTube") {
+    return 10 + log10(views + 1) * 8 + log10(comments + 1) * 7 + Math.log1p(items) * 3;
+  }
+  if (signal.source === "Google Trends") {
+    return 9 + log10(items + 1) * 12;
+  }
+  if (signal.source === "GDELT") {
+    return 6 + Math.log1p(items) * 7;
+  }
+  if (signal.source === "Bluesky") {
+    return 5 + Math.log1p(items) * 8;
+  }
+  if (signal.source === "Hacker News") {
+    return 4 + Math.log1p(comments + items) * 6;
+  }
+  if (signal.source === "Wikipedia") {
+    return 4 + log10(views + 1) * 6;
+  }
+  return 2 + Math.log1p(items + comments) * 4;
+}
+
+function evidenceScore(topic: Trend) {
+  const sourceScore = topic.sources.reduce((sum, signal) => sum + evidenceForSource(signal), 0);
+  const sourceCount = new Set(topic.sources.map((source) => source.source)).size;
+  const breadthBonus = Math.max(0, sourceCount - 1) * 18;
+  return sourceScore + breadthBonus;
+}
+
+function youtubeVideoId(url?: string) {
+  if (!url) return undefined;
+  try {
+    const parsed = new URL(url);
+    if (parsed.hostname.includes("youtube.com")) return parsed.searchParams.get("v") ?? undefined;
+    if (parsed.hostname === "youtu.be") return parsed.pathname.replace(/^\//, "") || undefined;
+  } catch {
+    return undefined;
+  }
+  return undefined;
+}
+
 function combineDiscovery(base: Result, additions: Array<Result | null | undefined>): Result {
   const topics = base.topics.map((topic) => ({ ...topic, sources: [...topic.sources] }));
   const statuses = { ...base.sourceStatus };
@@ -123,17 +175,13 @@ function combineDiscovery(base: Result, additions: Array<Result | null | undefin
         continue;
       }
 
-      const oldSourceCount = new Set(existing.sources.map((source) => source.source)).size;
       existing.sources = mergeSources([...existing.sources, ...incoming.sources]);
-      const newSourceCount = new Set(existing.sources.map((source) => source.source)).size;
       existing.sourceCount = existing.sources.length;
-      existing.platformCount = newSourceCount;
+      existing.platformCount = new Set(existing.sources.map((source) => source.source)).size;
       existing.observedSocialItems = (existing.observedSocialItems ?? existing.observedItems ?? 0) + (incoming.observedSocialItems ?? incoming.observedItems ?? 0);
       existing.observedItems = existing.observedSocialItems;
       existing.observedComments = (existing.observedComments ?? 0) + (incoming.observedComments ?? 0);
       existing.observedViews = (existing.observedViews ?? 0) + (incoming.observedViews ?? 0);
-      const breadthGain = Math.max(0, newSourceCount - oldSourceCount);
-      existing.attention = Math.min(100, Math.max(existing.attention, incoming.attention) + Math.min(10, breadthGain * 4));
 
       // Prefer a readable named topic over a raw hashtag when another source resolves it.
       if (existing.title.startsWith("#") && !incoming.title.startsWith("#")) {
@@ -146,13 +194,22 @@ function combineDiscovery(base: Result, additions: Array<Result | null | undefin
     }
   }
 
-  topics.sort((a, b) => {
-    const aBreadth = new Set(a.sources.map((source) => source.source)).size - 1;
-    const bBreadth = new Set(b.sources.map((source) => source.source)).size - 1;
-    return (b.attention + bBreadth * 3) - (a.attention + aBreadth * 3);
-  });
+  const ranked = topics
+    .map((topic) => ({ topic, evidence: evidenceScore(topic) }))
+    .sort((a, b) => b.evidence - a.evidence)
+    .slice(0, 10);
 
-  const reranked = topics.slice(0, 10).map((topic, index) => ({ ...topic, rank: index + 1 }));
+  const maxEvidence = ranked[0]?.evidence ?? 1;
+  const minEvidence = ranked[ranked.length - 1]?.evidence ?? 0;
+  const range = Math.max(1, maxEvidence - minEvidence);
+
+  const reranked = ranked.map(({ topic, evidence }, index) => ({
+    ...topic,
+    rank: index + 1,
+    sourceCount: new Set(topic.sources.map((source) => source.source)).size,
+    platformCount: new Set(topic.sources.map((source) => source.source)).size,
+    attention: Math.max(45, Math.min(100, Math.round(52 + ((evidence - minEvidence) / range) * 48))),
+  }));
 
   return {
     generatedAt: new Date(Number.isFinite(newestTimestamp) ? newestTimestamp : Date.now()).toISOString(),
@@ -233,6 +290,8 @@ export default function AutoTrendingFeed() {
             if ((topic.observedViews ?? 0) > 0) breadth.push(`${compactNumber(topic.observedViews ?? 0)} platform views`);
 
             const sourceCount = new Set(topic.sources.map((source) => source.source)).size;
+            const youtubeSource = topic.sources.find((source) => source.source === "YouTube");
+            const seedVideoId = youtubeVideoId(youtubeSource?.url);
 
             return (
               <div key={`${topic.rank}-${topic.title}`} className="grid gap-4 border-b border-[#17213a]/[0.07] px-5 py-5 last:border-b-0 md:grid-cols-[38px_minmax(0,1fr)_138px_190px] md:items-center md:px-7">
@@ -272,7 +331,11 @@ export default function AutoTrendingFeed() {
                   <div className={`mt-1 text-[32px] font-[850] leading-none tracking-[-0.06em] ${attentionStyle(topic.attention)}`}>{topic.attention}</div>
                 </div>
 
-                <LiveTopicScore query={topic.query} />
+                <LiveTopicScore
+                  query={topic.query}
+                  youtubeVideoIds={seedVideoId ? [seedVideoId] : []}
+                  allowYouTubeSearch={topic.rank <= 3}
+                />
               </div>
             );
           })}
