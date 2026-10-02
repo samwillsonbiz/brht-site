@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 export default function OutsideTheFeedLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return children;
 }
