@@ -51,7 +51,7 @@ async function searchBluesky(query: string): Promise<SampleItem[]> {
     if (cursor) url.searchParams.set("cursor", cursor);
 
     const response = await fetch(url, {
-      headers: { "User-Agent": "OutsideTheFeed/0.5" },
+      headers: { "User-Agent": "OutsideTheFeed/0.8" },
       next: { revalidate: 180 },
     });
     if (!response.ok) break;
@@ -90,7 +90,7 @@ async function searchHackerNews(query: string): Promise<SampleItem[]> {
   url.searchParams.set("hitsPerPage", "75");
 
   const response = await fetch(url, {
-    headers: { "User-Agent": "OutsideTheFeed/0.5" },
+    headers: { "User-Agent": "OutsideTheFeed/0.8" },
     next: { revalidate: 300 },
   });
 
@@ -118,7 +118,7 @@ async function searchGdelt(query: string): Promise<SampleItem[]> {
   url.searchParams.set("timespan", "7d");
 
   const response = await fetch(url, {
-    headers: { "User-Agent": "OutsideTheFeed/0.5" },
+    headers: { "User-Agent": "OutsideTheFeed/0.8" },
     next: { revalidate: 600 },
   });
 
@@ -134,33 +134,54 @@ async function searchGdelt(query: string): Promise<SampleItem[]> {
   }));
 }
 
-async function searchYouTube(query: string): Promise<SampleItem[]> {
+function safeVideoIds(value: string | null) {
+  if (!value) return [];
+  return value
+    .split(",")
+    .map((id) => id.trim())
+    .filter((id) => /^[A-Za-z0-9_-]{6,20}$/.test(id))
+    .slice(0, 12);
+}
+
+async function searchYouTube(query: string, seedVideoIds: string[], allowSearch: boolean): Promise<SampleItem[]> {
   const key = process.env.YOUTUBE_API_KEY;
   if (!key) return [];
 
-  const searchUrl = new URL("https://www.googleapis.com/youtube/v3/search");
-  searchUrl.searchParams.set("part", "snippet");
-  searchUrl.searchParams.set("type", "video");
-  searchUrl.searchParams.set("q", query);
-  searchUrl.searchParams.set("maxResults", "25");
-  searchUrl.searchParams.set("order", "relevance");
-  searchUrl.searchParams.set("relevanceLanguage", "en");
-  searchUrl.searchParams.set("publishedAfter", new Date(Date.now() - 45 * 86400000).toISOString());
-  searchUrl.searchParams.set("key", key);
+  const videoIds = new Set(seedVideoIds);
 
-  const searchResponse = await fetch(searchUrl, { next: { revalidate: 900 } });
-  if (!searchResponse.ok) return [];
-  const searchData = (await searchResponse.json()) as { items?: YouTubeSearchItem[] };
-  const searchItems = searchData.items ?? [];
-  const videoIds = searchItems.map((item) => item.id?.videoId).filter((id): id is string => Boolean(id));
-  if (!videoIds.length) return [];
+  // YouTube search.list costs 100 quota units. Only use it for the few top topics
+  // explicitly allowed by the front page, rather than once for every card on every refresh.
+  if (allowSearch) {
+    const searchUrl = new URL("https://www.googleapis.com/youtube/v3/search");
+    searchUrl.searchParams.set("part", "snippet");
+    searchUrl.searchParams.set("type", "video");
+    searchUrl.searchParams.set("q", query);
+    searchUrl.searchParams.set("maxResults", "25");
+    searchUrl.searchParams.set("order", "relevance");
+    searchUrl.searchParams.set("relevanceLanguage", "en");
+    searchUrl.searchParams.set("publishedAfter", new Date(Date.now() - 45 * 86400000).toISOString());
+    searchUrl.searchParams.set("key", key);
+
+    const searchResponse = await fetch(searchUrl, { next: { revalidate: 1800 } });
+    if (searchResponse.ok) {
+      const searchData = (await searchResponse.json()) as { items?: YouTubeSearchItem[] };
+      for (const item of searchData.items ?? []) {
+        const id = item.id?.videoId;
+        if (id) videoIds.add(id);
+      }
+    }
+  }
+
+  const ids = [...videoIds].slice(0, 25);
+  if (!ids.length) return [];
 
   const statsUrl = new URL("https://www.googleapis.com/youtube/v3/videos");
   statsUrl.searchParams.set("part", "snippet,statistics");
-  statsUrl.searchParams.set("id", videoIds.join(","));
+  statsUrl.searchParams.set("id", ids.join(","));
   statsUrl.searchParams.set("key", key);
   const statsResponse = await fetch(statsUrl, { next: { revalidate: 900 } });
-  const statsData = statsResponse.ok ? ((await statsResponse.json()) as { items?: YouTubeVideo[] }) : { items: [] };
+  if (!statsResponse.ok) return [];
+  const statsData = (await statsResponse.json()) as { items?: YouTubeVideo[] };
 
   const rankedVideos = (statsData.items ?? [])
     .map((video) => ({
@@ -211,6 +232,8 @@ async function searchYouTube(query: string): Promise<SampleItem[]> {
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const query = (searchParams.get("q") ?? "").trim().slice(0, 160);
+  const seedVideoIds = safeVideoIds(searchParams.get("youtubeVideoIds"));
+  const allowYouTubeSearch = searchParams.get("youtubeSearch") === "1";
 
   if (query.length < 2) {
     return NextResponse.json({ error: "Query must be at least 2 characters." }, { status: 400 });
@@ -220,7 +243,7 @@ export async function GET(request: Request) {
     searchBluesky(query).catch(() => []),
     searchHackerNews(query).catch(() => []),
     searchGdelt(query).catch(() => []),
-    searchYouTube(query).catch(() => []),
+    searchYouTube(query, seedVideoIds, allowYouTubeSearch).catch(() => []),
   ]);
 
   const statuses: SourceStatus[] = [
@@ -228,10 +251,10 @@ export async function GET(request: Request) {
     { id: "hackernews", name: "Hacker News", mode: "measured", note: "Public Algolia API; counted only where Hacker News has relevant discussion.", count: hackerNews.length },
     { id: "gdelt", name: "News / open web", mode: "context", note: "GDELT supplies factual context only and is excluded from sentiment scoring.", count: gdelt.length },
     process.env.YOUTUBE_API_KEY
-      ? { id: "youtube", name: "YouTube", mode: "measured", note: "Official Data API; samples comments across up to 12 relevant recent videos (up to ~1,200 top-level comments).", count: youtube.length }
-      : { id: "youtube", name: "YouTube", mode: "setup", note: "Collector is ready; add YOUTUBE_API_KEY to begin sampling up to ~1,200 comments per topic." },
+      ? { id: "youtube", name: "YouTube", mode: "measured", note: allowYouTubeSearch ? "Official Data API; known videos plus a cached search are sampled across up to 12 videos." : "Official Data API; reuses videos already found during discovery so scoring does not spend search quota unnecessarily.", count: youtube.length }
+      : { id: "youtube", name: "YouTube", mode: "setup", note: "Collector is ready; add YOUTUBE_API_KEY to begin sampling comments." },
     { id: "reddit", name: "Reddit", mode: "pending", note: "Commercial data permission/licensing is required before Reddit can enter the score." },
-    { id: "tiktok", name: "TikTok", mode: "pending", note: "No compliant broad commercial comment feed is connected yet, so TikTok is not included in the score." },
+    { id: "tiktok", name: "TikTok", mode: "pending", note: "TikTok attention is measured separately; TikTok comments are not included in Vibe until a compliant commercial reaction feed is connected." },
     { id: "instagram", name: "Instagram / Reels", mode: "pending", note: "No approved broad Reels-comment collector is connected yet, so Reels is not included in the score." },
     { id: "chatgpt", name: "OpenAI web context", mode: "setup", note: "Useful for discovery/context later, but search results will never be counted as representative social reactions." },
     { id: "x", name: "X", mode: "setup", note: "Can enter the scoring model once the paid API is connected." },
