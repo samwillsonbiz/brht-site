@@ -30,7 +30,6 @@ export default function OutsideTheFeedPage() {
           </nav>
 
           <div className="ml-auto hidden items-center gap-2 md:flex">
-            <span className="rounded-full border border-[#2878ff]/15 bg-[#2878ff]/7 px-3 py-2 text-[10px] font-extrabold uppercase tracking-[0.08em] text-[#2878ff]">100% ad free</span>
             <button type="button" onClick={() => setPaywallOpen(true)} className="grid h-9 w-9 place-items-center rounded-full border border-[#17213a]/8 bg-white text-[#17213a]/60 hover:text-[#2878ff]" aria-label="Search"><Search className="h-4 w-4" /></button>
             <button type="button" onClick={() => setPaywallOpen(true)} className="rounded-full bg-[#2878ff] px-4 py-2.5 text-[13px] font-bold text-white shadow-[0_8px_24px_rgba(40,120,255,0.2)] hover:bg-[#1769e8]">Membership</button>
           </div>
@@ -50,16 +49,13 @@ export default function OutsideTheFeedPage() {
         )}
       </header>
 
-      <section className="mx-auto max-w-[1180px] px-5 pb-10 pt-14 text-center lg:px-8 lg:pb-12 lg:pt-20">
-        <h1 className="mx-auto max-w-[920px] text-[clamp(3rem,6vw,5.7rem)] font-[760] leading-[0.95] tracking-[-0.06em] text-[#101a33]">
-          Get outside your feed.
-          <span className="mt-1 block text-[#2878ff]">See what&apos;s actually trending.</span>
+      <section className="mx-auto max-w-[1180px] px-5 pb-9 pt-14 text-center lg:px-8 lg:pb-10 lg:pt-20">
+        <h1 className="mx-auto max-w-[980px] text-[clamp(3.2rem,6.4vw,6rem)] font-[760] leading-[0.95] tracking-[-0.065em]">
+          <span className="text-[#101a33]">Get outside </span>
+          <span className="text-[#2878ff]">your feed.</span>
         </h1>
-        <p className="mx-auto mt-5 max-w-[660px] text-[16px] leading-7 tracking-[-0.01em] text-[#17213a]/50 md:text-lg">
-          What people are talking about, how they feel, and where the conversation is moving.
-        </p>
 
-        <button type="button" onClick={() => setPaywallOpen(true)} className="group mx-auto mt-7 flex w-full max-w-[760px] items-center gap-3 rounded-[20px] border border-[#2878ff]/12 bg-white p-2.5 text-left shadow-[0_14px_42px_rgba(33,56,108,0.08)] transition hover:-translate-y-0.5 hover:border-[#2878ff]/24">
+        <button type="button" onClick={() => setPaywallOpen(true)} className="group mx-auto mt-8 flex w-full max-w-[760px] items-center gap-3 rounded-[20px] border border-[#2878ff]/12 bg-white p-2.5 text-left shadow-[0_14px_42px_rgba(33,56,108,0.08)] transition hover:-translate-y-0.5 hover:border-[#2878ff]/24">
           <Search className="ml-3 h-5 w-5 shrink-0 text-[#2878ff]/65" />
           <span className="flex-1 py-3 text-[15px] text-[#17213a]/36 md:text-[16px]">Search a topic...</span>
           <span className="hidden rounded-2xl bg-[#2878ff] px-4 py-3 text-xs font-bold text-white sm:block">Search</span>
