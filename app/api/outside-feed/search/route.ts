@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { scoreConversation } from "@/lib/outside-feed/scoring";
 
 type SourceStatus = {
   id: string;
@@ -30,11 +31,11 @@ const stripHtml = (value: string | null | undefined) =>
 async function searchBluesky(query: string): Promise<SampleItem[]> {
   const url = new URL("https://public.api.bsky.app/xrpc/app.bsky.feed.searchPosts");
   url.searchParams.set("q", query);
-  url.searchParams.set("limit", "25");
+  url.searchParams.set("limit", "50");
   url.searchParams.set("sort", "latest");
 
   const response = await fetch(url, {
-    headers: { "User-Agent": "OutsideTheFeed/0.1" },
+    headers: { "User-Agent": "OutsideTheFeed/0.2" },
     next: { revalidate: 60 },
   });
 
@@ -59,10 +60,10 @@ async function searchHackerNews(query: string): Promise<SampleItem[]> {
   const url = new URL("https://hn.algolia.com/api/v1/search_by_date");
   url.searchParams.set("query", query);
   url.searchParams.set("tags", "(story,comment)");
-  url.searchParams.set("hitsPerPage", "25");
+  url.searchParams.set("hitsPerPage", "50");
 
   const response = await fetch(url, {
-    headers: { "User-Agent": "OutsideTheFeed/0.1" },
+    headers: { "User-Agent": "OutsideTheFeed/0.2" },
     next: { revalidate: 60 },
   });
 
@@ -90,7 +91,7 @@ async function searchGdelt(query: string): Promise<SampleItem[]> {
   url.searchParams.set("timespan", "7d");
 
   const response = await fetch(url, {
-    headers: { "User-Agent": "OutsideTheFeed/0.1" },
+    headers: { "User-Agent": "OutsideTheFeed/0.2" },
     next: { revalidate: 300 },
   });
 
@@ -114,7 +115,7 @@ async function searchYouTube(query: string): Promise<SampleItem[]> {
   searchUrl.searchParams.set("part", "snippet");
   searchUrl.searchParams.set("type", "video");
   searchUrl.searchParams.set("q", query);
-  searchUrl.searchParams.set("maxResults", "5");
+  searchUrl.searchParams.set("maxResults", "8");
   searchUrl.searchParams.set("order", "relevance");
   searchUrl.searchParams.set("key", key);
 
@@ -130,7 +131,7 @@ async function searchYouTube(query: string): Promise<SampleItem[]> {
       const commentsUrl = new URL("https://www.googleapis.com/youtube/v3/commentThreads");
       commentsUrl.searchParams.set("part", "snippet");
       commentsUrl.searchParams.set("videoId", videoId);
-      commentsUrl.searchParams.set("maxResults", "20");
+      commentsUrl.searchParams.set("maxResults", "40");
       commentsUrl.searchParams.set("order", "relevance");
       commentsUrl.searchParams.set("textFormat", "plainText");
       commentsUrl.searchParams.set("key", key);
@@ -152,7 +153,7 @@ async function searchYouTube(query: string): Promise<SampleItem[]> {
     }),
   );
 
-  return comments.flat().slice(0, 80);
+  return comments.flat().slice(0, 250);
 }
 
 export async function GET(request: Request) {
@@ -171,32 +172,35 @@ export async function GET(request: Request) {
   ]);
 
   const statuses: SourceStatus[] = [
-    { id: "bluesky", name: "Bluesky", mode: "measured", note: "Public API; posts can be sampled directly.", count: bluesky.length },
-    { id: "hackernews", name: "Hacker News", mode: "measured", note: "Public Algolia search API; useful mainly for tech/business topics.", count: hackerNews.length },
-    { id: "gdelt", name: "News / open web", mode: "context", note: "GDELT news search provides live event context, not community sentiment.", count: gdelt.length },
+    { id: "bluesky", name: "Bluesky", mode: "measured", note: "Public API; returned posts are counted directly in the score.", count: bluesky.length },
+    { id: "hackernews", name: "Hacker News", mode: "measured", note: "Public Algolia API; counted for topics where HN has meaningful discussion.", count: hackerNews.length },
+    { id: "gdelt", name: "News / open web", mode: "context", note: "GDELT supplies factual context only and is excluded from sentiment scoring.", count: gdelt.length },
     process.env.YOUTUBE_API_KEY
-      ? { id: "youtube", name: "YouTube", mode: "measured", note: "Official Data API; comments are sampled from relevant videos.", count: youtube.length }
-      : { id: "youtube", name: "YouTube", mode: "setup", note: "Ready to connect with a YouTube Data API key (free quota)." },
-    { id: "reddit", name: "Reddit", mode: "pending", note: "Commercial data permission/licensing required before direct sentiment measurement." },
-    { id: "tiktok", name: "TikTok", mode: "pending", note: "TikTok Research API is not available to commercial users; direct broad comment search is not currently a compliant launch dependency." },
-    { id: "instagram", name: "Instagram / Reels", mode: "pending", note: "No broad public commercial Reels-comment search feed is connected yet; use contextual discovery only until an approved source is available." },
-    { id: "chatgpt", name: "ChatGPT / OpenAI web", mode: "setup", note: "Can add OpenAI web search for discovery and context. It should not be counted as a representative social sample." },
-    { id: "x", name: "X", mode: "setup", note: "Available later through X's paid API; not included in the free-source pass." },
+      ? { id: "youtube", name: "YouTube", mode: "measured", note: "Official Data API; relevant top-level comments are counted in the score.", count: youtube.length }
+      : { id: "youtube", name: "YouTube", mode: "setup", note: "Scoring support is ready; add a YouTube Data API key to include comments." },
+    { id: "reddit", name: "Reddit", mode: "pending", note: "Commercial data permission/licensing is required before Reddit can enter the score." },
+    { id: "tiktok", name: "TikTok", mode: "pending", note: "No compliant broad commercial comment feed is connected yet, so TikTok is not included in the score." },
+    { id: "instagram", name: "Instagram / Reels", mode: "pending", note: "No approved broad Reels-comment collector is connected yet, so Reels is not included in the score." },
+    { id: "chatgpt", name: "OpenAI web context", mode: "setup", note: "Useful for discovery/context later, but search results will never be counted as representative social reactions." },
+    { id: "x", name: "X", mode: "setup", note: "Can enter the scoring model once the paid API is connected." },
   ];
 
   const items = [...bluesky, ...hackerNews, ...youtube, ...gdelt]
     .filter((item) => item.text || item.title)
-    .slice(0, 150);
+    .slice(0, 400);
+
+  const score = scoreConversation(items);
 
   return NextResponse.json(
     {
       query,
       fetchedAt: new Date().toISOString(),
-      totalSamples: bluesky.length + hackerNews.length + youtube.length,
+      totalSamples: score.sampleSize,
       contextArticles: gdelt.length,
       statuses,
       items,
-      disclaimer: "Counts reflect returned samples, not the whole internet. Sentiment classification is not enabled in this endpoint yet.",
+      score,
+      disclaimer: "Vibe, Consensus, Heat, Bubble Gap and Confidence are calculated from returned measurable social samples only. This v0.1 classifier is a deterministic lexical stance proxy, not yet the planned GPT stance classifier. The score measures sampled reaction, not factual truth.",
     },
     {
       headers: {
