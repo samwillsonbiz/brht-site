@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import {
   BarChart3,
   CalendarDays,
@@ -16,27 +17,10 @@ const appleFont =
   '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif';
 
 const items = [
-  {
-    href: "/fantasy",
-    label: "Matchup",
-    icon: Trophy,
-    exact: true,
-  },
-  {
-    href: "/fantasy/draft",
-    label: "Draft Board",
-    icon: CalendarDays,
-  },
-  {
-    href: "/fantasy/outlook",
-    label: "6-Week Outlook",
-    icon: BarChart3,
-  },
-  {
-    href: "/fantasy/admin",
-    label: "Admin",
-    icon: Database,
-  },
+  { href: "/fantasy", label: "Matchup", icon: Trophy, exact: true },
+  { href: "/fantasy/draft", label: "Draft Board", icon: CalendarDays },
+  { href: "/fantasy/outlook", label: "6-Week Outlook", icon: BarChart3 },
+  { href: "/fantasy/admin", label: "Admin", icon: Database },
 ];
 
 function currentLabel(pathname: string) {
@@ -49,9 +33,16 @@ function currentLabel(pathname: string) {
 export default function FantasyMenu() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [headerTarget, setHeaderTarget] = useState<HTMLElement | null>(null);
+  const [resolvedHeader, setResolvedHeader] = useState(false);
 
   useEffect(() => {
     setOpen(false);
+    const target = document.querySelector<HTMLElement>(
+      ".fantasy-shell main > header > div",
+    );
+    setHeaderTarget(target);
+    setResolvedHeader(true);
   }, [pathname]);
 
   useEffect(() => {
@@ -71,37 +62,46 @@ export default function FantasyMenu() {
     };
   }, [open]);
 
+  const menuButton = (
+    <button
+      type="button"
+      aria-label="Open Fantasy Lab menu"
+      aria-expanded={open}
+      onClick={() => setOpen(true)}
+      className="fantasy-menu-trigger ml-2 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-black/60 transition hover:bg-black/[0.05] hover:text-black"
+    >
+      <Menu className="h-[18px] w-[18px]" />
+    </button>
+  );
+
   return (
     <>
-      <header
-        className="sticky top-0 z-[80] border-b border-black/[0.06] bg-white/80 text-[#1d1d1f] backdrop-blur-2xl"
-        style={{ fontFamily: appleFont }}
-      >
-        <div className="mx-auto flex h-[58px] max-w-7xl items-center justify-between px-5 md:px-8">
-          <div className="flex min-w-0 items-center gap-3">
-            <Link
-              href="/fantasy"
-              className="shrink-0 text-[15px] font-semibold tracking-[-0.01em]"
-            >
-              Fantasy Lab
-            </Link>
-            <span className="text-black/20">/</span>
-            <span className="truncate text-sm font-medium text-black/45">
-              {currentLabel(pathname)}
-            </span>
-          </div>
-
-          <button
-            type="button"
-            aria-label="Open Fantasy Lab menu"
-            aria-expanded={open}
-            onClick={() => setOpen(true)}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-full text-black/65 transition hover:bg-black/[0.05] hover:text-black"
-          >
-            <Menu className="h-[18px] w-[18px]" />
-          </button>
-        </div>
-      </header>
+      {resolvedHeader && headerTarget
+        ? createPortal(menuButton, headerTarget)
+        : resolvedHeader
+          ? (
+              <header
+                className="sticky top-0 z-[80] border-b border-black/[0.06] bg-white/80 text-[#1d1d1f] backdrop-blur-2xl"
+                style={{ fontFamily: appleFont }}
+              >
+                <div className="mx-auto flex h-[58px] max-w-7xl items-center justify-between px-5 md:px-8">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <Link
+                      href="/fantasy"
+                      className="shrink-0 text-[15px] font-semibold tracking-[-0.01em]"
+                    >
+                      Fantasy Lab
+                    </Link>
+                    <span className="text-black/20">/</span>
+                    <span className="truncate text-sm font-medium text-black/45">
+                      {currentLabel(pathname)}
+                    </span>
+                  </div>
+                  {menuButton}
+                </div>
+              </header>
+            )
+          : null}
 
       {open ? (
         <div
@@ -116,8 +116,8 @@ export default function FantasyMenu() {
           />
 
           <aside className="absolute right-0 top-0 flex h-full w-[min(88vw,360px)] flex-col border-l border-black/[0.07] bg-[#f5f5f7] shadow-[-18px_0_60px_rgba(0,0,0,0.14)]">
-            <div className="flex h-[72px] items-center justify-between border-b border-black/[0.06] px-5">
-              <div className="text-[17px] font-semibold tracking-[-0.02em]">
+            <div className="flex h-[64px] items-center justify-between border-b border-black/[0.06] px-5">
+              <div className="text-[16px] font-semibold tracking-[-0.02em]">
                 Fantasy Lab
               </div>
               <button
@@ -141,14 +141,14 @@ export default function FantasyMenu() {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`flex items-center gap-3 rounded-[16px] px-3.5 py-3 transition ${
+                    className={`flex items-center gap-3 rounded-[14px] px-3.5 py-3 transition ${
                       active
-                        ? "bg-white shadow-[0_4px_18px_rgba(0,0,0,0.045)]"
+                        ? "bg-white shadow-[0_4px_18px_rgba(0,0,0,0.04)]"
                         : "hover:bg-white/70"
                     }`}
                   >
                     <div
-                      className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-[12px] ${
+                      className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-[11px] ${
                         active
                           ? "bg-[#1d1d1f] text-white"
                           : "bg-white text-black/50"
