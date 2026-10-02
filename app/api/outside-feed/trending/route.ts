@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-type SignalSource = "Hacker News" | "Wikipedia" | "Bluesky";
+type SignalSource = "Hacker News" | "Wikipedia" | "Bluesky" | "YouTube";
 
 type Signal = {
   source: SignalSource;
@@ -37,6 +37,12 @@ type BlueskyPost = {
   replyCount?: number;
 };
 
+type YouTubeVideo = {
+  id?: string;
+  snippet?: { title?: string; publishedAt?: string };
+  statistics?: { viewCount?: string; likeCount?: string; commentCount?: string };
+};
+
 const STOP_WORDS = new Set(["the", "a", "an", "and", "or", "to", "of", "in", "on", "for", "with", "from", "at", "by", "is", "are", "was", "were", "be", "as", "it", "this", "that", "new", "how", "why", "what", "after", "before", "about", "has", "have", "had"]);
 const WIKI_BLOCKLIST = ["main page", "special:", "wikipedia:", "portal:", "list of deaths", "deaths in ", "2026", "2025", "2024"];
 
@@ -63,12 +69,12 @@ async function getHackerNewsCandidates(): Promise<Candidate[]> {
   try {
     const idsResponse = await fetch("https://hacker-news.firebaseio.com/v0/topstories.json", {
       next: { revalidate: 120 },
-      headers: { "User-Agent": "OutsideTheFeed/0.2" },
+      headers: { "User-Agent": "OutsideTheFeed/0.3" },
     });
     if (!idsResponse.ok) return [];
 
     const ids = (await idsResponse.json()) as number[];
-    const selected = ids.slice(0, 24);
+    const selected = ids.slice(0, 20);
     const candidates: Candidate[] = [];
 
     await Promise.all(
@@ -76,7 +82,7 @@ async function getHackerNewsCandidates(): Promise<Candidate[]> {
         try {
           const response = await fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`, {
             next: { revalidate: 120 },
-            headers: { "User-Agent": "OutsideTheFeed/0.2" },
+            headers: { "User-Agent": "OutsideTheFeed/0.3" },
           });
           if (!response.ok) return;
           const story = (await response.json()) as HnStory;
@@ -89,7 +95,10 @@ async function getHackerNewsCandidates(): Promise<Candidate[]> {
           const comments = story.descendants ?? 0;
           const engagement = points + comments * 1.25;
           const ageHours = story.time ? Math.max(0, Date.now() / 1000 - story.time) / 3600 : 12;
-          const rawScore = 35 + Math.log1p(engagement) * 8 + Math.max(0, 18 - index * 0.6) + Math.max(0, 10 - ageHours * 0.5);
+
+          // Useful real-time signal, but intentionally capped so a tech community
+          // cannot dominate a general-interest front page.
+          const rawScore = 18 + Math.log1p(engagement) * 5.5 + Math.max(0, 10 - index * 0.35) + Math.max(0, 7 - ageHours * 0.35);
 
           candidates.push({
             title,
@@ -122,7 +131,7 @@ async function getWikipediaCandidates(): Promise<Candidate[]> {
       const day = String(date.getUTCDate()).padStart(2, "0");
       const response = await fetch(`https://wikimedia.org/api/rest_v1/metrics/pageviews/top/en.wikipedia.org/all-access/${year}/${month}/${day}`, {
         next: { revalidate: 1800 },
-        headers: { "User-Agent": "OutsideTheFeed/0.2 contact: brht.ai" },
+        headers: { "User-Agent": "OutsideTheFeed/0.3 contact: brht.ai" },
       });
       if (!response.ok) continue;
 
@@ -142,7 +151,7 @@ async function getWikipediaCandidates(): Promise<Candidate[]> {
         candidates.push({
           title,
           query: queryFor(title),
-          rawScore: 30 + Math.log10(Math.max(10, views)) * 10 + Math.max(0, 18 - rank * 0.45),
+          rawScore: 18 + Math.log10(Math.max(10, views)) * 8 + Math.max(0, 12 - rank * 0.35),
           signals: [{
             source: "Wikipedia",
             detail: `${views.toLocaleString()} page views · #${rank}`,
@@ -160,16 +169,65 @@ async function getWikipediaCandidates(): Promise<Candidate[]> {
   return [];
 }
 
+async function getYouTubeCandidates(): Promise<Candidate[]> {
+  const apiKey = process.env.YOUTUBE_API_KEY;
+  if (!apiKey) return [];
+
+  const regions = ["US", "GB", "AU", "CA"];
+  const candidates: Candidate[] = [];
+
+  await Promise.all(regions.map(async (region) => {
+    try {
+      const url = new URL("https://www.googleapis.com/youtube/v3/videos");
+      url.searchParams.set("part", "snippet,statistics");
+      url.searchParams.set("chart", "mostPopular");
+      url.searchParams.set("regionCode", region);
+      url.searchParams.set("maxResults", "25");
+      url.searchParams.set("key", apiKey);
+
+      const response = await fetch(url, { next: { revalidate: 300 } });
+      if (!response.ok) return;
+      const data = (await response.json()) as { items?: YouTubeVideo[] };
+
+      for (const [index, video] of (data.items ?? []).entries()) {
+        const title = cleanTitle(video.snippet?.title ?? "");
+        if (!title || !video.id) continue;
+        const views = Number(video.statistics?.viewCount ?? 0);
+        const likes = Number(video.statistics?.likeCount ?? 0);
+        const comments = Number(video.statistics?.commentCount ?? 0);
+        const ageHours = video.snippet?.publishedAt ? Math.max(0, Date.now() - Date.parse(video.snippet.publishedAt)) / 3600000 : 24;
+        const engagement = likes + comments * 2.2;
+        const rawScore = 35 + Math.log10(Math.max(10, views)) * 9 + Math.log1p(engagement) * 2.2 + Math.max(0, 16 - index * 0.45) + Math.max(0, 8 - ageHours * 0.15);
+
+        candidates.push({
+          title,
+          query: queryFor(title),
+          rawScore,
+          signals: [{
+            source: "YouTube",
+            detail: `${views.toLocaleString()} views · ${comments.toLocaleString()} comments · ${region}`,
+            url: `https://www.youtube.com/watch?v=${video.id}`,
+          }],
+        });
+      }
+    } catch {
+      return;
+    }
+  }));
+
+  return candidates;
+}
+
 async function addBlueskySignal(candidate: Candidate): Promise<Candidate> {
   try {
     const url = new URL("https://public.api.bsky.app/xrpc/app.bsky.feed.searchPosts");
     url.searchParams.set("q", candidate.query);
-    url.searchParams.set("limit", "20");
+    url.searchParams.set("limit", "25");
     url.searchParams.set("sort", "latest");
 
     const response = await fetch(url, {
       next: { revalidate: 180 },
-      headers: { "User-Agent": "OutsideTheFeed/0.2" },
+      headers: { "User-Agent": "OutsideTheFeed/0.3" },
     });
     if (!response.ok) return candidate;
 
@@ -182,7 +240,8 @@ async function addBlueskySignal(candidate: Candidate): Promise<Candidate> {
 
     const engagement = posts.reduce((sum, post) => sum + (post.likeCount ?? 0) + (post.repostCount ?? 0) * 1.5 + (post.replyCount ?? 0), 0);
     if (posts.length > 0) {
-      candidate.rawScore += Math.min(30, posts.length * 1.15 + Math.log1p(engagement) * 4);
+      // Social volume gets a large boost because that is the product's core signal.
+      candidate.rawScore += Math.min(48, posts.length * 1.7 + Math.log1p(engagement) * 5.2);
       candidate.signals.push({ source: "Bluesky", detail: `${posts.length} recent posts · ${Math.round(engagement)} engagement` });
     }
 
@@ -204,7 +263,7 @@ function mergeCandidates(candidates: Candidate[]) {
       continue;
     }
 
-    existing.rawScore += candidate.rawScore * 0.8;
+    existing.rawScore += candidate.rawScore * 0.75;
     existing.signals.push(...candidate.signals);
   }
 
@@ -212,18 +271,20 @@ function mergeCandidates(candidates: Candidate[]) {
 }
 
 export async function GET() {
-  const [hackerNews, wikipedia] = await Promise.all([
+  const [hackerNews, wikipedia, youtube] = await Promise.all([
     getHackerNewsCandidates(),
     getWikipediaCandidates(),
+    getYouTubeCandidates(),
   ]);
 
-  const merged = mergeCandidates([...hackerNews, ...wikipedia])
+  const merged = mergeCandidates([...youtube, ...wikipedia, ...hackerNews])
     .map((candidate) => ({
       ...candidate,
-      rawScore: candidate.rawScore + Math.max(0, candidate.signals.length - 1) * 16,
+      // Cross-source confirmation is one of the strongest signals we have.
+      rawScore: candidate.rawScore + Math.max(0, new Set(candidate.signals.map((signal) => signal.source)).size - 1) * 22,
     }))
     .sort((a, b) => b.rawScore - a.rawScore)
-    .slice(0, 16);
+    .slice(0, 24);
 
   const checked = await Promise.all(merged.map((candidate) => addBlueskySignal(candidate)));
   checked.sort((a, b) => b.rawScore - a.rawScore);
@@ -247,11 +308,12 @@ export async function GET() {
     generatedAt: new Date().toISOString(),
     topics,
     sourceStatus: {
-      hackerNews: { ok: hackerNews.length > 0, candidates: hackerNews.length },
+      youtube: { ok: youtube.length > 0, candidates: youtube.length, note: process.env.YOUTUBE_API_KEY ? "Most-popular videos included." : "Ready when YOUTUBE_API_KEY is added." },
+      bluesky: { ok: true, note: "Recent public discussion is used as a direct social signal." },
       wikipedia: { ok: wikipedia.length > 0, candidates: wikipedia.length },
-      bluesky: { ok: true, note: "Used to cross-check recent discussion around discovered topics." },
+      hackerNews: { ok: hackerNews.length > 0, candidates: hackerNews.length, note: "Capped so tech discussion cannot dominate the general front page." },
     },
-    methodology: "Candidates are discovered automatically from Hacker News top stories and English Wikipedia's most-viewed pages, then cross-checked against recent Bluesky discussion. Attention is a relative discovery score for this snapshot; Vibe is calculated separately from retrieved reactions.",
+    methodology: "The ranking favors direct social attention and cross-source confirmation. YouTube is included when configured; Bluesky is used as a live social cross-check. Wikipedia and Hacker News provide additional attention signals without being treated as representative of the whole internet.",
   }, {
     headers: { "Cache-Control": "public, s-maxage=180, stale-while-revalidate=900" },
   });
