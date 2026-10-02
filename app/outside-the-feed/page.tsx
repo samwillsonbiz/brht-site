@@ -3,7 +3,6 @@
 import { LockKeyhole, Menu, Search, ShieldCheck, X } from "lucide-react";
 import { useState } from "react";
 import AutoTrendingFeed from "./auto-trending-feed";
-import LiveSourceLab from "./live-source-lab";
 
 export default function OutsideTheFeedPage() {
   const [paywallOpen, setPaywallOpen] = useState(false);
@@ -26,7 +25,6 @@ export default function OutsideTheFeedPage() {
 
           <nav className="hidden flex-1 items-center gap-6 text-[13px] font-semibold text-[#17213a]/52 md:flex">
             <a href="#live-trends" className="text-[#17213a]">Now</a>
-            <a href="#source-lab" className="transition hover:text-[#17213a]">Sources</a>
             <button type="button" onClick={() => setPaywallOpen(true)} className="transition hover:text-[#17213a]">Following</button>
             <a href="#principles" className="transition hover:text-[#17213a]">Why this exists</a>
           </nav>
@@ -44,8 +42,8 @@ export default function OutsideTheFeedPage() {
           <div className="border-t border-[#17213a]/6 bg-white px-5 py-4 md:hidden">
             <div className="grid gap-1 text-sm font-semibold">
               <a href="#live-trends" onClick={() => setMobileMenu(false)} className="rounded-xl px-3 py-3 hover:bg-[#2878ff]/5">Now</a>
-              <a href="#source-lab" onClick={() => setMobileMenu(false)} className="rounded-xl px-3 py-3 hover:bg-[#2878ff]/5">Sources</a>
               <button type="button" onClick={() => setPaywallOpen(true)} className="rounded-xl px-3 py-3 text-left hover:bg-[#2878ff]/5">Search</button>
+              <button type="button" onClick={() => setPaywallOpen(true)} className="rounded-xl px-3 py-3 text-left hover:bg-[#2878ff]/5">Following</button>
               <button type="button" onClick={() => setPaywallOpen(true)} className="rounded-xl px-3 py-3 text-left hover:bg-[#2878ff]/5">Membership</button>
             </div>
           </div>
@@ -69,10 +67,6 @@ export default function OutsideTheFeedPage() {
       </section>
 
       <AutoTrendingFeed />
-
-      <div id="source-lab">
-        <LiveSourceLab />
-      </div>
 
       <section id="principles" className="border-y border-[#17213a]/[0.06] bg-white">
         <div className="mx-auto grid max-w-[1120px] gap-10 px-5 py-16 md:grid-cols-[0.9fr_1.1fr] md:items-center lg:px-8 lg:py-20">
