@@ -1,6 +1,6 @@
 "use client";
 
-import { BarChart3, EyeOff, Globe2, LockKeyhole, Menu, Search, ShieldCheck, X } from "lucide-react";
+import { LockKeyhole, Menu, Search, ShieldCheck, X } from "lucide-react";
 import { useState } from "react";
 import AutoTrendingFeed from "./auto-trending-feed";
 import LiveSourceLab from "./live-source-lab";
@@ -52,22 +52,20 @@ export default function OutsideTheFeedPage() {
         )}
       </header>
 
-      <section className="mx-auto max-w-[1280px] px-5 pb-12 pt-16 text-center lg:px-8 lg:pt-24">
-        <div className="mx-auto mb-5 inline-flex items-center gap-2 rounded-full border border-[#2878ff]/12 bg-white px-3.5 py-2 text-[11px] font-bold text-[#2878ff] shadow-sm"><Globe2 className="h-3.5 w-3.5" /> The front page outside your algorithm</div>
-        <h1 className="mx-auto max-w-[1020px] text-[clamp(3.2rem,7vw,6.9rem)] font-[750] leading-[0.93] tracking-[-0.06em] text-[#101a33]">Get outside your feed.<span className="mt-2 block text-[#2878ff]">See what everyone else sees.</span></h1>
-        <p className="mx-auto mt-7 max-w-[790px] text-[17px] leading-7 tracking-[-0.015em] text-[#17213a]/52 md:text-xl md:leading-8">A quantified front page of what is getting attention right now — discovered from live public signals, then scored for vibe, consensus, heat and confidence.</p>
+      <section className="mx-auto max-w-[1180px] px-5 pb-10 pt-14 text-center lg:px-8 lg:pb-12 lg:pt-20">
+        <h1 className="mx-auto max-w-[920px] text-[clamp(3rem,6vw,5.7rem)] font-[760] leading-[0.95] tracking-[-0.06em] text-[#101a33]">
+          Get outside your feed.
+          <span className="mt-1 block text-[#2878ff]">See what&apos;s actually trending.</span>
+        </h1>
+        <p className="mx-auto mt-5 max-w-[660px] text-[16px] leading-7 tracking-[-0.01em] text-[#17213a]/50 md:text-lg">
+          What people are talking about, how they feel, and where the conversation is moving.
+        </p>
 
-        <button type="button" onClick={() => setPaywallOpen(true)} className="group mx-auto mt-9 flex w-full max-w-[790px] items-center gap-3 rounded-[22px] border border-[#2878ff]/12 bg-white p-2.5 text-left shadow-[0_18px_55px_rgba(33,56,108,0.09)] transition hover:-translate-y-0.5 hover:border-[#2878ff]/24">
+        <button type="button" onClick={() => setPaywallOpen(true)} className="group mx-auto mt-7 flex w-full max-w-[760px] items-center gap-3 rounded-[20px] border border-[#2878ff]/12 bg-white p-2.5 text-left shadow-[0_14px_42px_rgba(33,56,108,0.08)] transition hover:-translate-y-0.5 hover:border-[#2878ff]/24">
           <Search className="ml-3 h-5 w-5 shrink-0 text-[#2878ff]/65" />
-          <span className="flex-1 py-3 text-[15px] text-[#17213a]/38 md:text-[17px]">Search any topic and read the internet...</span>
-          <span className="hidden rounded-2xl bg-[#2878ff] px-4 py-3 text-xs font-bold text-white sm:block">Search with membership</span>
+          <span className="flex-1 py-3 text-[15px] text-[#17213a]/36 md:text-[16px]">Search a topic...</span>
+          <span className="hidden rounded-2xl bg-[#2878ff] px-4 py-3 text-xs font-bold text-white sm:block">Search</span>
         </button>
-
-        <div className="mt-5 flex flex-wrap justify-center gap-x-6 gap-y-2 text-[11px] font-semibold text-[#17213a]/38">
-          <span className="inline-flex items-center gap-1.5"><EyeOff className="h-3.5 w-3.5 text-[#2878ff]" /> No personalized ranking</span>
-          <span className="inline-flex items-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5 text-[#2878ff]" /> No ads or sponsored topics</span>
-          <span className="inline-flex items-center gap-1.5"><BarChart3 className="h-3.5 w-3.5 text-[#2878ff]" /> Scores show sample + confidence</span>
-        </div>
       </section>
 
       <AutoTrendingFeed />
@@ -77,22 +75,21 @@ export default function OutsideTheFeedPage() {
       </div>
 
       <section id="principles" className="border-y border-[#17213a]/[0.06] bg-white">
-        <div className="mx-auto grid max-w-[1180px] gap-10 px-5 py-20 md:grid-cols-[0.9fr_1.1fr] md:items-center lg:px-8 lg:py-28">
+        <div className="mx-auto grid max-w-[1120px] gap-10 px-5 py-16 md:grid-cols-[0.9fr_1.1fr] md:items-center lg:px-8 lg:py-20">
           <div>
-            <div className="text-xs font-extrabold uppercase tracking-[0.08em] text-[#2878ff]">The business model is the feature</div>
-            <h2 className="mt-4 text-4xl font-[750] leading-[1] tracking-[-0.055em] md:text-6xl">You pay us.<br />Advertisers don&apos;t.</h2>
+            <h2 className="text-4xl font-[750] leading-[1] tracking-[-0.055em] md:text-5xl">You pay us.<br />Advertisers don&apos;t.</h2>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             {[
-              ["No ads", "No promoted posts, sponsored trends, or brands buying their way into what looks important."],
-              ["No outrage optimization", "We do not make more money when you stay angry, scroll longer, or fight in comments."],
-              ["No invisible personalization", "The public front page is the same public front page. Your chosen follows are separate and explicit."],
-              ["Show the disagreement", "Vibe is paired with consensus, sample size and confidence so a loud minority cannot silently become 'the internet'."],
+              ["No ads", "No promoted posts or sponsored trends."],
+              ["No invisible personalization", "The public front page is the public front page."],
+              ["No outrage optimization", "We do not make more money when you stay angry or scroll longer."],
+              ["Show the disagreement", "Scores include sample size and confidence, not just a headline."],
             ].map(([title, copy]) => (
-              <div key={title} className="rounded-[22px] border border-[#17213a]/[0.07] bg-[#f6f8fc] p-5">
+              <div key={title} className="rounded-[20px] border border-[#17213a]/[0.07] bg-[#f6f8fc] p-5">
                 <ShieldCheck className="h-5 w-5 text-[#2878ff]" />
-                <h3 className="mt-4 text-base font-bold">{title}</h3>
-                <p className="mt-2 text-sm leading-6 text-[#17213a]/48">{copy}</p>
+                <h3 className="mt-3 text-base font-bold">{title}</h3>
+                <p className="mt-1.5 text-sm leading-6 text-[#17213a]/48">{copy}</p>
               </div>
             ))}
           </div>
@@ -107,8 +104,8 @@ export default function OutsideTheFeedPage() {
               <button type="button" onClick={() => setPaywallOpen(false)} className="grid h-9 w-9 place-items-center rounded-full bg-[#f6f8fc]"><X className="h-4 w-4" /></button>
             </div>
             <div className="mt-6 text-xs font-extrabold uppercase tracking-[0.08em] text-[#2878ff]">Outside the Feed membership</div>
-            <h2 className="mt-2 text-3xl font-[750] leading-[1.05] tracking-[-0.045em]">The front page is public. Going deeper is yours.</h2>
-            <p className="mt-4 text-sm leading-6 text-[#17213a]/52">Search anything, follow topics deliberately, compare communities, inspect historical shifts and see the arguments behind the score — without ads shaping what you see.</p>
+            <h2 className="mt-2 text-3xl font-[750] leading-[1.05] tracking-[-0.045em]">Go deeper on anything.</h2>
+            <p className="mt-4 text-sm leading-6 text-[#17213a]/52">Search topics, compare communities, follow changes over time and inspect the conversation behind the score.</p>
             <button type="button" className="mt-7 w-full rounded-2xl bg-[#2878ff] px-5 py-4 text-sm font-extrabold text-white">Join the early membership</button>
             <p className="mt-3 text-center text-[11px] font-semibold text-[#17213a]/32">Prototype only — billing is not connected yet.</p>
           </div>
