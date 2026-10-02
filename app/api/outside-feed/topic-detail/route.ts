@@ -4,7 +4,6 @@ type SourceSignal = { source?: string; detail?: string; url?: string };
 type Body = { title?: string; query?: string; description?: string; attention?: number; sources?: SourceSignal[] };
 type WebSource = { url?: string; title?: string };
 type ResponsePayload = { output?: Array<{ type?: string; action?: { sources?: WebSource[] }; content?: Array<{ type?: string; text?: string; annotations?: Array<{ url?: string; title?: string; url_citation?: { url?: string; title?: string } }> }> }> };
-
 type Detail = { summary?: string; why_trending?: string; public_read?: string; reaction_clusters?: Array<{ label?: string; description?: string; strength?: string }>; source_urls?: string[] };
 
 function outputText(payload: ResponsePayload) {
@@ -83,7 +82,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       configured: true,
-      summary: String(parsed.summary ?? description || title),
+      summary: String(parsed.summary ?? (description || title)),
       whyTrending: String(parsed.why_trending ?? ""),
       publicRead: String(parsed.public_read ?? ""),
       reactionClusters: clusters,
