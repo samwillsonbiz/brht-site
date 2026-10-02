@@ -9,6 +9,8 @@ type SourceSignal = {
   detail: string;
   url?: string;
   items?: number;
+  comments?: number;
+  views?: number;
 };
 
 type Trend = {
@@ -46,9 +48,102 @@ function sourceLabel(signal: SourceSignal) {
   const count = signal.items ?? 0;
   if (!count) return signal.source;
   if (signal.source === "YouTube") return `${signal.source} · ${count} video${count === 1 ? "" : "s"}`;
+  if (signal.source === "TikTok") return `${signal.source} · ${compactNumber(count)} posts`;
   if (signal.source === "Bluesky") return `${signal.source} · ${count} post${count === 1 ? "" : "s"}`;
   if (signal.source === "Hacker News") return `${signal.source} · ${count} discussion${count === 1 ? "" : "s"}`;
   return signal.source;
+}
+
+function compactTopicKey(value: string) {
+  return value
+    .toLowerCase()
+    .replace(/^#/, "")
+    .replace(/[^a-z0-9]/g, "");
+}
+
+function topicTokens(value: string) {
+  return value
+    .toLowerCase()
+    .replace(/^#/, "")
+    .replace(/[^a-z0-9\s]/g, " ")
+    .split(/\s+/)
+    .filter((token) => token.length >= 3);
+}
+
+function sameTopic(left: Trend, right: Trend) {
+  const leftKey = compactTopicKey(left.title);
+  const rightKey = compactTopicKey(right.title);
+  if (!leftKey || !rightKey) return false;
+  if (leftKey === rightKey) return true;
+
+  const shortest = Math.min(leftKey.length, rightKey.length);
+  if (shortest >= 7 && (leftKey.includes(rightKey) || rightKey.includes(leftKey))) return true;
+
+  const leftTokens = new Set(topicTokens(left.title));
+  const rightTokens = new Set(topicTokens(right.title));
+  if (!leftTokens.size || !rightTokens.size) return false;
+  const shared = [...leftTokens].filter((token) => rightTokens.has(token));
+  return shared.length >= 2 && shared.length / Math.min(leftTokens.size, rightTokens.size) >= 0.66;
+}
+
+function mergeSources(sources: SourceSignal[]) {
+  const merged = new Map<string, SourceSignal>();
+  for (const source of sources) {
+    const existing = merged.get(source.source);
+    if (!existing) {
+      merged.set(source.source, { ...source });
+      continue;
+    }
+    existing.items = Math.max(existing.items ?? 0, source.items ?? 0);
+    existing.comments = Math.max(existing.comments ?? 0, source.comments ?? 0);
+    existing.views = Math.max(existing.views ?? 0, source.views ?? 0);
+    if (!existing.url && source.url) existing.url = source.url;
+    if (source.detail.length > existing.detail.length) existing.detail = source.detail;
+  }
+  return [...merged.values()];
+}
+
+function combineDiscovery(base: Result, tiktok?: Result | null): Result {
+  if (!tiktok?.topics?.length) return base;
+
+  const topics = base.topics.map((topic) => ({ ...topic, sources: [...topic.sources] }));
+
+  for (const incoming of tiktok.topics) {
+    const existing = topics.find((topic) => sameTopic(topic, incoming));
+    if (!existing) {
+      topics.push({ ...incoming, sources: [...incoming.sources] });
+      continue;
+    }
+
+    existing.sources = mergeSources([...existing.sources, ...incoming.sources]);
+    existing.sourceCount = existing.sources.length;
+    existing.platformCount = new Set(existing.sources.map((source) => source.source)).size;
+    existing.observedSocialItems = (existing.observedSocialItems ?? existing.observedItems ?? 0) + (incoming.observedSocialItems ?? incoming.observedItems ?? 0);
+    existing.observedItems = existing.observedSocialItems;
+    existing.observedComments = (existing.observedComments ?? 0) + (incoming.observedComments ?? 0);
+    existing.observedViews = (existing.observedViews ?? 0) + (incoming.observedViews ?? 0);
+    existing.attention = Math.min(100, Math.max(existing.attention, incoming.attention) + 6);
+
+    // Prefer a readable non-hashtag topic name and its explanatory copy when we already have one.
+    if (existing.title.startsWith("#") && !incoming.title.startsWith("#")) {
+      existing.title = incoming.title;
+      existing.query = incoming.query;
+    }
+  }
+
+  topics.sort((a, b) => {
+    const aBreadth = (a.platformCount ?? a.sourceCount) - 1;
+    const bBreadth = (b.platformCount ?? b.sourceCount) - 1;
+    return (b.attention + bBreadth * 2) - (a.attention + aBreadth * 2);
+  });
+
+  const reranked = topics.slice(0, 10).map((topic, index) => ({ ...topic, rank: index + 1 }));
+
+  return {
+    generatedAt: new Date(Math.max(Date.parse(base.generatedAt), Date.parse(tiktok.generatedAt))).toISOString(),
+    topics: reranked,
+    sourceStatus: { ...base.sourceStatus, ...tiktok.sourceStatus },
+  };
 }
 
 export default function AutoTrendingFeed() {
@@ -63,10 +158,19 @@ export default function AutoTrendingFeed() {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch(`/api/outside-feed/trending?refresh=${refreshKey}`);
-        if (!response.ok) throw new Error("Could not load current trends.");
-        const data = (await response.json()) as Result;
-        if (!cancelled) setResult(data);
+        const [mainResponse, tiktokResponse] = await Promise.all([
+          fetch(`/api/outside-feed/trending?refresh=${refreshKey}`),
+          fetch(`/api/outside-feed/tiktok-trends?refresh=${refreshKey}`).catch(() => null),
+        ]);
+        if (!mainResponse.ok) throw new Error("Could not load current trends.");
+
+        const mainData = (await mainResponse.json()) as Result;
+        let tiktokData: Result | null = null;
+        if (tiktokResponse?.ok) {
+          tiktokData = (await tiktokResponse.json()) as Result;
+        }
+
+        if (!cancelled) setResult(combineDiscovery(mainData, tiktokData));
       } catch (err) {
         if (!cancelled) setError(err instanceof Error ? err.message : "Could not load current trends.");
       } finally {
@@ -110,7 +214,7 @@ export default function AutoTrendingFeed() {
             const socialItems = topic.observedSocialItems ?? topic.observedItems ?? 0;
             if (socialItems > 0) breadth.push(`${compactNumber(socialItems)} social posts/videos observed`);
             if ((topic.observedComments ?? 0) > 0) breadth.push(`${compactNumber(topic.observedComments ?? 0)} comments`);
-            if ((topic.observedViews ?? 0) > 0) breadth.push(`${compactNumber(topic.observedViews ?? 0)} views`);
+            if ((topic.observedViews ?? 0) > 0) breadth.push(`${compactNumber(topic.observedViews ?? 0)} platform views`);
 
             const platformCount = topic.platformCount ?? topic.sourceCount;
 
@@ -137,7 +241,7 @@ export default function AutoTrendingFeed() {
                   )}
 
                   <div className="mt-2.5 flex flex-wrap gap-2">
-                    {topic.sources.slice(0, 4).map((signal) => signal.url ? (
+                    {topic.sources.slice(0, 5).map((signal) => signal.url ? (
                       <a key={signal.source} href={signal.url} target="_blank" rel="noreferrer" title={signal.detail} className="inline-flex items-center gap-1 rounded-full border border-[#2878ff]/10 bg-[#2878ff]/[0.045] px-2.5 py-1.5 text-[10px] font-bold text-[#2878ff] hover:bg-[#2878ff]/10" onClick={(event) => event.stopPropagation()}>
                         {sourceLabel(signal)} <ExternalLink className="h-2.5 w-2.5" />
                       </a>

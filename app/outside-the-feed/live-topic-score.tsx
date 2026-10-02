@@ -52,6 +52,16 @@ export default function LiveTopicScore({ query }: { query: string }) {
     );
   }
 
+  if (score.sampleSize === 0) {
+    return (
+      <div className="rounded-[18px] border border-[#17213a]/[0.06] bg-[#f8faff] px-4 py-3">
+        <div className="text-[9px] font-extrabold uppercase tracking-[0.08em] text-[#17213a]/38">Vibe</div>
+        <div className="mt-1 text-[32px] font-[850] leading-none tracking-[-0.06em] text-[#17213a]/22">—</div>
+        <div className="mt-2 text-[9px] font-bold leading-4 text-[#17213a]/36">attention detected<br />no measured reactions yet</div>
+      </div>
+    );
+  }
+
   const style = vibeStyle(score.vibe);
   const lowSample = score.sampleSize < 8;
 
