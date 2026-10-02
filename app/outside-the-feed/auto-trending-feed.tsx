@@ -34,6 +34,10 @@ type Result = {
   sourceStatus: Record<string, { ok: boolean; candidates?: number; note?: string }>;
 };
 
+type WorkingTrend = Trend & {
+  _feedScores: Record<string, number>;
+};
+
 function attentionStyle(value: number) {
   if (value >= 85) return "text-rose-600";
   if (value >= 70) return "text-amber-600";
@@ -114,35 +118,18 @@ function evidenceForSource(signal: SourceSignal) {
   const comments = signal.comments ?? 0;
   const views = signal.views ?? 0;
 
-  if (signal.source === "TikTok") {
-    return 12 + log10(views + 1) * 8.5 + log10(items + 1) * 7.5;
-  }
-  if (signal.source === "YouTube") {
-    return 10 + log10(views + 1) * 8 + log10(comments + 1) * 7 + Math.log1p(items) * 3;
-  }
-  if (signal.source === "Google Trends") {
-    return 9 + log10(items + 1) * 12;
-  }
-  if (signal.source === "GDELT") {
-    return 6 + Math.log1p(items) * 7;
-  }
-  if (signal.source === "Bluesky") {
-    return 5 + Math.log1p(items) * 8;
-  }
-  if (signal.source === "Hacker News") {
-    return 4 + Math.log1p(comments + items) * 6;
-  }
-  if (signal.source === "Wikipedia") {
-    return 4 + log10(views + 1) * 6;
-  }
-  return 2 + Math.log1p(items + comments) * 4;
+  if (signal.source === "TikTok") return 8 + log10(views + 1) * 5 + log10(items + 1) * 4;
+  if (signal.source === "YouTube") return 8 + log10(views + 1) * 5 + log10(comments + 1) * 4 + Math.log1p(items) * 2;
+  if (signal.source === "Google Trends") return 8 + log10(items + 1) * 7;
+  if (signal.source === "GDELT") return 5 + Math.log1p(items) * 5;
+  if (signal.source === "Bluesky") return 4 + Math.log1p(items) * 5;
+  if (signal.source === "Hacker News") return 4 + Math.log1p(comments + items) * 4;
+  if (signal.source === "Wikipedia") return 4 + log10(views + 1) * 4;
+  return 2 + Math.log1p(items + comments) * 3;
 }
 
 function evidenceScore(topic: Trend) {
-  const sourceScore = topic.sources.reduce((sum, signal) => sum + evidenceForSource(signal), 0);
-  const sourceCount = new Set(topic.sources.map((source) => source.source)).size;
-  const breadthBonus = Math.max(0, sourceCount - 1) * 18;
-  return sourceScore + breadthBonus;
+  return topic.sources.reduce((sum, signal) => sum + evidenceForSource(signal), 0);
 }
 
 function youtubeVideoId(url?: string) {
@@ -157,12 +144,72 @@ function youtubeVideoId(url?: string) {
   return undefined;
 }
 
-function combineDiscovery(base: Result, additions: Array<Result | null | undefined>): Result {
-  const topics = base.topics.map((topic) => ({ ...topic, sources: [...topic.sources] }));
+function workingCopy(topic: Trend, feedKey: string): WorkingTrend {
+  return {
+    ...topic,
+    sources: [...topic.sources],
+    _feedScores: { [feedKey]: topic.attention },
+  };
+}
+
+function rankStrength(topic: WorkingTrend) {
+  const feedScores = Object.values(topic._feedScores).sort((a, b) => b - a);
+  const strongestFeed = feedScores[0] ?? topic.attention ?? 50;
+  const confirmation = feedScores
+    .slice(1)
+    .reduce((sum, score) => sum + Math.max(0, score - 45) * 0.32, 0);
+  const sourceCount = new Set(topic.sources.map((source) => source.source)).size;
+  const sourceBreadth = Math.max(0, sourceCount - 1) * 5;
+  const evidenceTieBreak = Math.min(8, Math.log1p(evidenceScore(topic)) * 1.45);
+
+  return strongestFeed + confirmation + sourceBreadth + evidenceTieBreak;
+}
+
+function primaryFeed(topic: WorkingTrend) {
+  return Object.entries(topic._feedScores).sort((a, b) => b[1] - a[1])[0]?.[0] ?? "core";
+}
+
+function selectBalancedTop(topics: WorkingTrend[], limit = 10) {
+  const remaining = topics.map((topic) => ({ topic, raw: rankStrength(topic) }));
+  const selected: Array<{ topic: WorkingTrend; raw: number }> = [];
+  const feedCounts = new Map<string, number>();
+
+  while (remaining.length && selected.length < limit) {
+    let bestIndex = 0;
+    let bestAdjusted = -Infinity;
+
+    for (let index = 0; index < remaining.length; index += 1) {
+      const candidate = remaining[index];
+      const feed = primaryFeed(candidate.topic);
+      const sameFeedAlreadySelected = feedCounts.get(feed) ?? 0;
+      const crossFeed = Object.keys(candidate.topic._feedScores).length > 1;
+      const saturationPenalty = crossFeed ? sameFeedAlreadySelected * 1.2 : sameFeedAlreadySelected * 4.5;
+      const adjusted = candidate.raw - saturationPenalty;
+
+      if (adjusted > bestAdjusted) {
+        bestAdjusted = adjusted;
+        bestIndex = index;
+      }
+    }
+
+    const [picked] = remaining.splice(bestIndex, 1);
+    selected.push(picked);
+    const feed = primaryFeed(picked.topic);
+    feedCounts.set(feed, (feedCounts.get(feed) ?? 0) + 1);
+  }
+
+  return selected;
+}
+
+function combineDiscovery(
+  base: Result,
+  additions: Array<{ key: string; result: Result | null | undefined }>,
+): Result {
+  const topics: WorkingTrend[] = base.topics.map((topic) => workingCopy(topic, "core"));
   const statuses = { ...base.sourceStatus };
   let newestTimestamp = Date.parse(base.generatedAt);
 
-  for (const addition of additions) {
+  for (const { key, result: addition } of additions) {
     if (!addition) continue;
     Object.assign(statuses, addition.sourceStatus);
     const additionTime = Date.parse(addition.generatedAt);
@@ -171,10 +218,11 @@ function combineDiscovery(base: Result, additions: Array<Result | null | undefin
     for (const incoming of addition.topics ?? []) {
       const existing = topics.find((topic) => sameTopic(topic, incoming));
       if (!existing) {
-        topics.push({ ...incoming, sources: [...incoming.sources] });
+        topics.push(workingCopy(incoming, key));
         continue;
       }
 
+      existing._feedScores[key] = Math.max(existing._feedScores[key] ?? 0, incoming.attention);
       existing.sources = mergeSources([...existing.sources, ...incoming.sources]);
       existing.sourceCount = existing.sources.length;
       existing.platformCount = new Set(existing.sources.map((source) => source.source)).size;
@@ -183,7 +231,6 @@ function combineDiscovery(base: Result, additions: Array<Result | null | undefin
       existing.observedComments = (existing.observedComments ?? 0) + (incoming.observedComments ?? 0);
       existing.observedViews = (existing.observedViews ?? 0) + (incoming.observedViews ?? 0);
 
-      // Prefer a readable named topic over a raw hashtag when another source resolves it.
       if (existing.title.startsWith("#") && !incoming.title.startsWith("#")) {
         existing.title = incoming.title;
         existing.query = incoming.query;
@@ -194,22 +241,22 @@ function combineDiscovery(base: Result, additions: Array<Result | null | undefin
     }
   }
 
-  const ranked = topics
-    .map((topic) => ({ topic, evidence: evidenceScore(topic) }))
-    .sort((a, b) => b.evidence - a.evidence)
-    .slice(0, 10);
+  const selected = selectBalancedTop(topics, 10);
+  const maxStrength = Math.max(...selected.map((item) => item.raw), 1);
+  const minStrength = Math.min(...selected.map((item) => item.raw), 0);
+  const range = Math.max(1, maxStrength - minStrength);
 
-  const maxEvidence = ranked[0]?.evidence ?? 1;
-  const minEvidence = ranked[ranked.length - 1]?.evidence ?? 0;
-  const range = Math.max(1, maxEvidence - minEvidence);
-
-  const reranked = ranked.map(({ topic, evidence }, index) => ({
-    ...topic,
-    rank: index + 1,
-    sourceCount: new Set(topic.sources.map((source) => source.source)).size,
-    platformCount: new Set(topic.sources.map((source) => source.source)).size,
-    attention: Math.max(45, Math.min(100, Math.round(52 + ((evidence - minEvidence) / range) * 48))),
-  }));
+  const reranked: Trend[] = selected.map(({ topic, raw }, index) => {
+    const { _feedScores, ...publicTopic } = topic;
+    const sourceCount = new Set(topic.sources.map((source) => source.source)).size;
+    return {
+      ...publicTopic,
+      rank: index + 1,
+      sourceCount,
+      platformCount: sourceCount,
+      attention: Math.max(45, Math.min(100, Math.round(52 + ((raw - minStrength) / range) * 48))),
+    };
+  });
 
   return {
     generatedAt: new Date(Number.isFinite(newestTimestamp) ? newestTimestamp : Date.now()).toISOString(),
@@ -243,7 +290,12 @@ export default function AutoTrendingFeed() {
         if (tiktokResponse?.ok) tiktokData = (await tiktokResponse.json()) as Result;
         if (googleGdeltResponse?.ok) googleGdeltData = (await googleGdeltResponse.json()) as Result;
 
-        if (!cancelled) setResult(combineDiscovery(mainData, [tiktokData, googleGdeltData]));
+        if (!cancelled) {
+          setResult(combineDiscovery(mainData, [
+            { key: "tiktok", result: tiktokData },
+            { key: "google-news", result: googleGdeltData },
+          ]));
+        }
       } catch (err) {
         if (!cancelled) setError(err instanceof Error ? err.message : "Could not load current trends.");
       } finally {
