@@ -2,9 +2,8 @@ import type { Metadata } from "next";
 import FantasyMenu from "./FantasyMenu";
 
 export const metadata: Metadata = {
-  title: "Fantasy Basketball Forecast | BRHT",
-  description:
-    "Weekly fantasy basketball matchup forecasting, lineup optimization, and streaming planner.",
+  title: "Fantasy Lab | BRHT",
+  description: "Fantasy basketball tools.",
 };
 
 export default function FantasyLayout({ children }: { children: React.ReactNode }) {
@@ -16,7 +15,11 @@ export default function FantasyLayout({ children }: { children: React.ReactNode 
           '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif',
       }}
     >
-      <style>{`.fantasy-shell main > header { display: none !important; }`}</style>
+      <style>{`
+        .fantasy-shell main > header nav { display: none !important; }
+        .fantasy-shell main > header > div { justify-content: flex-start !important; }
+        .fantasy-shell main > header > div > :nth-child(2) { margin-left: auto; }
+      `}</style>
       <FantasyMenu />
       {children}
     </div>
