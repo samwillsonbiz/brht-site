@@ -4,6 +4,7 @@ type RegionCode = "US" | "GB" | "AU" | "CA" | "ZA" | "NZ" | "IE" | "SG";
 type ParsedTrend = { hashtag: string; posts: number; views: number; rank: number; region: RegionCode };
 type ObservedTrend = { hashtag: string; posts: number; views: number; bestRank: number; regions: Set<RegionCode> };
 type SourceSignal = { source: string; detail: string; url?: string; items?: number; comments?: number; views?: number };
+type NewsContext = { headline?: string; url?: string };
 
 const REGIONS: RegionCode[] = ["US", "GB", "AU", "CA", "ZA", "NZ", "IE", "SG"];
 const REGION_NAMES: Record<RegionCode, string> = {
@@ -12,13 +13,26 @@ const REGION_NAMES: Record<RegionCode, string> = {
 };
 
 function decodeHtml(value: string) {
-  return value.replace(/&nbsp;/gi, " ").replace(/&amp;/gi, "&").replace(/&quot;/gi, '"')
-    .replace(/&#x27;|&#39;/gi, "'").replace(/&lt;/gi, "<").replace(/&gt;/gi, ">").replace(/\\u0023/gi, "#");
+  return value
+    .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&quot;/gi, '"')
+    .replace(/&#x27;|&#39;|&apos;/gi, "'")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">")
+    .replace(/\\u0023/gi, "#");
 }
+
 function pageText(html: string) {
-  return decodeHtml(html).replace(/<style[\s\S]*?<\/style>/gi, " ").replace(/<script[\s\S]*?<\/script>/gi, " ")
-    .replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+  return decodeHtml(html)
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 }
+
 function metricToNumber(value: string) {
   const clean = value.replace(/,/g, "").trim().toUpperCase();
   const match = clean.match(/^([\d.]+)\s*([KMB])?$/);
@@ -28,23 +42,50 @@ function metricToNumber(value: string) {
   const multiplier = match[2] === "K" ? 1_000 : match[2] === "M" ? 1_000_000 : match[2] === "B" ? 1_000_000_000 : 1;
   return Math.round(base * multiplier);
 }
+
 function compactNumber(value: number) {
   return new Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 }).format(value);
 }
-function cleanHashtag(value: string) { return value.replace(/^#/, "").replace(/[^a-zA-Z0-9_]/g, "").trim(); }
-function hashtagKey(value: string) { return cleanHashtag(value).replace(/_/g, "").toLowerCase(); }
-function displayHashtag(value: string) { return `#${cleanHashtag(value).replace(/_/g, " ")}`; }
+
+function cleanHashtag(value: string) {
+  return value.replace(/^#/, "").replace(/[^a-zA-Z0-9_]/g, "").trim();
+}
+
+function hashtagKey(value: string) {
+  return cleanHashtag(value).replace(/_/g, "").toLowerCase();
+}
+
+function humanizeHashtag(value: string) {
+  const clean = cleanHashtag(value).replace(/_/g, " ").trim();
+  if (!clean) return "Trending topic";
+  return clean
+    .split(/\s+/)
+    .map((word) => word.length <= 3 && word.toUpperCase() === word ? word : word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
 function queryTokens(value: string) {
-  const stop = new Set(["the", "and", "for", "with", "from", "this", "that", "official", "video"]);
+  const stop = new Set(["the", "and", "for", "with", "from", "this", "that", "official", "video", "news", "latest"]);
   return value.toLowerCase().replace(/^#/, "").replace(/[^a-z0-9\s]/g, " ").split(/\s+/)
     .filter((token) => token.length >= 3 && !stop.has(token));
 }
+
 function relevant(text: string, query: string) {
   const wanted = queryTokens(query);
   if (!wanted.length) return false;
   const found = new Set(queryTokens(text));
   const matches = wanted.filter((token) => found.has(token)).length;
   return matches >= (wanted.length <= 2 ? 1 : 2);
+}
+
+function cleanHeadline(value?: string) {
+  if (!value) return undefined;
+  const cleaned = decodeHtml(value)
+    .replace(/\s+-\s+[^-]{2,50}$/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (!cleaned || cleaned.length < 5) return undefined;
+  return cleaned.length > 150 ? `${cleaned.slice(0, 147).trimEnd()}…` : cleaned;
 }
 
 function parseVisibleTrends(html: string, region: RegionCode): ParsedTrend[] {
@@ -126,8 +167,11 @@ function mergeObserved(trends: ParsedTrend[]) {
       existing.views = Math.max(existing.views, trend.views);
       existing.bestRank = Math.min(existing.bestRank, trend.rank);
       existing.regions.add(trend.region);
-    } else exact.set(key, { hashtag: trend.hashtag, posts: trend.posts, views: trend.views, bestRank: trend.rank, regions: new Set([trend.region]) });
+    } else {
+      exact.set(key, { hashtag: trend.hashtag, posts: trend.posts, views: trend.views, bestRank: trend.rank, regions: new Set([trend.region]) });
+    }
   }
+
   const merged: ObservedTrend[] = [];
   for (const trend of [...exact.values()].sort((a, b) => a.bestRank - b.bestRank || b.views - a.views)) {
     const key = hashtagKey(trend.hashtag);
@@ -157,7 +201,9 @@ function attentionFor(trend: ObservedTrend) {
 async function blueskySignal(query: string): Promise<SourceSignal | null> {
   try {
     const url = new URL("https://public.api.bsky.app/xrpc/app.bsky.feed.searchPosts");
-    url.searchParams.set("q", query); url.searchParams.set("limit", "100"); url.searchParams.set("sort", "latest");
+    url.searchParams.set("q", query);
+    url.searchParams.set("limit", "100");
+    url.searchParams.set("sort", "latest");
     const response = await fetch(url, { next: { revalidate: 600 }, headers: { "User-Agent": "OutsideTheFeed/0.9" } });
     if (!response.ok) return null;
     const data = (await response.json()) as { posts?: Array<any> };
@@ -175,8 +221,12 @@ async function blueskySignal(query: string): Promise<SourceSignal | null> {
 async function gdeltSignal(query: string): Promise<{ signal: SourceSignal; headline?: string } | null> {
   try {
     const url = new URL("https://api.gdeltproject.org/api/v2/doc/doc");
-    url.searchParams.set("query", query); url.searchParams.set("mode", "ArtList"); url.searchParams.set("maxrecords", "50");
-    url.searchParams.set("format", "json"); url.searchParams.set("sort", "HybridRel"); url.searchParams.set("timespan", "1d");
+    url.searchParams.set("query", query);
+    url.searchParams.set("mode", "ArtList");
+    url.searchParams.set("maxrecords", "50");
+    url.searchParams.set("format", "json");
+    url.searchParams.set("sort", "HybridRel");
+    url.searchParams.set("timespan", "1d");
     const response = await fetch(url, { next: { revalidate: 600 }, headers: { "User-Agent": "OutsideTheFeed/0.9" } });
     if (!response.ok) return null;
     const data = (await response.json()) as { articles?: Array<{ title?: string; url?: string; domain?: string }> };
@@ -184,23 +234,69 @@ async function gdeltSignal(query: string): Promise<{ signal: SourceSignal; headl
     if (!articles.length) return null;
     const outlets = new Set(articles.map((article) => article.domain).filter(Boolean));
     const best = articles.find((article) => article.title && article.url);
-    return { signal: { source: "GDELT", detail: `${articles.length}${articles.length >= 50 ? "+" : ""} recent articles · ${outlets.size} outlets`, url: best?.url, items: articles.length }, headline: best?.title };
+    return {
+      signal: {
+        source: "GDELT",
+        detail: `${articles.length}${articles.length >= 50 ? "+" : ""} recent articles · ${outlets.size} outlets`,
+        url: best?.url,
+        items: articles.length,
+      },
+      headline: best?.title,
+    };
+  } catch { return null; }
+}
+
+async function googleNewsContext(query: string): Promise<NewsContext | null> {
+  try {
+    const url = new URL("https://news.google.com/rss/search");
+    url.searchParams.set("q", `${query} when:2d`);
+    url.searchParams.set("hl", "en-US");
+    url.searchParams.set("gl", "US");
+    url.searchParams.set("ceid", "US:en");
+    const response = await fetch(url, {
+      next: { revalidate: 600 },
+      headers: { "User-Agent": "OutsideTheFeed/0.9", Accept: "application/rss+xml,application/xml,text/xml" },
+    });
+    if (!response.ok) return null;
+    const xml = await response.text();
+    const items = [...xml.matchAll(/<item>([\s\S]*?)<\/item>/gi)].slice(0, 20);
+    for (const item of items) {
+      const block = item[1];
+      const title = decodeHtml(block.match(/<title>([\s\S]*?)<\/title>/i)?.[1] ?? "").trim();
+      if (!title || !relevant(title, query)) continue;
+      const link = decodeHtml(block.match(/<link>([\s\S]*?)<\/link>/i)?.[1] ?? "").trim();
+      return { headline: title, url: link || undefined };
+    }
+    return null;
   } catch { return null; }
 }
 
 export async function GET() {
   const regional = await Promise.all(REGIONS.map((region) => fetchRegion(region)));
   const parsed = regional.flat();
-  const observed = mergeObserved(parsed).sort((a, b) => attentionFor(b) - attentionFor(a) || b.views - a.views).slice(0, 12);
+  const observed = mergeObserved(parsed)
+    .sort((a, b) => attentionFor(b) - attentionFor(a) || b.views - a.views)
+    .slice(0, 12);
 
   const topics = await Promise.all(observed.map(async (trend, index) => {
     const regions = [...trend.regions];
     const query = cleanHashtag(trend.hashtag).replace(/_/g, " ");
-    const regionCopy = regions.length > 1 ? `across ${regions.length} markets` : `in ${REGION_NAMES[regions[0]] ?? regions[0] ?? "the selected market"}`;
-    const [bluesky, gdelt] = await Promise.all([blueskySignal(query), gdeltSignal(query)]);
+    const regionCopy = regions.length > 1
+      ? `across ${regions.length} markets`
+      : `in ${REGION_NAMES[regions[0]] ?? regions[0] ?? "the selected market"}`;
+
+    const [bluesky, gdelt, googleNews] = await Promise.all([
+      blueskySignal(query),
+      gdeltSignal(query),
+      googleNewsContext(query),
+    ]);
+
+    const resolvedHeadline = cleanHeadline(gdelt?.headline) ?? cleanHeadline(googleNews?.headline);
+    const resolvedTitle = resolvedHeadline ?? humanizeHashtag(trend.hashtag);
+
     const sources: SourceSignal[] = [{
       source: "TikTok",
-      detail: `${compactNumber(trend.posts)} posts · ${compactNumber(trend.views)} views · ${regions.length} market${regions.length === 1 ? "" : "s"}`,
+      detail: `#${cleanHashtag(trend.hashtag)} · ${compactNumber(trend.posts)} posts · ${compactNumber(trend.views)} views · ${regions.length} market${regions.length === 1 ? "" : "s"}`,
       url: `https://ads.tiktok.com/creative/creativeCenter/trends?deviceType=pc&locale=en&period=7&region=${regions[0] ?? "US"}`,
       items: trend.posts,
       views: trend.views,
@@ -208,11 +304,15 @@ export async function GET() {
     if (bluesky) sources.push(bluesky);
     if (gdelt) sources.push(gdelt.signal);
 
+    const description = resolvedHeadline
+      ? `TikTok activity around this story is surging ${regionCopy}: ${compactNumber(trend.posts)} posts and ${compactNumber(trend.views)} views in the current trend window.`
+      : `${resolvedTitle} is surging on TikTok ${regionCopy} over the last 7 days.`;
+
     return {
       rank: index + 1,
-      title: displayHashtag(trend.hashtag),
-      description: gdelt?.headline || `${displayHashtag(trend.hashtag)} is surging on TikTok ${regionCopy} over the last 7 days.`,
-      query,
+      title: resolvedTitle,
+      description,
+      query: resolvedHeadline ?? query,
       attention: Math.min(100, attentionFor(trend) + (bluesky ? 4 : 0) + (gdelt ? 5 : 0)),
       sourceCount: sources.length,
       platformCount: sources.length,
@@ -222,14 +322,26 @@ export async function GET() {
       observedComments: 0,
       observedViews: trend.views,
       attentionOnlyPlatforms: ["TikTok"],
+      resolver: {
+        rawHashtag: `#${cleanHashtag(trend.hashtag)}`,
+        resolved: Boolean(resolvedHeadline),
+        contextUrl: gdelt?.signal.url ?? googleNews?.url,
+      },
     };
   }));
 
   return NextResponse.json({
-    generatedAt: new Date().toISOString(), topics,
+    generatedAt: new Date().toISOString(),
+    topics,
     sourceStatus: {
-      tiktok: { ok: topics.length > 0, candidates: topics.length, regionsWithData: regional.filter((items) => items.length > 0).length,
-        note: topics.length ? "TikTok Creative Center drives Attention; Bluesky and recent-news corroboration are added when they independently match. TikTok comments are not included in Vibe." : "TikTok Creative Center did not expose parsable public trend rows on this refresh." },
+      tiktok: {
+        ok: topics.length > 0,
+        candidates: topics.length,
+        regionsWithData: regional.filter((items) => items.length > 0).length,
+        note: topics.length
+          ? "TikTok hashtags are treated as discovery keys, then resolved into current human-readable headlines using recent GDELT/Google News context where available. TikTok comments are not included in Vibe."
+          : "TikTok Creative Center did not expose parsable public trend rows on this refresh.",
+      },
     },
   }, { headers: { "Cache-Control": "public, s-maxage=900, stale-while-revalidate=1800" } });
 }
