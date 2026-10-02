@@ -39,7 +39,7 @@ function decodeHtml(value: string) {
     .replace(/&#x27;|&#39;/gi, "'")
     .replace(/&lt;/gi, "<")
     .replace(/&gt;/gi, ">")
-    .replace(/\u0023/gi, "#");
+    .replace(/\\u0023/gi, "#");
 }
 
 function pageText(html: string) {
@@ -82,9 +82,6 @@ function parseVisibleTrends(html: string, region: RegionCode): ParsedTrend[] {
   const text = pageText(html);
   const results: ParsedTrend[] = [];
   const seen = new Set<string>();
-
-  // Public Creative Center renders rows in the form:
-  // #hashtag [optional industry] 27.4K Posts 344.9M Views
   const pattern = /#([a-zA-Z0-9_]{2,80})(?:(?!#).){0,120}?([\d.,]+\s*[KMB]?)\s*Posts?(?:(?!#).){0,45}?([\d.,]+\s*[KMB]?)\s*Views?/gi;
   let match: RegExpExecArray | null;
   let rank = 1;
@@ -99,7 +96,6 @@ function parseVisibleTrends(html: string, region: RegionCode): ParsedTrend[] {
     results.push({ hashtag, posts, views, rank, region });
     rank += 1;
   }
-
   return results;
 }
 
@@ -107,13 +103,10 @@ function parseEmbeddedJson(html: string, region: RegionCode): ParsedTrend[] {
   const decoded = decodeHtml(html).replace(/\\"/g, '"');
   const results: ParsedTrend[] = [];
   const seen = new Set<string>();
-
-  // Creative Center data has historically exposed hashtagName, publishCnt and vv/videoViews.
   const patterns = [
     /"hashtagName"\s*:\s*"([^"]+)"[\s\S]{0,1600}?"publishCnt"\s*:\s*"?(\d+)"?[\s\S]{0,1600}?"(?:vv|videoViews|video_views)"\s*:\s*"?(\d+)"?/gi,
     /"hashtag_name"\s*:\s*"([^"]+)"[\s\S]{0,1600}?"(?:publish_cnt|publishCount)"\s*:\s*"?(\d+)"?[\s\S]{0,1600}?"(?:vv|videoViews|video_views|views)"\s*:\s*"?(\d+)"?/gi,
   ];
-
   for (const pattern of patterns) {
     let match: RegExpExecArray | null;
     while ((match = pattern.exec(decoded)) && results.length < 20) {
@@ -128,7 +121,6 @@ function parseEmbeddedJson(html: string, region: RegionCode): ParsedTrend[] {
     }
     if (results.length) break;
   }
-
   return results;
 }
 
@@ -138,13 +130,12 @@ async function fetchRegion(region: RegionCode): Promise<ParsedTrend[]> {
     `https://ads.tiktok.com/creative/creativeCenter/trends/hashtag?deviceType=pc&locale=en&period=7&region=${region}`,
     `https://ads.tiktok.com/business/creativecenter/hashtag/find?countryCode=${region}&period=7`,
   ];
-
   for (const url of urls) {
     try {
       const response = await fetch(url, {
         next: { revalidate: 900 },
         headers: {
-          "User-Agent": "Mozilla/5.0 (compatible; OutsideTheFeed/0.6; +https://brht.ai/outside-the-feed)",
+          "User-Agent": "Mozilla/5.0 (compatible; OutsideTheFeed/0.8; +https://brht.ai/outside-the-feed)",
           Accept: "text/html,application/xhtml+xml",
           "Accept-Language": "en-US,en;q=0.8",
         },
@@ -156,16 +147,14 @@ async function fetchRegion(region: RegionCode): Promise<ParsedTrend[]> {
       const embedded = parseEmbeddedJson(html, region);
       if (embedded.length) return embedded;
     } catch {
-      // Try the next public Creative Center URL shape.
+      // Try next public Creative Center URL shape.
     }
   }
-
   return [];
 }
 
 function mergeObserved(trends: ParsedTrend[]) {
   const exact = new Map<string, ObservedTrend>();
-
   for (const trend of trends) {
     const key = hashtagKey(trend.hashtag);
     const existing = exact.get(key);
@@ -193,21 +182,16 @@ function mergeObserved(trends: ParsedTrend[]) {
       const shortest = Math.min(key.length, candidateKey.length);
       return key === candidateKey || (shortest >= 7 && (key.includes(candidateKey) || candidateKey.includes(key)));
     });
-
     if (!related) {
       merged.push(trend);
       continue;
     }
-
-    // Related hashtags often describe the same viral conversation (#cornell / #cornelluniversity).
-    // Use maxima instead of summing so the same videos are not double-counted.
     related.posts = Math.max(related.posts, trend.posts);
     related.views = Math.max(related.views, trend.views);
     related.bestRank = Math.min(related.bestRank, trend.bestRank);
     trend.regions.forEach((region) => related.regions.add(region));
     if (key.length < hashtagKey(related.hashtag).length) related.hashtag = trend.hashtag;
   }
-
   return merged;
 }
 
@@ -245,6 +229,7 @@ export async function GET() {
         detail: `${compactNumber(trend.posts)} posts · ${compactNumber(trend.views)} views · ${regions.length} market${regions.length === 1 ? "" : "s"}`,
         url: `https://ads.tiktok.com/creative/creativeCenter/trends?deviceType=pc&locale=en&period=7&region=${regions[0] ?? "US"}`,
         items: trend.posts,
+        views: trend.views,
       }],
       observedSocialItems: trend.posts,
       observedItems: trend.posts,
