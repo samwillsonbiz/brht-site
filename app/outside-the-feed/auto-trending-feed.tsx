@@ -6,7 +6,6 @@ import LiveTopicScore from "./live-topic-score";
 
 type SourceSignal = {
   source: string;
-  value: number;
   detail: string;
   url?: string;
 };
@@ -14,24 +13,30 @@ type SourceSignal = {
 type Trend = {
   rank: number;
   title: string;
+  description?: string;
   query: string;
   attention: number;
   sourceCount: number;
   sources: SourceSignal[];
-  discoveryReason: string;
+  observedItems?: number;
+  observedComments?: number;
+  observedViews?: number;
 };
 
 type Result = {
   generatedAt: string;
   topics: Trend[];
   sourceStatus: Record<string, { ok: boolean; candidates?: number; note?: string }>;
-  methodology: string;
 };
 
 function attentionStyle(value: number) {
   if (value >= 85) return "text-rose-600";
   if (value >= 70) return "text-amber-600";
   return "text-[#2878ff]";
+}
+
+function compactNumber(value: number) {
+  return new Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 }).format(value);
 }
 
 export default function AutoTrendingFeed() {
@@ -88,35 +93,53 @@ export default function AutoTrendingFeed() {
 
       {result && (
         <div className="overflow-hidden rounded-[24px] border border-[#17213a]/[0.07] bg-white shadow-[0_18px_50px_rgba(33,56,108,0.05)]">
-          {result.topics.map((topic) => (
-            <div key={`${topic.rank}-${topic.title}`} className="grid gap-4 border-b border-[#17213a]/[0.07] px-5 py-5 last:border-b-0 md:grid-cols-[38px_minmax(0,1fr)_138px_190px] md:items-center md:px-7">
-              <div className="hidden text-center text-base font-semibold text-[#17213a]/28 md:block">{topic.rank}</div>
-              <div className="min-w-0">
-                <div className="flex flex-wrap items-center gap-2 text-[10px] font-extrabold uppercase tracking-[0.06em] text-[#17213a]/34">
-                  <span className="md:hidden">#{topic.rank}</span>
-                  <span className="inline-flex items-center gap-1 text-rose-500"><Flame className="h-3 w-3" /> {topic.attention} attention</span>
-                  <span>·</span>
-                  <span>{topic.sourceCount} source{topic.sourceCount === 1 ? "" : "s"}</span>
+          {result.topics.map((topic) => {
+            const breadth: string[] = [];
+            if ((topic.observedItems ?? 0) > 1) breadth.push(`${compactNumber(topic.observedItems ?? 0)} posts/videos seen`);
+            if ((topic.observedComments ?? 0) > 0) breadth.push(`${compactNumber(topic.observedComments ?? 0)} comments`);
+            if ((topic.observedViews ?? 0) > 0) breadth.push(`${compactNumber(topic.observedViews ?? 0)} views`);
+
+            return (
+              <div key={`${topic.rank}-${topic.title}`} className="grid gap-4 border-b border-[#17213a]/[0.07] px-5 py-5 last:border-b-0 md:grid-cols-[38px_minmax(0,1fr)_138px_190px] md:items-center md:px-7">
+                <div className="hidden text-center text-base font-semibold text-[#17213a]/28 md:block">{topic.rank}</div>
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2 text-[10px] font-extrabold uppercase tracking-[0.06em] text-[#17213a]/34">
+                    <span className="md:hidden">#{topic.rank}</span>
+                    <span className="inline-flex items-center gap-1 text-rose-500"><Flame className="h-3 w-3" /> {topic.attention} attention</span>
+                    <span>·</span>
+                    <span>{topic.sourceCount} source{topic.sourceCount === 1 ? "" : "s"}</span>
+                  </div>
+
+                  <h3 className="mt-1.5 text-[21px] font-[750] leading-[1.14] tracking-[-0.03em] text-[#101a33] md:text-[24px]">{topic.title}</h3>
+
+                  {topic.description && (
+                    <p className="mt-1.5 max-w-3xl text-sm font-medium leading-5.5 text-[#17213a]/55 md:text-[15px] md:leading-6">{topic.description}</p>
+                  )}
+
+                  {breadth.length > 0 && (
+                    <p className="mt-2 text-[11px] font-bold text-[#17213a]/38">{breadth.join(" · ")}</p>
+                  )}
+
+                  <div className="mt-2.5 flex flex-wrap gap-2">
+                    {topic.sources.slice(0, 4).map((signal, index) => signal.url ? (
+                      <a key={`${signal.source}-${index}`} href={signal.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-full border border-[#2878ff]/10 bg-[#2878ff]/[0.045] px-2.5 py-1.5 text-[10px] font-bold text-[#2878ff] hover:bg-[#2878ff]/10" onClick={(event) => event.stopPropagation()}>
+                        {signal.source} <ExternalLink className="h-2.5 w-2.5" />
+                      </a>
+                    ) : (
+                      <span key={`${signal.source}-${index}`} className="rounded-full border border-[#17213a]/7 bg-[#f6f8fc] px-2.5 py-1.5 text-[10px] font-bold text-[#17213a]/46">{signal.source}</span>
+                    ))}
+                  </div>
                 </div>
-                <h3 className="mt-1.5 text-[21px] font-[750] leading-[1.14] tracking-[-0.03em] text-[#101a33] md:text-[24px]">{topic.title}</h3>
-                <div className="mt-2.5 flex flex-wrap gap-2">
-                  {topic.sources.slice(0, 4).map((signal, index) => signal.url ? (
-                    <a key={`${signal.source}-${index}`} href={signal.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-full border border-[#2878ff]/10 bg-[#2878ff]/[0.045] px-2.5 py-1.5 text-[10px] font-bold text-[#2878ff] hover:bg-[#2878ff]/10" onClick={(event) => event.stopPropagation()}>
-                      {signal.source} <ExternalLink className="h-2.5 w-2.5" />
-                    </a>
-                  ) : (
-                    <span key={`${signal.source}-${index}`} className="rounded-full border border-[#17213a]/7 bg-[#f6f8fc] px-2.5 py-1.5 text-[10px] font-bold text-[#17213a]/46">{signal.source}</span>
-                  ))}
+
+                <div className="rounded-[16px] bg-[#f7f9fd] px-3.5 py-3 text-center">
+                  <div className="text-[9px] font-extrabold uppercase tracking-[0.08em] text-[#17213a]/34">Attention</div>
+                  <div className={`mt-1 text-[32px] font-[850] leading-none tracking-[-0.06em] ${attentionStyle(topic.attention)}`}>{topic.attention}</div>
                 </div>
-                <p className="mt-2 text-[11px] leading-5 text-[#17213a]/36">{topic.sources.slice(0, 3).map((signal) => signal.detail).join(" · ")}</p>
+
+                <LiveTopicScore query={topic.query} />
               </div>
-              <div className="rounded-[16px] bg-[#f7f9fd] px-3.5 py-3 text-center">
-                <div className="text-[9px] font-extrabold uppercase tracking-[0.08em] text-[#17213a]/34">Attention</div>
-                <div className={`mt-1 text-[32px] font-[850] leading-none tracking-[-0.06em] ${attentionStyle(topic.attention)}`}>{topic.attention}</div>
-              </div>
-              <LiveTopicScore query={topic.query} />
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </section>

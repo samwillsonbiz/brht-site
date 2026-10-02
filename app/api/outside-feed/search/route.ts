@@ -19,6 +19,17 @@ type SampleItem = {
   publishedAt?: string;
 };
 
+type YouTubeSearchItem = {
+  id?: { videoId?: string };
+  snippet?: { title?: string };
+};
+
+type YouTubeVideo = {
+  id?: string;
+  snippet?: { title?: string; channelTitle?: string };
+  statistics?: { viewCount?: string; commentCount?: string };
+};
+
 const stripHtml = (value: string | null | undefined) =>
   (value ?? "")
     .replace(/<[^>]+>/g, " ")
@@ -35,7 +46,7 @@ async function searchBluesky(query: string): Promise<SampleItem[]> {
   url.searchParams.set("sort", "latest");
 
   const response = await fetch(url, {
-    headers: { "User-Agent": "OutsideTheFeed/0.2" },
+    headers: { "User-Agent": "OutsideTheFeed/0.4" },
     next: { revalidate: 60 },
   });
 
@@ -63,7 +74,7 @@ async function searchHackerNews(query: string): Promise<SampleItem[]> {
   url.searchParams.set("hitsPerPage", "50");
 
   const response = await fetch(url, {
-    headers: { "User-Agent": "OutsideTheFeed/0.2" },
+    headers: { "User-Agent": "OutsideTheFeed/0.4" },
     next: { revalidate: 60 },
   });
 
@@ -91,7 +102,7 @@ async function searchGdelt(query: string): Promise<SampleItem[]> {
   url.searchParams.set("timespan", "7d");
 
   const response = await fetch(url, {
-    headers: { "User-Agent": "OutsideTheFeed/0.2" },
+    headers: { "User-Agent": "OutsideTheFeed/0.4" },
     next: { revalidate: 300 },
   });
 
@@ -111,33 +122,62 @@ async function searchYouTube(query: string): Promise<SampleItem[]> {
   const key = process.env.YOUTUBE_API_KEY;
   if (!key) return [];
 
+  // Search a broader set, then use video statistics to select the most useful
+  // discussion surfaces. This avoids letting one tiny but keyword-perfect video
+  // dominate the sample.
   const searchUrl = new URL("https://www.googleapis.com/youtube/v3/search");
   searchUrl.searchParams.set("part", "snippet");
   searchUrl.searchParams.set("type", "video");
   searchUrl.searchParams.set("q", query);
-  searchUrl.searchParams.set("maxResults", "8");
+  searchUrl.searchParams.set("maxResults", "25");
   searchUrl.searchParams.set("order", "relevance");
+  searchUrl.searchParams.set("relevanceLanguage", "en");
   searchUrl.searchParams.set("key", key);
 
   const searchResponse = await fetch(searchUrl, { next: { revalidate: 300 } });
   if (!searchResponse.ok) return [];
-  const searchData = (await searchResponse.json()) as { items?: Array<any> };
-  const videos = searchData.items ?? [];
+  const searchData = (await searchResponse.json()) as { items?: YouTubeSearchItem[] };
+  const searchItems = searchData.items ?? [];
+  const videoIds = searchItems.map((item) => item.id?.videoId).filter((id): id is string => Boolean(id));
+  if (!videoIds.length) return [];
 
-  const comments = await Promise.all(
-    videos.map(async (video) => {
-      const videoId = video.id?.videoId;
+  const statsUrl = new URL("https://www.googleapis.com/youtube/v3/videos");
+  statsUrl.searchParams.set("part", "snippet,statistics");
+  statsUrl.searchParams.set("id", videoIds.join(","));
+  statsUrl.searchParams.set("key", key);
+  const statsResponse = await fetch(statsUrl, { next: { revalidate: 300 } });
+  const statsData = statsResponse.ok ? ((await statsResponse.json()) as { items?: YouTubeVideo[] }) : { items: [] };
+
+  const rankedVideos = (statsData.items ?? [])
+    .map((video) => ({
+      ...video,
+      viewCount: Number(video.statistics?.viewCount ?? 0),
+      commentCount: Number(video.statistics?.commentCount ?? 0),
+    }))
+    .sort((a, b) => {
+      const aScore = Math.log10(1 + a.viewCount) * 0.7 + Math.log10(1 + a.commentCount) * 1.3;
+      const bScore = Math.log10(1 + b.viewCount) * 0.7 + Math.log10(1 + b.commentCount) * 1.3;
+      return bScore - aScore;
+    })
+    .slice(0, 12);
+
+  const commentBatches = await Promise.all(
+    rankedVideos.map(async (video) => {
+      const videoId = video.id;
       if (!videoId) return [];
+
       const commentsUrl = new URL("https://www.googleapis.com/youtube/v3/commentThreads");
       commentsUrl.searchParams.set("part", "snippet");
       commentsUrl.searchParams.set("videoId", videoId);
-      commentsUrl.searchParams.set("maxResults", "40");
+      commentsUrl.searchParams.set("maxResults", "100");
       commentsUrl.searchParams.set("order", "relevance");
       commentsUrl.searchParams.set("textFormat", "plainText");
       commentsUrl.searchParams.set("key", key);
+
       const response = await fetch(commentsUrl, { next: { revalidate: 300 } });
       if (!response.ok) return [];
       const data = (await response.json()) as { items?: Array<any> };
+
       return (data.items ?? []).map((item) => {
         const snippet = item.snippet?.topLevelComment?.snippet;
         return {
@@ -153,7 +193,7 @@ async function searchYouTube(query: string): Promise<SampleItem[]> {
     }),
   );
 
-  return comments.flat().slice(0, 250);
+  return commentBatches.flat().slice(0, 1200);
 }
 
 export async function GET(request: Request) {
@@ -176,8 +216,8 @@ export async function GET(request: Request) {
     { id: "hackernews", name: "Hacker News", mode: "measured", note: "Public Algolia API; counted for topics where HN has meaningful discussion.", count: hackerNews.length },
     { id: "gdelt", name: "News / open web", mode: "context", note: "GDELT supplies factual context only and is excluded from sentiment scoring.", count: gdelt.length },
     process.env.YOUTUBE_API_KEY
-      ? { id: "youtube", name: "YouTube", mode: "measured", note: "Official Data API; relevant top-level comments are counted in the score.", count: youtube.length }
-      : { id: "youtube", name: "YouTube", mode: "setup", note: "Scoring support is ready; add a YouTube Data API key to include comments." },
+      ? { id: "youtube", name: "YouTube", mode: "measured", note: "Official Data API; samples comments across up to 12 relevant videos (up to ~1,200 top-level comments per topic).", count: youtube.length }
+      : { id: "youtube", name: "YouTube", mode: "setup", note: "Collector is ready; add YOUTUBE_API_KEY to begin sampling up to ~1,200 comments per topic." },
     { id: "reddit", name: "Reddit", mode: "pending", note: "Commercial data permission/licensing is required before Reddit can enter the score." },
     { id: "tiktok", name: "TikTok", mode: "pending", note: "No compliant broad commercial comment feed is connected yet, so TikTok is not included in the score." },
     { id: "instagram", name: "Instagram / Reels", mode: "pending", note: "No approved broad Reels-comment collector is connected yet, so Reels is not included in the score." },
@@ -185,11 +225,16 @@ export async function GET(request: Request) {
     { id: "x", name: "X", mode: "setup", note: "Can enter the scoring model once the paid API is connected." },
   ];
 
-  const items = [...bluesky, ...hackerNews, ...youtube, ...gdelt]
-    .filter((item) => item.text || item.title)
-    .slice(0, 400);
+  // Score the full measurable corpus, but only return a compact preview payload
+  // to the browser. This lets YouTube materially improve sample size without
+  // shipping thousands of comments to every homepage visitor.
+  const measurableItems = [...bluesky, ...hackerNews, ...youtube].filter((item) => item.text || item.title);
+  const score = scoreConversation(measurableItems);
 
-  const score = scoreConversation(items);
+  const previewItems = [...measurableItems, ...gdelt]
+    .filter((item) => item.text || item.title)
+    .sort((a, b) => (b.engagement ?? 0) - (a.engagement ?? 0))
+    .slice(0, 250);
 
   return NextResponse.json(
     {
@@ -198,13 +243,13 @@ export async function GET(request: Request) {
       totalSamples: score.sampleSize,
       contextArticles: gdelt.length,
       statuses,
-      items,
+      items: previewItems,
       score,
       disclaimer: "Vibe, Consensus, Heat, Bubble Gap and Confidence are calculated from returned measurable social samples only. This v0.1 classifier is a deterministic lexical stance proxy, not yet the planned GPT stance classifier. The score measures sampled reaction, not factual truth.",
     },
     {
       headers: {
-        "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
+        "Cache-Control": "public, s-maxage=300, stale-while-revalidate=900",
       },
     },
   );
