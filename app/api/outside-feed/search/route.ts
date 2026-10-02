@@ -26,7 +26,7 @@ type YouTubeSearchItem = {
 
 type YouTubeVideo = {
   id?: string;
-  snippet?: { title?: string; channelTitle?: string };
+  snippet?: { title?: string; channelTitle?: string; publishedAt?: string };
   statistics?: { viewCount?: string; commentCount?: string };
 };
 
@@ -40,42 +40,58 @@ const stripHtml = (value: string | null | undefined) =>
     .trim();
 
 async function searchBluesky(query: string): Promise<SampleItem[]> {
-  const url = new URL("https://public.api.bsky.app/xrpc/app.bsky.feed.searchPosts");
-  url.searchParams.set("q", query);
-  url.searchParams.set("limit", "50");
-  url.searchParams.set("sort", "latest");
+  const all: SampleItem[] = [];
+  let cursor: string | undefined;
 
-  const response = await fetch(url, {
-    headers: { "User-Agent": "OutsideTheFeed/0.4" },
-    next: { revalidate: 60 },
-  });
+  for (let page = 0; page < 3; page += 1) {
+    const url = new URL("https://public.api.bsky.app/xrpc/app.bsky.feed.searchPosts");
+    url.searchParams.set("q", query);
+    url.searchParams.set("limit", "100");
+    url.searchParams.set("sort", "latest");
+    if (cursor) url.searchParams.set("cursor", cursor);
 
-  if (!response.ok) return [];
-  const data = (await response.json()) as { posts?: Array<any> };
+    const response = await fetch(url, {
+      headers: { "User-Agent": "OutsideTheFeed/0.5" },
+      next: { revalidate: 180 },
+    });
+    if (!response.ok) break;
 
-  return (data.posts ?? []).map((post) => {
-    const rkey = typeof post.uri === "string" ? post.uri.split("/").pop() : undefined;
-    const handle = post.author?.handle;
-    return {
-      source: "Bluesky",
-      text: post.record?.text ?? "",
-      author: handle,
-      engagement: (post.likeCount ?? 0) + (post.repostCount ?? 0) + (post.replyCount ?? 0),
-      publishedAt: post.indexedAt,
-      url: handle && rkey ? `https://bsky.app/profile/${handle}/post/${rkey}` : undefined,
-    };
-  });
+    const data = (await response.json()) as { posts?: Array<any>; cursor?: string };
+    for (const post of data.posts ?? []) {
+      const rkey = typeof post.uri === "string" ? post.uri.split("/").pop() : undefined;
+      const handle = post.author?.handle;
+      all.push({
+        source: "Bluesky",
+        text: post.record?.text ?? "",
+        author: handle,
+        engagement: (post.likeCount ?? 0) + (post.repostCount ?? 0) + (post.replyCount ?? 0),
+        publishedAt: post.indexedAt,
+        url: handle && rkey ? `https://bsky.app/profile/${handle}/post/${rkey}` : undefined,
+      });
+    }
+
+    cursor = data.cursor;
+    if (!cursor || !(data.posts ?? []).length) break;
+  }
+
+  const cutoff = Date.now() - 7 * 86400000;
+  return all
+    .filter((item) => {
+      const timestamp = Date.parse(item.publishedAt ?? "");
+      return !Number.isFinite(timestamp) || timestamp >= cutoff;
+    })
+    .slice(0, 300);
 }
 
 async function searchHackerNews(query: string): Promise<SampleItem[]> {
   const url = new URL("https://hn.algolia.com/api/v1/search_by_date");
   url.searchParams.set("query", query);
   url.searchParams.set("tags", "(story,comment)");
-  url.searchParams.set("hitsPerPage", "50");
+  url.searchParams.set("hitsPerPage", "75");
 
   const response = await fetch(url, {
-    headers: { "User-Agent": "OutsideTheFeed/0.4" },
-    next: { revalidate: 60 },
+    headers: { "User-Agent": "OutsideTheFeed/0.5" },
+    next: { revalidate: 300 },
   });
 
   if (!response.ok) return [];
@@ -102,8 +118,8 @@ async function searchGdelt(query: string): Promise<SampleItem[]> {
   url.searchParams.set("timespan", "7d");
 
   const response = await fetch(url, {
-    headers: { "User-Agent": "OutsideTheFeed/0.4" },
-    next: { revalidate: 300 },
+    headers: { "User-Agent": "OutsideTheFeed/0.5" },
+    next: { revalidate: 600 },
   });
 
   if (!response.ok) return [];
@@ -122,9 +138,6 @@ async function searchYouTube(query: string): Promise<SampleItem[]> {
   const key = process.env.YOUTUBE_API_KEY;
   if (!key) return [];
 
-  // Search a broader set, then use video statistics to select the most useful
-  // discussion surfaces. This avoids letting one tiny but keyword-perfect video
-  // dominate the sample.
   const searchUrl = new URL("https://www.googleapis.com/youtube/v3/search");
   searchUrl.searchParams.set("part", "snippet");
   searchUrl.searchParams.set("type", "video");
@@ -132,9 +145,10 @@ async function searchYouTube(query: string): Promise<SampleItem[]> {
   searchUrl.searchParams.set("maxResults", "25");
   searchUrl.searchParams.set("order", "relevance");
   searchUrl.searchParams.set("relevanceLanguage", "en");
+  searchUrl.searchParams.set("publishedAfter", new Date(Date.now() - 45 * 86400000).toISOString());
   searchUrl.searchParams.set("key", key);
 
-  const searchResponse = await fetch(searchUrl, { next: { revalidate: 300 } });
+  const searchResponse = await fetch(searchUrl, { next: { revalidate: 900 } });
   if (!searchResponse.ok) return [];
   const searchData = (await searchResponse.json()) as { items?: YouTubeSearchItem[] };
   const searchItems = searchData.items ?? [];
@@ -145,7 +159,7 @@ async function searchYouTube(query: string): Promise<SampleItem[]> {
   statsUrl.searchParams.set("part", "snippet,statistics");
   statsUrl.searchParams.set("id", videoIds.join(","));
   statsUrl.searchParams.set("key", key);
-  const statsResponse = await fetch(statsUrl, { next: { revalidate: 300 } });
+  const statsResponse = await fetch(statsUrl, { next: { revalidate: 900 } });
   const statsData = statsResponse.ok ? ((await statsResponse.json()) as { items?: YouTubeVideo[] }) : { items: [] };
 
   const rankedVideos = (statsData.items ?? [])
@@ -155,43 +169,41 @@ async function searchYouTube(query: string): Promise<SampleItem[]> {
       commentCount: Number(video.statistics?.commentCount ?? 0),
     }))
     .sort((a, b) => {
-      const aScore = Math.log10(1 + a.viewCount) * 0.7 + Math.log10(1 + a.commentCount) * 1.3;
-      const bScore = Math.log10(1 + b.viewCount) * 0.7 + Math.log10(1 + b.commentCount) * 1.3;
+      const aScore = Math.log10(1 + a.viewCount) * 0.65 + Math.log10(1 + a.commentCount) * 1.4;
+      const bScore = Math.log10(1 + b.viewCount) * 0.65 + Math.log10(1 + b.commentCount) * 1.4;
       return bScore - aScore;
     })
     .slice(0, 12);
 
-  const commentBatches = await Promise.all(
-    rankedVideos.map(async (video) => {
-      const videoId = video.id;
-      if (!videoId) return [];
+  const commentBatches = await Promise.all(rankedVideos.map(async (video) => {
+    const videoId = video.id;
+    if (!videoId) return [];
 
-      const commentsUrl = new URL("https://www.googleapis.com/youtube/v3/commentThreads");
-      commentsUrl.searchParams.set("part", "snippet");
-      commentsUrl.searchParams.set("videoId", videoId);
-      commentsUrl.searchParams.set("maxResults", "100");
-      commentsUrl.searchParams.set("order", "relevance");
-      commentsUrl.searchParams.set("textFormat", "plainText");
-      commentsUrl.searchParams.set("key", key);
+    const commentsUrl = new URL("https://www.googleapis.com/youtube/v3/commentThreads");
+    commentsUrl.searchParams.set("part", "snippet");
+    commentsUrl.searchParams.set("videoId", videoId);
+    commentsUrl.searchParams.set("maxResults", "100");
+    commentsUrl.searchParams.set("order", "relevance");
+    commentsUrl.searchParams.set("textFormat", "plainText");
+    commentsUrl.searchParams.set("key", key);
 
-      const response = await fetch(commentsUrl, { next: { revalidate: 300 } });
-      if (!response.ok) return [];
-      const data = (await response.json()) as { items?: Array<any> };
+    const response = await fetch(commentsUrl, { next: { revalidate: 900 } });
+    if (!response.ok) return [];
+    const data = (await response.json()) as { items?: Array<any> };
 
-      return (data.items ?? []).map((item) => {
-        const snippet = item.snippet?.topLevelComment?.snippet;
-        return {
-          source: "YouTube",
-          title: video.snippet?.title,
-          text: snippet?.textDisplay ?? "",
-          author: snippet?.authorDisplayName,
-          engagement: snippet?.likeCount ?? 0,
-          publishedAt: snippet?.publishedAt,
-          url: `https://www.youtube.com/watch?v=${videoId}`,
-        } satisfies SampleItem;
-      });
-    }),
-  );
+    return (data.items ?? []).map((item) => {
+      const snippet = item.snippet?.topLevelComment?.snippet;
+      return {
+        source: "YouTube",
+        title: video.snippet?.title,
+        text: snippet?.textDisplay ?? "",
+        author: snippet?.authorDisplayName,
+        engagement: snippet?.likeCount ?? 0,
+        publishedAt: snippet?.publishedAt,
+        url: `https://www.youtube.com/watch?v=${videoId}`,
+      } satisfies SampleItem;
+    });
+  }));
 
   return commentBatches.flat().slice(0, 1200);
 }
@@ -212,11 +224,11 @@ export async function GET(request: Request) {
   ]);
 
   const statuses: SourceStatus[] = [
-    { id: "bluesky", name: "Bluesky", mode: "measured", note: "Public API; returned posts are counted directly in the score.", count: bluesky.length },
-    { id: "hackernews", name: "Hacker News", mode: "measured", note: "Public Algolia API; counted for topics where HN has meaningful discussion.", count: hackerNews.length },
+    { id: "bluesky", name: "Bluesky", mode: "measured", note: "Public API; samples up to ~300 recent matching posts when available.", count: bluesky.length },
+    { id: "hackernews", name: "Hacker News", mode: "measured", note: "Public Algolia API; counted only where Hacker News has relevant discussion.", count: hackerNews.length },
     { id: "gdelt", name: "News / open web", mode: "context", note: "GDELT supplies factual context only and is excluded from sentiment scoring.", count: gdelt.length },
     process.env.YOUTUBE_API_KEY
-      ? { id: "youtube", name: "YouTube", mode: "measured", note: "Official Data API; samples comments across up to 12 relevant videos (up to ~1,200 top-level comments per topic).", count: youtube.length }
+      ? { id: "youtube", name: "YouTube", mode: "measured", note: "Official Data API; samples comments across up to 12 relevant recent videos (up to ~1,200 top-level comments).", count: youtube.length }
       : { id: "youtube", name: "YouTube", mode: "setup", note: "Collector is ready; add YOUTUBE_API_KEY to begin sampling up to ~1,200 comments per topic." },
     { id: "reddit", name: "Reddit", mode: "pending", note: "Commercial data permission/licensing is required before Reddit can enter the score." },
     { id: "tiktok", name: "TikTok", mode: "pending", note: "No compliant broad commercial comment feed is connected yet, so TikTok is not included in the score." },
@@ -225,9 +237,6 @@ export async function GET(request: Request) {
     { id: "x", name: "X", mode: "setup", note: "Can enter the scoring model once the paid API is connected." },
   ];
 
-  // Score the full measurable corpus, but only return a compact preview payload
-  // to the browser. This lets YouTube materially improve sample size without
-  // shipping thousands of comments to every homepage visitor.
   const measurableItems = [...bluesky, ...hackerNews, ...youtube].filter((item) => item.text || item.title);
   const score = scoreConversation(measurableItems);
 
@@ -245,11 +254,11 @@ export async function GET(request: Request) {
       statuses,
       items: previewItems,
       score,
-      disclaimer: "Vibe, Consensus, Heat, Bubble Gap and Confidence are calculated from returned measurable social samples only. This v0.1 classifier is a deterministic lexical stance proxy, not yet the planned GPT stance classifier. The score measures sampled reaction, not factual truth.",
+      disclaimer: "Vibe, Consensus, Heat, Bubble Gap and Confidence are calculated from returned measurable social samples only. This v0.1 classifier is a deterministic lexical stance proxy, not yet the planned target-aware classifier. The score measures sampled reaction, not factual truth.",
     },
     {
       headers: {
-        "Cache-Control": "public, s-maxage=300, stale-while-revalidate=900",
+        "Cache-Control": "public, s-maxage=900, stale-while-revalidate=3600",
       },
     },
   );
