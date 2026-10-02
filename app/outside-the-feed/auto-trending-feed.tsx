@@ -49,6 +49,8 @@ function sourceLabel(signal: SourceSignal) {
   if (!count) return signal.source;
   if (signal.source === "YouTube") return `${signal.source} · ${count} video${count === 1 ? "" : "s"}`;
   if (signal.source === "TikTok") return `${signal.source} · ${compactNumber(count)} posts`;
+  if (signal.source === "Google Trends") return `Google · ${compactNumber(count)}+ searches`;
+  if (signal.source === "GDELT") return `News · ${compactNumber(count)} articles`;
   if (signal.source === "Bluesky") return `${signal.source} · ${count} post${count === 1 ? "" : "s"}`;
   if (signal.source === "Hacker News") return `${signal.source} · ${count} discussion${count === 1 ? "" : "s"}`;
   return signal.source;
@@ -103,46 +105,59 @@ function mergeSources(sources: SourceSignal[]) {
   return [...merged.values()];
 }
 
-function combineDiscovery(base: Result, tiktok?: Result | null): Result {
-  if (!tiktok?.topics?.length) return base;
-
+function combineDiscovery(base: Result, additions: Array<Result | null | undefined>): Result {
   const topics = base.topics.map((topic) => ({ ...topic, sources: [...topic.sources] }));
+  const statuses = { ...base.sourceStatus };
+  let newestTimestamp = Date.parse(base.generatedAt);
 
-  for (const incoming of tiktok.topics) {
-    const existing = topics.find((topic) => sameTopic(topic, incoming));
-    if (!existing) {
-      topics.push({ ...incoming, sources: [...incoming.sources] });
-      continue;
-    }
+  for (const addition of additions) {
+    if (!addition) continue;
+    Object.assign(statuses, addition.sourceStatus);
+    const additionTime = Date.parse(addition.generatedAt);
+    if (Number.isFinite(additionTime)) newestTimestamp = Math.max(newestTimestamp, additionTime);
 
-    existing.sources = mergeSources([...existing.sources, ...incoming.sources]);
-    existing.sourceCount = existing.sources.length;
-    existing.platformCount = new Set(existing.sources.map((source) => source.source)).size;
-    existing.observedSocialItems = (existing.observedSocialItems ?? existing.observedItems ?? 0) + (incoming.observedSocialItems ?? incoming.observedItems ?? 0);
-    existing.observedItems = existing.observedSocialItems;
-    existing.observedComments = (existing.observedComments ?? 0) + (incoming.observedComments ?? 0);
-    existing.observedViews = (existing.observedViews ?? 0) + (incoming.observedViews ?? 0);
-    existing.attention = Math.min(100, Math.max(existing.attention, incoming.attention) + 6);
+    for (const incoming of addition.topics ?? []) {
+      const existing = topics.find((topic) => sameTopic(topic, incoming));
+      if (!existing) {
+        topics.push({ ...incoming, sources: [...incoming.sources] });
+        continue;
+      }
 
-    // Prefer a readable non-hashtag topic name and its explanatory copy when we already have one.
-    if (existing.title.startsWith("#") && !incoming.title.startsWith("#")) {
-      existing.title = incoming.title;
-      existing.query = incoming.query;
+      const oldSourceCount = new Set(existing.sources.map((source) => source.source)).size;
+      existing.sources = mergeSources([...existing.sources, ...incoming.sources]);
+      const newSourceCount = new Set(existing.sources.map((source) => source.source)).size;
+      existing.sourceCount = existing.sources.length;
+      existing.platformCount = newSourceCount;
+      existing.observedSocialItems = (existing.observedSocialItems ?? existing.observedItems ?? 0) + (incoming.observedSocialItems ?? incoming.observedItems ?? 0);
+      existing.observedItems = existing.observedSocialItems;
+      existing.observedComments = (existing.observedComments ?? 0) + (incoming.observedComments ?? 0);
+      existing.observedViews = (existing.observedViews ?? 0) + (incoming.observedViews ?? 0);
+      const breadthGain = Math.max(0, newSourceCount - oldSourceCount);
+      existing.attention = Math.min(100, Math.max(existing.attention, incoming.attention) + Math.min(10, breadthGain * 4));
+
+      // Prefer a readable named topic over a raw hashtag when another source resolves it.
+      if (existing.title.startsWith("#") && !incoming.title.startsWith("#")) {
+        existing.title = incoming.title;
+        existing.query = incoming.query;
+        if (incoming.description) existing.description = incoming.description;
+      } else if (!existing.description && incoming.description) {
+        existing.description = incoming.description;
+      }
     }
   }
 
   topics.sort((a, b) => {
-    const aBreadth = (a.platformCount ?? a.sourceCount) - 1;
-    const bBreadth = (b.platformCount ?? b.sourceCount) - 1;
-    return (b.attention + bBreadth * 2) - (a.attention + aBreadth * 2);
+    const aBreadth = new Set(a.sources.map((source) => source.source)).size - 1;
+    const bBreadth = new Set(b.sources.map((source) => source.source)).size - 1;
+    return (b.attention + bBreadth * 3) - (a.attention + aBreadth * 3);
   });
 
   const reranked = topics.slice(0, 10).map((topic, index) => ({ ...topic, rank: index + 1 }));
 
   return {
-    generatedAt: new Date(Math.max(Date.parse(base.generatedAt), Date.parse(tiktok.generatedAt))).toISOString(),
+    generatedAt: new Date(Number.isFinite(newestTimestamp) ? newestTimestamp : Date.now()).toISOString(),
     topics: reranked,
-    sourceStatus: { ...base.sourceStatus, ...tiktok.sourceStatus },
+    sourceStatus: statuses,
   };
 }
 
@@ -158,19 +173,20 @@ export default function AutoTrendingFeed() {
       setLoading(true);
       setError(null);
       try {
-        const [mainResponse, tiktokResponse] = await Promise.all([
+        const [mainResponse, tiktokResponse, googleGdeltResponse] = await Promise.all([
           fetch(`/api/outside-feed/trending?refresh=${refreshKey}`),
           fetch(`/api/outside-feed/tiktok-trends?refresh=${refreshKey}`).catch(() => null),
+          fetch(`/api/outside-feed/google-gdelt-trends?refresh=${refreshKey}`).catch(() => null),
         ]);
         if (!mainResponse.ok) throw new Error("Could not load current trends.");
 
         const mainData = (await mainResponse.json()) as Result;
         let tiktokData: Result | null = null;
-        if (tiktokResponse?.ok) {
-          tiktokData = (await tiktokResponse.json()) as Result;
-        }
+        let googleGdeltData: Result | null = null;
+        if (tiktokResponse?.ok) tiktokData = (await tiktokResponse.json()) as Result;
+        if (googleGdeltResponse?.ok) googleGdeltData = (await googleGdeltResponse.json()) as Result;
 
-        if (!cancelled) setResult(combineDiscovery(mainData, tiktokData));
+        if (!cancelled) setResult(combineDiscovery(mainData, [tiktokData, googleGdeltData]));
       } catch (err) {
         if (!cancelled) setError(err instanceof Error ? err.message : "Could not load current trends.");
       } finally {
@@ -216,7 +232,7 @@ export default function AutoTrendingFeed() {
             if ((topic.observedComments ?? 0) > 0) breadth.push(`${compactNumber(topic.observedComments ?? 0)} comments`);
             if ((topic.observedViews ?? 0) > 0) breadth.push(`${compactNumber(topic.observedViews ?? 0)} platform views`);
 
-            const platformCount = topic.platformCount ?? topic.sourceCount;
+            const sourceCount = new Set(topic.sources.map((source) => source.source)).size;
 
             return (
               <div key={`${topic.rank}-${topic.title}`} className="grid gap-4 border-b border-[#17213a]/[0.07] px-5 py-5 last:border-b-0 md:grid-cols-[38px_minmax(0,1fr)_138px_190px] md:items-center md:px-7">
@@ -227,7 +243,7 @@ export default function AutoTrendingFeed() {
                     <span className="md:hidden">#{topic.rank}</span>
                     <span className="inline-flex items-center gap-1 text-rose-500"><Flame className="h-3 w-3" /> {topic.attention} attention</span>
                     <span>·</span>
-                    <span>{platformCount} platform{platformCount === 1 ? "" : "s"}</span>
+                    <span>{sourceCount} source{sourceCount === 1 ? "" : "s"}</span>
                   </div>
 
                   <h3 className="mt-1.5 text-[21px] font-[750] leading-[1.14] tracking-[-0.03em] text-[#101a33] md:text-[24px]">{topic.title}</h3>
@@ -241,7 +257,7 @@ export default function AutoTrendingFeed() {
                   )}
 
                   <div className="mt-2.5 flex flex-wrap gap-2">
-                    {topic.sources.slice(0, 5).map((signal) => signal.url ? (
+                    {topic.sources.slice(0, 6).map((signal) => signal.url ? (
                       <a key={signal.source} href={signal.url} target="_blank" rel="noreferrer" title={signal.detail} className="inline-flex items-center gap-1 rounded-full border border-[#2878ff]/10 bg-[#2878ff]/[0.045] px-2.5 py-1.5 text-[10px] font-bold text-[#2878ff] hover:bg-[#2878ff]/10" onClick={(event) => event.stopPropagation()}>
                         {sourceLabel(signal)} <ExternalLink className="h-2.5 w-2.5" />
                       </a>
