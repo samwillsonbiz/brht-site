@@ -29,6 +29,8 @@ type GoogleObserved = {
   traffic: number;
   regions: Set<string>;
   newestPublishedAt?: number;
+  newsTitle?: string;
+  newsUrl?: string;
 };
 
 type GdeltArticle = {
@@ -72,6 +74,12 @@ function compactNumber(value: number) {
   return new Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 }).format(value);
 }
 
+function titleCase(value: string) {
+  if (!value) return value;
+  if (/[A-Z]/.test(value)) return value;
+  return value.replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
 function normalizedTopic(value: string) {
   return value
     .toLowerCase()
@@ -111,7 +119,7 @@ async function getGoogleTrends() {
       const response = await fetch(`https://trends.google.com/trending/rss?geo=${region}`, {
         next: { revalidate: 600 },
         headers: {
-          "User-Agent": "Mozilla/5.0 (compatible; OutsideTheFeed/0.7; +https://brht.ai/outside-the-feed)",
+          "User-Agent": "Mozilla/5.0 (compatible; OutsideTheFeed/0.8; +https://brht.ai/outside-the-feed)",
           Accept: "application/rss+xml, application/xml, text/xml;q=0.9, */*;q=0.8",
         },
       });
@@ -126,6 +134,8 @@ async function getGoogleTrends() {
         const title = xmlTag(block, "title");
         const traffic = parseTraffic(xmlTag(block, "ht:approx_traffic"));
         const pubDate = Date.parse(xmlTag(block, "pubDate"));
+        const newsTitle = xmlTag(block, "ht:news_item_title");
+        const newsUrl = xmlTag(block, "ht:news_item_url");
         if (!title || traffic <= 0) continue;
 
         const existing = observed.find((item) => sameTopic(item.title, title));
@@ -133,12 +143,16 @@ async function getGoogleTrends() {
           existing.traffic = Math.max(existing.traffic, traffic);
           existing.regions.add(region);
           if (Number.isFinite(pubDate)) existing.newestPublishedAt = Math.max(existing.newestPublishedAt ?? 0, pubDate);
+          if (!existing.newsTitle && newsTitle) existing.newsTitle = newsTitle;
+          if (!existing.newsUrl && newsUrl) existing.newsUrl = newsUrl;
         } else {
           observed.push({
             title,
             traffic,
             regions: new Set([region]),
             newestPublishedAt: Number.isFinite(pubDate) ? pubDate : undefined,
+            newsTitle: newsTitle || undefined,
+            newsUrl: newsUrl || undefined,
           });
         }
       }
@@ -168,7 +182,7 @@ async function getGdeltSignal(title: string) {
 
     const response = await fetch(url, {
       next: { revalidate: 600 },
-      headers: { "User-Agent": "OutsideTheFeed/0.7" },
+      headers: { "User-Agent": "OutsideTheFeed/0.8" },
     });
     if (!response.ok) return null;
     const data = (await response.json()) as { articles?: GdeltArticle[] };
@@ -213,14 +227,23 @@ export async function GET() {
         url: gdelt.url,
         items: gdelt.count,
       });
+    } else if (item.newsTitle && item.newsUrl) {
+      sources.push({
+        source: "GDELT",
+        detail: "Related current-news context from Google Trends",
+        url: item.newsUrl,
+        items: 1,
+      });
     }
 
-    const description = gdelt?.headline && !sameTopic(gdelt.headline, item.title)
-      ? gdelt.headline
-      : `${item.title} is spiking in Google searches${item.regions.size > 1 ? ` across ${item.regions.size} markets` : ""}.`;
+    const description = item.newsTitle
+      ? cleanText(item.newsTitle)
+      : gdelt?.headline
+        ? cleanText(gdelt.headline)
+        : `${titleCase(item.title)} is spiking in Google searches${item.regions.size > 1 ? ` across ${item.regions.size} markets` : ""}.`;
 
     return {
-      title: item.title,
+      title: titleCase(item.title),
       query: queryFor(item.title),
       rawScore: googleScore + gdeltBoost,
       sources,
@@ -260,7 +283,7 @@ export async function GET() {
       },
       gdelt: {
         ok: topics.some((topic) => topic.sources.some((source) => source.source === "GDELT")),
-        note: "GDELT recent-news breadth is used as a coverage/velocity signal, not public sentiment.",
+        note: "Recent-news breadth/context is used as an attention and explanation signal, not public sentiment.",
       },
     },
   }, {
