@@ -152,6 +152,36 @@ function SkillRack({ skills, faceUp, disabledColors = [], onUse, compact = false
   })}</div>;
 }
 
+function PortalControls({ canLeave, onStay, onLeave }: { canLeave: boolean; onStay: () => void; onLeave: () => void }) {
+  return <div className="mt-5 rounded-2xl border border-cyan-300/20 bg-cyan-300/10 p-4">
+    {canLeave ? <>
+      <div className="font-black text-cyan-100">The Realm Rune is active.</div>
+      <p className="mt-1 text-sm text-white/55">You may keep exploring, or leave through the Portal now. Leaving heals 1 Health and opens the Gift Shop.</p>
+      <div className="mt-4 grid grid-cols-2 gap-2"><button onClick={onStay} className="rounded-xl border border-white/10 px-4 py-3 font-bold">Stay in Realm</button><button onClick={onLeave} className="rounded-xl bg-amber-300 px-4 py-3 font-black text-[#231707]">Leave Realm</button></div>
+    </> : <>
+      <div className="font-black text-cyan-100">The Portal is dormant.</div>
+      <p className="mt-1 text-sm text-white/55">Find and activate this Realm's Shrine first. Once its Rune is active, return here to leave the Realm.</p>
+      <button onClick={onStay} className="mt-4 w-full rounded-xl bg-amber-300 px-4 py-3 font-black text-[#231707]">Continue Exploring</button>
+    </>}
+  </div>;
+}
+
+function ShopModal({ realm, coins, armor, maxArmor, attackDice, maxAttackDice, backpack, coinSlots, lootInbox, onBuyToken, onBuyLoot, onBuyAttackDice, onBuyArmor, onSellLoot, onPackLoot, onDiscardLoot, onFinish }: { realm: number; coins: number; armor: number; maxArmor: number; attackDice: number; maxAttackDice: number; backpack: Array<FableCard | null>; coinSlots: number[]; lootInbox: FableCard[]; onBuyToken: (token: TokenKind) => void; onBuyLoot: () => void; onBuyAttackDice: () => void; onBuyArmor: () => void; onSellLoot: (slot: number) => void; onPackLoot: (inboxIndex: number, slot: number) => void; onDiscardLoot: (inboxIndex: number) => void; onFinish: () => void }) {
+  const itemClass = "rounded-2xl border border-white/10 bg-black/20 p-3 text-center transition hover:border-amber-300/50 disabled:opacity-30";
+  return <ModalShell z="z-[425]"><section className="w-full max-w-[1080px] rounded-[30px] border border-amber-300/20 bg-[#111821] p-6 shadow-2xl">
+    <div className="flex flex-wrap items-end justify-between gap-3"><div><div className="text-[10px] font-black uppercase tracking-[.18em] text-amber-300">Gift Shop · After Realm {realm}</div><h2 className="mt-1 text-4xl font-black text-[#fff2cf]">Spend your Coins</h2><p className="mt-2 text-sm text-white/50">Buy as much as you can afford. Loot may be sold back for 1 Coin each.</p></div><div className="flex items-center gap-2 rounded-2xl bg-amber-300/10 px-4 py-3"><img src={FABLE_STAT_ART.coins} alt="Coins" className="h-9 w-9 object-contain" /><div><div className="text-[9px] font-black uppercase text-white/35">Coins</div><div className="text-2xl font-black text-amber-200">{coins}</div></div></div></div>
+    <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
+      {(["crystal","lucky","healing"] as TokenKind[]).map((token) => <button key={token} disabled={coins < 1} onClick={() => onBuyToken(token)} className={itemClass}><img src={FABLE_TOKEN_ART[token]} alt={TOKEN_LABELS[token]} className="mx-auto h-20 w-20 object-contain" /><div className="mt-2 text-sm font-black">{TOKEN_LABELS[token]}</div><div className="text-xs text-amber-300">1 Coin</div></button>)}
+      <button disabled={coins < 2} onClick={onBuyLoot} className={itemClass}><img src={FABLE_CARD_BACKS.loot} alt="Loot" className="mx-auto h-24 rounded-lg object-contain" /><div className="mt-2 text-sm font-black">Random Loot</div><div className="text-xs text-amber-300">2 Coins</div></button>
+      <button disabled={coins < 4 || attackDice >= maxAttackDice} onClick={onBuyAttackDice} className={itemClass}><img src={FABLE_STAT_ART.attackDice} alt="Attack Die" className="mx-auto h-20 w-20 object-contain" /><div className="mt-2 text-sm font-black">Attack Die</div><div className="text-xs text-amber-300">4 Coins · {attackDice}/{maxAttackDice}</div></button>
+      <button disabled={coins < 6 || armor >= maxArmor} onClick={onBuyArmor} className={itemClass}><img src={FABLE_STAT_ART.armor} alt="Armor" className="mx-auto h-20 w-20 object-contain" /><div className="mt-2 text-sm font-black">Armor</div><div className="text-xs text-amber-300">6 Coins · {armor}/{maxArmor}</div></button>
+    </div>
+    <div className="mt-6 rounded-2xl border border-white/10 bg-white/[.03] p-4"><div className="text-[10px] font-black uppercase tracking-[.14em] text-white/35">Sell Loot · 1 Coin each</div><div className="mt-3 grid grid-cols-3 gap-3">{backpack.map((card, slot) => <div key={slot} className="rounded-xl border border-white/10 bg-black/20 p-2">{card ? <><CardImage card={card} className="mx-auto h-36 rounded-lg" /><div className="mt-2 truncate text-center text-xs font-black">{card.title}</div><button onClick={() => onSellLoot(slot)} className="mt-2 w-full rounded-lg bg-amber-300 px-2 py-2 text-xs font-black text-[#231707]">Sell +1 Coin</button></> : <div className="grid h-44 place-items-center text-xs text-white/25">No Loot</div>}</div>)}</div></div>
+    {lootInbox.length > 0 && <div className="mt-5 rounded-2xl border border-fuchsia-300/25 bg-fuchsia-300/10 p-4"><div className="font-black text-fuchsia-100">Purchased Loot — store it before leaving the shop.</div>{lootInbox.map((card, index) => <div key={`${card.id}-${index}`} className="mt-3 grid gap-3 sm:grid-cols-[110px_1fr]"><CardImage card={card} className="w-full rounded-lg" /><div><div className="font-black">{card.title}</div><div className="mt-2 flex flex-wrap gap-2">{[0,1,2].map((slot) => <button key={slot} disabled={coinSlots[slot] > 0 || !!backpack[slot]} onClick={() => onPackLoot(index, slot)} className="rounded-lg border border-white/10 px-3 py-2 text-xs font-bold disabled:opacity-25">Pocket {slot+1}</button>)}<button onClick={() => onDiscardLoot(index)} className="rounded-lg border border-white/10 px-3 py-2 text-xs text-white/50">Discard</button></div></div></div>)}</div>}
+    <button disabled={lootInbox.length > 0} onClick={onFinish} className="mt-6 w-full rounded-2xl bg-amber-300 px-5 py-4 text-lg font-black text-[#231707] disabled:opacity-30">{realm < 3 ? `Finish Shopping · Enter Realm ${realm + 1}` : "Finish Shopping"}</button>
+  </section></ModalShell>;
+}
+
 export default function FableFurySoloRunV2() {
   const [phase, setPhase] = useState<GamePhase>("hero");
   const [heroId, setHeroId] = useState(FABLE_HEROES[0].id);
@@ -193,6 +223,7 @@ export default function FableFurySoloRunV2() {
   const [eventHistory, setEventHistory] = useState<Record<string, string[]>>({});
   const [specialHistory, setSpecialHistory] = useState<Record<string, string[]>>({});
   const [shrineStarted, setShrineStarted] = useState<string[]>([]);
+  const [shopOpen, setShopOpen] = useState(false);
   const [enemy, setEnemy] = useState<EnemyCombatState | null>(null);
   const [reactionRoll, setReactionRoll] = useState<{ label: string; requirement: number; roll?: number; onPass: "armor" | "attackDice" } | null>(null);
   const [loading, setLoading] = useState<string | null>(null);
@@ -218,6 +249,7 @@ export default function FableFurySoloRunV2() {
   const effectiveMaxArmor = hero.maxArmor + (skills.some((s) => s?.id === "skill-unusual-hat" && skillActive(s)) ? 1 : 0);
   const effectiveMaxDice = hero.maxAttackDice + (skills.some((s) => s?.id === "skill-gym-candy" && skillActive(s)) ? 2 : 0);
   const inventoryLocked = lootInbox.length > 0;
+  const portalCanLeave = resolvedKeys.some((key) => key.startsWith(`${realm}:`) && cardsByCell[key]?.subtype === "shrine");
   const shopArmorCost = hasSkill(triggerCtx, "skill-designer-parry") ? 4 : 6;
 
   useEffect(() => { if (!toast) return; const t = window.setTimeout(() => setToast(null), 2600); return () => window.clearTimeout(t); }, [toast]);
@@ -784,6 +816,69 @@ export default function FableFurySoloRunV2() {
     setResolvedKeys((v) => v.includes(enemy.key) ? v : [...v, enemy.key]); setCombatMods((v) => ({ ...v, enemyDamageDelta: 0, enemyAgilityDelta: 0, rewardBonus: 0 })); setEnemy(null); setSelectedCard(null); setSelectedCell(null); notify(enemy.noReward ? "Enemy cleared — no reward." : `${reward.kind === "none" ? "Enemy cleared" : `Reward: ${amount} ${reward.kind}`}.`);
   }
 
+  function spendShopCoins(amount: number) {
+    if (coins < amount) { notify(`Need ${amount} Coins.`); return false; }
+    setCoinSlots((slots) => adjustCoinSlots(slots, backpack, -amount).slots);
+    return true;
+  }
+
+  function buyShopToken(token: TokenKind) {
+    if (!spendShopCoins(1)) return;
+    setTokens((current) => ({ ...current, [token]: current[token] + 1 }));
+    notify(`${TOKEN_LABELS[token]} purchased.`);
+  }
+
+  async function buyShopLoot() {
+    if (!spendShopCoins(2)) return;
+    const cards = await drawLootCards(1);
+    if (cards.length) notify(`${cards[0].title} purchased.`);
+  }
+
+  function buyShopAttackDie() {
+    if (attackDice >= effectiveMaxDice) return notify("Attack Dice are already at capacity.");
+    if (!spendShopCoins(4)) return;
+    setAttackDice((value) => Math.min(effectiveMaxDice, value + 1));
+    notify("+1 Attack Die purchased.");
+  }
+
+  function buyShopArmor() {
+    if (armor >= effectiveMaxArmor) return notify("Armor is already at capacity.");
+    if (!spendShopCoins(6)) return;
+    setArmor((value) => Math.min(effectiveMaxArmor, value + 1));
+    notify("+1 Armor purchased.");
+  }
+
+  function sellShopLoot(slot: number) {
+    const card = backpack[slot];
+    if (!card) return;
+    const nextBackpack = backpack.map((item, index) => index === slot ? null : item);
+    setBackpack(nextBackpack);
+    setLootDiscard((current) => [...current, card]);
+    setCoinSlots((slots) => adjustCoinSlots(slots, nextBackpack, 1).slots);
+    notify(`${card.title} sold for 1 Coin.`);
+  }
+
+  function leaveThroughPortal() {
+    if (!portalCanLeave) return notify("Activate the Realm Shrine before using the Portal.");
+    setHealth((value) => Math.min(hero.maxHealth, value + 1));
+    setSelectedCard(null); setSelectedCell(null); setEventState(null);
+    setShopOpen(true);
+    notify("Portal: +1 Health. Welcome to the Gift Shop.");
+  }
+
+  function finishShopping() {
+    if (lootInbox.length > 0) return notify("Store or discard purchased Loot first.");
+    setShopOpen(false);
+    setSelectedCard(null); setSelectedCell(null); setEventState(null); setEnemy(null); setScoutRemaining(0);
+    setCombatMods({ ...EMPTY_COMBAT_MODS });
+    if (realm < 3) {
+      setRealm((value) => value + 1);
+      notify(`Realm ${realm + 1} begins.`);
+    } else {
+      notify("Realm 3 complete. The Final Monster flow is the next system to wire.");
+    }
+  }
+
   async function revealLocation(cell: string) {
     if (!run || !map || phase !== "realm" || inventoryLocked || enemy) return; const key = `${realm}:${cell}`;
     if (scoutRemaining > 0 && !realmRevealed.includes(cell)) { const result = await postJson<{ card: FableCard }>("/api/fablefury/peek", { runId: run.run_id, realm, cell }); setScoutedByCell((v) => ({ ...v, [key]: result.card })); setScoutRemaining((v) => Math.max(0, v - 1)); setSelectedCard(result.card); setSelectedCell(cell); return; }
@@ -793,7 +888,7 @@ export default function FableFurySoloRunV2() {
     if (result.card.card_type === "event" || result.card.id.startsWith("trap-")) await prepareEvent(result.card, key); else if (result.card.card_type === "enemy") await prepareEnemy(result.card, key); else if (result.card.card_type === "special" && result.card.subtype === "shrine") await prepareShrine(result.card, key);
   }
 
-  function resetRun() { setPhase("hero"); setRun(null); setStartingToken(null); setTargetNumber(null); setHealth(hero.startingHealth); setArmor(hero.startingArmor); setAttackDice(hero.startingAttackDice); setCoinSlots([0,0,0]); setTokens({ ...EMPTY_TOKENS }); setBackpack([null,null,null]); setSkills([null,null,null]); setLootInbox([]); setEnemy(null); setSelectedCard(null); setEventState(null); }
+  function resetRun() { setPhase("hero"); setRun(null); setStartingToken(null); setTargetNumber(null); setHealth(hero.startingHealth); setArmor(hero.startingArmor); setAttackDice(hero.startingAttackDice); setCoinSlots([0,0,0]); setTokens({ ...EMPTY_TOKENS }); setBackpack([null,null,null]); setSkills([null,null,null]); setLootInbox([]); setEnemy(null); setSelectedCard(null); setEventState(null); setShopOpen(false); }
 
   const activeCells = map?.grid.active_cells ?? [];
 
@@ -811,13 +906,15 @@ export default function FableFurySoloRunV2() {
 
     {toast && <div className="fixed bottom-5 left-1/2 z-[500] -translate-x-1/2 rounded-full bg-[#fff0bd] px-5 py-3 text-sm font-black text-[#271a0c] shadow-2xl">{toast}</div>}
 
-    {selectedCard && !enemy && !skillDraft && <ModalShell z="z-[200]"><section className="grid w-full max-w-[1120px] gap-6 md:grid-cols-[410px_1fr]"><FlipCard card={selectedCard} /><div className="rounded-[28px] border border-white/10 bg-[#111821] p-6"><div className="text-[10px] font-black uppercase tracking-[.16em] text-amber-300">{typeLabel(selectedCard)}</div><h2 className="mt-2 text-4xl font-black text-[#fff2cf]">{selectedCard.title}</h2>{selectedCard.rules_text && <p className="mt-4 whitespace-pre-line text-sm font-semibold leading-6 text-white/70">{selectedCard.rules_text}</p>}{eventState ? <EventControls state={eventState} coins={coins} tokens={tokens} onRoll={() => setEventState((v) => v ? { ...v, roll: rollD6() } : v)} onLucky={() => useToken("lucky")} onAccept={async () => { const s = eventState; if (s.roll == null) return; if (s.plan.kind === "roll") await resolveEvent(s.plan.resolve(s.roll), s.roll); else if (s.plan.kind === "pickNumber" && s.pick) await resolveEvent(s.plan.resolve(s.pick, s.roll), s.roll, s.pick); else if (s.plan.kind === "optionalRoll") await resolveEvent([...s.plan.cost, ...s.plan.resolve(s.roll)], s.roll); }} onChoice={(effects) => resolveEvent(effects)} onSkip={() => eventState.plan.kind === "optionalRoll" && resolveEvent(eventState.plan.skipEffects ?? [])} onPick={(n) => setEventState((v) => v ? { ...v, pick: n } : v)} onContinue={() => { setSelectedCard(null); setSelectedCell(null); setEventState(null); }} /> : selectedCard.card_type === "special" && selectedCard.subtype === "shrine" ? <div className="mt-5 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm text-emerald-100">Shrine rewards applied. Choose your Skill from the Skill draft.</div> : <button onClick={() => { setSelectedCard(null); setSelectedCell(null); }} className="mt-6 w-full rounded-2xl bg-amber-300 px-5 py-3 font-black text-[#231707]">Continue</button>}</div></section></ModalShell>}
+    {selectedCard && !enemy && !skillDraft && <ModalShell z="z-[200]"><section className="grid w-full max-w-[1120px] gap-6 md:grid-cols-[410px_1fr]"><FlipCard card={selectedCard} /><div className="rounded-[28px] border border-white/10 bg-[#111821] p-6"><div className="text-[10px] font-black uppercase tracking-[.16em] text-amber-300">{typeLabel(selectedCard)}</div><h2 className="mt-2 text-4xl font-black text-[#fff2cf]">{selectedCard.title}</h2>{selectedCard.rules_text && <p className="mt-4 whitespace-pre-line text-sm font-semibold leading-6 text-white/70">{selectedCard.rules_text}</p>}{eventState ? <EventControls state={eventState} coins={coins} tokens={tokens} onRoll={() => setEventState((v) => v ? { ...v, roll: rollD6() } : v)} onLucky={() => useToken("lucky")} onAccept={async () => { const s = eventState; if (s.roll == null) return; if (s.plan.kind === "roll") await resolveEvent(s.plan.resolve(s.roll), s.roll); else if (s.plan.kind === "pickNumber" && s.pick) await resolveEvent(s.plan.resolve(s.pick, s.roll), s.roll, s.pick); else if (s.plan.kind === "optionalRoll") await resolveEvent([...s.plan.cost, ...s.plan.resolve(s.roll)], s.roll); }} onChoice={(effects) => resolveEvent(effects)} onSkip={() => eventState.plan.kind === "optionalRoll" && resolveEvent(eventState.plan.skipEffects ?? [])} onPick={(n) => setEventState((v) => v ? { ...v, pick: n } : v)} onContinue={() => { setSelectedCard(null); setSelectedCell(null); setEventState(null); }} /> : selectedCard.id === "special-portal" ? <PortalControls canLeave={portalCanLeave} onStay={() => { setSelectedCard(null); setSelectedCell(null); }} onLeave={leaveThroughPortal} /> : selectedCard.card_type === "special" && selectedCard.subtype === "shrine" ? <div className="mt-5 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm text-emerald-100">Shrine rewards applied. Choose your Skill from the Skill draft.</div> : <button onClick={() => { setSelectedCard(null); setSelectedCell(null); }} className="mt-6 w-full rounded-2xl bg-amber-300 px-5 py-3 font-black text-[#231707]">Continue</button>}</div></section></ModalShell>}
 
     {lootUse && <ModalShell z="z-[350]"><section className="grid w-full max-w-[850px] gap-5 md:grid-cols-[300px_1fr]"><CardImage card={lootUse.card} className="w-full rounded-[24px]" /><div className="rounded-[28px] border border-white/10 bg-[#111821] p-6"><div className="text-[10px] font-black uppercase tracking-[.16em] text-amber-300">Use Loot</div><h2 className="mt-2 text-3xl font-black">{lootUse.card.title}</h2><p className="mt-3 text-sm text-white/60">{lootUse.card.rules_text}</p><div className="mt-5 grid gap-2">{getLootPlan(lootUse.card.id, { race: hero.race, health, maxHealth: hero.maxHealth, armor, maxArmor: effectiveMaxArmor, attackDice, maxAttackDice: effectiveMaxDice, coins, hasCoreRoll: !!eventState?.roll || !!enemy?.setupRoll, trapPending: !!eventState?.card.id.startsWith("trap-") && eventState.status === "pending", skillCount: skills.filter(Boolean).length }).options.map((option, index) => { const ctx = { race: hero.race, health, maxHealth: hero.maxHealth, armor, maxArmor: effectiveMaxArmor, attackDice, maxAttackDice: effectiveMaxDice, coins, hasCoreRoll: !!eventState?.roll || !!enemy?.setupRoll, trapPending: !!eventState?.card.id.startsWith("trap-") && eventState.status === "pending", skillCount: skills.filter(Boolean).length }; const disabled = option.requires ? !option.requires(ctx) : false; return <button key={index} disabled={disabled} onClick={() => applyLoot(lootUse, option.effects)} className="rounded-2xl bg-amber-300 px-4 py-3 text-left font-black text-[#231707] disabled:opacity-30">{option.label}{disabled && option.unavailableText ? <span className="block text-[10px] font-semibold opacity-60">{option.unavailableText}</span> : null}</button>; })}</div><button onClick={() => setLootUse(null)} className="mt-3 w-full rounded-xl border border-white/10 px-4 py-2 text-xs font-bold text-white/50">Cancel</button></div></section></ModalShell>}
 
     {skillDraft && <ModalShell z="z-[400]"><section className="w-full max-w-[1050px] rounded-[28px] border border-white/10 bg-[#111821] p-6"><h2 className="text-3xl font-black text-[#fff2cf]">{skillDraft.title}</h2>{skillDraft.stage === "slot" && <div className="mt-5 grid grid-cols-3 gap-3">{skills.map((skill, i) => <button key={i} disabled={!skill} onClick={async () => { if (!skillDraft) return; if (skillDraft.color === "any") setSkillDraft({ ...skillDraft, slot: i, stage: "color" }); else { const choices = await drawSkills(skillDraft.color as SkillColor, 3); setSkillDraft({ ...skillDraft, slot: i, choices, stage: "choices" }); } }} className="rounded-2xl border border-white/10 p-3 disabled:opacity-25">{skill ? <CardImage card={skill} className="mx-auto h-48 rounded" /> : "Empty"}</button>)}</div>}{skillDraft.stage === "color" && <div className="mt-5 grid grid-cols-4 gap-2">{(["red","blue","green","yellow"] as SkillColor[]).map((color) => <button key={color} onClick={async () => { const choices = await drawSkills(color, 3); setSkillDraft((v) => v ? { ...v, color, choices, stage: "choices" } : v); }} className="rounded-2xl border border-white/10 p-4 font-black capitalize">{color}</button>)}</div>}{skillDraft.stage === "choices" && <div className="mt-5 grid gap-4 md:grid-cols-3">{skillDraft.choices.map((card) => <button key={card.id} onClick={() => chooseSkill(card)} className="rounded-2xl border border-white/10 bg-black/20 p-3 transition hover:border-amber-300/60"><CardImage card={card} className="mx-auto max-h-[480px] rounded-xl" /></button>)}</div>}</section></ModalShell>}
 
     {enemy && <EnemyModal enemy={enemy} heroName={hero.name} heroHealth={health} heroArmor={armor} heroAttackDice={attackDice} targetNumber={targetNumber ?? 1} tokens={tokens} combatMods={combatMods} skills={skills} triggerCtx={triggerCtx} coins={coins} onUseLoot={openLoot} backpack={backpack} coinSlots={coinSlots} onUseToken={useToken} onAdvanceSetup={advanceEnemySetup} onSetupRoll={() => setEnemy((v) => v ? { ...v, setupRoll: rollD6() } : v)} onResolveSetupRoll={resolveSetupRoll} onRollHero={rollHeroAttack} onRerollDie={rerollCombatDie} onPolymorph={polymorphDie} onResolveHero={resolveHeroAttack} onBeginEnemy={beginEnemyTurn} onEnemyAction={executeEnemyAction} onResolveTarget={resolveTargetedAttack} onChoice={applyEnemyChoice} onClaim={claimReward} />}
+
+    {shopOpen && <ShopModal realm={realm} coins={coins} armor={armor} maxArmor={effectiveMaxArmor} attackDice={attackDice} maxAttackDice={effectiveMaxDice} backpack={backpack} coinSlots={coinSlots} lootInbox={lootInbox} onBuyToken={buyShopToken} onBuyLoot={buyShopLoot} onBuyAttackDice={buyShopAttackDie} onBuyArmor={buyShopArmor} onSellLoot={sellShopLoot} onPackLoot={packLoot} onDiscardLoot={discardInbox} onFinish={finishShopping} />}
 
     {reactionRoll && <ModalShell z="z-[500]"><div className="w-full max-w-md rounded-[28px] border border-white/10 bg-[#111821] p-6 text-center"><h3 className="text-xl font-black">{reactionRoll.label}</h3>{reactionRoll.roll == null ? <button onClick={() => setReactionRoll((v) => v ? { ...v, roll: rollD6() } : v)} className="mt-5 rounded-2xl bg-amber-300 px-6 py-3 font-black text-[#231707]">Roll Core Die</button> : <><div className="mx-auto mt-5 grid h-20 w-20 place-items-center rounded-2xl bg-[#fff2cf] text-4xl font-black text-[#231707]">{reactionRoll.roll}</div><div className="mt-4 grid grid-cols-2 gap-2"><button disabled={tokens.lucky <= 0} onClick={() => useToken("lucky")} className="rounded-xl border border-white/10 p-3 font-bold disabled:opacity-30">Lucky reroll</button><button onClick={resolveReactionRoll} className="rounded-xl bg-amber-300 p-3 font-black text-[#231707]">Accept</button></div></>}</div></ModalShell>}
   </main>;
