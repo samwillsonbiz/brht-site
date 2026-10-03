@@ -34,7 +34,7 @@ function activeSkills(ctx: TriggerContext) {
   });
 }
 
-export function clearTriggers(kind: "enemy" | "trap" | "shrine", ctx: TriggerContext): TriggerEffect[] {
+export function clearTriggers(kind: "event" | "enemy" | "trap" | "shrine" | "portal", ctx: TriggerContext): TriggerEffect[] {
   const effects: TriggerEffect[] = [];
   if (kind === "enemy") {
     if (ctx.heroId === "hero-alf-featherbottom") effects.push({ type: "token", token: "crystal", amount: 1 });
@@ -44,6 +44,7 @@ export function clearTriggers(kind: "enemy" | "trap" | "shrine", ctx: TriggerCon
   if (kind === "shrine" && ctx.heroId === "hero-raven-madison") effects.push({ type: "drawLoot", count: 1 });
 
   for (const skill of activeSkills(ctx)) {
+    if (skill.id === "skill-life-tap") effects.push({ type: "token", token: "healing", amount: 1 });
     switch (skill.id) {
       case "skill-champion-of-the-sun": if (kind === "shrine") effects.push({ type: "attackDice", amount: 1 }); break;
       case "skill-absorb": if (kind === "shrine") effects.push({ type: "armor", amount: 1 }); break;
