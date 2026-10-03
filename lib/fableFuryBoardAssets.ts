@@ -16,9 +16,9 @@ export const FABLE_TOKEN_ART: Record<TokenKind, string> = {
 
 // Existing Fable Fury art used in place of generic emoji/stat icons.
 export const FABLE_STAT_ART = {
-  health: thumb("1jmhQaKjlXD5Po6rqBPaMOkaFbBsqpcVJ", 420),
-  armor: thumb("17oUGJEVTDVuoA9z3YxxXdGy1-G7do-VE", 420),
-  attackDice: thumb("13LsgS8yU4vinqpgD8azCmpVo9mLqE1BH", 420),
+  health: thumb("12s11V8Vzl63TGMGpnnLdPuNgp_DB191L", 420),
+  armor: thumb("1r1H4ublk_8UZhAppsTbnKCUU10s2CCSa", 420),
+  attackDice: thumb("1oUn6NpzKa8lkWnViMZZpvlKtF-AQuSgR", 420),
   coins: thumb("1p4_zR5zyRx381bVXvc_GlyskLyFRFP1d", 420),
 } as const;
 

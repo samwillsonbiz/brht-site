@@ -302,7 +302,7 @@ export default function FableFurySoloRunV2() {
 
   async function chooseSkill(card: FableCard) {
     if (!skillDraft) return;
-    if (skillDraft.mode === "shrine") { const slot = realm - 1; setSkills((v) => v.map((s, i) => i === slot ? card : s)); if (skillDraft.sourceKey) setResolvedKeys((v) => v.includes(skillDraft.sourceKey as string) ? v : [...v, skillDraft.sourceKey as string]); setSkillDraft(null); notify(`${card.title} equipped.`); return; }
+    if (skillDraft.mode === "shrine") { const slot = realm - 1; setSkills((v) => v.map((s, i) => i === slot ? card : s)); if (skillDraft.sourceKey) setResolvedKeys((v) => v.includes(skillDraft.sourceKey as string) ? v : [...v, skillDraft.sourceKey as string]); setSkillDraft(null); setSelectedCard(null); setSelectedCell(null); notify(`${card.title} equipped.`); return; }
     if (skillDraft.slot != null) { setSkills((v) => v.map((s, i) => i === skillDraft.slot ? card : s)); setSkillDraft(null); notify(`${card.title} equipped.`); }
   }
 
