@@ -82,7 +82,7 @@ export function setupSteps(card: EnemyCardLike, ctx: EnemyContext): EnemySetupSt
       return [{ kind: "auto", effects: [{ type: "health", amount: -1 }] }];
     case "enemy-lethargic-larry":
     case "enemy-caveborn-conrad":
-      return [{ kind: "auto", effects: [{ type: "drawLoot", amount: undefined as never, count: 1 } as EnemyEffect] }];
+      return [{ kind: "auto", effects: [{ type: "drawLoot", count: 1 }] }];
     case "enemy-bossy-betty":
       return [{ kind: "auto", effects: [{ type: "health", amount: 1 }] }];
     case "enemy-bouldergut-grumlok":
