@@ -6,6 +6,8 @@ export type EnemyAttack = {
   effects?: string[];
 };
 
+export type EnemyPassive = { title: string; text: string };
+
 export type EnemyData = {
   haste: boolean;
   health: number;
@@ -14,6 +16,8 @@ export type EnemyData = {
   attacks: EnemyAttack[];
   rewards: string;
   action_name?: string;
+  isBoss: boolean;
+  passives: EnemyPassive[];
 };
 
 export type EnemyCardLike = {
@@ -64,6 +68,13 @@ export function enemyData(card: EnemyCardLike): EnemyData {
     attacks: Array.isArray(data.attacks) ? data.attacks as EnemyAttack[] : [],
     rewards: String(data.rewards ?? ""),
     action_name: typeof data.action_name === "string" ? data.action_name : undefined,
+    isBoss: Boolean(data.is_boss),
+    passives: Array.isArray(data.passives)
+      ? (data.passives as Array<Record<string, unknown>>).map((passive) => ({
+          title: String(passive.title ?? "Monster Action"),
+          text: String(passive.text ?? ""),
+        }))
+      : [],
   };
 }
 
@@ -128,6 +139,7 @@ export function setupSteps(card: EnemyCardLike, ctx: EnemyContext): EnemySetupSt
 }
 
 export function targetIsDirected(card: EnemyCardLike) {
+  if (card.id === "monster-battleaxe-zorga") return true;
   const text = card.rules_text ?? "";
   return /\[TA\]\s*targets/i.test(text);
 }
@@ -138,6 +150,8 @@ export function armorBlocksEnemy(card: EnemyCardLike) {
 
 export function enemyTurnStart(card: EnemyCardLike): { kind: "auto"; effects: EnemyEffect[] } | { kind: "choice"; prompt: string; options: Array<{ label: string; effects: EnemyEffect[]; requiresAttackDice?: number }> } | null {
   switch (card.id) {
+    case "monster-drakorath-jr":
+      return { kind: "auto", effects: [{ type: "health", amount: -1 }, note("Overwhelming Cuteness: each Hero loses 1 Health when the Monster turn begins.")] };
     case "enemy-snapdragon":
       return { kind: "auto", effects: [{ type: "health", amount: -1 }, note("Snapdragon: each Hero loses 1 Health when the Enemy turn begins.")] };
     case "enemy-youthful-yuri":
@@ -200,6 +214,7 @@ export function afterEnemyAction(card: EnemyCardLike, attack: EnemyAttack, targe
   const effects: EnemyEffect[] = [];
   if (card.id === "enemy-horned-harold" && attack.type === "[AA]") effects.push({ type: "enemyDamage", amount: 1 }, note("Horned Harold: All Attack ended, Damage +1."));
   if (card.id === "enemy-darkhide-shankul" && attack.type === "[TA]" && targetedMiss) effects.push({ type: "enemyDamage", amount: 1 }, note("Darkhide Shankul: Targeted Attack missed, Damage +1."));
+  if (card.id === "monster-drakorath-jr" && attack.type === "[TA]" && targetedMiss) effects.push({ type: "enemyDamage", amount: 2 }, note("Temper Tantrum: the missed Targeted Attack increases Monster Damage by 2."));
   if (card.id === "enemy-unstable-grok" && attack.type === "[AA]") return { effects: [note("Go Boom: Unstable Grok dies after its All Attack and drops no reward.")], killNoReward: true };
   return { effects };
 }
