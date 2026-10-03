@@ -87,3 +87,13 @@ export async function selectRows(
 ) {
   return request(table, { method: "GET" }, query);
 }
+
+export async function rpc<T = unknown>(
+  functionName: string,
+  args: JsonRecord = {},
+): Promise<T> {
+  return request(`rpc/${functionName}`, {
+    method: "POST",
+    body: JSON.stringify(args),
+  }) as Promise<T>;
+}
