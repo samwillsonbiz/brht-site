@@ -234,8 +234,8 @@ export default function FableFurySoloRunV2() {
   const mapImage = mapArt(map?.id);
   const realmRevealed = revealed[realm] ?? [];
   const activeEnemyColors = enemy?.disabledSkillColors ?? [];
-  const activeTrapSummary = selectedCard?.id.startsWith("trap-")
-    ? getTrapSummary(selectedCard.id, { race: hero.race, health, armor, attackDice, coins, lootCount: backpack.filter(Boolean).length, lootNames: backpack.flatMap((card) => card ? [card.title] : []), trapRequirementDelta: trapMods.requirementDelta, trapRequirementOverride: trapMods.requirementOverride, trapDamageDelta: trapMods.damageDelta })
+  const activeTrapSummary = eventState?.card.id.startsWith("trap-") && eventState.status !== "resolved"
+    ? getTrapSummary(eventState.card.id, { race: hero.race, health, armor, attackDice, coins, lootCount: backpack.filter(Boolean).length, lootNames: backpack.flatMap((card) => card ? [card.title] : []), trapRequirementDelta: trapMods.requirementDelta, trapRequirementOverride: trapMods.requirementOverride, trapDamageDelta: trapMods.damageDelta })
     : null;
   const disabledSkillColors = [...new Set<SkillColor>([...activeEnemyColors, ...(activeTrapSummary?.disabledSkillColor ? [activeTrapSummary.disabledSkillColor] : [])])];
   const triggerSkills = skills.map((skill, index) => skillFaceUp[index] ? skill : null);

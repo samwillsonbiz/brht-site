@@ -48,10 +48,10 @@ function hasLoot(ctx: TrapContext, name: string) {
 }
 
 function effectiveRequirement(rule: TrapRule, ctx: TrapContext) {
-  const base = rule.raceRequirement && ctx.race.toLowerCase() === rule.raceRequirement.race.toLowerCase()
+  const printed = rule.raceRequirement && ctx.race.toLowerCase() === rule.raceRequirement.race.toLowerCase()
     ? rule.raceRequirement.requirement
     : rule.requirement;
-  if (typeof ctx.trapRequirementOverride === "number") return Math.min(6, Math.max(1, ctx.trapRequirementOverride));
+  const base = typeof ctx.trapRequirementOverride === "number" ? ctx.trapRequirementOverride : printed;
   return Math.min(6, Math.max(1, base + (ctx.trapRequirementDelta ?? 0)));
 }
 
