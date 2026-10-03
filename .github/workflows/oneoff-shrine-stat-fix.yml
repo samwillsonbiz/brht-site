@@ -1,0 +1,48 @@
+name: One-off shrine and stat art fix
+
+on:
+  push:
+    branches:
+      - fix/fablefury-shrine-icons
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/fablefury-shrine-icons
+      - name: Patch shrine handoff and stat art
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          run_path = Path('components/fableFury/FableFurySoloRunV2.tsx')
+          text = run_path.read_text()
+          old = 'setSkillDraft(null); notify(`${card.title} equipped.`); return; }'
+          new = 'setSkillDraft(null); setSelectedCard(null); setSelectedCell(null); notify(`${card.title} equipped.`); return; }'
+          assert old in text, 'shrine chooseSkill anchor not found'
+          text = text.replace(old, new, 1)
+          run_path.write_text(text)
+
+          art_path = Path('lib/fableFuryBoardAssets.ts')
+          art = art_path.read_text()
+          art = art.replace('health: thumb("1jmhQaKjlXD5Po6rqBPaMOkaFbBsqpcVJ", 420)', 'health: thumb("12s11V8Vzl63TGMGpnnLdPuNgp_DB191L", 420)')
+          art = art.replace('armor: thumb("17oUGJEVTDVuoA9z3YxxXdGy1-G7do-VE", 420)', 'armor: thumb("1r1H4ublk_8UZhAppsTbnKCUU10s2CCSa", 420)')
+          art = art.replace('attackDice: thumb("13LsgS8yU4vinqpgD8azCmpVo9mLqE1BH", 420)', 'attackDice: thumb("1oUn6NpzKa8lkWnViMZZpvlKtF-AQuSgR", 420)')
+          art_path.write_text(art)
+          PY
+      - name: Commit patched source and remove workflow
+        shell: bash
+        run: |
+          rm .github/workflows/oneoff-shrine-stat-fix.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add components/fableFury/FableFurySoloRunV2.tsx lib/fableFuryBoardAssets.ts .github/workflows/oneoff-shrine-stat-fix.yml
+          git commit -m "Fix Shrine handoff and use real hero stat art"
+          git push origin HEAD:fix/fablefury-shrine-icons
