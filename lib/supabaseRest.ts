@@ -88,6 +88,22 @@ export async function selectRows(
   return request(table, { method: "GET" }, query);
 }
 
+export async function updateRows(
+  table: string,
+  values: JsonRecord,
+  query: Record<string, string> = {},
+) {
+  return request(
+    table,
+    {
+      method: "PATCH",
+      body: JSON.stringify(values),
+      headers: { Prefer: "return=representation" },
+    },
+    query,
+  );
+}
+
 export async function rpc<T = unknown>(
   functionName: string,
   args: JsonRecord = {},
