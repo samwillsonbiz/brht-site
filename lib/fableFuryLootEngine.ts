@@ -110,7 +110,9 @@ export function getLootPlan(lootId: string, ctx: LootContext): LootPlan {
     case "loot-extra-limbs":
       return one("Increase all your attack dice by 1", [{ type: "attackRollBonus", amount: 1 }]);
     case "loot-foghorn":
-      return one("Reroll dice", [{ type: "rerollCore" }, { type: "rerollAttack" }], (value) => value.hasCoreRoll, "No Core Roll is currently staged. Outside a Core Roll this card arms an attack reroll for your next combat roll.");
+      return ctx.hasCoreRoll
+        ? one("Reroll current die", [{ type: "rerollCore" }, { type: "rerollAttack" }])
+        : one("Arm an attack reroll", [{ type: "rerollAttack" }, note("No Core Roll is staged, so Foghorn is stored for your next combat roll.")]);
     case "loot-gold-dust":
       return one("Gain 3 Coins", [{ type: "coins", amount: 3 }]);
     case "loot-gum-string":
@@ -148,7 +150,9 @@ export function getLootPlan(lootId: string, ctx: LootContext): LootPlan {
     case "loot-protein-shake":
       return one("Replace a Skill with Blue", [{ type: "replaceSkill", color: "blue" }], (value) => value.skillCount > 0, "You need a Skill before you can replace one.");
     case "loot-rabbit-s-foot":
-      return one("Increase current die by 1", [{ type: "increaseCore", amount: 1 }], (value) => value.hasCoreRoll, "A die must be staged before Rabbit's Foot can increase it.");
+      return ctx.hasCoreRoll
+        ? one("Increase current die by 1", [{ type: "increaseCore", amount: 1 }])
+        : one("Increase next attack dice by 1", [{ type: "attackRollBonus", amount: 1 }, note("No Core Roll is staged, so Rabbit's Foot is stored for your next combat roll.")]);
     case "loot-roast-boar":
       return one(`Heal ${raceIs(ctx, "Dwarf") ? 2 : 1} Health`, [heal(raceIs(ctx, "Dwarf") ? 2 : 1)]);
     case "loot-snack-pack":
