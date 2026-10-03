@@ -8,6 +8,9 @@ export type EventContext = {
   coins: number;
   lootCount: number;
   lootNames: string[];
+  trapRequirementDelta?: number;
+  trapRequirementOverride?: number | null;
+  trapDamageDelta?: number;
 };
 
 export type EventEffect =
