@@ -625,8 +625,16 @@ export default function FableFurySoloRunV2() {
   }
 
   async function completeEvent(key: string, card: FableCard, messages: string[], roll?: number, pick?: number) {
-    setResolvedKeys((v) => v.includes(key) ? v : [...v, key]); setEventHistory((v) => ({ ...v, [key]: messages })); setEventState((v) => v ? { ...v, status: "resolved", messages, roll, pick, rollMode: undefined } : v);
-    if (card.id.startsWith("trap-")) await applyTriggerEffects(clearTriggers("trap", triggerCtx));
+    setResolvedKeys((v) => v.includes(key) ? v : [...v, key]);
+    setEventHistory((v) => ({ ...v, [key]: messages }));
+    setEventState((v) => v ? { ...v, status: "resolved", messages, roll, pick, rollMode: undefined } : v);
+
+    if (card.id.startsWith("trap-")) {
+      await applyTriggerEffects(clearTriggers("trap", triggerCtx));
+      if (hasSkill(triggerCtx, "skill-reflex-flex")) setReactionRoll({ label: "Reflex Flex · Core Roll 5+ to gain 1 Attack Die", requirement: 5, onPass: "attackDice" });
+    }
+    refreshSkills();
+    setTrapMods({ ...EMPTY_TRAP_MODS });
   }
 
   async function prepareEvent(card: FableCard, key: string) {
@@ -655,8 +663,23 @@ export default function FableFurySoloRunV2() {
 
   async function chooseSkill(card: FableCard) {
     if (!skillDraft) return;
-    if (skillDraft.mode === "shrine") { const slot = realm - 1; setSkills((v) => v.map((s, i) => i === slot ? card : s)); if (skillDraft.sourceKey) setResolvedKeys((v) => v.includes(skillDraft.sourceKey as string) ? v : [...v, skillDraft.sourceKey as string]); setSkillDraft(null); setSelectedCard(null); setSelectedCell(null); notify(`${card.title} equipped.`); return; }
-    if (skillDraft.slot != null) { setSkills((v) => v.map((s, i) => i === skillDraft.slot ? card : s)); setSkillDraft(null); notify(`${card.title} equipped.`); }
+    if (skillDraft.mode === "shrine") {
+      const slot = realm - 1;
+      setSkills((v) => v.map((s, i) => i === slot ? card : s));
+      setSkillFaceUp((v) => v.map((face, i) => i === slot ? true : face));
+      if (skillDraft.sourceKey) setResolvedKeys((v) => v.includes(skillDraft.sourceKey as string) ? v : [...v, skillDraft.sourceKey as string]);
+      setSkillDraft(null); setSelectedCard(null); setSelectedCell(null);
+      refreshSkills();
+      notify(`${card.title} equipped.`);
+      return;
+    }
+    if (skillDraft.slot != null) {
+      const slot = skillDraft.slot;
+      setSkills((v) => v.map((s, i) => i === slot ? card : s));
+      setSkillFaceUp((v) => v.map((face, i) => i === slot ? true : face));
+      setSkillDraft(null);
+      notify(`${card.title} equipped.`);
+    }
   }
 
   async function applyLoot(use: LootUse, effects: LootEffect[]) {
@@ -732,6 +755,7 @@ export default function FableFurySoloRunV2() {
 
   function rollHeroAttack() {
     if (!enemy || enemy.phase !== "hero") return;
+    setLastEnemyDamagedHero(false);
     const count = 1 + attackDice + combatMods.attackDiceBonus;
     setEnemy((v) => v ? { ...v, dice: Array.from({ length: count }, () => rollD6()), messages: [...v.messages, `Rolled ${count} dice: 1 Core + ${count - 1} Attack.`] } : v);
   }
@@ -741,10 +765,27 @@ export default function FableFurySoloRunV2() {
 
   async function resolveHeroAttack() {
     if (!enemy?.dice) return;
-    const raw = enemy.dice; const adjusted = raw.map((die) => Math.min(6, die + combatMods.attackRollBonus)); const hits = adjusted.filter((die) => die >= enemy.agility).length; const misses = adjusted.length - hits;
-    const reaction = heroRollReaction(enemy.card, raw, misses); await applyEnemyEffects(reaction.auto); await applyTriggerEffects(heroAttackRollTriggers(raw, triggerCtx));
-    let remainingHp = Math.max(0, enemy.health - hits); setEnemy((v) => v ? { ...v, health: remainingHp, dice: undefined, messages: [...v.messages, `${hits} hit${hits === 1 ? "" : "s"} at Agility ${v.agility}+ → ${hits} damage.`] } : v);
-    setCombatMods((v) => ({ ...v, attackDiceBonus: 0, attackRollBonus: 0, rerollAttack: false }));
+    const raw = enemy.dice;
+    const adjusted = raw.map((die) => Math.min(6, die + combatMods.attackRollBonus));
+    const coreHits = adjusted.length > 0 && adjusted[0] >= enemy.agility ? 1 : 0;
+    const attackHits = combatMods.forceAttackDiceHit
+      ? Math.max(0, adjusted.length - 1)
+      : adjusted.slice(1).filter((die) => die >= enemy.agility).length;
+    const hits = coreHits + attackHits;
+    const misses = adjusted.length - hits;
+
+    const reaction = heroRollReaction(enemy.card, raw, misses);
+    await applyEnemyEffects(reaction.auto);
+    await applyTriggerEffects(heroAttackRollTriggers(raw, triggerCtx));
+
+    if (hasSkill(triggerCtx, "skill-the-fource") && hasDouble(raw, 4) && skills.some(Boolean)) {
+      setSkillDraft({ mode: "replace", color: "any", choices: [], title: "The Fource · Double 4 — optionally replace a Skill", stage: "slot" });
+    }
+
+    const remainingHp = Math.max(0, enemy.health - hits);
+    setEnemy((v) => v ? { ...v, health: remainingHp, dice: undefined, messages: [...v.messages, `${hits} hit${hits === 1 ? "" : "s"} at Agility ${v.agility}+ → ${hits} damage.`] } : v);
+    setCombatMods((v) => ({ ...v, attackDiceBonus: 0, attackRollBonus: 0, rerollAttack: false, forceAttackDiceHit: false }));
+
     if (reaction.choice) {
       setEnemy((v) => v ? { ...v, choice: { prompt: reaction.choice!.prompt, options: reaction.choice!.options.map((o) => ({ label: o.label, effects: o.effects, disabled: !!o.requiresCoins && coins < o.requiresCoins })) } } : v);
       return;
@@ -773,36 +814,77 @@ export default function FableFurySoloRunV2() {
 
   async function finishEnemyAction(attack: EnemyAttack, targetedMiss: boolean, heroWasDamaged: boolean) {
     if (!enemy) return;
-    const after = afterEnemyAction(enemy.card, attack, targetedMiss); await applyEnemyEffects(after.effects);
+    setLastEnemyDamagedHero(heroWasDamaged);
+    const after = afterEnemyAction(enemy.card, attack, targetedMiss);
+    await applyEnemyEffects(after.effects);
     if (attack.type === "[TA]") await applyTriggerEffects(targetedAttackTriggers(triggerCtx, !targetedMiss));
     if (attack.type === "[AA]") await applyTriggerEffects(allAttackEndedTriggers(triggerCtx));
+
     let enemyKilled = after.killNoReward || (enemy.health <= 0);
     if (after.killNoReward) setEnemy((v) => v ? { ...v, health: 0, noReward: true } : v);
-    if (heroWasDamaged && hero.id === "hero-lord-smasherton") { setEnemy((v) => v ? { ...v, health: Math.max(0, v.health - 1), messages: [...v.messages, "Smite Club: 1 damage back to the Enemy."] } : v); enemyKilled = enemyKilled || enemy.health <= 1; }
+    if (heroWasDamaged && hero.id === "hero-lord-smasherton") {
+      setEnemy((v) => v ? { ...v, health: Math.max(0, v.health - 1), messages: [...v.messages, "Smite Club: 1 damage back to the Enemy."] } : v);
+      enemyKilled = enemyKilled || enemy.health <= 1;
+    }
     if (enemyKilled) { setEnemy((v) => v ? { ...v, phase: "victory", targetPending: false, targetRoll: undefined } : v); return; }
     if (health <= 0) { setEnemy((v) => v ? { ...v, phase: "defeat" } : v); return; }
     setEnemy((v) => v ? { ...v, actionIndex: (v.actionIndex + 1) % Math.max(1, enemyData(v.card).attacks.length), phase: "hero", targetPending: false, targetRoll: undefined } : v);
   }
 
   async function resolveTargetedAttack() {
-    if (!enemy || !enemy.targetPending || enemy.targetRoll == null) return; const attack = enemyData(enemy.card).attacks[enemy.actionIndex];
-    const directed = targetIsDirected(enemy.card) || combatMods.targeting === "self"; const hit = directed || enemy.targetRoll === targetNumber; let lost = 0;
-    if (hit) lost = enemyDamageHero(enemy.damage); setCombatMods((v) => ({ ...v, targeting: null }));
+    if (!enemy || !enemy.targetPending || enemy.targetRoll == null) return;
+    const originalAttack = enemyData(enemy.card).attacks[enemy.actionIndex];
+    const convertedAreaAttack = originalAttack?.type === "[AA]" && combatMods.targeting === "self";
+    const attack = convertedAreaAttack ? { ...originalAttack, type: "[TA]", name: `${originalAttack.name} (redirected)` } : originalAttack;
+    const directed = convertedAreaAttack || targetIsDirected(enemy.card) || combatMods.targeting === "self";
+    const hit = directed || enemy.targetRoll === targetNumber;
+    let lost = 0;
+    if (hit) lost = enemyDamageHero(enemy.damage);
+    setCombatMods((v) => ({ ...v, targeting: null }));
     if (hit && hero.id === "hero-helga") setReactionRoll({ label: "Holding Space · Core Roll 5+ to gain 1 Armor", requirement: 5, onPass: "armor" });
     await finishEnemyAction(attack, !hit, lost > 0);
   }
 
   async function executeEnemyAction() {
-    if (!enemy || enemy.phase !== "enemy") return; const attack = enemyData(enemy.card).attacks[enemy.actionIndex] ?? { name: "Attack", type: "[TA]", effects: [] };
-    if (attack.type === "[TA]") { if (targetIsDirected(enemy.card)) { const lost = enemyDamageHero(enemy.damage); if (hero.id === "hero-helga") setReactionRoll({ label: "Holding Space · Core Roll 5+ to gain 1 Armor", requirement: 5, onPass: "armor" }); await finishEnemyAction(attack, false, lost > 0); } else setEnemy((v) => v ? { ...v, targetRoll: rollD6(), targetPending: true } : v); return; }
-    if (attack.type === "[AA]") { const lost = enemyDamageHero(enemy.damage); await finishEnemyAction(attack, false, lost > 0); return; }
-    if (attack.type === "[BA]") { await applyEnemyEffects(buffEffects(attack)); await finishEnemyAction(attack, false, false); }
+    if (!enemy || enemy.phase !== "enemy") return;
+    const attack = enemyData(enemy.card).attacks[enemy.actionIndex] ?? { name: "Attack", type: "[TA]", effects: [] };
+
+    if (attack.type === "[TA]") {
+      if (targetIsDirected(enemy.card) || combatMods.targeting === "self") setEnemy((v) => v ? { ...v, targetRoll: targetNumber ?? 1, targetPending: true } : v);
+      else setEnemy((v) => v ? { ...v, targetRoll: rollD6(), targetPending: true } : v);
+      return;
+    }
+    if (attack.type === "[AA]" && combatMods.targeting === "self") {
+      setEnemy((v) => v ? { ...v, targetRoll: targetNumber ?? 1, targetPending: true } : v);
+      return;
+    }
+    if (attack.type === "[AA]") {
+      const lost = enemyDamageHero(enemy.damage);
+      await finishEnemyAction(attack, false, lost > 0);
+      return;
+    }
+    if (attack.type === "[BA]") {
+      await applyEnemyEffects(buffEffects(attack));
+      await finishEnemyAction(attack, false, false);
+    }
   }
 
-  async function resolveReactionRoll() { if (!reactionRoll?.roll) return; if (reactionRoll.roll >= reactionRoll.requirement && reactionRoll.onPass === "armor") setArmor((v) => Math.min(effectiveMaxArmor, v + 1)); setReactionRoll(null); }
+  async function resolveReactionRoll() {
+    if (!reactionRoll?.roll) return;
+    if (reactionRoll.roll >= reactionRoll.requirement) {
+      if (reactionRoll.onPass === "armor") setArmor((v) => Math.min(effectiveMaxArmor, v + 1));
+      else if (reactionRoll.onPass === "attackDice") setAttackDice((v) => Math.min(effectiveMaxDice, v + 1));
+    }
+    setReactionRoll(null);
+  }
 
   async function claimReward() {
-    if (!enemy) return; const reward = parseReward(enemy.card); const boosting = skills.some((s) => s?.id === "skill-boosting" && skillActive(s)) ? 1 : 0; const bonus = combatMods.rewardBonus + boosting; const amount = enemy.noReward ? 0 : reward.amount + (reward.amount > 0 ? bonus : 0);
+    if (!enemy) return;
+    const reward = parseReward(enemy.card);
+    const boosting = skills.some((s) => s?.id === "skill-boosting" && skillActive(s)) ? 1 : 0;
+    const bonus = combatMods.rewardBonus + boosting;
+    const amount = enemy.noReward ? 0 : reward.amount + (reward.amount > 0 ? bonus : 0);
+
     if (amount > 0) {
       if (reward.kind === "coins") setCoinSlots((v) => adjustCoinSlots(v, backpack, amount).slots);
       else if (reward.kind === "healing") setTokens((v) => ({ ...v, healing: v.healing + amount }));
@@ -812,8 +894,14 @@ export default function FableFurySoloRunV2() {
       else if (reward.kind === "armor") setArmor((v) => Math.min(effectiveMaxArmor, v + amount));
       else if (reward.kind === "attackDice") setAttackDice((v) => Math.min(effectiveMaxDice, v + amount));
     }
+
+    if ((enemy.noReward || reward.kind === "none" || amount <= 0) && hasSkill(triggerCtx, "skill-self-bless")) await drawLootCards(1);
     await applyTriggerEffects(clearTriggers("enemy", triggerCtx));
-    setResolvedKeys((v) => v.includes(enemy.key) ? v : [...v, enemy.key]); setCombatMods((v) => ({ ...v, enemyDamageDelta: 0, enemyAgilityDelta: 0, rewardBonus: 0 })); setEnemy(null); setSelectedCard(null); setSelectedCell(null); notify(enemy.noReward ? "Enemy cleared — no reward." : `${reward.kind === "none" ? "Enemy cleared" : `Reward: ${amount} ${reward.kind}`}.`);
+    refreshSkills();
+    setResolvedKeys((v) => v.includes(enemy.key) ? v : [...v, enemy.key]);
+    setCombatMods((v) => ({ ...v, enemyDamageDelta: 0, enemyAgilityDelta: 0, rewardBonus: 0, forceAttackDiceHit: false }));
+    setEnemy(null); setSelectedCard(null); setSelectedCell(null); setLastEnemyDamagedHero(false);
+    notify(enemy.noReward ? "Enemy cleared — no reward." : `${reward.kind === "none" ? "Enemy cleared" : `Reward: ${amount} ${reward.kind}`}.`);
   }
 
   function spendShopCoins(amount: number) {
