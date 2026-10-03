@@ -31,7 +31,7 @@ const HEROES: Hero[] = [
     name: "Alf Featherbottom",
     race: "Elf",
     role: "Archer",
-    mat: "/fablefury/deckbuilder/heroes/alf-featherbottom.webp",
+    mat: "https://drive.google.com/thumbnail?id=1_MwjyIx66kGn6aQWEmf2PJSiCk9raEmm&sz=w1600",
     startingHealth: 7,
     startingArmor: 1,
     startingAttackDice: 1,
@@ -45,7 +45,7 @@ const HEROES: Hero[] = [
     name: "Dr. Shealer",
     race: "Human",
     role: "Priest",
-    mat: "/fablefury/deckbuilder/heroes/dr-shealer.webp",
+    mat: "https://drive.google.com/thumbnail?id=1wFz_XyRoZVI33fgvwH4u1GWL-Ymp4oYD&sz=w1600",
     startingHealth: 8,
     startingArmor: 1,
     startingAttackDice: 0,
@@ -59,7 +59,7 @@ const HEROES: Hero[] = [
     name: "Friar Franc",
     race: "Human",
     role: "Monk",
-    mat: "/fablefury/deckbuilder/heroes/friar-franc.webp",
+    mat: "https://drive.google.com/thumbnail?id=1smn18D_5C90fFAn2l_1CAYSjmFEtOPFg&sz=w1600",
     startingHealth: 10,
     startingArmor: 0,
     startingAttackDice: 1,
@@ -73,7 +73,7 @@ const HEROES: Hero[] = [
     name: "Helga",
     race: "Dwarf",
     role: "Tank",
-    mat: "/fablefury/deckbuilder/heroes/helga.webp",
+    mat: "https://drive.google.com/thumbnail?id=17Aua39SVOGH9swaW7_IyyuN9sSmikg1x&sz=w1600",
     startingHealth: 5,
     startingArmor: 2,
     startingAttackDice: 0,
@@ -87,7 +87,7 @@ const HEROES: Hero[] = [
     name: "Lord Smasherton",
     race: "Dwarf",
     role: "Barbarian",
-    mat: "/fablefury/deckbuilder/heroes/lord-smasherton.webp",
+    mat: "https://drive.google.com/thumbnail?id=1jv64LvKTNm8zkzuxtXMoxF9yDabq4LLu&sz=w1600",
     startingHealth: 8,
     startingArmor: 1,
     startingAttackDice: 2,
@@ -101,7 +101,7 @@ const HEROES: Hero[] = [
     name: "Raven Madison",
     race: "Elf",
     role: "Rogue",
-    mat: "/fablefury/deckbuilder/heroes/raven-madison.webp",
+    mat: "https://drive.google.com/thumbnail?id=1UekNZ1XSLa_NcMahuEls6OQHHClF6gF9&sz=w1600",
     startingHealth: 6,
     startingArmor: 1,
     startingAttackDice: 1,
@@ -326,7 +326,7 @@ export default function DeckbuilderHeroLab() {
             <p className={styles.modalIntro}>Click a pocket to cycle contents. Coin pockets use − / + and cap at 6.</p>
 
             <div className={styles.bagStage}>
-              <img src="/fablefury/deckbuilder/player-bag.webp" alt="Fable Fury player backpack" />
+              <img src="https://drive.google.com/thumbnail?id=16RqDmbyxMq5Kq9fi_CP9H55uMvXxxenz&sz=w1600" alt="Fable Fury player backpack" />
               {tokens.map((token, index) => (
                 <button type="button" key={`token-${index}`} className={`${styles.bagSlot} ${styles[`tokenSlot${index + 1}`]}`} onClick={() => cycleToken(index)}>
                   <span>Token {index + 1}</span>
