@@ -7,6 +7,13 @@ import {
   mapArt,
 } from "@/lib/fableFuryAssets";
 import {
+  FABLE_BOARD_ART,
+  FABLE_BACKPACK_ART,
+  FABLE_SHOP_ART,
+  FABLE_STAT_ART,
+  FABLE_TOKEN_ART,
+} from "@/lib/fableFuryBoardAssets";
+import {
   FABLE_HEROES,
   TOKEN_LABELS,
   getHero,
@@ -57,12 +64,16 @@ type RevealResult = {
 
 type GamePhase = "hero" | "gear" | "realm";
 type EventStatus = "pending" | "resolving" | "resolved";
+type RollMode = "roll" | "pickNumber" | "optionalRoll";
+type SkillColor = "red" | "blue" | "green" | "yellow";
+
 type EventState = {
   key: string;
   plan: EventPlan;
   status: EventStatus;
   messages: string[];
   roll?: number;
+  rollMode?: RollMode;
   pick?: number;
 };
 
@@ -75,9 +86,14 @@ const REALM_RECIPES: Record<number, string> = {
 };
 
 const EMPTY_TOKENS: TokenCounts = { healing: 0, lucky: 0, crystal: 0 };
+const SKILL_COLORS: SkillColor[] = ["red", "blue", "green", "yellow"];
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
+}
+
+function totalCoins(slots: number[]) {
+  return slots.reduce((sum, value) => sum + value, 0);
 }
 
 function isAdjacent(a: string, b: string) {
@@ -88,12 +104,13 @@ function isAdjacent(a: string, b: string) {
   return Math.abs(ax - bx) + Math.abs(ay - by) === 1;
 }
 
-function cardPosition(cell: string) {
+// The production board contains a 6 x 5 Realm grid in the central parchment.
+function boardCellPosition(cell: string) {
   const columnIndex = cell.charCodeAt(0) - 65;
   const rowIndex = Number(cell.slice(1)) - 1;
   return {
-    left: `${((columnIndex + 0.5) / 6) * 100}%`,
-    top: `${((rowIndex + 0.5) / 5) * 100}%`,
+    left: `${16.45 + columnIndex * 12.86}%`,
+    top: `${19.45 + rowIndex * 16.12}%`,
   };
 }
 
@@ -106,6 +123,43 @@ async function postJson<T>(url: string, body: unknown): Promise<T> {
   const data = await response.json();
   if (!response.ok) throw new Error(data?.error || "Request failed");
   return data as T;
+}
+
+function adjustCoinSlots(
+  current: number[],
+  loot: Array<FableCard | null>,
+  delta: number,
+) {
+  const next = [...current];
+  let remaining = Math.abs(delta);
+
+  if (delta >= 0) {
+    // Fill existing coin pockets first.
+    for (let index = 0; index < next.length && remaining > 0; index += 1) {
+      if (next[index] <= 0) continue;
+      const room = 6 - next[index];
+      const add = Math.min(room, remaining);
+      next[index] += add;
+      remaining -= add;
+    }
+    // Then claim empty Loot/Coin pockets, max six Coins per pocket.
+    for (let index = 0; index < next.length && remaining > 0; index += 1) {
+      if (next[index] > 0 || loot[index]) continue;
+      const add = Math.min(6, remaining);
+      next[index] = add;
+      remaining -= add;
+    }
+    return { slots: next, applied: delta - remaining, overflow: remaining };
+  }
+
+  // Remove Coins from the last occupied Coin pocket first.
+  for (let index = next.length - 1; index >= 0 && remaining > 0; index -= 1) {
+    if (next[index] <= 0) continue;
+    const remove = Math.min(next[index], remaining);
+    next[index] -= remove;
+    remaining -= remove;
+  }
+  return { slots: next, applied: -(Math.abs(delta) - remaining), overflow: 0 };
 }
 
 function CardImage({ card, className = "" }: { card: FableCard; className?: string }) {
@@ -154,11 +208,7 @@ function FlipCard({ card, back }: { card: FableCard; back: string }) {
           className="absolute inset-0 overflow-hidden rounded-[24px] bg-[#111821] shadow-[0_35px_90px_rgba(0,0,0,.55)]"
           style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}
         >
-          {front ? (
-            <img src={front} alt={card.title} className="h-full w-full object-cover" />
-          ) : (
-            <CardImage card={card} className="h-full w-full" />
-          )}
+          {front ? <img src={front} alt={card.title} className="h-full w-full object-cover" /> : <CardImage card={card} className="h-full w-full" />}
         </div>
       </div>
     </div>
@@ -170,12 +220,14 @@ function RevealModal({
   back,
   onClose,
   canClose,
+  quickActions,
   footer,
 }: {
   card: FableCard;
   back: string;
   onClose: () => void;
   canClose: boolean;
+  quickActions?: ReactNode;
   footer?: ReactNode;
 }) {
   return (
@@ -183,42 +235,145 @@ function RevealModal({
       className="fixed inset-0 z-[200] grid place-items-center overflow-y-auto bg-[#05070b]/88 p-4 py-8 backdrop-blur-xl"
       onMouseDown={() => canClose && onClose()}
     >
-      <section
-        className="relative grid w-full max-w-[1080px] gap-6 md:grid-cols-[minmax(260px,430px)_1fr]"
-        onMouseDown={(event) => event.stopPropagation()}
-      >
+      <section className="relative grid w-full max-w-[1120px] gap-6 md:grid-cols-[minmax(260px,430px)_1fr]" onMouseDown={(event) => event.stopPropagation()}>
         {canClose && (
-          <button
-            type="button"
-            onClick={onClose}
-            className="absolute -right-1 -top-12 z-30 grid h-10 w-10 place-items-center rounded-full border border-white/15 bg-white/10 text-xl text-white"
-          >
-            ×
-          </button>
+          <button type="button" onClick={onClose} className="absolute -right-1 -top-12 z-30 grid h-10 w-10 place-items-center rounded-full border border-white/15 bg-white/10 text-xl text-white">×</button>
         )}
         <FlipCard card={card} back={back} />
         <div className="flex min-w-0 flex-col justify-center rounded-[28px] border border-white/10 bg-[#111821]/95 p-6 shadow-2xl md:p-8">
-          <div className="text-[10px] font-black uppercase tracking-[.2em] text-amber-300">
-            {card.card_type}{card.difficulty ? ` · ${card.difficulty}` : ""}
-          </div>
+          <div className="text-[10px] font-black uppercase tracking-[.2em] text-amber-300">{card.card_type}{card.difficulty ? ` · ${card.difficulty}` : ""}</div>
           <h2 className="mt-2 text-3xl font-black tracking-[-.04em] text-[#fff6df] md:text-5xl">{card.title}</h2>
           {card.race && <div className="mt-2 text-xs font-bold uppercase tracking-[.12em] text-white/40">{card.race}</div>}
           {card.rules_text && <p className="mt-5 whitespace-pre-line text-sm font-semibold leading-6 text-white/75">{card.rules_text}</p>}
           {card.story_text && <p className="mt-4 whitespace-pre-line border-t border-white/10 pt-4 text-sm italic leading-6 text-white/45">{card.story_text}</p>}
-          {footer && <div className="mt-6 border-t border-white/10 pt-5">{footer}</div>}
+          {quickActions && <div className="mt-5 border-t border-white/10 pt-4">{quickActions}</div>}
+          {footer && <div className="mt-5 border-t border-white/10 pt-5">{footer}</div>}
         </div>
       </section>
     </div>
   );
 }
 
-function StatPill({ icon, label, value, max }: { icon: string; label: string; value: number; max?: number }) {
+function StatPill({ art, label, value, max }: { art: string; label: string; value: number; max?: number }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-black/25 px-3 py-2">
-      <div className="text-[9px] font-black uppercase tracking-[.12em] text-white/35">{icon} {label}</div>
-      <div className="mt-1 text-lg font-black text-[#fff4d8]">{value}{typeof max === "number" ? <span className="text-xs text-white/30">/{max}</span> : null}</div>
+    <div className="flex min-w-0 items-center gap-2 rounded-2xl border border-white/10 bg-black/25 px-3 py-2">
+      <img src={art} alt="" className="h-8 w-8 shrink-0 object-contain" />
+      <div className="min-w-0">
+        <div className="truncate text-[9px] font-black uppercase tracking-[.12em] text-white/35">{label}</div>
+        <div className="mt-0.5 text-lg font-black text-[#fff4d8]">{value}{typeof max === "number" ? <span className="text-xs text-white/30">/{max}</span> : null}</div>
+      </div>
     </div>
   );
+}
+
+function MiniStat({ art, value }: { art: string; value: number }) {
+  return <span className="inline-flex items-center gap-1.5"><img src={art} alt="" className="h-5 w-5 object-contain" /><strong>{value}</strong></span>;
+}
+
+function TokenAction({
+  token,
+  count,
+  disabled,
+  onUse,
+  compact = false,
+}: {
+  token: TokenKind;
+  count: number;
+  disabled?: boolean;
+  onUse: () => void;
+  compact?: boolean;
+}) {
+  const descriptions: Record<TokenKind, string> = {
+    healing: "+1 Health",
+    crystal: "Reveal any Location",
+    lucky: "Reroll a die",
+  };
+  return (
+    <button
+      type="button"
+      onClick={onUse}
+      disabled={disabled || count <= 0}
+      className={`group relative flex items-center gap-2 rounded-2xl border border-white/10 bg-black/25 text-left transition hover:border-amber-300/40 hover:bg-amber-300/10 disabled:cursor-not-allowed disabled:opacity-35 ${compact ? "px-2.5 py-2" : "px-3 py-3"}`}
+      title={`${TOKEN_LABELS[token]}: ${descriptions[token]}`}
+    >
+      <div className="relative shrink-0">
+        <img src={FABLE_TOKEN_ART[token]} alt={TOKEN_LABELS[token]} className={`${compact ? "h-9 w-9" : "h-12 w-12"} object-contain drop-shadow-lg`} />
+        <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-amber-300 px-1 text-[10px] font-black text-[#241707]">{count}</span>
+      </div>
+      {!compact && <div className="min-w-0"><strong className="block truncate text-xs text-[#fff4d8]">{TOKEN_LABELS[token]}</strong><span className="mt-0.5 block truncate text-[10px] text-white/40">{descriptions[token]}</span></div>}
+    </button>
+  );
+}
+
+function BackpackPanel({
+  backpack,
+  coinSlots,
+  tokens,
+  onUseToken,
+  luckyDisabled,
+  crystalDisabled,
+}: {
+  backpack: Array<FableCard | null>;
+  coinSlots: number[];
+  tokens: TokenCounts;
+  onUseToken: (token: TokenKind) => void;
+  luckyDisabled?: boolean;
+  crystalDisabled?: boolean;
+}) {
+  const tokenSlots: Array<{ token: TokenKind; left: string }> = [
+    { token: "lucky", left: "17%" },
+    { token: "crystal", left: "50%" },
+    { token: "healing", left: "83%" },
+  ];
+  const lootLeft = ["17%", "50%", "83%"];
+
+  return (
+    <div className="rounded-[24px] border border-white/10 bg-white/[.035] p-4">
+      <div className="flex items-end justify-between gap-3"><div><div className="text-[9px] font-black uppercase tracking-[.14em] text-amber-300">Backpack</div><div className="mt-0.5 text-sm font-black">3 Token · 3 Loot/Coin spaces</div></div><div className="text-[9px] text-white/30">Click tokens to use</div></div>
+      <div className="relative mt-3 aspect-[3/2] overflow-hidden rounded-2xl border border-white/10 bg-[#7ca5c1]/15">
+        <img src={FABLE_BACKPACK_ART} alt="Fable Fury Backpack" className="absolute inset-0 h-full w-full object-cover" />
+
+        {tokenSlots.map(({ token, left }) => (
+          <button
+            key={token}
+            type="button"
+            disabled={tokens[token] <= 0 || (token === "lucky" && luckyDisabled) || (token === "crystal" && crystalDisabled)}
+            onClick={() => onUseToken(token)}
+            className="absolute top-[18%] z-10 w-[18%] -translate-x-1/2 transition hover:scale-110 disabled:opacity-30"
+            style={{ left }}
+            title={`Use ${TOKEN_LABELS[token]}`}
+          >
+            {tokens[token] > 0 && <img src={FABLE_TOKEN_ART[token]} alt={TOKEN_LABELS[token]} className="w-full object-contain drop-shadow-[0_8px_8px_rgba(0,0,0,.45)]" />}
+            <span className="absolute -right-1 top-0 grid h-5 min-w-5 place-items-center rounded-full bg-[#fff1bf] px-1 text-[10px] font-black text-[#40220f]">{tokens[token]}</span>
+          </button>
+        ))}
+
+        {lootLeft.map((left, index) => (
+          <div key={left} className="absolute top-[53%] z-10 flex h-[35%] w-[20%] -translate-x-1/2 items-center justify-center" style={{ left }}>
+            {backpack[index] ? (
+              <CardImage card={backpack[index] as FableCard} className="max-h-full max-w-full rounded-lg drop-shadow-[0_8px_8px_rgba(0,0,0,.5)]" />
+            ) : coinSlots[index] > 0 ? (
+              <div className="relative flex h-full w-full items-center justify-center">
+                <img src={FABLE_STAT_ART.coins} alt="Coins" className="w-[70%] object-contain drop-shadow-lg" />
+                <span className="absolute bottom-0 right-0 grid h-7 min-w-7 place-items-center rounded-full bg-amber-300 px-1 text-xs font-black text-[#3a2109]">{coinSlots[index]}</span>
+              </div>
+            ) : (
+              <span className="rounded-full bg-black/35 px-2 py-1 text-[9px] font-black uppercase tracking-[.1em] text-white/45">Empty</span>
+            )}
+          </div>
+        ))}
+      </div>
+      <div className="mt-3 grid grid-cols-3 gap-2">
+        <TokenAction token="lucky" count={tokens.lucky} onUse={() => onUseToken("lucky")} disabled={luckyDisabled} compact />
+        <TokenAction token="crystal" count={tokens.crystal} onUse={() => onUseToken("crystal")} disabled={crystalDisabled} compact />
+        <TokenAction token="healing" count={tokens.healing} onUse={() => onUseToken("healing")} compact />
+      </div>
+    </div>
+  );
+}
+
+function BoardSupply({ art, left, top, width, label }: { art: string; left: string; top: string; width: string; label: string }) {
+  return <img src={art} alt={label} title={label} className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-1/2 object-contain drop-shadow-[0_6px_5px_rgba(0,0,0,.45)]" style={{ left, top, width }} />;
 }
 
 export default function FableFurySoloRun() {
@@ -230,7 +385,8 @@ export default function FableFurySoloRun() {
   const [health, setHealth] = useState(hero.startingHealth);
   const [armor, setArmor] = useState(hero.startingArmor);
   const [attackDice, setAttackDice] = useState(hero.startingAttackDice);
-  const [coins, setCoins] = useState(0);
+  const [coinSlots, setCoinSlots] = useState([0, 0, 0]);
+  const coins = totalCoins(coinSlots);
   const [tokens, setTokens] = useState<TokenCounts>({ ...EMPTY_TOKENS });
   const [backpack, setBackpack] = useState<Array<FableCard | null>>([null, null, null]);
   const [lootInbox, setLootInbox] = useState<FableCard[]>([]);
@@ -245,12 +401,13 @@ export default function FableFurySoloRun() {
   const [selectedCell, setSelectedCell] = useState<string | null>(null);
   const [showReveal, setShowReveal] = useState(false);
   const [lootRemaining, setLootRemaining] = useState(60);
-  const [skillRemaining, setSkillRemaining] = useState<Record<string, number>>({ red: 18, blue: 18, green: 18, yellow: 18 });
+  const [skillRemaining, setSkillRemaining] = useState<Record<SkillColor, number>>({ red: 18, blue: 18, green: 18, yellow: 18 });
   const [eventState, setEventState] = useState<EventState | null>(null);
   const [resolvedEventKeys, setResolvedEventKeys] = useState<string[]>([]);
   const [eventHistory, setEventHistory] = useState<Record<string, string[]>>({});
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
 
   const map = run?.maps[realm - 1] ?? null;
   const mapImage = mapArt(map?.id);
@@ -258,6 +415,17 @@ export default function FableFurySoloRun() {
   const remainingLocations = 14 - realmRevealed.length;
   const inventoryLocked = lootInbox.length > 0;
   const encounterLocked = eventState?.status === "pending" || eventState?.status === "resolving";
+  const pendingRoll = eventState?.status === "pending" && typeof eventState.roll === "number";
+
+  useEffect(() => {
+    if (!toast) return;
+    const timer = window.setTimeout(() => setToast(null), 2600);
+    return () => window.clearTimeout(timer);
+  }, [toast]);
+
+  function notify(message: string) {
+    setToast(message);
+  }
 
   function eventContext() {
     return {
@@ -277,7 +445,7 @@ export default function FableFurySoloRun() {
     setHealth(hero.startingHealth);
     setArmor(hero.startingArmor);
     setAttackDice(hero.startingAttackDice);
-    setCoins(0);
+    setCoinSlots([0, 0, 0]);
     setTokens({ ...EMPTY_TOKENS });
     setBackpack([null, null, null]);
     setLootInbox([]);
@@ -299,10 +467,7 @@ export default function FableFurySoloRun() {
     const cards: FableCard[] = [];
     let remaining = lootRemaining;
     for (let index = 0; index < count; index += 1) {
-      const result = await postJson<{ card: FableCard | null; remaining: number }>("/api/fablefury/draw", {
-        runId,
-        deckKey: "loot",
-      });
+      const result = await postJson<{ card: FableCard | null; remaining: number }>("/api/fablefury/draw", { runId, deckKey: "loot" });
       if (result.card) cards.push(result.card);
       remaining = result.remaining;
     }
@@ -327,7 +492,7 @@ export default function FableFurySoloRun() {
       setHealth(hero.startingHealth);
       setArmor(hero.startingArmor);
       setAttackDice(hero.startingAttackDice);
-      setCoins(2);
+      setCoinSlots([2, 0, 0]);
       setTokens({ ...EMPTY_TOKENS, [startingToken]: 1 });
       setBackpack([null, null, null]);
       setLootInbox([]);
@@ -338,11 +503,7 @@ export default function FableFurySoloRun() {
         green: setup.deck_counts["skills-green"] ?? 18,
         yellow: setup.deck_counts["skills-yellow"] ?? 18,
       });
-
-      const result = await postJson<{ card: FableCard | null; remaining: number }>("/api/fablefury/draw", {
-        runId: setup.run_id,
-        deckKey: "loot",
-      });
+      const result = await postJson<{ card: FableCard | null; remaining: number }>("/api/fablefury/draw", { runId: setup.run_id, deckKey: "loot" });
       if (result.card) setLootInbox([result.card]);
       setLootRemaining(result.remaining);
       setPhase("gear");
@@ -355,7 +516,7 @@ export default function FableFurySoloRun() {
 
   function packLoot(inboxIndex: number, slot: number) {
     const card = lootInbox[inboxIndex];
-    if (!card) return;
+    if (!card || coinSlots[slot] > 0) return;
     setBackpack((current) => current.map((item, index) => index === slot ? card : item));
     setLootInbox((current) => current.filter((_, index) => index !== inboxIndex));
   }
@@ -364,13 +525,48 @@ export default function FableFurySoloRun() {
     setLootInbox((current) => current.filter((_, index) => index !== inboxIndex));
   }
 
+  function useToken(token: TokenKind) {
+    if (tokens[token] <= 0) return;
+
+    if (token === "healing") {
+      if (health >= hero.maxHealth) {
+        notify(`${hero.name} is already at full Health.`);
+        return;
+      }
+      setTokens((current) => ({ ...current, healing: current.healing - 1 }));
+      setHealth((current) => Math.min(hero.maxHealth, current + 1));
+      notify(`Healing Potion used — ${hero.name} gains 1 Health.`);
+      return;
+    }
+
+    if (token === "crystal") {
+      if (!run || phase !== "realm") {
+        notify("Enter a Realm before using a Crystal Ball.");
+        return;
+      }
+      setTokens((current) => ({ ...current, crystal: current.crystal - 1 }));
+      setScoutRemaining((current) => current + 1);
+      notify("Crystal Ball used — choose any unexplored Location to keep it revealed.");
+      return;
+    }
+
+    if (!pendingRoll) {
+      notify("Lucky Charm is ready when you have a die result to reroll.");
+      return;
+    }
+    setTokens((current) => ({ ...current, lucky: current.lucky - 1 }));
+    const reroll = Math.floor(Math.random() * 6) + 1;
+    setEventState((current) => current ? { ...current, roll: reroll } : current);
+    notify(`Lucky Charm used — rerolled to ${reroll}.`);
+  }
+
   async function applyEffects(effects: EventEffect[], sourceKey: string) {
     let nextHealth = health;
     let nextArmor = armor;
     let nextAttackDice = attackDice;
-    let nextCoins = coins;
     let nextTokens = { ...tokens };
     let nextBackpack = [...backpack];
+    let nextCoinSlots = [...coinSlots];
     const messages: string[] = [];
 
     for (const effect of effects) {
@@ -390,10 +586,11 @@ export default function FableFurySoloRun() {
         const delta = nextAttackDice - before;
         messages.push(delta === 0 ? "Attack Dice did not change (already at capacity)." : `Attack Dice ${delta > 0 ? "+" : ""}${delta} → ${nextAttackDice}/${hero.maxAttackDice}`);
       } else if (effect.type === "coins") {
-        const before = nextCoins;
-        nextCoins = Math.max(0, nextCoins + effect.amount);
-        const delta = nextCoins - before;
-        messages.push(`Coins ${delta > 0 ? "+" : ""}${delta} → ${nextCoins}`);
+        const result = adjustCoinSlots(nextCoinSlots, nextBackpack, effect.amount);
+        nextCoinSlots = result.slots;
+        const after = totalCoins(nextCoinSlots);
+        if (result.overflow > 0) messages.push(`Backpack full: ${result.overflow} Coin${result.overflow === 1 ? "" : "s"} could not fit.`);
+        messages.push(`Coins ${result.applied > 0 ? "+" : ""}${result.applied} → ${after}`);
       } else if (effect.type === "token") {
         nextTokens = { ...nextTokens, [effect.token]: Math.max(0, nextTokens[effect.token] + effect.amount) };
         messages.push(`${TOKEN_LABELS[effect.token]} ${effect.amount > 0 ? "+" : ""}${effect.amount} → ${nextTokens[effect.token]}`);
@@ -411,9 +608,7 @@ export default function FableFurySoloRun() {
       } else if (effect.type === "drawLoot") {
         if (run) {
           const drawn = await drawLootCards(run.run_id, effect.count);
-          if (drawn.length) {
-            messages.push(`Drew ${drawn.map((card) => card.title).join(", ")}${effect.immediate ? " — immediate-use Loot" : ""}.`);
-          }
+          if (drawn.length) messages.push(`Drew ${drawn.map((card) => card.title).join(", ")}${effect.immediate ? " — immediate-use Loot" : ""}.`);
         }
       } else if (effect.type === "scout") {
         setScoutRemaining((current) => current + effect.count);
@@ -421,11 +616,7 @@ export default function FableFurySoloRun() {
       } else if (effect.type === "resetRealm") {
         if (run) {
           const [, cell = selectedCell ?? map?.start_cell ?? ""] = sourceKey.split(":");
-          const result = await postJson<{ revealed: string[] }>("/api/fablefury/reset-realm", {
-            runId: run.run_id,
-            realm,
-            currentCell: cell,
-          });
+          const result = await postJson<{ revealed: string[] }>("/api/fablefury/reset-realm", { runId: run.run_id, realm, currentCell: cell });
           setRevealed((current) => ({ ...current, [realm]: result.revealed }));
           setScoutedByCell((current) => Object.fromEntries(Object.entries(current).filter(([key]) => !key.startsWith(`${realm}:`))));
           setResolvedEventKeys((current) => current.filter((key) => !key.startsWith(`${realm}:`) || key === sourceKey));
@@ -439,7 +630,7 @@ export default function FableFurySoloRun() {
     setHealth(nextHealth);
     setArmor(nextArmor);
     setAttackDice(nextAttackDice);
-    setCoins(nextCoins);
+    setCoinSlots(nextCoinSlots);
     setTokens(nextTokens);
     setBackpack(nextBackpack);
     return messages;
@@ -448,7 +639,7 @@ export default function FableFurySoloRun() {
   function markEventResolved(key: string, messages: string[], roll?: number, pick?: number) {
     setResolvedEventKeys((current) => current.includes(key) ? current : [...current, key]);
     setEventHistory((current) => ({ ...current, [key]: messages }));
-    setEventState((current) => current ? { ...current, status: "resolved", messages, roll, pick } : current);
+    setEventState((current) => current ? { ...current, status: "resolved", messages, roll, pick, rollMode: undefined } : current);
   }
 
   async function prepareEvent(card: FableCard, key: string) {
@@ -481,26 +672,22 @@ export default function FableFurySoloRun() {
     }
   }
 
-  async function rollEvent() {
-    if (!eventState || eventState.status !== "pending") return;
-    const plan = eventState.plan;
-    if (plan.kind !== "roll") return;
+  function stageEventRoll(mode: RollMode) {
     const roll = Math.floor(Math.random() * 6) + 1;
-    await resolveEventEffects(plan.resolve(roll), roll);
+    setEventState((current) => current ? { ...current, roll, rollMode: mode } : current);
   }
 
-  async function rollPickedNumber() {
-    if (!eventState || eventState.status !== "pending" || eventState.plan.kind !== "pickNumber" || !eventState.pick) return;
-    const roll = Math.floor(Math.random() * 6) + 1;
-    await resolveEventEffects(eventState.plan.resolve(eventState.pick, roll), roll, eventState.pick);
-  }
-
-  async function payAndRollOptional() {
-    if (!eventState || eventState.status !== "pending" || eventState.plan.kind !== "optionalRoll") return;
+  async function acceptEventRoll() {
+    if (!eventState || eventState.status !== "pending" || typeof eventState.roll !== "number") return;
+    const roll = eventState.roll;
     const plan = eventState.plan;
-    if (!requirementMet(plan.requires, eventContext())) return;
-    const roll = Math.floor(Math.random() * 6) + 1;
-    await resolveEventEffects([...plan.cost, ...plan.resolve(roll)], roll);
+    if (plan.kind === "roll") {
+      await resolveEventEffects(plan.resolve(roll), roll);
+    } else if (plan.kind === "pickNumber" && eventState.pick) {
+      await resolveEventEffects(plan.resolve(eventState.pick, roll), roll, eventState.pick);
+    } else if (plan.kind === "optionalRoll") {
+      await resolveEventEffects([...plan.cost, ...plan.resolve(roll)], roll);
+    }
   }
 
   async function skipOptionalRoll() {
@@ -510,17 +697,13 @@ export default function FableFurySoloRun() {
 
   async function revealLocation(cell: string) {
     if (!run || !map || phase !== "realm") return;
-
     const cellKey = `${realm}:${cell}`;
+
     if (scoutRemaining > 0 && !realmRevealed.includes(cell)) {
       setLoading(`peek-${cellKey}`);
       setError(null);
       try {
-        const result = await postJson<{ cell: string; card: FableCard }>("/api/fablefury/peek", {
-          runId: run.run_id,
-          realm,
-          cell,
-        });
+        const result = await postJson<{ cell: string; card: FableCard }>("/api/fablefury/peek", { runId: run.run_id, realm, cell });
         setScoutedByCell((current) => ({ ...current, [cellKey]: result.card }));
         setScoutRemaining((current) => Math.max(0, current - 1));
         setSelectedCard(result.card);
@@ -536,7 +719,6 @@ export default function FableFurySoloRun() {
     }
 
     if (inventoryLocked || encounterLocked || scoutRemaining > 0) return;
-
     const existing = cardsByCell[cellKey];
     if (realmRevealed.includes(cell) && existing) {
       setSelectedCard(existing);
@@ -547,19 +729,13 @@ export default function FableFurySoloRun() {
       return;
     }
 
-    const allowed = realmRevealed.length === 0
-      ? cell === map.start_cell
-      : realmRevealed.some((seenCell) => isAdjacent(seenCell, cell));
+    const allowed = realmRevealed.length === 0 ? cell === map.start_cell : realmRevealed.some((seenCell) => isAdjacent(seenCell, cell));
     if (!allowed) return;
 
     setLoading(`cell-${cellKey}`);
     setError(null);
     try {
-      const result = await postJson<RevealResult>("/api/fablefury/reveal", {
-        runId: run.run_id,
-        realm,
-        cell,
-      });
+      const result = await postJson<RevealResult>("/api/fablefury/reveal", { runId: run.run_id, realm, cell });
       setRevealed((current) => ({ ...current, [realm]: result.revealed }));
       setCardsByCell((current) => ({ ...current, [cellKey]: result.card }));
       setSelectedCard(result.card);
@@ -582,353 +758,198 @@ export default function FableFurySoloRun() {
     setEventState(null);
   }
 
+  function renderRollDecision() {
+    if (!eventState || eventState.status !== "pending" || typeof eventState.roll !== "number") return null;
+    return (
+      <div>
+        <div className="flex items-center gap-4 rounded-2xl border border-amber-300/25 bg-amber-300/10 p-4">
+          <img src={FABLE_STAT_ART.attackDice} alt="Core die" className="h-14 w-14 object-contain" />
+          <div><div className="text-[10px] font-black uppercase tracking-[.15em] text-amber-200">Core Roll</div><div className="text-4xl font-black text-[#fff4d8]">{eventState.roll}</div></div>
+        </div>
+        <p className="mt-3 text-xs leading-5 text-white/50">You can accept this result, or spend a Lucky Charm from your Backpack to reroll before the result resolves.</p>
+        <div className="mt-3 grid gap-2 sm:grid-cols-2">
+          <TokenAction token="lucky" count={tokens.lucky} onUse={() => useToken("lucky")} />
+          <button type="button" onClick={acceptEventRoll} disabled={loading === "event"} className="rounded-2xl bg-amber-300 px-5 py-3 text-sm font-black text-[#241707]">Accept {eventState.roll} →</button>
+        </div>
+      </div>
+    );
+  }
+
   function renderEventControls() {
     if (!eventState) return null;
     const plan = eventState.plan;
 
-    if (eventState.status === "resolving") {
-      return <div className="rounded-2xl border border-amber-300/20 bg-amber-300/10 p-4 text-sm font-bold text-amber-100">Resolving Event…</div>;
-    }
+    if (eventState.status === "resolving") return <div className="rounded-2xl border border-amber-300/20 bg-amber-300/10 p-4 text-sm font-bold text-amber-100">Resolving Event…</div>;
 
     if (eventState.status === "resolved") {
       return (
         <div>
           <div className="flex flex-wrap items-center gap-2">
-            {typeof eventState.roll === "number" && (
-              <div className="grid h-14 w-14 place-items-center rounded-2xl border border-amber-300/40 bg-amber-300/10 text-2xl font-black text-amber-100">{eventState.roll}</div>
-            )}
-            <div>
-              <div className="text-[10px] font-black uppercase tracking-[.14em] text-emerald-300">Resolved</div>
-              {eventState.pick && <div className="mt-1 text-xs text-white/45">Picked {eventState.pick}</div>}
-            </div>
+            {typeof eventState.roll === "number" && <div className="grid h-14 w-14 place-items-center rounded-2xl border border-amber-300/40 bg-amber-300/10 text-2xl font-black text-amber-100">{eventState.roll}</div>}
+            <div><div className="text-[10px] font-black uppercase tracking-[.14em] text-emerald-300">Resolved</div>{eventState.pick && <div className="mt-1 text-xs text-white/45">Picked {eventState.pick}</div>}</div>
           </div>
-          <div className="mt-4 grid gap-2">
-            {eventState.messages.map((message, index) => (
-              <div key={`${message}-${index}`} className="rounded-xl border border-white/[.07] bg-black/20 px-3 py-2 text-xs leading-5 text-white/65">{message}</div>
-            ))}
-          </div>
+          <div className="mt-4 grid gap-2">{eventState.messages.map((message, index) => <div key={`${message}-${index}`} className="rounded-xl border border-white/[.07] bg-black/20 px-3 py-2 text-xs leading-5 text-white/65">{message}</div>)}</div>
           <button type="button" onClick={closeReveal} className="mt-4 w-full rounded-2xl bg-amber-300 px-5 py-3 text-sm font-black text-[#241707]">Continue</button>
         </div>
       );
     }
 
+    if (typeof eventState.roll === "number") return renderRollDecision();
+
     if (plan.kind === "choice") {
       return (
-        <div>
-          <div className="mb-3 text-sm font-bold text-white/75">{plan.prompt}</div>
-          <div className="grid gap-2">
-            {plan.options.map((option) => {
-              const enabled = requirementMet(option.requires, eventContext());
-              return (
-                <button
-                  key={option.label}
-                  type="button"
-                  disabled={!enabled || loading === "event"}
-                  onClick={() => resolveEventEffects(option.effects)}
-                  className="rounded-2xl border border-white/10 bg-white/[.05] px-4 py-3 text-left transition hover:border-amber-300/40 hover:bg-amber-300/10 disabled:cursor-not-allowed disabled:opacity-35"
-                >
-                  <strong className="text-sm text-[#fff4d8]">{option.label}</strong>
-                  {option.description && <span className="mt-1 block text-xs leading-5 text-white/45">{option.description}</span>}
-                </button>
-              );
-            })}
-          </div>
-        </div>
+        <div><div className="mb-3 text-sm font-bold text-white/75">{plan.prompt}</div><div className="grid gap-2">{plan.options.map((option) => {
+          const enabled = requirementMet(option.requires, eventContext());
+          return <button key={option.label} type="button" disabled={!enabled || loading === "event"} onClick={() => resolveEventEffects(option.effects)} className="rounded-2xl border border-white/10 bg-white/[.05] px-4 py-3 text-left transition hover:border-amber-300/40 hover:bg-amber-300/10 disabled:cursor-not-allowed disabled:opacity-35"><strong className="text-sm text-[#fff4d8]">{option.label}</strong>{option.description && <span className="mt-1 block text-xs leading-5 text-white/45">{option.description}</span>}</button>;
+        })}</div></div>
       );
     }
 
-    if (plan.kind === "roll") {
-      return (
-        <div>
-          <p className="text-sm font-bold leading-6 text-white/70">{plan.prompt}</p>
-          <button type="button" onClick={rollEvent} disabled={loading === "event"} className="mt-4 w-full rounded-2xl bg-amber-300 px-5 py-4 text-sm font-black text-[#241707] shadow-lg shadow-amber-500/10">🎲 Roll Core Die</button>
-        </div>
-      );
-    }
+    if (plan.kind === "roll") return <div><p className="text-sm font-bold leading-6 text-white/70">{plan.prompt}</p><button type="button" onClick={() => stageEventRoll("roll")} disabled={loading === "event"} className="mt-4 w-full rounded-2xl bg-amber-300 px-5 py-4 text-sm font-black text-[#241707]">Roll Core Die</button></div>;
 
     if (plan.kind === "pickNumber") {
       return (
-        <div>
-          <p className="text-sm font-bold leading-6 text-white/70">{plan.prompt}</p>
-          <div className="mt-4 grid grid-cols-6 gap-2">
-            {[1, 2, 3, 4, 5, 6].map((value) => (
-              <button
-                key={value}
-                type="button"
-                onClick={() => setEventState((current) => current ? { ...current, pick: value } : current)}
-                className={`aspect-square rounded-xl border text-sm font-black ${eventState.pick === value ? "border-amber-300 bg-amber-300 text-[#241707]" : "border-white/10 bg-white/5 text-white/70"}`}
-              >
-                {value}
-              </button>
-            ))}
-          </div>
-          <button type="button" onClick={rollPickedNumber} disabled={!eventState.pick || loading === "event"} className="mt-3 w-full rounded-2xl bg-amber-300 px-5 py-4 text-sm font-black text-[#241707] disabled:opacity-35">🎲 Roll Core Die</button>
-        </div>
+        <div><p className="text-sm font-bold leading-6 text-white/70">{plan.prompt}</p><div className="mt-4 grid grid-cols-6 gap-2">{[1, 2, 3, 4, 5, 6].map((value) => <button key={value} type="button" onClick={() => setEventState((current) => current ? { ...current, pick: value } : current)} className={`aspect-square rounded-xl border text-sm font-black ${eventState.pick === value ? "border-amber-300 bg-amber-300 text-[#241707]" : "border-white/10 bg-white/5 text-white/70"}`}>{value}</button>)}</div><button type="button" onClick={() => stageEventRoll("pickNumber")} disabled={!eventState.pick || loading === "event"} className="mt-3 w-full rounded-2xl bg-amber-300 px-5 py-4 text-sm font-black text-[#241707] disabled:opacity-35">Roll Core Die</button></div>
       );
     }
 
     if (plan.kind === "optionalRoll") {
       const canPay = requirementMet(plan.requires, eventContext());
       return (
-        <div>
-          <p className="text-sm font-bold leading-6 text-white/70">{plan.prompt}</p>
-          <div className="mt-4 grid gap-2 sm:grid-cols-2">
-            <button type="button" disabled={!canPay || loading === "event"} onClick={payAndRollOptional} className="rounded-2xl bg-amber-300 px-4 py-3 text-sm font-black text-[#241707] disabled:opacity-35">🎲 {plan.payLabel}</button>
-            <button type="button" disabled={loading === "event"} onClick={skipOptionalRoll} className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-black text-white/70">{plan.skipLabel}</button>
-          </div>
-        </div>
+        <div><p className="text-sm font-bold leading-6 text-white/70">{plan.prompt}</p><div className="mt-4 grid gap-2 sm:grid-cols-2"><button type="button" disabled={!canPay || loading === "event"} onClick={() => stageEventRoll("optionalRoll")} className="rounded-2xl bg-amber-300 px-4 py-3 text-sm font-black text-[#241707] disabled:opacity-35">{plan.payLabel}</button><button type="button" disabled={loading === "event"} onClick={skipOptionalRoll} className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-black text-white/70">{plan.skipLabel}</button></div></div>
       );
     }
-
     return null;
   }
 
   const selectedBack = selectedCard?.card_type === "loot" ? FABLE_CARD_BACKS.loot : FABLE_CARD_BACKS.location;
+  const tokenQuickActions = (
+    <div>
+      <div className="mb-2 text-[9px] font-black uppercase tracking-[.14em] text-white/35">Backpack quick-use</div>
+      <div className="grid grid-cols-3 gap-2">
+        <TokenAction token="healing" count={tokens.healing} onUse={() => useToken("healing")} compact />
+        <TokenAction token="crystal" count={tokens.crystal} onUse={() => useToken("crystal")} compact />
+        <TokenAction token="lucky" count={tokens.lucky} onUse={() => useToken("lucky")} disabled={!pendingRoll} compact />
+      </div>
+    </div>
+  );
 
   return (
     <main className="min-h-screen bg-[#0b1017] px-4 py-6 text-[#f8f0dc] md:px-8 lg:px-10">
-      <div className="mx-auto max-w-[1540px]">
+      <div className="mx-auto max-w-[1740px]">
         <header className="flex flex-col gap-4 border-b border-white/10 pb-5 md:flex-row md:items-end md:justify-between">
           <div>
             <div className="text-[10px] font-black uppercase tracking-[.2em] text-amber-300">Fable Fury · Solo Adventure Prototype</div>
             <h1 className="mt-1 text-4xl font-black tracking-[-.05em] md:text-6xl">{phase === "hero" ? "Choose Your Hero" : phase === "gear" ? "Pack Your Bag" : `Realm ${realm}`}</h1>
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-white/50">
-              {phase === "hero" ? "Lock in one Hero, choose your starting Token, then the game deals your 2 Coins and first Loot card." : phase === "gear" ? "Your Hero is locked. Pack the starting Loot card, then enter the first Realm." : "Explore the real map, flip the real cards, and resolve Events directly against your Hero state."}
-            </p>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-white/50">{phase === "hero" ? "Lock in one Hero and one starting Token. Your Backpack starts with 2 Coins and one real Loot draw." : phase === "gear" ? "Coins and Loot share the three lower Backpack pockets. Tokens live in the three upper pockets." : "The real game board is now the table. Explore, reveal cards, resolve Events, and use Backpack Tokens whenever they are relevant."}</p>
           </div>
-          <div className="flex flex-wrap gap-2">
-            <a href="/fablefury/deckbuilder" className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-xs font-bold text-white/65">Hero Lab</a>
-            {phase !== "hero" && <button type="button" onClick={resetAdventure} className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-xs font-bold text-white/65">New Adventure</button>}
-          </div>
+          <div className="flex flex-wrap gap-2"><a href="/fablefury/deckbuilder" className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-xs font-bold text-white/65">Hero Lab</a>{phase !== "hero" && <button type="button" onClick={resetAdventure} className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-xs font-bold text-white/65">New Adventure</button>}</div>
         </header>
 
         {error && <div className="mt-5 rounded-xl border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-100">{error}</div>}
 
         {phase === "hero" && (
           <section className="mt-7">
-            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-              {FABLE_HEROES.map((candidate) => {
-                const active = candidate.id === heroId;
-                return (
-                  <button
-                    key={candidate.id}
-                    type="button"
-                    onClick={() => setHeroId(candidate.id)}
-                    className={`overflow-hidden rounded-[26px] border text-left transition ${active ? "border-amber-300/70 bg-amber-300/10 shadow-[0_0_45px_rgba(252,211,77,.12)]" : "border-white/10 bg-white/[.035] hover:border-white/20"}`}
-                  >
-                    <div className="aspect-[1.52/1] overflow-hidden bg-black/20">
-                      <img src={candidate.mat} alt={`${candidate.name} hero mat`} className="h-full w-full object-cover" />
-                    </div>
-                    <div className="p-4">
-                      <div className="text-[9px] font-black uppercase tracking-[.15em] text-amber-300">{candidate.role} · {candidate.race}</div>
-                      <div className="mt-1 text-xl font-black">{candidate.name}</div>
-                      <div className="mt-3 flex gap-2 text-[10px] font-bold text-white/55">
-                        <span>❤️ {candidate.startingHealth}</span><span>🛡️ {candidate.startingArmor}</span><span>🎲 {candidate.startingAttackDice}</span>
-                      </div>
-                      <div className="mt-3 rounded-xl border border-white/[.07] bg-black/15 p-3 text-xs leading-5 text-white/50"><strong className="text-white/75">{candidate.coreSkill.name}</strong><br />{candidate.coreSkill.text}</div>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">{FABLE_HEROES.map((candidate) => {
+              const active = candidate.id === heroId;
+              return <button key={candidate.id} type="button" onClick={() => setHeroId(candidate.id)} className={`overflow-hidden rounded-[26px] border text-left transition ${active ? "border-amber-300/70 bg-amber-300/10 shadow-[0_0_45px_rgba(252,211,77,.12)]" : "border-white/10 bg-white/[.035] hover:border-white/20"}`}><div className="aspect-[1.52/1] overflow-hidden bg-black/20"><img src={candidate.mat} alt={`${candidate.name} hero mat`} className="h-full w-full object-cover" /></div><div className="p-4"><div className="text-[9px] font-black uppercase tracking-[.15em] text-amber-300">{candidate.role} · {candidate.race}</div><div className="mt-1 text-xl font-black">{candidate.name}</div><div className="mt-3 flex flex-wrap gap-3 text-[10px] text-white/55"><MiniStat art={FABLE_STAT_ART.health} value={candidate.startingHealth} /><MiniStat art={FABLE_STAT_ART.armor} value={candidate.startingArmor} /><MiniStat art={FABLE_STAT_ART.attackDice} value={candidate.startingAttackDice} /></div><div className="mt-3 rounded-xl border border-white/[.07] bg-black/15 p-3 text-xs leading-5 text-white/50"><strong className="text-white/75">{candidate.coreSkill.name}</strong><br />{candidate.coreSkill.text}</div></div></button>;
+            })}</div>
 
             <div className="mt-6 rounded-[26px] border border-white/10 bg-white/[.035] p-5 md:p-6">
               <div className="text-[10px] font-black uppercase tracking-[.16em] text-amber-300">Starting Token · choose 1</div>
-              <div className="mt-4 grid gap-3 sm:grid-cols-3">
-                {(["healing", "lucky", "crystal"] as TokenKind[]).map((token) => (
-                  <button
-                    key={token}
-                    type="button"
-                    onClick={() => setStartingToken(token)}
-                    className={`rounded-2xl border p-4 text-left transition ${startingToken === token ? "border-amber-300 bg-amber-300/10" : "border-white/10 bg-black/20 hover:border-white/20"}`}
-                  >
-                    <div className="text-2xl">{token === "healing" ? "🧪" : token === "lucky" ? "🍀" : "🔮"}</div>
-                    <strong className="mt-2 block text-sm">{TOKEN_LABELS[token]}</strong>
-                  </button>
-                ))}
-              </div>
-              <div className="mt-5 flex flex-col gap-3 rounded-2xl border border-white/[.07] bg-black/20 p-4 sm:flex-row sm:items-center sm:justify-between">
-                <div className="text-xs leading-5 text-white/50">Setup will give <strong className="text-white/80">{hero.name}</strong> your chosen Token, <strong className="text-white/80">2 Coins</strong>, and <strong className="text-white/80">1 random Loot</strong> from the persistent shuffled deck.</div>
-                <button type="button" onClick={lockHeroAndDeal} disabled={!startingToken || loading === "setup"} className="shrink-0 rounded-2xl bg-amber-300 px-6 py-4 text-sm font-black text-[#241707] disabled:opacity-35">{loading === "setup" ? "Building Run…" : "Lock Hero & Deal Gear →"}</button>
-              </div>
+              <div className="mt-4 grid gap-3 sm:grid-cols-3">{(["healing", "lucky", "crystal"] as TokenKind[]).map((token) => <button key={token} type="button" onClick={() => setStartingToken(token)} className={`flex items-center gap-4 rounded-2xl border p-4 text-left transition ${startingToken === token ? "border-amber-300 bg-amber-300/10" : "border-white/10 bg-black/20 hover:border-white/20"}`}><img src={FABLE_TOKEN_ART[token]} alt={TOKEN_LABELS[token]} className="h-16 w-16 object-contain drop-shadow-lg" /><div><strong className="block text-sm">{TOKEN_LABELS[token]}</strong><span className="mt-1 block text-[10px] text-white/40">{token === "healing" ? "+1 Health" : token === "lucky" ? "Reroll a die" : "Reveal any Location"}</span></div></button>)}</div>
+              <div className="mt-5 flex flex-col gap-3 rounded-2xl border border-white/[.07] bg-black/20 p-4 sm:flex-row sm:items-center sm:justify-between"><div className="text-xs leading-5 text-white/50">Setup gives <strong className="text-white/80">{hero.name}</strong> your chosen Token, <strong className="text-white/80">2 Coins</strong> in one Loot/Coin pocket, and <strong className="text-white/80">1 random Loot</strong>.</div><button type="button" onClick={lockHeroAndDeal} disabled={!startingToken || loading === "setup"} className="shrink-0 rounded-2xl bg-amber-300 px-6 py-4 text-sm font-black text-[#241707] disabled:opacity-35">{loading === "setup" ? "Building Run…" : "Lock Hero & Deal Gear →"}</button></div>
             </div>
           </section>
         )}
 
         {phase === "gear" && run && (
-          <section className="mt-7 grid gap-5 xl:grid-cols-[1.1fr_.9fr]">
-            <div className="rounded-[28px] border border-white/10 bg-white/[.035] p-5">
-              <div className="overflow-hidden rounded-[22px] border border-white/10 bg-black/20"><img src={hero.mat} alt={`${hero.name} hero mat`} className="w-full" /></div>
-              <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
-                <StatPill icon="❤️" label="Health" value={health} max={hero.maxHealth} />
-                <StatPill icon="🛡️" label="Armor" value={armor} max={hero.maxArmor} />
-                <StatPill icon="🎲" label="Attack Dice" value={attackDice} max={hero.maxAttackDice} />
-                <StatPill icon="🪙" label="Coins" value={coins} />
-              </div>
-              <div className="mt-3 grid grid-cols-3 gap-2">
-                <StatPill icon="🧪" label="Potion" value={tokens.healing} />
-                <StatPill icon="🍀" label="Lucky" value={tokens.lucky} />
-                <StatPill icon="🔮" label="Crystal" value={tokens.crystal} />
-              </div>
+          <section className="mt-7 grid gap-5 xl:grid-cols-[.9fr_1.1fr]">
+            <div className="grid content-start gap-4">
+              <div className="rounded-[28px] border border-white/10 bg-white/[.035] p-5"><div className="overflow-hidden rounded-[22px] border border-white/10 bg-black/20"><img src={hero.mat} alt={`${hero.name} hero mat`} className="w-full" /></div><div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4"><StatPill art={FABLE_STAT_ART.health} label="Health" value={health} max={hero.maxHealth} /><StatPill art={FABLE_STAT_ART.armor} label="Armor" value={armor} max={hero.maxArmor} /><StatPill art={FABLE_STAT_ART.attackDice} label="Attack Dice" value={attackDice} max={hero.maxAttackDice} /><StatPill art={FABLE_STAT_ART.coins} label="Coins" value={coins} /></div></div>
+              <BackpackPanel backpack={backpack} coinSlots={coinSlots} tokens={tokens} onUseToken={useToken} luckyDisabled crystalDisabled />
             </div>
 
             <div className="rounded-[28px] border border-white/10 bg-white/[.035] p-5 md:p-6">
               <div className="text-[10px] font-black uppercase tracking-[.16em] text-amber-300">Starting Loot Draw</div>
-              {lootInbox[0] ? (
-                <div className="mt-4 grid gap-5 sm:grid-cols-[210px_1fr]">
-                  <CardImage card={lootInbox[0]} className="w-full rounded-2xl shadow-2xl" />
-                  <div>
-                    <h2 className="text-2xl font-black">{lootInbox[0].title}</h2>
-                    <p className="mt-2 text-sm leading-6 text-white/55">{lootInbox[0].rules_text}</p>
-                    <div className="mt-5 text-[10px] font-black uppercase tracking-[.14em] text-white/35">Place it in your Backpack</div>
-                    <div className="mt-2 grid gap-2">
-                      {backpack.map((slotCard, slot) => (
-                        <button key={slot} type="button" onClick={() => packLoot(0, slot)} className="rounded-xl border border-amber-300/25 bg-amber-300/10 px-4 py-3 text-left text-xs font-black text-amber-100">Slot {slot + 1}<span className="ml-2 font-medium text-white/40">{slotCard?.title ?? "Empty"}</span></button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-5 text-sm text-emerald-100">Starting gear packed. You are ready.</div>
-              )}
+              {lootInbox[0] ? <div className="mt-4 grid gap-5 sm:grid-cols-[210px_1fr]"><CardImage card={lootInbox[0]} className="w-full rounded-2xl shadow-2xl" /><div><h2 className="text-2xl font-black">{lootInbox[0].title}</h2><p className="mt-2 text-sm leading-6 text-white/55">{lootInbox[0].rules_text}</p><div className="mt-5 text-[10px] font-black uppercase tracking-[.14em] text-white/35">Place it in an empty Loot/Coin pocket</div><div className="mt-2 grid gap-2">{backpack.map((slotCard, slot) => <button key={slot} type="button" disabled={coinSlots[slot] > 0} onClick={() => packLoot(0, slot)} className="rounded-xl border border-amber-300/25 bg-amber-300/10 px-4 py-3 text-left text-xs font-black text-amber-100 disabled:cursor-not-allowed disabled:opacity-35">Pocket {slot + 1}<span className="ml-2 font-medium text-white/40">{coinSlots[slot] > 0 ? `${coinSlots[slot]} Coins` : slotCard?.title ?? "Empty"}</span></button>)}</div></div></div> : <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-5 text-sm text-emerald-100">Starting gear packed. You are ready.</div>}
               <button type="button" disabled={lootInbox.length > 0} onClick={() => setPhase("realm")} className="mt-6 w-full rounded-2xl bg-amber-300 px-6 py-4 text-sm font-black text-[#241707] disabled:opacity-30">Enter Realm 1 →</button>
             </div>
           </section>
         )}
 
         {phase === "realm" && run && map && (
-          <>
-            <section className="mt-5 grid gap-4 xl:grid-cols-[.78fr_1.45fr_.77fr]">
-              <aside className="grid content-start gap-4">
-                <div className="rounded-[24px] border border-white/10 bg-white/[.035] p-4">
-                  <div className="overflow-hidden rounded-2xl border border-white/10 bg-black/20"><img src={hero.mat} alt={`${hero.name} hero mat`} className="w-full" /></div>
-                  <div className="mt-3 flex items-end justify-between gap-3"><div><div className="text-[9px] font-black uppercase tracking-[.14em] text-amber-300">Your Hero</div><div className="text-lg font-black">{hero.name}</div></div><div className="text-[10px] text-white/35">{hero.role}</div></div>
-                  <div className="mt-3 grid grid-cols-2 gap-2">
-                    <StatPill icon="❤️" label="Health" value={health} max={hero.maxHealth} />
-                    <StatPill icon="🛡️" label="Armor" value={armor} max={hero.maxArmor} />
-                    <StatPill icon="🎲" label="Attack Dice" value={attackDice} max={hero.maxAttackDice} />
-                    <StatPill icon="🪙" label="Coins" value={coins} />
+          <section className="mt-5 grid gap-4 2xl:grid-cols-[350px_minmax(760px,1fr)_300px]">
+            <aside className="grid content-start gap-4">
+              <div className="rounded-[24px] border border-white/10 bg-white/[.035] p-4">
+                <div className="overflow-hidden rounded-2xl border border-white/10 bg-black/20"><img src={hero.mat} alt={`${hero.name} hero mat`} className="w-full" /></div>
+                <div className="mt-3 flex items-end justify-between gap-3"><div><div className="text-[9px] font-black uppercase tracking-[.14em] text-amber-300">Your Hero</div><div className="text-lg font-black">{hero.name}</div></div><div className="text-[10px] text-white/35">{hero.role}</div></div>
+                <div className="mt-3 grid grid-cols-2 gap-2"><StatPill art={FABLE_STAT_ART.health} label="Health" value={health} max={hero.maxHealth} /><StatPill art={FABLE_STAT_ART.armor} label="Armor" value={armor} max={hero.maxArmor} /><StatPill art={FABLE_STAT_ART.attackDice} label="Attack Dice" value={attackDice} max={hero.maxAttackDice} /><StatPill art={FABLE_STAT_ART.coins} label="Coins" value={coins} /></div>
+                <div className="mt-3 rounded-xl border border-white/[.07] bg-black/20 p-3 text-[11px] leading-5 text-white/45"><strong className="text-white/70">{hero.coreSkill.name}:</strong> {hero.coreSkill.text}</div>
+              </div>
+              <BackpackPanel backpack={backpack} coinSlots={coinSlots} tokens={tokens} onUseToken={useToken} luckyDisabled={!pendingRoll} crystalDisabled={false} />
+            </aside>
+
+            <section className="rounded-[28px] border border-white/10 bg-white/[.035] p-3 md:p-4">
+              <div className="flex flex-wrap items-end justify-between gap-3 px-1 pb-3"><div><div className="text-[9px] font-black uppercase tracking-[.15em] text-white/35">Game board · Realm {realm}</div><h2 className="mt-1 text-2xl font-black">{map.name}</h2><p className="mt-1 text-xs text-white/40">{remainingLocations} unexplored · Start {map.start_cell}</p></div><div className="flex gap-2">{[1, 2, 3].map((value) => <button key={value} type="button" onClick={() => { if (!encounterLocked && !inventoryLocked && scoutRemaining === 0) { setRealm(value); setSelectedCard(null); setShowReveal(false); setEventState(null); } }} className={`rounded-xl px-3 py-2 text-[10px] font-black ${realm === value ? "bg-amber-300 text-[#241707]" : "border border-white/10 bg-white/5 text-white/50"}`}>R{value}</button>)}</div></div>
+
+              {scoutRemaining > 0 && <div className="mb-3 rounded-2xl border border-violet-300/35 bg-violet-400/10 px-4 py-3 text-xs font-bold text-violet-100">Crystal Ball / Reveal mode: choose {scoutRemaining} unexplored Location{scoutRemaining === 1 ? "" : "s"}. The card stays face-up, but you do not travel there or resolve it.</div>}
+              {inventoryLocked && <div className="mb-3 rounded-2xl border border-amber-300/30 bg-amber-300/10 px-4 py-3 text-xs font-bold text-amber-100">You have unassigned Loot. Pack or discard it before travelling.</div>}
+
+              <div className="flex justify-center overflow-hidden rounded-[24px] border border-white/10 bg-black/30 p-1 shadow-2xl">
+                <div className="relative w-full max-w-[1040px]">
+                  <img src={FABLE_BOARD_ART} alt="Fable Fury game board" className="block w-full" />
+
+                  <div className="absolute left-[16.5%] top-[6.7%] z-10 w-[7.2%] -translate-x-1/2 -translate-y-1/2">
+                    <div className="relative aspect-[746/1039]"><img src={FABLE_CARD_BACKS.loot} alt="Loot deck" className="h-full w-full rounded-[7px] object-cover shadow-xl" /><span className="absolute -right-2 -top-2 grid h-6 min-w-6 place-items-center rounded-full bg-amber-300 px-1 text-[10px] font-black text-[#241707]">{lootRemaining}</span></div>
                   </div>
-                  <div className="mt-2 grid grid-cols-3 gap-2">
-                    <StatPill icon="🧪" label="Potion" value={tokens.healing} />
-                    <StatPill icon="🍀" label="Lucky" value={tokens.lucky} />
-                    <StatPill icon="🔮" label="Crystal" value={tokens.crystal} />
-                  </div>
-                  <div className="mt-3 rounded-xl border border-white/[.07] bg-black/20 p-3 text-[11px] leading-5 text-white/45"><strong className="text-white/70">{hero.coreSkill.name}:</strong> {hero.coreSkill.text}</div>
+                  <BoardSupply art={FABLE_SHOP_ART.crystal} left="6.8%" top="17.4%" width="4.5%" label="Crystal Ball supply" />
+                  <BoardSupply art={FABLE_SHOP_ART.lucky} left="12.2%" top="17.4%" width="4.5%" label="Lucky Charm supply" />
+                  <BoardSupply art={FABLE_SHOP_ART.healing} left="17.6%" top="17.4%" width="4.5%" label="Health Potion supply" />
+                  <BoardSupply art={FABLE_SHOP_ART.attackDice} left="10.4%" top="25.1%" width="5.5%" label="Attack Die supply" />
+                  <BoardSupply art={FABLE_SHOP_ART.armor} left="20.2%" top="25.1%" width="6.2%" label="Armor supply" />
+
+                  {SKILL_COLORS.map((color, index) => {
+                    const positions = [
+                      { left: "76.8%", top: "80.3%" },
+                      { left: "88.3%", top: "80.3%" },
+                      { left: "76.8%", top: "88.7%" },
+                      { left: "88.3%", top: "88.7%" },
+                    ];
+                    return <div key={color} className="absolute z-10 w-[6.5%] -translate-x-1/2 -translate-y-1/2" style={positions[index]} title={`${color} Skill deck`}><div className="relative aspect-[746/1039]"><img src={FABLE_CARD_BACKS[color]} alt={`${color} Skill deck`} className="h-full w-full rounded-[6px] object-cover shadow-xl" /><span className="absolute -right-1.5 -top-1.5 grid h-5 min-w-5 place-items-center rounded-full bg-black/75 px-1 text-[8px] font-black text-white">{skillRemaining[color]}</span></div></div>;
+                  })}
+
+                  {[2, 3].map((futureRealm) => <div key={futureRealm} className={`absolute right-[4.4%] z-10 w-[7%] -translate-x-1/2 -translate-y-1/2 ${realm === futureRealm ? "opacity-20" : "opacity-75"}`} style={{ top: futureRealm === 2 ? "13.5%" : "27.2%" }}><div className="relative aspect-[746/1039]"><img src={FABLE_CARD_BACKS.location} alt={`Realm ${futureRealm} deck`} className="h-full w-full rounded-[7px] object-cover shadow-xl" /><span className="absolute -right-1.5 -top-1.5 grid h-5 min-w-5 place-items-center rounded-full bg-black/75 px-1 text-[8px] font-black text-white">14</span></div></div>)}
+
+                  {map.grid.active_cells.map((cell) => {
+                    const key = `${realm}:${cell}`;
+                    const explored = realmRevealed.includes(cell);
+                    const card = cardsByCell[key];
+                    const scouted = scoutedByCell[key];
+                    const normallyReachable = realmRevealed.length === 0 ? cell === map.start_cell : realmRevealed.some((prior) => isAdjacent(prior, cell));
+                    const clickable = scoutRemaining > 0 ? !explored : (!inventoryLocked && !encounterLocked && (explored || normallyReachable));
+                    const artCard = explored ? card : scouted;
+                    return <button key={cell} type="button" onClick={() => revealLocation(cell)} disabled={!clickable || loading === `cell-${key}` || loading === `peek-${key}`} className={`absolute w-[9.15%] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-[8px] border text-left shadow-xl transition duration-200 ${explored ? "z-30 border-amber-200/75" : scouted ? "z-25 border-violet-300/75" : clickable ? "z-20 border-amber-200/65 hover:-translate-y-[55%] hover:scale-110 hover:shadow-[0_0_28px_rgba(252,211,77,.5)]" : "z-20 border-white/10 opacity-42"}`} style={boardCellPosition(cell)}><div className="relative aspect-[746/1039] bg-[#202936]">{artCard ? <CardImage card={artCard} className="h-full w-full" /> : <img src={FABLE_CARD_BACKS.location} alt="Unexplored Location" className="h-full w-full object-cover" />}<span className="absolute left-1 top-1 rounded-full bg-black/60 px-1.5 py-0.5 text-[7px] font-black text-white/80">{cell}</span>{cell === map.start_cell && <span className="absolute right-1 top-1 rounded-full bg-amber-300 px-1.5 py-0.5 text-[6px] font-black text-[#241707]">START</span>}{scouted && !explored && <span className="absolute inset-x-1 bottom-1 rounded bg-violet-500/90 py-1 text-center text-[6px] font-black uppercase tracking-[.12em] text-white">Revealed</span>}</div></button>;
+                  })}
                 </div>
-
-                <div className="rounded-[24px] border border-white/10 bg-white/[.035] p-4">
-                  <div className="text-[9px] font-black uppercase tracking-[.14em] text-amber-300">Backpack · Loot</div>
-                  <div className="mt-3 grid grid-cols-3 gap-2">
-                    {backpack.map((card, index) => (
-                      <div key={index} className="grid min-h-[120px] place-items-center overflow-hidden rounded-xl border border-white/10 bg-black/20 p-1 text-center text-[9px] text-white/30">
-                        {card ? <CardImage card={card} className="h-full w-full rounded-lg" /> : `Slot ${index + 1}`}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </aside>
-
-              <section className="rounded-[28px] border border-white/10 bg-white/[.035] p-4 md:p-5">
-                <div className="flex flex-wrap items-end justify-between gap-3">
-                  <div><div className="text-[9px] font-black uppercase tracking-[.15em] text-white/35">Realm map</div><h2 className="mt-1 text-2xl font-black">Realm {realm}: {map.name}</h2><p className="mt-1 text-xs text-white/40">{remainingLocations} unexplored · Start {map.start_cell}</p></div>
-                  <div className="flex gap-2">{[1, 2, 3].map((value) => <button key={value} type="button" onClick={() => { if (!encounterLocked && !inventoryLocked && scoutRemaining === 0) { setRealm(value); setSelectedCard(null); setShowReveal(false); setEventState(null); } }} className={`rounded-xl px-3 py-2 text-[10px] font-black ${realm === value ? "bg-amber-300 text-[#241707]" : "border border-white/10 bg-white/5 text-white/50"}`}>R{value}</button>)}</div>
-                </div>
-
-                {scoutRemaining > 0 && <div className="mt-4 rounded-2xl border border-violet-300/35 bg-violet-400/10 px-4 py-3 text-xs font-bold text-violet-100">🔮 Reveal mode: choose {scoutRemaining} unexplored Location{scoutRemaining === 1 ? "" : "s"}. These are peeks only—you do not travel there.</div>}
-                {inventoryLocked && <div className="mt-4 rounded-2xl border border-amber-300/30 bg-amber-300/10 px-4 py-3 text-xs font-bold text-amber-100">🎒 You have unassigned Loot. Pack or discard it before travelling.</div>}
-
-                <div className="mt-5 flex justify-center overflow-hidden rounded-[24px] border border-white/10 bg-black/30 p-2 shadow-2xl">
-                  <div className="relative w-full max-w-[820px]">
-                    {mapImage ? <img src={mapImage} alt={`${map.name} map card`} className="block w-full rounded-[18px]" /> : <div className="aspect-square rounded-[18px] bg-[#efe0b7]" />}
-                    {map.grid.active_cells.map((cell) => {
-                      const key = `${realm}:${cell}`;
-                      const explored = realmRevealed.includes(cell);
-                      const card = cardsByCell[key];
-                      const scouted = scoutedByCell[key];
-                      const normallyReachable = realmRevealed.length === 0 ? cell === map.start_cell : realmRevealed.some((prior) => isAdjacent(prior, cell));
-                      const clickable = scoutRemaining > 0 ? !explored : (!inventoryLocked && !encounterLocked && (explored || normallyReachable));
-                      const artCard = explored ? card : scouted;
-                      return (
-                        <button
-                          key={cell}
-                          type="button"
-                          onClick={() => revealLocation(cell)}
-                          disabled={!clickable || loading === `cell-${key}` || loading === `peek-${key}`}
-                          className={`absolute w-[11.2%] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-[9px] border text-left shadow-xl transition duration-200 ${explored ? "z-20 border-amber-200/60" : scouted ? "z-10 border-violet-300/60" : clickable ? "z-10 border-amber-200/55 hover:-translate-y-[55%] hover:scale-105 hover:shadow-[0_0_28px_rgba(252,211,77,.45)]" : "border-white/10 opacity-48"}`}
-                          style={cardPosition(cell)}
-                        >
-                          <div className="relative aspect-[746/1039] bg-[#202936]">
-                            {artCard ? <CardImage card={artCard} className="h-full w-full" /> : <img src={FABLE_CARD_BACKS.location} alt="Unexplored Location" className="h-full w-full object-cover" />}
-                            <span className="absolute left-1 top-1 rounded-full bg-black/55 px-1.5 py-0.5 text-[7px] font-black text-white/75">{cell}</span>
-                            {cell === map.start_cell && <span className="absolute right-1 top-1 rounded-full bg-amber-300 px-1.5 py-0.5 text-[6px] font-black text-[#241707]">START</span>}
-                            {scouted && !explored && <span className="absolute inset-x-1 bottom-1 rounded bg-violet-500/85 py-1 text-center text-[6px] font-black uppercase tracking-[.12em] text-white">Peeked</span>}
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-                <div className="mt-4 rounded-2xl border border-white/[.07] bg-black/20 p-3 text-[11px] leading-5 text-white/40"><strong className="text-white/65">Realm {realm}:</strong> {REALM_RECIPES[realm]}. Cards were shuffled and secretly assigned when your run was created.</div>
-              </section>
-
-              <aside className="grid content-start gap-4">
-                {lootInbox.length > 0 && (
-                  <div className="rounded-[24px] border border-amber-300/30 bg-amber-300/[.07] p-4">
-                    <div className="text-[9px] font-black uppercase tracking-[.14em] text-amber-300">Loot waiting · {lootInbox.length}</div>
-                    <div className="mt-3 grid gap-4">
-                      {lootInbox.map((card, inboxIndex) => (
-                        <div key={`${card.id}-${inboxIndex}`} className="rounded-2xl border border-white/10 bg-black/20 p-3">
-                          <div className="grid grid-cols-[90px_1fr] gap-3"><CardImage card={card} className="w-full rounded-lg" /><div><strong className="text-sm">{card.title}</strong><p className="mt-1 line-clamp-4 text-[10px] leading-4 text-white/45">{card.rules_text}</p></div></div>
-                          <div className="mt-3 grid grid-cols-3 gap-1">{backpack.map((slotCard, slot) => <button key={slot} type="button" onClick={() => packLoot(inboxIndex, slot)} className="rounded-lg border border-amber-300/20 bg-amber-300/10 px-2 py-2 text-[9px] font-black text-amber-100">{slotCard ? `Replace ${slot + 1}` : `Slot ${slot + 1}`}</button>)}</div>
-                          <button type="button" onClick={() => discardInboxLoot(inboxIndex)} className="mt-2 w-full rounded-lg border border-white/10 px-2 py-2 text-[9px] font-bold text-white/40">Discard</button>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                <div className="rounded-[24px] border border-white/10 bg-white/[.035] p-4">
-                  <div className="text-[9px] font-black uppercase tracking-[.14em] text-white/35">Persistent decks</div>
-                  <div className="mt-3 grid grid-cols-2 gap-2">
-                    <div className="rounded-xl border border-white/[.07] bg-black/20 p-3"><div className="text-[9px] uppercase text-white/35">Loot</div><div className="mt-1 text-xl font-black">{lootRemaining}</div></div>
-                    {Object.entries(skillRemaining).map(([color, count]) => <div key={color} className="rounded-xl border border-white/[.07] bg-black/20 p-3"><div className="text-[9px] uppercase text-white/35">{color} Skills</div><div className="mt-1 text-xl font-black">{count}</div></div>)}
-                  </div>
-                </div>
-
-                <div className="rounded-[24px] border border-white/10 bg-white/[.035] p-4">
-                  <div className="text-[9px] font-black uppercase tracking-[.14em] text-emerald-300">Event engine</div>
-                  <p className="mt-2 text-xs leading-5 text-white/45">Events now resolve against this Hero: Health, Armor, Attack Dice, Coins, Tokens, Loot draws, Loot costs, Core Rolls, choices, solo highest/lowest rules, scouting and Sense of Direction map resets.</p>
-                  <p className="mt-2 text-[10px] leading-4 text-white/30">Enemies, Traps, Shrines, Portals and individual Loot effects are intentionally the next systems.</p>
-                </div>
-              </aside>
+              </div>
             </section>
-          </>
+
+            <aside className="grid content-start gap-4">
+              <div className="rounded-[24px] border border-white/10 bg-white/[.035] p-4"><div className="text-[9px] font-black uppercase tracking-[.14em] text-amber-300">Current Map Card</div>{mapImage ? <img src={mapImage} alt={`${map.name} map card`} className="mt-3 w-full rounded-2xl border border-white/10" /> : null}<p className="mt-3 text-[10px] leading-4 text-white/35">The Map card now acts as the layout reference. Location cards themselves live on the actual game board grid.</p></div>
+
+              {lootInbox.length > 0 && <div className="rounded-[24px] border border-amber-300/30 bg-amber-300/[.07] p-4"><div className="text-[9px] font-black uppercase tracking-[.14em] text-amber-200">Loot waiting · {lootInbox.length}</div><div className="mt-3 grid gap-4">{lootInbox.map((card, inboxIndex) => <div key={`${card.id}-${inboxIndex}`} className="grid grid-cols-[82px_1fr] gap-3"><CardImage card={card} className="w-full rounded-lg" /><div><strong className="text-xs">{card.title}</strong><div className="mt-2 grid gap-1">{backpack.map((slotCard, slot) => <button key={slot} type="button" disabled={coinSlots[slot] > 0} onClick={() => packLoot(inboxIndex, slot)} className="rounded-lg border border-amber-300/20 bg-amber-300/10 px-2 py-1.5 text-left text-[9px] font-black text-amber-100 disabled:opacity-30">Pocket {slot + 1}: {coinSlots[slot] > 0 ? `${coinSlots[slot]} Coins` : slotCard?.title ?? "Empty"}</button>)}</div><button type="button" onClick={() => discardInboxLoot(inboxIndex)} className="mt-2 text-[9px] font-bold text-white/35 underline">Discard</button></div></div>)}</div></div>}
+
+              <div className="rounded-[24px] border border-white/10 bg-white/[.035] p-4"><div className="text-[9px] font-black uppercase tracking-[.14em] text-white/35">Realm state</div><p className="mt-2 text-xs leading-5 text-white/45"><strong className="text-white/70">Realm {realm}:</strong> {REALM_RECIPES[realm]}</p><div className="mt-3 rounded-xl border border-white/[.07] bg-black/20 p-3 text-[10px] leading-4 text-white/35">Cards were shuffled and assigned once at run creation. Crystal Ball reveals remain face-up without counting as travel.</div></div>
+              <div className="rounded-[24px] border border-emerald-300/15 bg-emerald-300/[.04] p-4"><div className="text-[9px] font-black uppercase tracking-[.14em] text-emerald-300">Live systems</div><p className="mt-2 text-xs leading-5 text-white/45">Events resolve against your real Hero state. Health Potions heal immediately. Crystal Balls reveal any Location. Lucky Charms can reroll a staged Core Die before you accept it.</p><p className="mt-2 text-[10px] leading-4 text-white/30">Enemies, Traps, Shrines, Portals and individual Loot effects remain the next systems.</p></div>
+            </aside>
+          </section>
         )}
       </div>
 
-      {showReveal && selectedCard && (
-        <RevealModal
-          card={selectedCard}
-          back={selectedBack}
-          onClose={closeReveal}
-          canClose={!eventState || eventState.status === "resolved"}
-          footer={
-            selectedCard.card_type === "event" && eventState ? renderEventControls() : (
-              <div>
-                <div className="flex flex-wrap gap-2 text-xs text-white/45">
-                  <span className="rounded-full border border-white/10 px-3 py-2">Realm {realm}</span>
-                  {selectedCell && <span className="rounded-full border border-white/10 px-3 py-2">Location {selectedCell}</span>}
-                </div>
-                {selectedCard.card_type === "enemy" && <div className="mt-4 rounded-xl border border-red-300/20 bg-red-400/10 p-3 text-xs leading-5 text-red-100">Enemy combat is the next rules system. The real Enemy card and data are already locked to this Location.</div>}
-                {selectedCard.card_type === "trap" && <div className="mt-4 rounded-xl border border-orange-300/20 bg-orange-400/10 p-3 text-xs leading-5 text-orange-100">Trap rolling/resolution is next after Events.</div>}
-                {selectedCard.card_type === "special" && <div className="mt-4 rounded-xl border border-violet-300/20 bg-violet-400/10 p-3 text-xs leading-5 text-violet-100">Shrine / Portal resolution will plug into this same interaction layer next.</div>}
-                <button type="button" onClick={closeReveal} className="mt-4 w-full rounded-2xl bg-amber-300 px-5 py-3 text-sm font-black text-[#241707]">Continue</button>
-              </div>
-            )
-          }
-        />
-      )}
+      {showReveal && selectedCard && <RevealModal card={selectedCard} back={selectedBack} onClose={closeReveal} canClose={!eventState || eventState.status === "resolved"} quickActions={phase === "realm" ? tokenQuickActions : undefined} footer={selectedCard.card_type === "event" && eventState ? renderEventControls() : <div><div className="flex flex-wrap gap-2 text-xs text-white/45"><span className="rounded-full border border-white/10 px-3 py-2">Realm {realm}</span>{selectedCell && <span className="rounded-full border border-white/10 px-3 py-2">Location {selectedCell}</span>}</div>{selectedCard.card_type === "enemy" && <div className="mt-4 rounded-xl border border-red-300/20 bg-red-400/10 p-3 text-xs leading-5 text-red-100">Enemy combat is the next rules system. The real Enemy card and data are already locked to this Location.</div>}{selectedCard.card_type === "trap" && <div className="mt-4 rounded-xl border border-orange-300/20 bg-orange-400/10 p-3 text-xs leading-5 text-orange-100">Trap rolling/resolution is next after Events.</div>}{selectedCard.card_type === "special" && <div className="mt-4 rounded-xl border border-violet-300/20 bg-violet-400/10 p-3 text-xs leading-5 text-violet-100">Shrine / Portal resolution will plug into this same interaction layer next.</div>}<button type="button" onClick={closeReveal} className="mt-4 w-full rounded-2xl bg-amber-300 px-5 py-3 text-sm font-black text-[#241707]">Continue</button></div>} />}
+
+      {toast && <div className="fixed bottom-5 right-5 z-[300] max-w-sm rounded-2xl border border-amber-300/30 bg-[#17130d]/95 px-4 py-3 text-xs font-bold leading-5 text-amber-50 shadow-2xl backdrop-blur">{toast}</div>}
     </main>
   );
 }
