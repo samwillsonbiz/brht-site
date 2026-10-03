@@ -6,6 +6,8 @@ import { FABLE_BACKPACK_ART, FABLE_BOARD_ART, FABLE_SHOP_ART, FABLE_STAT_ART, FA
 import { FABLE_HEROES, TOKEN_LABELS, getHero, type SkillColor, type TokenKind } from "@/lib/fableFuryHeroes";
 import { getEventPlan, requirementMet, type EventEffect, type EventPlan } from "@/lib/fableFuryEventEngine";
 import { getLootPlan, type LootEffect } from "@/lib/fableFuryLootEngine";
+import { getTrapSummary } from "@/lib/fableFuryTrapEngine";
+import { hasDouble, hasTriples, skillBehavior, skillUsesFlip } from "@/lib/fableFurySkillEngine";
 import {
   afterEnemyAction,
   armorBlocksEnemy,
@@ -52,7 +54,11 @@ type RollMode = "roll" | "pickNumber" | "optionalRoll";
 type EventState = { key: string; card: FableCard; plan: EventPlan; status: EventStatus; messages: string[]; roll?: number; rollMode?: RollMode; pick?: number };
 type TokenCounts = Record<TokenKind, number>;
 type SkillDraft = { mode: "shrine" | "replace"; color: SkillColor | "any"; choices: FableCard[]; slot?: number; sourceKey?: string; title: string; stage: "slot" | "color" | "choices" };
-type CombatMods = { attackDiceBonus: number; attackRollBonus: number; rerollAttack: boolean; targeting: "anyHero" | "self" | null; enemyDamageDelta: number; enemyAgilityDelta: number; rewardBonus: number };
+type CombatMods = { attackDiceBonus: number; attackRollBonus: number; rerollAttack: boolean; forceAttackDiceHit: boolean; targeting: "anyHero" | "self" | null; enemyDamageDelta: number; enemyAgilityDelta: number; rewardBonus: number };
+type TrapMods = { requirementDelta: number; requirementOverride: number | null; damageDelta: number };
+type SkillUse = { slot: number; card: FableCard };
+type SkillRollState = { slot: number; card: FableCard; requirement: number; effect: "enemyAgilityDown" | "damageDown" | "attentionSeeker"; roll?: number };
+type DieTarget = { source: "event" | "enemySetup" | "enemyTarget" | "enemyAttack" | "reaction" | "skillRoll"; index?: number; value: number; label: string };
 type EnemyChoice = { prompt: string; options: Array<{ label: string; effects: EnemyEffect[]; disabled?: boolean }> };
 type EnemyCombatState = {
   key: string;
@@ -78,7 +84,8 @@ type EnemyCombatState = {
 type LootUse = { slot: number; card: FableCard };
 
 const EMPTY_TOKENS: TokenCounts = { healing: 0, lucky: 0, crystal: 0 };
-const EMPTY_COMBAT_MODS: CombatMods = { attackDiceBonus: 0, attackRollBonus: 0, rerollAttack: false, targeting: null, enemyDamageDelta: 0, enemyAgilityDelta: 0, rewardBonus: 0 };
+const EMPTY_COMBAT_MODS: CombatMods = { attackDiceBonus: 0, attackRollBonus: 0, rerollAttack: false, forceAttackDiceHit: false, targeting: null, enemyDamageDelta: 0, enemyAgilityDelta: 0, rewardBonus: 0 };
+const EMPTY_TRAP_MODS: TrapMods = { requirementDelta: 0, requirementOverride: null, damageDelta: 0 };
 const PARTY_COUNT = 1;
 
 function clamp(value: number, min: number, max: number) { return Math.min(max, Math.max(min, value)); }
@@ -129,6 +136,22 @@ function Backpack({ backpack, coinSlots, tokens, onUseLoot, onUseToken }: { back
   return <div className="rounded-[24px] border border-white/10 bg-white/[.035] p-4"><div className="flex justify-between"><div><div className="text-[9px] font-black uppercase tracking-[.14em] text-amber-300">Backpack</div><div className="text-sm font-black">3 Token · 3 Loot/Coin spaces</div></div><div className="text-[9px] text-white/35">Click to use</div></div><div className="relative mt-3 aspect-[3/2] overflow-hidden rounded-2xl"><img src={FABLE_BACKPACK_ART} alt="Backpack" className="absolute inset-0 h-full w-full object-cover" />{tokenSlots.map(({ token, left }) => <button key={token} onClick={() => onUseToken(token)} disabled={tokens[token] <= 0} className="absolute top-[18%] z-10 w-[18%] -translate-x-1/2 transition hover:scale-110 disabled:opacity-25" style={{ left }}>{tokens[token] > 0 && <img src={FABLE_TOKEN_ART[token]} alt={TOKEN_LABELS[token]} className="w-full object-contain drop-shadow-lg" />}<span className="absolute -right-1 top-0 grid h-5 min-w-5 place-items-center rounded-full bg-amber-300 px-1 text-[10px] font-black text-[#241707]">{tokens[token]}</span></button>)}{lootLeft.map((left, index) => <div key={left} className="absolute top-[53%] z-10 flex h-[35%] w-[20%] -translate-x-1/2 items-center justify-center" style={{ left }}>{backpack[index] ? <button onClick={() => onUseLoot(index)} className="h-full transition hover:scale-110"><CardImage card={backpack[index] as FableCard} className="h-full rounded-lg drop-shadow-lg" /></button> : coinSlots[index] > 0 ? <div className="relative"><img src={FABLE_STAT_ART.coins} alt="Coins" className="w-16" /><span className="absolute -right-1 -top-1 rounded-full bg-amber-300 px-2 py-1 text-xs font-black text-[#241707]">{coinSlots[index]}</span></div> : <span className="rounded-full bg-black/40 px-2 py-1 text-[9px] font-black uppercase text-white/40">Empty</span>}</div>)}</div></div>;
 }
 
+function SkillRack({ skills, faceUp, disabledColors = [], onUse, compact = false }: { skills: Array<FableCard | null>; faceUp: boolean[]; disabledColors?: SkillColor[]; onUse: (slot: number) => void; compact?: boolean }) {
+  return <div className={`grid grid-cols-3 ${compact ? "gap-1.5" : "gap-2"}`}>{skills.map((skill, i) => {
+    if (!skill) return <div key={i} className="grid aspect-[2/3] place-items-center rounded-xl border border-dashed border-white/10 text-[8px] uppercase text-white/20">Empty</div>;
+    const color = skillColor(skill);
+    const colorDisabled = disabledColors.includes(color) && !/can't be disabled/i.test(skill.rules_text ?? "");
+    const flipped = !faceUp[i];
+    const back = FABLE_CARD_BACKS[color];
+    return <button key={skill.id} type="button" onClick={() => onUse(i)} className={`relative overflow-hidden rounded-xl border border-white/10 bg-black/20 p-1 text-left transition hover:border-amber-300/50 ${colorDisabled ? "opacity-30 grayscale" : ""}`}>
+      {flipped && back ? <img src={back} alt={`${skill.title} flipped`} className="w-full rounded-lg object-contain" /> : <CardImage card={skill} className="w-full rounded-lg" />}
+      <div className="mt-1 truncate px-1 text-center text-[8px] font-black">{skill.title}</div>
+      {flipped && <span className="absolute left-1/2 top-2 -translate-x-1/2 rounded-full bg-black/75 px-2 py-1 text-[7px] font-black uppercase tracking-[.12em] text-white">Flipped</span>}
+      {!flipped && colorDisabled && <span className="absolute left-1/2 top-2 -translate-x-1/2 rounded-full bg-black/75 px-2 py-1 text-[7px] font-black uppercase tracking-[.12em] text-white">Disabled</span>}
+    </button>;
+  })}</div>;
+}
+
 export default function FableFurySoloRunV2() {
   const [phase, setPhase] = useState<GamePhase>("hero");
   const [heroId, setHeroId] = useState(FABLE_HEROES[0].id);
@@ -147,8 +170,15 @@ export default function FableFurySoloRunV2() {
   const [lootDiscard, setLootDiscard] = useState<FableCard[]>([]);
   const [lootUse, setLootUse] = useState<LootUse | null>(null);
   const [skills, setSkills] = useState<Array<FableCard | null>>([null, null, null]);
+  const [skillFaceUp, setSkillFaceUp] = useState<boolean[]>([true, true, true]);
   const [skillDraft, setSkillDraft] = useState<SkillDraft | null>(null);
+  const [skillUse, setSkillUse] = useState<SkillUse | null>(null);
+  const [skillPaymentSlots, setSkillPaymentSlots] = useState<number[]>([]);
+  const [skillRoll, setSkillRoll] = useState<SkillRollState | null>(null);
   const [combatMods, setCombatMods] = useState<CombatMods>({ ...EMPTY_COMBAT_MODS });
+  const [trapMods, setTrapMods] = useState<TrapMods>({ ...EMPTY_TRAP_MODS });
+  const [lastEnemyDamagedHero, setLastEnemyDamagedHero] = useState(false);
+  const [knockoutHandled, setKnockoutHandled] = useState(false);
 
   const [run, setRun] = useState<RunSetup | null>(null);
   const [realm, setRealm] = useState(1);
@@ -164,7 +194,7 @@ export default function FableFurySoloRunV2() {
   const [specialHistory, setSpecialHistory] = useState<Record<string, string[]>>({});
   const [shrineStarted, setShrineStarted] = useState<string[]>([]);
   const [enemy, setEnemy] = useState<EnemyCombatState | null>(null);
-  const [reactionRoll, setReactionRoll] = useState<{ label: string; requirement: number; roll?: number; onPass: "armor" } | null>(null);
+  const [reactionRoll, setReactionRoll] = useState<{ label: string; requirement: number; roll?: number; onPass: "armor" | "attackDice" } | null>(null);
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
@@ -173,11 +203,22 @@ export default function FableFurySoloRunV2() {
   const mapImage = mapArt(map?.id);
   const realmRevealed = revealed[realm] ?? [];
   const activeEnemyColors = enemy?.disabledSkillColors ?? [];
-  const triggerCtx = { heroId: hero.id, skills, disabledSkillColors: activeEnemyColors };
-  const skillActive = (card: FableCard | null) => !!card && (!activeEnemyColors.includes(skillColor(card)) || /can't be disabled/i.test(card.rules_text ?? ""));
+  const activeTrapSummary = selectedCard?.id.startsWith("trap-")
+    ? getTrapSummary(selectedCard.id, { race: hero.race, health, armor, attackDice, coins, lootCount: backpack.filter(Boolean).length, lootNames: backpack.flatMap((card) => card ? [card.title] : []), trapRequirementDelta: trapMods.requirementDelta, trapRequirementOverride: trapMods.requirementOverride, trapDamageDelta: trapMods.damageDelta })
+    : null;
+  const disabledSkillColors = [...new Set<SkillColor>([...activeEnemyColors, ...(activeTrapSummary?.disabledSkillColor ? [activeTrapSummary.disabledSkillColor] : [])])];
+  const triggerSkills = skills.map((skill, index) => skillFaceUp[index] ? skill : null);
+  const triggerCtx = { heroId: hero.id, skills: triggerSkills, disabledSkillColors };
+  const skillActive = (card: FableCard | null) => {
+    if (!card) return false;
+    const index = skills.findIndex((candidate) => candidate?.id === card.id);
+    if (index >= 0 && !skillFaceUp[index]) return false;
+    return !disabledSkillColors.includes(skillColor(card)) || /can't be disabled/i.test(card.rules_text ?? "");
+  };
   const effectiveMaxArmor = hero.maxArmor + (skills.some((s) => s?.id === "skill-unusual-hat" && skillActive(s)) ? 1 : 0);
   const effectiveMaxDice = hero.maxAttackDice + (skills.some((s) => s?.id === "skill-gym-candy" && skillActive(s)) ? 2 : 0);
   const inventoryLocked = lootInbox.length > 0;
+  const shopArmorCost = hasSkill(triggerCtx, "skill-designer-parry") ? 4 : 6;
 
   useEffect(() => { if (!toast) return; const t = window.setTimeout(() => setToast(null), 2600); return () => window.clearTimeout(t); }, [toast]);
   function notify(message: string) { setToast(message); }
