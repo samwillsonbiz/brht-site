@@ -425,13 +425,13 @@ export default function FableFurySoloRunV2() {
       case "skill-hand-torch": return { enabled: phase === "realm" && !shopOpen && coins >= 1 && !enemy, reason: "Requires 1 Coin while exploring a Realm." };
       case "skill-prolonged-stare": return { enabled: lastEnemyDamagedHero && lootDiscard.length > 0, reason: "Use after an Enemy damages you; the Loot discard pile must not be empty." };
 
-      case "skill-distract":
-      case "skill-mind-over-metal":
+      case "skill-distract": return { enabled: !!enemy && enemy.phase === "enemy" && move?.type === "[TA]", reason: "Use while the Enemy is making a Targeted Attack. In solo, redirecting means choosing yourself." };
+      case "skill-mind-over-metal": return { enabled: !!enemy && enemy.phase === "enemy" && move?.type === "[TA]" && coins >= 1, reason: "Requires 1 Coin while the Enemy is making a Targeted Attack. In solo, redirecting means choosing yourself." };
       case "skill-organ-donor":
       case "skill-ice-wall":
       case "skill-reanimate":
       case "skill-missed-opportunity":
-        return { enabled: false, reason: "This Skill needs another Hero. It is mapped but has no valid target in a solo run." };
+        return { enabled: false, reason: "This Skill requires another Hero (or another eligible Hero) and has no valid target in a solo run." };
       default:
         if (behavior === "automatic") return { enabled: false, reason: "Automatic Skill — the game applies it when its trigger occurs." };
         if (behavior === "ongoing") return { enabled: false, reason: "Ongoing Skill — its benefit is already active." };
@@ -539,6 +539,8 @@ export default function FableFurySoloRunV2() {
 
       case "skill-atrophy": setAttackDice((value) => Math.max(0, value - 1)); setEnemy((state) => state ? { ...state, damage: Math.max(0, state.damage - 1), messages: [...state.messages, "Atrophy: Damage -1."] } : state); break;
       case "skill-attention-seeker": beginSkillRoll(slot, card, "attentionSeeker"); return;
+      case "skill-distract": setCombatMods((mods) => ({ ...mods, targeting: "self" })); break;
+      case "skill-mind-over-metal": if (!payCoins(1)) return notify("Need 1 Coin."); setCombatMods((mods) => ({ ...mods, targeting: "self" })); break;
       case "skill-danger-nerd": rebuildTrapPlan({ ...trapMods, requirementDelta: trapMods.requirementDelta - 1 }); break;
       case "skill-trap-expert": setArmor((value) => Math.max(0, value - 1)); rebuildTrapPlan({ ...trapMods, damageDelta: trapMods.damageDelta - 3 }); break;
       case "skill-ice-block":
@@ -841,7 +843,7 @@ export default function FableFurySoloRunV2() {
     }
     if (enemyKilled) { setEnemy((v) => v ? { ...v, phase: "victory", targetPending: false, targetRoll: undefined } : v); return; }
     if (health <= 0) { setEnemy((v) => v ? { ...v, phase: "defeat" } : v); return; }
-    setEnemy((v) => v ? { ...v, actionIndex: (v.actionIndex + 1) % Math.max(1, enemyData(v.card).attacks.length), phase: "hero", targetPending: false, targetRoll: undefined } : v);
+    setEnemy((v) => v ? (v.health <= 0 ? { ...v, phase: "victory", targetPending: false, targetRoll: undefined } : { ...v, actionIndex: (v.actionIndex + 1) % Math.max(1, enemyData(v.card).attacks.length), phase: "hero", targetPending: false, targetRoll: undefined }) : v);
   }
 
   async function resolveTargetedAttack() {
