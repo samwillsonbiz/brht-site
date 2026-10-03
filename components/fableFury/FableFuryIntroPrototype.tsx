@@ -9,7 +9,8 @@ type Screen = "home" | "heroes" | "token" | "map" | "board";
 type MapInfo = { id: string; name: string; start_cell: string; grid: { rows: number; columns: string[]; active_cells: string[] } };
 type RunSetup = { run_id: string; realm: number; maps: MapInfo[]; deck_counts: Record<string, number> };
 
-const HOME_VIDEO = "https://drive.google.com/uc?export=download&id=1Gl9e3yQiP0kYffkk7E0toXOTNRk6pHzK";
+const HOME_VISUAL = "https://drive.google.com/uc?export=view&id=1K60zjAGZQ_mzcX87EPEE4MCHO_-i58Pl";
+const HOME_AUDIO = "https://drive.google.com/uc?export=download&id=1t-cKYyHNhGAMlLdAM1ZhT_KP43CYpmmy";
 
 function boardCellPosition(cell: string) {
   const columnIndex = cell.charCodeAt(0) - 65;
@@ -95,9 +96,10 @@ export default function FableFuryIntroPrototype() {
   const [run, setRun] = useState<RunSetup | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [soundOn, setSoundOn] = useState(false);
+  const [soundOn, setSoundOn] = useState(true);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [mapLeaving, setMapLeaving] = useState(false);
-  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const hero = useMemo(() => getHero(heroId), [heroId]);
   const hoveredHero = useMemo(() => FABLE_HEROES.find((item) => item.id === hoveredHeroId) ?? null, [hoveredHeroId]);
@@ -105,19 +107,33 @@ export default function FableFuryIntroPrototype() {
   const mapImage = mapArt(map?.id);
 
   useEffect(() => {
-    if (screen !== "home") return;
-    const videoEl = videoRef.current;
-    if (!videoEl) return;
-    videoEl.muted = true;
-    void videoEl.play().catch(() => undefined);
-  }, [screen]);
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.volume = 0.38;
+    audio.muted = false;
+    void audio.play().then(() => setSoundOn(true)).catch(() => setSoundOn(false));
+  }, []);
 
   function enableSound() {
-    const videoEl = videoRef.current;
-    if (!videoEl) return;
-    videoEl.muted = false;
-    videoEl.volume = 0.38;
-    void videoEl.play().then(() => setSoundOn(true)).catch(() => setSoundOn(false));
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.muted = false;
+    audio.volume = 0.38;
+    void audio.play().then(() => setSoundOn(true)).catch(() => setSoundOn(false));
+  }
+
+  function toggleSound() {
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (soundOn) {
+      audio.muted = true;
+      setSoundOn(false);
+    } else {
+      audio.muted = false;
+      audio.volume = 0.38;
+      void audio.play().catch(() => undefined);
+      setSoundOn(true);
+    }
   }
 
   function startGame() {
@@ -161,32 +177,37 @@ export default function FableFuryIntroPrototype() {
 
   if (screen === "home") {
     return (
-      <main className="relative min-h-screen overflow-hidden bg-black text-white" onPointerDown={() => !soundOn && enableSound()}>
-        <video ref={videoRef} autoPlay loop playsInline muted className="absolute inset-0 h-full w-full object-cover" src={HOME_VIDEO} />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_52%,transparent_0%,rgba(0,0,0,.14)_35%,rgba(0,0,0,.65)_100%)]" />
-        <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-black/75 to-transparent" />
+      <main className="relative min-h-screen overflow-hidden bg-black text-white">
+        <img src={HOME_VISUAL} alt="Fable Fury cave" className="absolute inset-0 h-full w-full object-cover" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_58%,transparent_0%,rgba(0,0,0,.04)_45%,rgba(0,0,0,.38)_100%)]" />
+        <audio ref={audioRef} src={HOME_AUDIO} autoPlay loop preload="auto" />
 
-        <button
-          type="button"
-          onClick={(event) => { event.stopPropagation(); enableSound(); }}
-          className="absolute right-5 top-5 z-20 rounded-full border border-white/20 bg-black/45 px-4 py-2 text-[10px] font-black uppercase tracking-[.18em] text-white/75 backdrop-blur-md"
-        >
-          {soundOn ? "♪ Sound On" : "♪ Click for Sound"}
-        </button>
+        <div className="absolute right-5 top-5 z-30">
+          <button
+            type="button"
+            aria-label="Settings"
+            onClick={() => setSettingsOpen((open) => !open)}
+            className="grid h-11 w-11 place-items-center rounded-full border border-white/20 bg-black/45 text-lg text-white/80 backdrop-blur-md transition hover:bg-black/65"
+          >
+            ⚙
+          </button>
+          {settingsOpen && (
+            <div className="absolute right-0 mt-2 w-44 rounded-2xl border border-white/15 bg-black/80 p-2 shadow-2xl backdrop-blur-xl">
+              <button type="button" onClick={toggleSound} className="w-full rounded-xl px-3 py-3 text-left text-xs font-black uppercase tracking-[.12em] text-white/80 transition hover:bg-white/10">
+                {soundOn ? "🔊 Mute" : "🔇 Sound On"}
+              </button>
+            </div>
+          )}
+        </div>
 
-        <div className="relative z-10 flex min-h-screen flex-col items-center justify-center px-5 text-center">
-          <div className="mb-8 animate-[ffTitleFloat_4s_ease-in-out_infinite]">
-            <div className="text-xs font-black uppercase tracking-[.5em] text-[#ffd976]/80">A cooperative roguelike adventure</div>
-            <h1 className="mt-3 text-6xl font-black tracking-[-.06em] text-[#fff0bd] drop-shadow-[0_5px_0_#43126f] sm:text-8xl lg:text-9xl">FABLE FURY</h1>
-          </div>
+        <div className="absolute inset-x-0 bottom-[7vh] z-20 flex justify-center px-5">
           <div className="animate-[ffStartFloat_2.7s_ease-in-out_infinite]">
             <FantasyButton onClick={startGame}>START</FantasyButton>
           </div>
-          <div className="mt-8 text-[10px] font-bold uppercase tracking-[.2em] text-white/40">Music + ambience loop with the cave scene</div>
         </div>
+
         <style jsx global>{`
           @keyframes ffStartFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
-          @keyframes ffTitleFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
           @keyframes ffTokenFloat { 0%,100%{transform:translateY(0) rotate(-2deg)} 50%{transform:translateY(-18px) rotate(2deg)} }
           @keyframes ffGlowPulse { 0%,100%{opacity:.42;transform:scale(.92)} 50%{opacity:.9;transform:scale(1.08)} }
         `}</style>
