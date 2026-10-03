@@ -2,6 +2,9 @@ import type { EventContext, EventEffect, EventPlan } from "@/lib/fableFuryEventE
 
 export type TrapContext = EventContext & {
   race: string;
+  trapRequirementDelta?: number;
+  trapRequirementOverride?: number | null;
+  trapDamageDelta?: number;
 };
 
 type TrapRule = {
@@ -45,10 +48,15 @@ function hasLoot(ctx: TrapContext, name: string) {
 }
 
 function effectiveRequirement(rule: TrapRule, ctx: TrapContext) {
-  if (rule.raceRequirement && ctx.race.toLowerCase() === rule.raceRequirement.race.toLowerCase()) {
-    return rule.raceRequirement.requirement;
-  }
-  return rule.requirement;
+  const base = rule.raceRequirement && ctx.race.toLowerCase() === rule.raceRequirement.race.toLowerCase()
+    ? rule.raceRequirement.requirement
+    : rule.requirement;
+  if (typeof ctx.trapRequirementOverride === "number") return Math.min(6, Math.max(1, ctx.trapRequirementOverride));
+  return Math.min(6, Math.max(1, base + (ctx.trapRequirementDelta ?? 0)));
+}
+
+function effectiveDamage(rule: TrapRule, ctx: TrapContext) {
+  return Math.max(0, rule.damage + (ctx.trapDamageDelta ?? 0));
 }
 
 function skillDisableText(rule: TrapRule) {
@@ -58,11 +66,12 @@ function skillDisableText(rule: TrapRule) {
 }
 
 function failEffects(rule: TrapRule, requirement: number, ctx: TrapContext): EventEffect[] {
-  const blocked = Math.min(rule.damage, Math.max(0, ctx.armor));
-  const healthDamage = Math.max(0, rule.damage - blocked);
+  const damage = effectiveDamage(rule, ctx);
+  const blocked = Math.min(damage, Math.max(0, ctx.armor));
+  const healthDamage = Math.max(0, damage - blocked);
   const effects: EventEffect[] = [
     note(
-      `Failed Core Roll ${requirement}+. The Trap deals ${rule.damage} damage. ` +
+      `Failed Core Roll ${requirement}+. The Trap deals ${damage} damage. ` +
       `${blocked > 0 ? `Armor ${ctx.armor} blocks ${blocked}. ` : ""}` +
       `${healthDamage > 0 ? `${healthDamage} Health gets through.` : "Armor blocks all damage."} ` +
       `Armor stays at ${ctx.armor}.`,
@@ -153,7 +162,7 @@ export function getTrapSummary(trapId: string, ctx: TrapContext) {
   const requirement = effectiveRequirement(rule, ctx);
   return {
     requirement,
-    damage: rule.damage,
+    damage: effectiveDamage(rule, ctx),
     disabledSkillColor: rule.disabledSkillColor ?? null,
     armorIsPermanent: true,
   };
