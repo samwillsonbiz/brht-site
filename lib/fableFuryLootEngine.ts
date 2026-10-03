@@ -110,9 +110,7 @@ export function getLootPlan(lootId: string, ctx: LootContext): LootPlan {
     case "loot-extra-limbs":
       return one("Increase all your attack dice by 1", [{ type: "attackRollBonus", amount: 1 }]);
     case "loot-foghorn":
-      return ctx.hasCoreRoll
-        ? one("Reroll current die", [{ type: "rerollCore" }, { type: "rerollAttack" }])
-        : one("Arm an attack reroll", [{ type: "rerollAttack" }, note("No Core Roll is staged, so Foghorn is stored for your next combat roll.")]);
+      return one("Reroll your attack dice", [{ type: "rerollAttack" }]);
     case "loot-gold-dust":
       return one("Gain 3 Coins", [{ type: "coins", amount: 3 }]);
     case "loot-gum-string":
