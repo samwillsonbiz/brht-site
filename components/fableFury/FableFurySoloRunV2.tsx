@@ -223,7 +223,7 @@ export default function FableFurySoloRunV2() {
   useEffect(() => { if (!toast) return; const t = window.setTimeout(() => setToast(null), 2600); return () => window.clearTimeout(t); }, [toast]);
   function notify(message: string) { setToast(message); }
 
-  function currentContext() { return { health, armor, attackDice, coins, lootCount: backpack.filter(Boolean).length, lootNames: backpack.flatMap((card) => card ? [card.title] : []) }; }
+  function currentContext() { return { health, armor, attackDice, coins, lootCount: backpack.filter(Boolean).length, lootNames: backpack.flatMap((card) => card ? [card.title] : []), trapRequirementDelta: trapMods.requirementDelta, trapRequirementOverride: trapMods.requirementOverride, trapDamageDelta: trapMods.damageDelta }; }
   function enemyContext() { return { race: hero.race, health, armor, attackDice, coins, lootNames: backpack.flatMap((card) => card ? [card.title] : []) }; }
 
   async function drawLootCards(count: number) {
@@ -252,7 +252,7 @@ export default function FableFurySoloRunV2() {
     setLoading("setup"); setError(null);
     try {
       const setup = await postJson<RunSetup>("/api/fablefury/run", { heroIds: [hero.id] });
-      setRun(setup); setHealth(hero.startingHealth); setArmor(hero.startingArmor); setAttackDice(hero.startingAttackDice); setCoinSlots([2, 0, 0]); setTokens({ ...EMPTY_TOKENS, [startingToken]: 1 }); setBackpack([null, null, null]); setSkills([null, null, null]); setRevealed({ 1: [], 2: [], 3: [] }); setCardsByCell({}); setScoutedByCell({}); setResolvedKeys([]); setCombatMods({ ...EMPTY_COMBAT_MODS }); setLootDiscard([]); setEnemy(null);
+      setRun(setup); setHealth(hero.startingHealth); setArmor(hero.startingArmor); setAttackDice(hero.startingAttackDice); setCoinSlots([2, 0, 0]); setTokens({ ...EMPTY_TOKENS, [startingToken]: 1 }); setBackpack([null, null, null]); setSkills([null, null, null]); setSkillFaceUp([true, true, true]); setSkillUse(null); setSkillRoll(null); setTrapMods({ ...EMPTY_TRAP_MODS }); setLastEnemyDamagedHero(false); setKnockoutHandled(false); setRevealed({ 1: [], 2: [], 3: [] }); setCardsByCell({}); setScoutedByCell({}); setResolvedKeys([]); setCombatMods({ ...EMPTY_COMBAT_MODS }); setLootDiscard([]); setEnemy(null);
       const result = await postJson<{ card: FableCard | null }>("/api/fablefury/draw", { runId: setup.run_id, deckKey: "loot" });
       setLootInbox(result.card ? [result.card] : []); setPhase("gear");
     } catch (err) { setError(err instanceof Error ? err.message : "Could not start run."); }
@@ -287,6 +287,7 @@ export default function FableFurySoloRunV2() {
       const count = hasSkill(triggerCtx, "skill-palm-reader") ? 2 : 1;
       setTokens((v) => ({ ...v, crystal: v.crystal - 1 })); setScoutRemaining((v) => v + count); return notify(`Crystal Ball: reveal ${count} Location${count > 1 ? "s" : ""}.`);
     }
+    if (skillRoll?.roll != null) { setTokens((v) => ({ ...v, lucky: v.lucky - 1 })); setSkillRoll((v) => v ? { ...v, roll: rollD6() } : v); return; }
     if (reactionRoll?.roll != null) { setTokens((v) => ({ ...v, lucky: v.lucky - 1 })); setReactionRoll((v) => v ? { ...v, roll: rollD6() } : v); return; }
     if (enemy?.setupRoll != null && enemy.phase === "setup") { setTokens((v) => ({ ...v, lucky: v.lucky - 1 })); setEnemy((v) => v ? { ...v, setupRoll: rollD6() } : v); return; }
     if (enemy?.targetPending && enemy.targetRoll != null) { setTokens((v) => ({ ...v, lucky: v.lucky - 1 })); setEnemy((v) => v ? { ...v, targetRoll: rollD6() } : v); return; }
