@@ -1,3 +1,3 @@
 "use client";
 
-export { default } from "@/components/fableFury/FableFurySoloRunV2";
+export { default } from "@/components/fableFury/FableFuryIntroPrototype";
