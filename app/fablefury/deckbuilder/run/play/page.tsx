@@ -1,3 +1,3 @@
 "use client";
 
-export { default } from "@/components/fableFury/FableFuryPlayableBridge";
+export { default } from "@/components/fableFury/FableFuryPlayableBridgeViewportFix";
