@@ -647,8 +647,11 @@ export default function FableFurySoloRunV2() {
   }
 
   async function prepareEvent(card: FableCard, key: string) {
-    const id = card.id.startsWith("trap-") ? `${card.id}::${hero.race.toLowerCase()}` : card.id;
-    const plan = getEventPlan(id, currentContext());
+    const isTrap = card.id.startsWith("trap-");
+    const freshTrapMods = isTrap ? { ...EMPTY_TRAP_MODS } : trapMods;
+    if (isTrap) setTrapMods(freshTrapMods);
+    const id = isTrap ? `${card.id}::${hero.race.toLowerCase()}` : card.id;
+    const plan = getEventPlan(id, isTrap ? { ...currentContext(), trapRequirementDelta: 0, trapRequirementOverride: null, trapDamageDelta: 0 } : currentContext());
     if (resolvedKeys.includes(key)) { setEventState({ key, card, plan, status: "resolved", messages: eventHistory[key] ?? ["Already resolved."] }); return; }
     if (plan.kind === "auto") { setEventState({ key, card, plan, status: "resolving", messages: [] }); const messages = await applyEventEffects(plan.effects, key); await completeEvent(key, card, messages); return; }
     setEventState({ key, card, plan, status: "pending", messages: [] });
@@ -744,6 +747,7 @@ export default function FableFurySoloRunV2() {
 
   async function prepareEnemy(card: FableCard, key: string) {
     if (resolvedKeys.includes(key)) { notify(`${card.title} has already been defeated.`); return; }
+    setLastEnemyDamagedHero(false);
     const data = enemyData(card); const setup = setupSteps(card, enemyContext());
     setEnemy({ key, card, maxHealth: data.health * PARTY_COUNT, health: data.health * PARTY_COUNT, damage: Math.max(0, data.damage + combatMods.enemyDamageDelta), agility: clamp(data.agility + combatMods.enemyAgilityDelta, 1, 6), actionIndex: 0, phase: "setup", setup, setupIndex: 0, disabledSkillColors: [], noReward: false, messages: [`${data.haste ? "Haste — Enemy attacks first." : "Heroes attack first."}`] });
   }
