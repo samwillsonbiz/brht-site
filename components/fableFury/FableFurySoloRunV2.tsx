@@ -262,6 +262,285 @@ export default function FableFurySoloRunV2() {
   function packLoot(inboxIndex: number, slot: number) { const card = lootInbox[inboxIndex]; if (!card || coinSlots[slot] > 0 || backpack[slot]) return; setBackpack((current) => current.map((v, i) => i === slot ? card : v)); setLootInbox((current) => current.filter((_, i) => i !== inboxIndex)); }
   function discardInbox(inboxIndex: number) { setLootDiscard((current) => [...current, lootInbox[inboxIndex]].filter(Boolean)); setLootInbox((current) => current.filter((_, i) => i !== inboxIndex)); }
 
+
+  function refreshSkills() { setSkillFaceUp([true, true, true]); }
+  function flipSkill(slot: number) { setSkillFaceUp((current) => current.map((value, index) => index === slot ? false : value)); }
+  function openSkill(slot: number) {
+    const card = skills[slot];
+    if (!card) return;
+    setSkillPaymentSlots([]);
+    setSkillUse({ slot, card });
+  }
+
+  function payCoins(amount: number) {
+    if (coins < amount) return false;
+    setCoinSlots((slots) => adjustCoinSlots(slots, backpack, -amount).slots);
+    return true;
+  }
+
+  function payLootSlots(slots: number[], count: number) {
+    const unique = [...new Set(slots)].filter((slot) => !!backpack[slot]);
+    if (unique.length < count) return false;
+    const chosen = unique.slice(0, count);
+    const cards = chosen.map((slot) => backpack[slot]).filter((card): card is FableCard => !!card);
+    setBackpack((items) => items.map((card, index) => chosen.includes(index) ? null : card));
+    setLootDiscard((discard) => [...discard, ...cards]);
+    return true;
+  }
+
+  function dealSkillDamage(amount: number, label: string) {
+    setEnemy((current) => {
+      if (!current) return current;
+      const nextHealth = Math.max(0, current.health - amount);
+      return { ...current, health: nextHealth, phase: nextHealth <= 0 ? "victory" : current.phase, messages: [...current.messages, `${label}: ${amount} damage.`] };
+    });
+  }
+
+  function currentDieTargets(): DieTarget[] {
+    if (skillRoll?.roll != null) return [{ source: "skillRoll", value: skillRoll.roll, label: `${skillRoll.card.title} Core Die` }];
+    if (reactionRoll?.roll != null) return [{ source: "reaction", value: reactionRoll.roll, label: "Core Die" }];
+    if (eventState?.roll != null && eventState.status === "pending") return [{ source: "event", value: eventState.roll, label: eventState.card.id.startsWith("trap-") ? "Trap Core Die" : "Event Core Die" }];
+    if (enemy?.setupRoll != null && enemy.phase === "setup") return [{ source: "enemySetup", value: enemy.setupRoll, label: "Setup Core Die" }];
+    if (enemy?.targetPending && enemy.targetRoll != null) return [{ source: "enemyTarget", value: enemy.targetRoll, label: "Target Die" }];
+    if (enemy?.dice?.length && enemy.phase === "hero") return enemy.dice.map((value, index) => ({ source: "enemyAttack" as const, index, value, label: index === 0 ? "Core Die" : `Attack Die ${index}` }));
+    return [];
+  }
+
+  function updateDieTarget(target: DieTarget, transform: (value: number) => number) {
+    if (target.source === "event") setEventState((state) => state?.roll != null ? { ...state, roll: clamp(transform(state.roll), 1, 6) } : state);
+    else if (target.source === "enemySetup") setEnemy((state) => state?.setupRoll != null ? { ...state, setupRoll: clamp(transform(state.setupRoll), 1, 6) } : state);
+    else if (target.source === "enemyTarget") setEnemy((state) => state?.targetRoll != null ? { ...state, targetRoll: clamp(transform(state.targetRoll), 1, 6) } : state);
+    else if (target.source === "enemyAttack") setEnemy((state) => state?.dice ? { ...state, dice: state.dice.map((die, index) => index === target.index ? clamp(transform(die), 1, 6) : die) } : state);
+    else if (target.source === "reaction") setReactionRoll((state) => state?.roll != null ? { ...state, roll: clamp(transform(state.roll), 1, 6) } : state);
+    else if (target.source === "skillRoll") setSkillRoll((state) => state?.roll != null ? { ...state, roll: clamp(transform(state.roll), 1, 6) } : state);
+  }
+
+  function skillLootCost(cardId: string) {
+    if (["skill-bougie-bludgeoner", "skill-ice-block", "skill-pain-aversion", "skill-second-aid"].includes(cardId)) return 1;
+    if (cardId === "skill-thorny-wood") return 2;
+    return 0;
+  }
+
+  function currentEnemyMove() {
+    if (!enemy) return null;
+    return enemyData(enemy.card).attacks[enemy.actionIndex] ?? null;
+  }
+
+  function targetWillHitHero() {
+    if (!enemy?.targetPending || enemy.targetRoll == null) return false;
+    return targetIsDirected(enemy.card) || combatMods.targeting === "self" || enemy.targetRoll === targetNumber;
+  }
+
+  function isSkillColorDisabled(card: FableCard) {
+    return disabledSkillColors.includes(skillColor(card)) && !/can't be disabled/i.test(card.rules_text ?? "");
+  }
+
+  function skillUseStatus(slot: number, card: FableCard) {
+    const behavior = skillBehavior(card);
+    if (!skillFaceUp[slot]) return { enabled: false, reason: "This Skill is flipped. It refreshes when the current Location is Cleared." };
+    if (isSkillColorDisabled(card)) return { enabled: false, reason: "This Skill color is disabled by the current Location." };
+    if (health <= 0) return { enabled: false, reason: "Knocked Out Heroes cannot use Skill Cards." };
+    if (enemy?.phase === "setup") return { enabled: false, reason: "Skills cannot be used during Enemy Setup." };
+    const trapPending = !!eventState?.card.id.startsWith("trap-") && eventState.status === "pending";
+    const lootCount = backpack.filter(Boolean).length;
+    const move = currentEnemyMove();
+    const dice = currentDieTargets();
+
+    switch (card.id) {
+      case "skill-bloody-blade": return { enabled: !!enemy?.dice && enemy.phase === "hero" && hasTriples(enemy.dice), reason: "Requires triples on your current attack roll." };
+      case "skill-boomerwrong": return { enabled: !!enemy && tokens.lucky > 0, reason: "Requires an active Enemy and 1 Lucky Charm." };
+      case "skill-bougie-bludgeoner": return { enabled: !!enemy && lootCount >= 1, reason: "Requires an active Enemy and 1 Loot to discard." };
+      case "skill-choosing-violence": return { enabled: !!enemy && targetWillHitHero(), reason: "Use when a Targeted Attack is currently targeting you." };
+      case "skill-coin-blaster": return { enabled: !!enemy && coins >= 1, reason: "Requires an active Enemy and 1 Coin." };
+      case "skill-diamond-coated": return { enabled: !!enemy && enemy.phase === "hero", reason: "Use during your attack turn." };
+      case "skill-hammer-time": return { enabled: !!enemy && enemy.phase === "hero", reason: "Use during your attack turn." };
+      case "skill-limp-poke": return { enabled: !!enemy, reason: "Requires an active Enemy." };
+      case "skill-nzt-48": return { enabled: !!enemy, reason: "Requires an active Enemy." };
+      case "skill-rent-a-sword": return { enabled: coins >= 3 && attackDice < effectiveMaxDice, reason: "Requires 3 Coins and room for another Attack Die." };
+      case "skill-shedding-weight": return { enabled: armor >= 1 && attackDice < effectiveMaxDice, reason: "Requires 1 Armor and room for another Attack Die." };
+
+      case "skill-atrophy": return { enabled: !!enemy && attackDice >= 1, reason: "Requires an active Enemy and 1 Attack Die." };
+      case "skill-attention-seeker": return { enabled: !!enemy && enemy.phase === "enemy" && move?.type === "[AA]", reason: "Use when the Enemy is about to make an Area Attack." };
+      case "skill-danger-nerd": return { enabled: trapPending, reason: "Requires an active Trap before its Core Roll is accepted." };
+      case "skill-trap-expert": return { enabled: trapPending && armor >= 1, reason: "Requires an active Trap and 1 Armor." };
+      case "skill-ice-block": return { enabled: (!!enemy || trapPending) && lootCount >= 1, reason: "Requires an active Enemy/Trap and 1 Loot." };
+      case "skill-intimidation": return { enabled: !!enemy || trapPending, reason: "Requires an active Enemy or Trap Damage stat." };
+      case "skill-pain-aversion": return { enabled: trapPending && lootCount >= 1, reason: "Requires an active Trap and 1 Loot." };
+      case "skill-rickety-reflex": return { enabled: trapPending && coins >= 2, reason: "Requires an active Trap and 2 Coins." };
+      case "skill-thorny-wood": return { enabled: lootCount >= 2 && armor < effectiveMaxArmor, reason: "Requires 2 Loot and room for Armor." };
+      case "skill-questionable-reflex": return { enabled: trapPending, reason: "Requires an active Trap." };
+
+      case "skill-be-better": return { enabled: dice.some((die) => die.value === 1), reason: "Requires a visible die showing 1." };
+      case "skill-capital-care": return { enabled: coins >= 1 && health < hero.maxHealth, reason: "Requires 1 Coin and missing Health." };
+      case "skill-extra-inch": return { enabled: dice.some((die) => die.value < 6), reason: "Requires a visible die below 6." };
+      case "skill-gaming-the-system": return { enabled: coins >= 1 && dice.length > 0, reason: "Requires 1 Coin and a visible die." };
+      case "skill-mediocre": return { enabled: dice.length > 0, reason: "Requires a visible die." };
+      case "skill-polymorph": return { enabled: dice.some((die) => die.value === 2), reason: "Requires a visible die showing 2." };
+      case "skill-do-over": return { enabled: !!enemy?.dice && enemy.phase === "hero" && enemy.dice.slice(1).some((die) => Math.min(6, die + combatMods.attackRollBonus) < enemy.agility), reason: "Requires at least one missed Attack Die." };
+      case "skill-second-aid": return { enabled: lootCount >= 1 && health < hero.maxHealth, reason: "Requires 1 Loot and missing Health." };
+      case "skill-transfusion": return { enabled: health >= 3 && skills.some(Boolean), reason: "Requires 3 Health and a Skill to replace." };
+      case "skill-benevolent-exchange": return { enabled: armor >= 1 && skills.some(Boolean), reason: "Requires 1 Armor and a Skill to replace." };
+
+      case "skill-hand-torch": return { enabled: phase === "realm" && !shopOpen && coins >= 1 && !enemy, reason: "Requires 1 Coin while exploring a Realm." };
+      case "skill-prolonged-stare": return { enabled: lastEnemyDamagedHero && lootDiscard.length > 0, reason: "Use after an Enemy damages you; the Loot discard pile must not be empty." };
+
+      case "skill-distract":
+      case "skill-mind-over-metal":
+      case "skill-organ-donor":
+      case "skill-ice-wall":
+      case "skill-reanimate":
+      case "skill-missed-opportunity":
+        return { enabled: false, reason: "This Skill needs another Hero. It is mapped but has no valid target in a solo run." };
+      default:
+        if (behavior === "automatic") return { enabled: false, reason: "Automatic Skill — the game applies it when its trigger occurs." };
+        if (behavior === "ongoing") return { enabled: false, reason: "Ongoing Skill — its benefit is already active." };
+        return { enabled: false, reason: "This Skill does not currently have a valid action window." };
+    }
+  }
+
+  function rebuildTrapPlan(nextMods: TrapMods) {
+    setTrapMods(nextMods);
+    if (!eventState?.card.id.startsWith("trap-")) return;
+    const id = `${eventState.card.id}::${hero.race.toLowerCase()}`;
+    const plan = getEventPlan(id, { ...currentContext(), trapRequirementDelta: nextMods.requirementDelta, trapRequirementOverride: nextMods.requirementOverride, trapDamageDelta: nextMods.damageDelta });
+    setEventState((state) => state ? { ...state, plan } : state);
+  }
+
+  function beginSkillRoll(slot: number, card: FableCard, effect: SkillRollState["effect"]) {
+    setSkillUse(null);
+    setSkillRoll({ slot, card, requirement: 5, effect });
+  }
+
+  async function resolveSkillRoll() {
+    if (!skillRoll?.roll) return;
+    const passed = skillRoll.roll >= skillRoll.requirement;
+    if (passed) {
+      if (skillRoll.effect === "enemyAgilityDown") setEnemy((state) => state ? { ...state, agility: clamp(state.agility - 1, 1, 6), messages: [...state.messages, `${skillRoll.card.title}: Agility -1.`] } : state);
+      else if (skillRoll.effect === "damageDown") {
+        if (enemy) setEnemy((state) => state ? { ...state, damage: Math.max(0, state.damage - 1), messages: [...state.messages, `${skillRoll.card.title}: Damage -1.`] } : state);
+        else if (eventState?.card.id.startsWith("trap-")) rebuildTrapPlan({ ...trapMods, damageDelta: trapMods.damageDelta - 1 });
+      } else if (skillRoll.effect === "attentionSeeker") setCombatMods((mods) => ({ ...mods, targeting: "self" }));
+      notify(`${skillRoll.card.title}: Core Roll passed.`);
+    } else notify(`${skillRoll.card.title}: Core Roll failed.`);
+    setSkillRoll(null);
+  }
+
+  function applyDieSkill(slot: number, target: DieTarget) {
+    const card = skills[slot];
+    if (!card) return;
+    const status = skillUseStatus(slot, card);
+    if (!status.enabled) return notify(status.reason);
+    if (card.id === "skill-be-better" && target.value !== 1) return notify("Be Better only rerolls a 1.");
+    if (card.id === "skill-polymorph" && target.value !== 2) return notify("Polymorph only changes a 2.");
+    if (card.id === "skill-extra-inch" && target.value >= 6) return notify("That die is already a 6.");
+    if (card.id === "skill-gaming-the-system" && !payCoins(1)) return notify("Need 1 Coin.");
+    if (skillUsesFlip(card)) flipSkill(slot);
+
+    if (card.id === "skill-extra-inch") updateDieTarget(target, (value) => value + 1);
+    else if (card.id === "skill-polymorph") updateDieTarget(target, () => 6);
+    else updateDieTarget(target, () => rollD6());
+
+    setSkillUse(null);
+    setSkillPaymentSlots([]);
+    notify(`${card.title} used.`);
+  }
+
+  async function executeSkillUse(slot: number) {
+    const card = skills[slot];
+    if (!card) return;
+    const status = skillUseStatus(slot, card);
+    if (!status.enabled) return notify(status.reason);
+
+    const dieSkill = ["skill-be-better", "skill-extra-inch", "skill-gaming-the-system", "skill-mediocre", "skill-polymorph"].includes(card.id);
+    if (dieSkill) {
+      const targets = currentDieTargets().filter((target) => card.id === "skill-be-better" ? target.value === 1 : card.id === "skill-polymorph" ? target.value === 2 : card.id === "skill-extra-inch" ? target.value < 6 : true);
+      if (targets.length === 1) return applyDieSkill(slot, targets[0]);
+      return notify("Choose the die in the Skill window.");
+    }
+
+    const lootCost = skillLootCost(card.id);
+    if (lootCost > 0 && skillPaymentSlots.length < lootCost) return notify(`Choose ${lootCost} Loot card${lootCost === 1 ? "" : "s"} to pay.`);
+
+    if (card.id === "skill-boomerwrong") {
+      if (tokens.lucky <= 0) return notify("Need 1 Lucky Charm.");
+      setTokens((value) => ({ ...value, lucky: value.lucky - 1 }));
+    }
+    if (card.id === "skill-coin-blaster" || card.id === "skill-capital-care" || card.id === "skill-hand-torch") {
+      if (!payCoins(1)) return notify("Need 1 Coin.");
+    }
+    if (card.id === "skill-rent-a-sword") {
+      if (!payCoins(3)) return notify("Need 3 Coins.");
+    }
+    if (card.id === "skill-rickety-reflex") {
+      if (!payCoins(2)) return notify("Need 2 Coins.");
+    }
+    if (lootCost > 0 && !payLootSlots(skillPaymentSlots, lootCost)) return notify("Choose valid Loot to pay.");
+
+    if (skillUsesFlip(card)) flipSkill(slot);
+
+    switch (card.id) {
+      case "skill-bloody-blade":
+      case "skill-choosing-violence":
+        setEnemy((state) => state ? { ...state, agility: clamp(state.agility - 1, 1, 6), messages: [...state.messages, `${card.title}: Agility -1.`] } : state);
+        break;
+      case "skill-boomerwrong": dealSkillDamage(3, card.title); break;
+      case "skill-bougie-bludgeoner": dealSkillDamage(2, card.title); break;
+      case "skill-coin-blaster": dealSkillDamage(1, card.title); break;
+      case "skill-diamond-coated":
+        if (enemy?.dice?.length) setEnemy((state) => state?.dice ? { ...state, dice: [...state.dice, rollD6(), rollD6()] } : state);
+        else setCombatMods((mods) => ({ ...mods, attackDiceBonus: mods.attackDiceBonus + 2 }));
+        break;
+      case "skill-hammer-time": setCombatMods((mods) => ({ ...mods, forceAttackDiceHit: true })); break;
+      case "skill-limp-poke": dealSkillDamage(2, card.title); break;
+      case "skill-nzt-48": beginSkillRoll(slot, card, "enemyAgilityDown"); return;
+      case "skill-rent-a-sword": setAttackDice((value) => Math.min(effectiveMaxDice, value + 1)); break;
+      case "skill-shedding-weight": setArmor((value) => Math.max(0, value - 1)); setAttackDice((value) => Math.min(effectiveMaxDice, value + 1)); break;
+
+      case "skill-atrophy": setAttackDice((value) => Math.max(0, value - 1)); setEnemy((state) => state ? { ...state, damage: Math.max(0, state.damage - 1), messages: [...state.messages, "Atrophy: Damage -1."] } : state); break;
+      case "skill-attention-seeker": beginSkillRoll(slot, card, "attentionSeeker"); return;
+      case "skill-danger-nerd": rebuildTrapPlan({ ...trapMods, requirementDelta: trapMods.requirementDelta - 1 }); break;
+      case "skill-trap-expert": setArmor((value) => Math.max(0, value - 1)); rebuildTrapPlan({ ...trapMods, damageDelta: trapMods.damageDelta - 3 }); break;
+      case "skill-ice-block":
+        if (enemy) setEnemy((state) => state ? { ...state, damage: Math.max(0, state.damage - 1), messages: [...state.messages, "Ice Block: Damage -1."] } : state);
+        else rebuildTrapPlan({ ...trapMods, damageDelta: trapMods.damageDelta - 1 });
+        break;
+      case "skill-intimidation": beginSkillRoll(slot, card, "damageDown"); return;
+      case "skill-pain-aversion":
+        if (eventState?.card.id.startsWith("trap-")) await completeEvent(eventState.key, eventState.card, ["Pain Aversion: paid 1 Loot and dodged the Trap."]);
+        break;
+      case "skill-rickety-reflex":
+        if (eventState?.card.id.startsWith("trap-")) await completeEvent(eventState.key, eventState.card, ["Rickety Reflex: paid 2 Coins and dodged the Trap."]);
+        break;
+      case "skill-thorny-wood": setArmor((value) => Math.min(effectiveMaxArmor, value + 1)); break;
+      case "skill-questionable-reflex": rebuildTrapPlan({ ...trapMods, requirementOverride: 4 }); break;
+
+      case "skill-capital-care": setHealth((value) => Math.min(hero.maxHealth, value + 1)); break;
+      case "skill-do-over":
+        setEnemy((state) => state?.dice ? { ...state, dice: state.dice.map((die, index) => index > 0 && Math.min(6, die + combatMods.attackRollBonus) < state.agility ? rollD6() : die), messages: [...state.messages, "Do-Over: rerolled missed Attack Dice."] } : state);
+        break;
+      case "skill-second-aid": setHealth((value) => Math.min(hero.maxHealth, value + 2)); break;
+      case "skill-transfusion":
+        setHealth((value) => Math.max(0, value - 3)); setSkillUse(null); setSkillDraft({ mode: "replace", color: "any", choices: [], title: "Transfusion · Replace one Skill", stage: "slot" }); return;
+      case "skill-benevolent-exchange":
+        setArmor((value) => Math.max(0, value - 1)); setSkillUse(null); setSkillDraft({ mode: "replace", color: "any", choices: [], title: "Benevolent Exchange · Replace one Skill", stage: "slot" }); return;
+
+      case "skill-hand-torch": setScoutRemaining((value) => value + 1); break;
+      case "skill-prolonged-stare": {
+        const recovered = lootDiscard[lootDiscard.length - 1];
+        if (recovered) {
+          setLootDiscard((value) => value.slice(0, -1));
+          setLootInbox((value) => [...value, recovered]);
+          setLastEnemyDamagedHero(false);
+        }
+        break;
+      }
+    }
+
+    setSkillUse(null);
+    setSkillPaymentSlots([]);
+    notify(`${card.title} used.`);
+  }
+
   async function applyTriggerEffects(effects: TriggerEffect[]) {
     for (const effect of effects) {
       if (effect.type === "health") setHealth((v) => clamp(v + effect.amount, 0, hero.maxHealth));
