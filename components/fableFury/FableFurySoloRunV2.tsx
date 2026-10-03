@@ -253,6 +253,14 @@ export default function FableFurySoloRunV2() {
   const shopArmorCost = hasSkill(triggerCtx, "skill-designer-parry") ? 4 : 6;
 
   useEffect(() => { if (!toast) return; const t = window.setTimeout(() => setToast(null), 2600); return () => window.clearTimeout(t); }, [toast]);
+  useEffect(() => {
+    if (health > 0) { if (knockoutHandled) setKnockoutHandled(false); return; }
+    if (knockoutHandled) return;
+    setKnockoutHandled(true);
+    if (hasSkill(triggerCtx, "skill-mortician-magician")) setCoinSlots((slots) => adjustCoinSlots(slots, backpack, 1).slots);
+    if (hasSkill(triggerCtx, "skill-pure-intentions")) void drawLootCards(1);
+    setSkillFaceUp([false, false, false]);
+  }, [health, knockoutHandled]);
   function notify(message: string) { setToast(message); }
 
   function currentContext() { return { health, armor, attackDice, coins, lootCount: backpack.filter(Boolean).length, lootNames: backpack.flatMap((card) => card ? [card.title] : []), trapRequirementDelta: trapMods.requirementDelta, trapRequirementOverride: trapMods.requirementOverride, trapDamageDelta: trapMods.damageDelta }; }
@@ -931,9 +939,9 @@ export default function FableFurySoloRunV2() {
 
   function buyShopArmor() {
     if (armor >= effectiveMaxArmor) return notify("Armor is already at capacity.");
-    if (!spendShopCoins(6)) return;
+    if (!spendShopCoins(shopArmorCost)) return;
     setArmor((value) => Math.min(effectiveMaxArmor, value + 1));
-    notify("+1 Armor purchased.");
+    notify(`+1 Armor purchased for ${shopArmorCost} Coins.`);
   }
 
   function sellShopLoot(slot: number) {
@@ -949,16 +957,17 @@ export default function FableFurySoloRunV2() {
   function leaveThroughPortal() {
     if (!portalCanLeave) return notify("Activate the Realm Shrine before using the Portal.");
     setHealth((value) => Math.min(hero.maxHealth, value + 1));
+    if (hasSkill(triggerCtx, "skill-lemonade-stand")) setCoinSlots((slots) => adjustCoinSlots(slots, backpack, 2).slots);
     setSelectedCard(null); setSelectedCell(null); setEventState(null);
     setShopOpen(true);
-    notify("Portal: +1 Health. Welcome to the Gift Shop.");
+    notify(hasSkill(triggerCtx, "skill-lemonade-stand") ? "Portal: +1 Health. Lemonade Stand: +2 Coins. Welcome to the Gift Shop." : "Portal: +1 Health. Welcome to the Gift Shop.");
   }
 
   function finishShopping() {
     if (lootInbox.length > 0) return notify("Store or discard purchased Loot first.");
     setShopOpen(false);
     setSelectedCard(null); setSelectedCell(null); setEventState(null); setEnemy(null); setScoutRemaining(0);
-    setCombatMods({ ...EMPTY_COMBAT_MODS });
+    setCombatMods({ ...EMPTY_COMBAT_MODS }); setTrapMods({ ...EMPTY_TRAP_MODS }); setLastEnemyDamagedHero(false);
     if (realm < 3) {
       setRealm((value) => value + 1);
       notify(`Realm ${realm + 1} begins.`);
@@ -976,7 +985,7 @@ export default function FableFurySoloRunV2() {
     if (result.card.card_type === "event" || result.card.id.startsWith("trap-")) await prepareEvent(result.card, key); else if (result.card.card_type === "enemy") await prepareEnemy(result.card, key); else if (result.card.card_type === "special" && result.card.subtype === "shrine") await prepareShrine(result.card, key);
   }
 
-  function resetRun() { setPhase("hero"); setRun(null); setStartingToken(null); setTargetNumber(null); setHealth(hero.startingHealth); setArmor(hero.startingArmor); setAttackDice(hero.startingAttackDice); setCoinSlots([0,0,0]); setTokens({ ...EMPTY_TOKENS }); setBackpack([null,null,null]); setSkills([null,null,null]); setLootInbox([]); setEnemy(null); setSelectedCard(null); setEventState(null); setShopOpen(false); }
+  function resetRun() { setPhase("hero"); setRun(null); setStartingToken(null); setTargetNumber(null); setHealth(hero.startingHealth); setArmor(hero.startingArmor); setAttackDice(hero.startingAttackDice); setCoinSlots([0,0,0]); setTokens({ ...EMPTY_TOKENS }); setBackpack([null,null,null]); setSkills([null,null,null]); setSkillFaceUp([true,true,true]); setSkillUse(null); setSkillRoll(null); setSkillDraft(null); setSkillPaymentSlots([]); setTrapMods({ ...EMPTY_TRAP_MODS }); setLastEnemyDamagedHero(false); setKnockoutHandled(false); setLootInbox([]); setEnemy(null); setSelectedCard(null); setEventState(null); setShopOpen(false); }
 
   const activeCells = map?.grid.active_cells ?? [];
 
