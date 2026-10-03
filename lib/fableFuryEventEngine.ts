@@ -1,4 +1,5 @@
 import type { TokenKind } from "@/lib/fableFuryHeroes";
+import { getTrapPlan } from "@/lib/fableFuryTrapEngine";
 
 export type EventContext = {
   health: number;
@@ -63,6 +64,14 @@ export function requirementMet(requirement: EventRequirement | undefined, ctx: E
 }
 
 export function getEventPlan(eventId: string, ctx: EventContext): EventPlan {
+  const [baseId, encodedRace] = eventId.split("::");
+  if (baseId.startsWith("trap-")) {
+    const normalizedRace = encodedRace
+      ? `${encodedRace.charAt(0).toUpperCase()}${encodedRace.slice(1).toLowerCase()}`
+      : "Human";
+    return getTrapPlan(baseId, { ...ctx, race: normalizedRace });
+  }
+
   switch (eventId) {
     case "event-attractive-offer":
       return {
