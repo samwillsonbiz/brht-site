@@ -1,3 +1,5 @@
+import { fableAsset } from "@/lib/fableFuryStorage";
+
 export type FableCardLike = {
   card_type?: string | null;
   source_sheet?: string | null;
@@ -6,325 +8,48 @@ export type FableCardLike = {
   id?: string | null;
 };
 
-const thumb = (id: string, size = 1200) =>
-  `https://drive.google.com/thumbnail?id=${id}&sz=w${size}`;
+function numberedPng(prefix: string, number: number) {
+  return `${prefix}${number === 1 ? "" : number}.png`;
+}
 
 export const FABLE_CARD_BACKS = {
-  location: thumb("1HEJ5Y82K3FfXDYWAM1VvlT0zRCZ_Y42d"),
-  map: thumb("1MgqS6Xki60ptgJGjHhOOCR5LDYwvj_ZS"),
-  modifier: thumb("1IKtF8YqYo6uMJkDUVRPpcOEHe6wFXRyF"),
-  loot: thumb("1GCll8KzK9TQ4FwyT0i4as0iy3_z3kJGA"),
-  red: thumb("1CT-Y2Sis5xtwtjK90sRtKbrpAIKJACBc"),
-  blue: thumb("1G7l6UXn3WdjT65f5akmM1CW6F3STFJde"),
-  green: thumb("1OP80mFvK7jMMkagGZcXJx6fu8e2GI9ji"),
-  yellow: thumb("1p3nOyGRVgxPwU3bW-dxCcUhpn1ZTGXoV"),
+  location: fableAsset("Card Back/Card Backs.png"),
+  map: fableAsset("Card Back/Card Backs2.png"),
+  modifier: fableAsset("Card Back/Card Backs3.png"),
+  loot: fableAsset("Card Back/Card Backs4.png"),
+  red: fableAsset("Card Back/Card Backs5.png"),
+  blue: fableAsset("Card Back/Card Backs6.png"),
+  green: fableAsset("Card Back/Card Backs7.png"),
+  yellow: fableAsset("Card Back/Card Backs8.png"),
 } as const;
 
-const MAP_IDS = [
-  "1V8F2uhzIXCNb5mVtbcxQ-j-17C8Am1_d",
-  "17XCVqP07DX63oJkOJl82Wpmhf01VD5Ss",
-  "1Z2-A7wtpx5Q7i4Ov7A_pe4eWhMHm5Aw1",
-  "1sipf8TKwXV9LSgZ05nd49yx_HCPb9vPf",
-  "1ncNjVJ4FGnpfi7-suNPIJLTi6CfY-hwz",
-  "1K1TNnqjJAtWVH_NnSUOmv4hEYGn_gffR",
-  "1bTv7WidGlDdv0_iWKpvyqB2NU9XdWCZW",
-  "1b1G0Y3gzh7fbwiOkOTkFXsjgiodI14L_",
-  "1LqVu_AZtTbIpBdvd7tdGS4a4ftQPxpSU",
-  "1h9_thABIia3mMEcdSOZ--PaltnaFhgIG",
-  "1XLNtn45PqxI1ByKYNeL7sd3Okz7TEl-a",
-  "1Job-5wQAj-evRN4ZC_HIxv_b6yJX7-UF",
-  "1ektDtfupc53dsUioIC6b7beBOjZn-m0E",
-  "12bE118xb-ruB1lBEaWLhoqazZnoI-oP9",
-  "1kaUSYrJtZUPLuPxpyN_ZgZDVokNaBnev",
-] as const;
-
-const LOOT_IDS = [
-  "1LY0fBx45TAzf0s4LH486hOV0mFeaOfPB",
-  "14gAC74gsDdXdM6Gq-ZUQd-zoh7sRyqQX",
-  "1fxk84W8Zv5TmO9AoTu_iawGCPJ_Hbr7U",
-  "1zIcgqEbf2geSCCxGHCFNxpIBFPfBTjRZ",
-  "12UAuYkVNvToxaipIArrXjSb2IGccdaTY",
-  "1Q_20dbNd3bA8RwAIO-QutqBSfrFA923w",
-  "14OaDhfMr9GO5uuchByn5NAHlpPqUeECZ",
-  "1Yzg3-zKU92RDWYKcMV2w1-9CDpPW9i4j",
-  "1sWSqd_GEamswb4rjTOJjwv5WiaMZfT76",
-  "1loDwc9NnZReqYo9SK577CSihZylbL-SG",
-  "1wg_FoDzNcIhOqd_SQYGPSPKtQJp2lIew",
-  "1kMAMygDbLsXTZBJmgFhOYJ8otfGHAJDV",
-  "1YLULpiFcfx22lgoi-qYJI69-ss1fvczS",
-  "1MoPQtZXu-8FSX5YpZDKpdf34mChbt814",
-  "11ZmRwZnI35Lcn6dGYeK_EUoEKM06J842",
-  "1i-e9MEvE0hL9ftJlDSegT6f0_GI0cX-V",
-  "1IZByiHq5FsNdYtRRNa2Xlj3iYd4mlgzR",
-  "1QcvgjRoiUQ0BnLwS_MWWm3kkW5eAxn-Q",
-  "1j7uSRd7Q7eDyphejnWUy4zSvkyKke02D",
-  "15gqITlbnhLs-DZgblSkdF8mDkNNw5lk6",
-  "1ntfTyWDfsuyaDArO3JyGWfydXvDRSSPA",
-  "1wEVhz86k3FjA6sS-Ql7_6qmQ2AGW3IPJ",
-  "1QxNhTqlwlNG1sTlQdGNtbsoP_bBvrlO5",
-  "1EDFu729MglEp2P5EXhT6qDNSoyiAIkXm",
-  "1Ji_0H8M7_WApQcBc7-XCLqDJbf9qrVNF",
-  "1HN5A9oAuQHFv4k5VgkM114SLqqwiaPGh",
-  "1Kex7r-p5myXivkJdZQ-AxA4uPWYFz6x2",
-  "1eqx5IBWClr03OM1zwaejUdupqrf6IxNB",
-  "1vkaBrK4ghxZfMNBhsrvmsmkBlbb_Yi2h",
-  "1gCAD3VgvQfo0cLkW-0z0tvDYtUNqtKD5",
-  "1u6AEr9OQWBCTVx9Oc8fd9ljiQLQSmJDr",
-  "17Vr6k6z9o1KVi3UyYVAYQjHkKUvcSmRe",
-  "1-GtqqbCzjD9DQ9a3IWNvpP8YgqyMq0r-",
-  "1Vc5EWTBJ3iZFvtz220UTTH-cmsvmphQh",
-  "1ZuYo5VmhORayodSw3LzzJBbZwMf0weX5",
-  "1p_s6E2gSDVGtPuMfGuGU7S-oLG8pf3th",
-  "1HYQGHvQ6Zs1ZTnFwmrNCsewN8hbq3SFq",
-  "1_mottOqnftjOlyvH7jsoCOhJ8mgkEPVR",
-  "1InYHLmEZAAeiWh-gY0Vfl-SHLtAL-DBW",
-  "1oV2e52h_5xO0SdYfruzhkew7yeyeSwTM",
-  "1qbNaG1wlgPMClg7nD5WBqSHOBI7FfYvJ",
-  "1NveJaUtnwHiNV5xivRTk2O7DCOdIdCaJ",
-  "14UWGOS8umV0AzHefE4ENKuRXfdpSQ8YH",
-  "1VDBMynxn6WTS56B_Z1we-uqY5O0xerXx",
-  "1tld7KIR2gBURCMrVwdjU7Vfzf3EkQBoc",
-  "1mxSpZXx714CUoCfyY3IDKMIsRKWQISio",
-  "1IgRsoXP4RuLhOELrddGRbfbsYFJhgENk",
-  "1EAI5Wc6VURy6seb7i7wivtAnK1eR0laC",
-  "1UlR8SU5CcDxsjTWr8mSm47ZzzCA0FL4u",
-  "1Jme-2S0hE1ukWrae2U5nsY2xIj-90qf8",
-  "1rm3S6Ve7ELKPgZAVIguMRjWJGkO9ioJt",
-  "1hlmBxqOUwxBWdUYMQ3PF0d31nrbH9avx",
-  "1KJAVsoV0h9rhQqaymuoF8My_NYfqIgZ_",
-  "18FCAR9cj6HKBFOjhDtJ0f43a-Dhtr6ie",
-  "1HT8whuVirdxxj22v_KuzRKSceBsion47",
-  "1uKCGYtypTf7MuY4mvynnqnYyZyw9QGPd",
-  "1PvlrgcUUXDV4sDrMKoF-jmnbPMKSPRcD",
-  "1HrKX5UdVo_SuHzkgCEMY1ILcC2reWeTd",
-  "1LO5m9Nm57PEMC8w1VVBxWLx0HPsBRh64",
-  "16PEzspzdgokfedy5G-RSVo6RTGbWqnD5",
-] as const;
-
-const EVENT_IDS = [
-  "1b2ab086XC7etvQC_emIT68T5YNhLci06",
-  "11WznFEiO8DFuv_IdRPCBRHP9bungFJ0s",
-  "1zt64xgif0-aihpolX1QoKVqI-G0dFIcr",
-  "11n2HxgykQVH_I71DacquPfBb7O-L1a9_",
-  "1Ce6oHRv7QDT8e12pwd5-rEvyAxLxvJqg",
-  "1aCv9GQHfCC5Iy8w_zMUlTYyFZCrWcc00",
-  "1R300_ILx_bayRScZm_v0yvixcFip0nWk",
-  "1G207pb252-RCqoLOIbrVPJd-Yoi99Pj4",
-  "1VEX6NofKZhOHdx88p5o6bbf4OEGz9jGm",
-  "1s9-ghlvVHUyvh9vqAIjQ8u6Uzaw-m048",
-  "1x9zUxXFjpDEMhzsRXHV4OB-WRHQeq8Gx",
-  "1wtkCvh_S7WwfurJqubLPv8zjqD-T7JjV",
-  "1qECsIMBcWTu-NV21egMQlHLLEE_MNhi0",
-  "16151wQnuIiZP5PleFthyZXPQZP7xw1Cf",
-  "1iOgJ4psZYjIza8w52K4VIJgfq5i_PBV7",
-  "1zVdefuHHSSnR-rw289LfyQZPFJux2kPk",
-  "19eVDVcx_32osNE0RfHXltzfA00juQnRa",
-  "19BQxzMWomuPLu4CoqfZyUBBtzEsx8qeJ",
-  "1GTOzlOPJDBM63ljbDxbGgiKMpKNafsha",
-  "1DaQUNGk-aeU5Lc89FUoP57g6dIi0Jbw9",
-  "1P1IQYw-swDNJ3TJVzEpqjf3ITY6Sqz-T",
-  "1vP5gliWYoUoYxhV13BE0ShvmiHR1N3RL",
-  "1MGwlgy2nMcP3hj5r0_8_VCeAAz36MInq",
-  "12zKrZifDlP_fpHrN4bbomhUzzDoFvxP0",
-  "1owOlPwtFbc9WXfrJY4rlD_IZl9w0hhkn",
-  "1LzujT7RAQGzJGYAdSNELksrxbPuXzf4E",
-  "1R5tPq8VyET-vIXhoiW7St-tsfhIKdYPY",
-  "1sWQy-5CDWhFcrdaQtvwEmTH-PZ1N9Dlx",
-  "10xQv3e5fgJiupUJneibu5DwcR0WAm2tD",
-  "1XGT_jM_X2C9TqQmqlw0kleCuMqAQBAE8",
-  "1Tu4v5CrgUNTFkc25T3B1nNHBKfmcHRy8",
-  "1XCPBWyOO4Ze8umvCuJVt34doBpjkSz4D",
-  "1RiRASyoGaFkNeLLLfvpj0mPBwGGEld_k",
-  "1SszLmT-66CMxN9cnP62Y0rhQo5egZOuz",
-  "1vAd8LSmclu4pxjXyTIyOKzPUalczCeas",
-  "1rgN8ti6Ka1AfPhU2rCMinhDOhKzU0Ifv",
-  "1z82SNoceCbsXUCJIQMi5VHIJTSvdXhE6",
-  "1m9BfUbfXKJfE7eO8ZK64YIqsKx6S9QAV",
-  "1NWGjNuLXIoYfXSzQVo8fWCiRVhutfXEB",
-  "1CuR5jXhyt6JGuao28sOAstSa_zsuW26P",
-  "1URt3oDi_riFFARw84bPbvRCSDsSysCLy",
-  "11lBWoyI6KWl49Ib_zv9T6BmD5VFhjVkB",
-  "19hOT1O9Ui8fXB6gFHNNFzNmhEZGc5QAB",
-  "1O2PdT_v2SAg-8Jxd0fgVvvW10lD2hyqw",
-  "1bWYmBuymRCA6odLSc7gzgJm3UrBfeokv",
-  "1F9NkfjvYvpaWN28i5e2VUH3w04HIYW39",
-  "1LGwwFG4d2yZ8KiEMUVzzGZJHveFCS1_t",
-  "1CBP5i9bZ2DchmtBc--K6-WBHeZIK-aVc",
-  "1ZL6NMVG629DRjzAa-gA2-Hm2d0PmYUXN",
-  "1f8CLOlQ_Tm-hrMxezLLPC-kp6H_RALxS",
-  "1j6XqUophvT2ueXLVbzlQmOXwZqelyC9d",
-  "1n2AQI8yh2SoBLfSqcmoOwzsU7Gy4EEpX",
-  "1dJYaptwQjXSsY4RVJeCT3YEymfUuhYbx",
-  "1dUhv9gXqP0AvoOiQ6ClqyXTbRxJT5ahX",
-] as const;
-
-const SKILL_IDS = [
-  "1djrRT7ILyXHQRItfMoFRZHM99WHg9qaS",
-  "1eSvN0y4FkVGh-2V7L3StN0IGMcpkZ_GF",
-  "12oCeC35K94eAjlGcacmUHiV-S4s0IfdW",
-  "16EkxZTN50yq34SPsMsYlcQbeOmXP6BKz",
-  "1j84YmaV-_Mc7O0Z7v9szogxXaCUKzRaq",
-  "1ZbMAsFkyEer39QsURe8KoHlZJHlLhVEk",
-  "1wkgdCKAeYU9ufNF7DIOU5qDRBxoFGcOm",
-  "1btEk823TnmTG1rhWXS7G0DIZZ1nusCPN",
-  "1yWusBPRUbaLBRPiRIB2Cn-UJXzBym8jc",
-  "1WIRfYlj3oUEfOZrpaeWx5P5LSKukaFkO",
-  "1Lr1tekLDJBKg-_kZZ9YP_PUSWBuBBgsU",
-  "1dAyt7xZTZ01Y4Z_RVBaCS0eBV2_QHoCh",
-  "1qJa6c57bhcWKsV-D6Bm6-OR5E0Sdr-7U",
-  "1naSfitMz-JKLYEFrY6ZqYh0n6LtyrlXq",
-  "19-7OKF_m7C0gTDX4hZCObgfC0gJw1O1x",
-  "1d-l-PN3kaCXcZbLdzDgHjMbuuuVgctDb",
-  "1VaMDZqbXZZQdUSEP6IHgdY4SD6zrniky",
-  "1Oxi1fMczsMJf0OV8yoOHubhqeMrMqoMP",
-  "1-z4JcZ_SyAF--2XF6Pip1KZvDBIQXpt8",
-  "1YWiTGbaZgSujSza34snHn7kawrvrwd6h",
-  "1jrioYwL66g1EUv7dc-hf0TBwtA3HZYbi",
-  "1UaciG34yJTBJQ03dC_spE7h77eD9ZiDG",
-  "1e2A1EXqjvKCGwiJw7cK_SAXSo1vxEBHi",
-  "16hJDuFC4VjDO91ChFdZE-hVD1A_eb3Cr",
-  "1Xww7jYM9RlV6ses_XLHGk4ARz67vqB-V",
-  "1oSaK5L_iLebPKfLN9UreGvcO_HyF24H3",
-  "1uNMYDZrbukXMFxqmpkj8ypcgcnb0j8Zw",
-  "1Q-FM6e50KAhCoYcwmkpnGJMtEIApFehb",
-  "1qkfX4C8uagGVgBkVpZb_1uYjH_kzDiiG",
-  "1rHYQfHZYlCloz0ba-mhu3BFeXkAh80Ni",
-  "1dACxM0UGdgKosOFgqZWpYYqMtMl-EfjJ",
-  "1A7ybZbCjAjXLie1LCr1hpQQexE71W-Kq",
-  "1SqcKjs17khFgiROeK4P5wjrFhC8xXLuI",
-  "1T8ADSbiwvdvbbBxuofIlt9nvvFb2OOnM",
-  "19ft9_r_kbLEm23wv6gIIkHSNflEncCG9",
-  "14pamFGK5NfCxtbbHVf9MVoe5KuUz7VvY",
-  "1Z8jR0P3x1ZymnQTW-0_6b5etLJ_H00MM",
-  "1B-4b9mhJLRJXf2ViwtOW0536KNh1kPQg",
-  "1AiQy_f3njVJkhfUCMYUEeLUEobvxcruA",
-  "1DPkBSs6rnKDitxUmnGxuq1UAoo31LCoJ",
-  "1n2jWDC-jOHxH2ZO5Vz-vAaewwo-qgneV",
-  "1UG_p_-3qHF1eJeAXqaz6jb-e6HOAew5a",
-  "1F7R7ps7yg6KeKYbsxOq0Nu3qNZkv2YXe",
-  "1JmkhfB0w3qLIfP1A5nzohF0rcIUyoyyL",
-  "1D5CLT5hEqpYj_5GPI9Y0Swn5zsLyrsVp",
-  "1fUJ9j1BSpuX5P6SpZ_fPzNWN5DFF-0Ei",
-  "1bgO0UrELafzO1jocNsxsTq-YhNGp_g24",
-  "1Tm3_F__h6OOiFUMGsrLPCZ3ahx4sn-gV",
-  "1qBW0HWLHm0pLg20SHr_-Ov6K4qgs0vK2",
-  "1wKzYE8kID59ByHQ1UBGCkA2E69Os7Wel",
-  "1K2R1efXlflcdK85Pgo-m7bMD3jptCevQ",
-  "1N56IvJ5XlM41-LIvaWbOTPIF3N2ttfaK",
-  "1m7spgCyT9X027LmxvT90OeiIml2_eNP_",
-  "1eOBOYP18SLbvDGwTD03mkkYSXCIDpV6e",
-  "1RC5K6xehkRbaKgEIUKGI-Zt0AiNfuZgv",
-  "1LdJgxodxzJ6TrQbkWQh3Fby0-vl3BIuN",
-  "1ncyRMIgrfH8EM4CjoEpNv6LU3EcFiLYB",
-  "1hwlK6b97Qwwr0aWj67tsR4vmppHlqrEs",
-  "1grvurCn5W4y5O96KpZawLjPp0eBfCdbq",
-  "1mk4u1XP5stDFAw1uPu9TXSv6f7iuVVuD",
-  "1lN2ei-Rh265l6JLu_-Vk0gr8hyLicIzT",
-  "1_eJl1O9TxiWUYxSBFwDWFu1xZe10yuUc",
-  "1fExA9ap1s84U1-BfPb4jCIo0r5JCEuXs",
-  "1nW62jmESvakEWH07VaRb2PJTdPFI6BCZ",
-  "1qhht4C-mXQY44qAXQtA_Lrn40Kn1F54S",
-  "1eD9eH9KwtFvoKxv7fbjVTOtE-cmNg8gB",
-  "1bQc8O8KnelE7Mzrmyftjy--omPeZiLn7",
-  "10LLEST8ckpLo_SQrtjyLkqn1qe3YouHw",
-  "1IKzCNfSuJ9593hx8aB6ug6Y_j4lCdOBz",
-  "1nlAzhk43iGXWFRevjkox8ZhSbOLs9ki6",
-  "1PtsvpKYO71f2eumKWCUqYFZDjjX8nHu5",
-  "1dmzHjkN0XtxABcJDTMTOCrOcziqpeivK",
-] as const;
-
-const ENEMY_IDS = [
-  "1nqvN_mA4tmyVARcIa7Gnzwuv-jqxDxRH",
-  "1iaOMArj628D6c_euP12MqsJ8OUVOipqj",
-  "1RWDkUhVgl7QdrvqECfWwe7W_MYM06tCM",
-  "1Sk-ySLW2frph8rjTyk1bqU5FnUuYehy-",
-  "1sUgXohHm2QOr9zQOvrTV6ieSxPYzIh8B",
-  "1FJuqgM3FEHxsUao5A0z9D02oE-FWbd4n",
-  "1SUFLC3zh5GprxZKp448DECDxDWg7gG1i",
-  "1xXcbirM0NpVm1UlCJmA0oOAFyuRzCXGM",
-  "12k8PRkTH6gxsVmTGMRVE6FaKt3E9KQxm",
-  "1EjyN9ShCafQnuKvX34pnWXgQpGbL0q_R",
-  "1HkDS_Tsnl6FHsDwbuh-rpnd82yA6Wyh1",
-  "1cvhqRLZ7naE4mFgsmoxXiiCoh6RNlD6j",
-  "1C2KdFKJsiVd3cOFgHToM6ySPQgHYQDyY",
-  "1I7oQk6KRMU5LcAkdFGq1CiGrlm75ZmJ2",
-  "1DpNhEob5_Fjy6Za0d3gfii9B5U8XIw-S",
-  "1Tc7Hb1uig8CNEpUSIW0LAPsZgvOu5fpf",
-  "16550qxroz65lRHYXhlA1CRSN4YgzhXQM",
-  "1a92RsVTEI6IcPSe56fK_rz6jNfgxTemB",
-  "1aopyrO-jt9eJGVjjRGsZsd_aq33P2JHy",
-  "1wvg13vCYWE2LMIKXXTqdaPDgxYDW17PH",
-  "1ZcW7zBsuGTbXarJ6JI5XlrB2XyaJ-lmu",
-  "1BEzo4JcQZBxr-hDTVYJzITRE6nUHRJWJ",
-  "19ml2HFPFUbgD70s9r2HtuRDsI97iPrJi",
-  "1zoycoH8LnROYQAtqjdZv7nQATVl5Vgir",
-  "1-Yr2VOE6Yaqr5zX9tFNn3pkwf2Q3jvss",
-  "1t9Q0iREAin51ixWsJ9B_N4iUdHXf8sm2",
-  "1wqtKL8UKE1kp_ghAi5J6jZeS4clePCHB",
-  "1teNj2mUizrWT4ChCYqLEM7yV2ltSMoUz",
-  "1hPsJCyo8b-zLwyu5SNmt9M9z5amBsgGA",
-  "1SExkfHNTdan_wxZICDeyr_fh1c9V_yhP",
-  "13ismB3iqGihADLBayZXrVKw_S6o2Z0hz",
-  "1053t7FGo5N-GntdMigKJba9EVgn07juX",
-  "1L24MwIgv-3OmOzWnFO392VnLnYfCgJb8",
-  "1E7_fghhmyXs9ihY2aYNdPzXfW2n5Q49K",
-  "1c6fYICRBK47lYSXSyq44Q85AummEkYej",
-  "1YNp7msML_V3vy1gSbsdgd_nHZnOKrTH3",
-] as const;
-
-const TRAP_IDS = [
-  "1WAMw5St6u5hD0bv8J-FaQ4PeQKt8w71C",
-  "1aDDA66ZDANK5Dxw8fjCqIM7nM4eUULfG",
-  "1SwagScSA27Z1NPSaVCeUsad18H8gjIzc",
-  "1ba20cruArY45aLcLDTRz5jk-8Sr4E5-c",
-  "15i7i0W9ShwnxnrG7dTPifiRMAam8CHqf",
-  "1uJS-Dwm5jIre9ZeDSpP66K1E4oz88Bdb",
-  "1pxNQSwGMKK_xM6bDlO_1Ev-ChWfoWmsl",
-  "1r32zEvuCmUKs9oGLpI750PN1CO5vf6Pk",
-  "1xIZUhYZtDvyZwoR3pQDkKBzDtSd0lQMm",
-  "1CrQ49CgDM63suJ1c_1HtkGoTmSRVLDvz",
-  "1mnO7QfjGD19w6rYGX8vxQIIcaNBCz91X",
-  "1h_GHN-g9Ll1NRsrOg1_C5pZZB-HfvLCJ",
-  "1J0ftiJAms6S-wXCSVDlxSWGH4CdBOxUc",
-  "1Z_bpQwA1xAjeesCRdUhMtYPdIn0DKEz2",
-  "1nra6IC6ouJWkb7pqW-CNyWdusA0QOrhg",
-  "1IQdDZJSh9l8Kr8m3W49Vk41qhI_wHTku",
-  "1oP9WwTQR8evrXyhExXBuk2bqgfZt0hc5",
-  "1dwgPc5gExrVPRiB_ACllW_FY4hW8DsMz",
-] as const;
-
-const SPECIAL_IDS = [
-  "1U3LlcHnfNCsJpjbFWd8ymFbpVBDN8uVe",
-  "1VIGMcD5flPsqjKsV3nxMVVvKw36yNaOG",
-  "1QmlSuHZWYJtDr35q6j2gjgwye8SJt7zS",
-  "1nYReDFkCzlgAiyY9qnLjf4TSHXTPkSpH",
-] as const;
-
-const idsBySheet: Record<string, readonly string[]> = {
-  Loot: LOOT_IDS,
-  Event: EVENT_IDS,
-  Skill: SKILL_IDS,
-  Enemy: ENEMY_IDS,
-  Trap: TRAP_IDS,
-  Special: SPECIAL_IDS,
+const SHEET_ASSETS: Record<string, { folder: string; prefix: string }> = {
+  loot: { folder: "Loot", prefix: "Loot Cards" },
+  event: { folder: "Event", prefix: "Event Cards" },
+  skill: { folder: "Skill", prefix: "Skill Cards" },
+  enemy: { folder: "Enemy", prefix: "Enemy Cards" },
+  trap: { folder: "Trap", prefix: "Trap Cards" },
+  special: { folder: "Special", prefix: "Special Cards" },
+  monster: { folder: "Monster Mats", prefix: "Monster Mats" },
 };
 
 export function mapArt(mapId?: string | null) {
   if (!mapId) return null;
   const match = mapId.match(/(\d+)$/);
-  const index = match ? Number(match[1]) - 1 : -1;
-  const id = MAP_IDS[index];
-  return id ? thumb(id, 1600) : null;
+  const number = match ? Number(match[1]) : 0;
+  if (!number || number < 1 || number > 15) return null;
+  return fableAsset(`Map/${numberedPng("Map Cards", number)}`);
 }
 
 export function cardFrontArt(card?: FableCardLike | null) {
   if (!card) return null;
-  const sheet = card.source_sheet || ({ loot: "Loot", event: "Event", skill: "Skill", enemy: "Enemy", trap: "Trap", special: "Special" } as Record<string, string>)[card.card_type || ""];
-  const row = card.source_row;
-  if (!sheet || !row) return null;
-  const ids = idsBySheet[sheet];
-  const id = ids?.[row - 2];
-  return id ? thumb(id, 1200) : null;
+  const sheet = (card.source_sheet || card.card_type || "").toLowerCase();
+  const asset = SHEET_ASSETS[sheet];
+  const row = Number(card.source_row);
+  if (!asset || !Number.isFinite(row) || row < 2) return null;
+
+  const number = row - 1;
+  return fableAsset(`${asset.folder}/${numberedPng(asset.prefix, number)}`);
 }
 
 export function cardBackArt(card?: FableCardLike | null, skillColor?: "red" | "blue" | "green" | "yellow") {
