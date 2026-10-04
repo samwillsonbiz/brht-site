@@ -7,7 +7,7 @@ export type FableCardLike = {
 };
 
 const thumb = (id: string, size = 1200) =>
-  `https://drive.google.com/thumbnail?id=${id}&sz=w${size}`;
+  `/api/fablefury/media/asset?id=${encodeURIComponent(id)}&size=${size}`;
 
 export const FABLE_CARD_BACKS = {
   location: thumb("1HEJ5Y82K3FfXDYWAM1VvlT0zRCZ_Y42d"),

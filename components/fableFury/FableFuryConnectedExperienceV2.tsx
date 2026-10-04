@@ -4,6 +4,7 @@ import { useMemo, useRef, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { FABLE_HEROES, TOKEN_LABELS, getHero, type TokenKind } from "@/lib/fableFuryHeroes";
 import { FABLE_TOKEN_ART } from "@/lib/fableFuryBoardAssets";
+import { preloadCriticalFableAssets } from "@/lib/fableFuryPreload";
 import { FABLE_BOOTSTRAP_KEY } from "@/components/fableFury/FableFuryConnectedExperience";
 
 type Screen = "home" | "heroes" | "token";
@@ -41,6 +42,10 @@ export default function FableFuryConnectedExperienceV2() {
 
   const hero = useMemo(() => getHero(heroId), [heroId]);
   const hoveredHero = useMemo(() => FABLE_HEROES.find((item) => item.id === hoveredHeroId) ?? null, [hoveredHeroId]);
+
+  useEffect(() => {
+    void preloadCriticalFableAssets();
+  }, []);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -104,8 +109,9 @@ export default function FableFuryConnectedExperienceV2() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_58%,transparent_0%,rgba(0,0,0,.04)_48%,rgba(0,0,0,.36)_100%)]" />
         <audio ref={audioRef} src="/api/fablefury/media/home-audio" autoPlay loop preload="auto" />
         {settings}
-        <div className="absolute inset-x-0 bottom-[7vh] z-20 flex justify-center px-5">
+        <div className="absolute inset-x-0 bottom-[7vh] z-20 flex flex-col items-center justify-center gap-3 px-5">
           <div className="animate-[ffStartFloat_2.7s_ease-in-out_infinite]"><FantasyButton onClick={startGame}>START</FantasyButton></div>
+          <button type="button" onClick={() => router.push("/fablefury/deckbuilder/run/multiplayer")} className="rounded-xl border border-white/15 bg-black/45 px-5 py-2 text-[10px] font-black uppercase tracking-[.18em] text-white/65 backdrop-blur-md transition hover:border-[#d27cff]/60 hover:text-white">Multiplayer Beta</button>
         </div>
         <style jsx global>{`
           @keyframes ffStartFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }

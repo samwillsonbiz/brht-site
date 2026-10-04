@@ -22,6 +22,7 @@ import {
   type EnemyEffect,
   type EnemySetupStep,
 } from "@/lib/fableFuryEnemyEngine";
+import { preloadImage, preloadRealmAssets } from "@/lib/fableFuryPreload";
 import {
   allAttackEndedTriggers,
   clearTriggers,
@@ -254,6 +255,18 @@ export default function FableFurySoloRunV2() {
   const portalCanLeave = resolvedKeys.some((key) => key.startsWith(`${realm}:`) && cardsByCell[key]?.subtype === "shrine");
   const shopArmorCost = hasSkill(triggerCtx, "skill-designer-parry") ? 4 : 6;
 
+  useEffect(() => {
+    if (!run?.run_id) return;
+    void preloadRealmAssets(run.run_id, realm, run.maps[realm - 1]?.id);
+    const nextRealm = realm + 1;
+    if (nextRealm <= 3) {
+      const timer = window.setTimeout(() => {
+        void preloadRealmAssets(run.run_id, nextRealm, run.maps[nextRealm - 1]?.id);
+      }, 1200);
+      return () => window.clearTimeout(timer);
+    }
+  }, [run, realm]);
+
   useEffect(() => { if (!toast) return; const t = window.setTimeout(() => setToast(null), 2600); return () => window.clearTimeout(t); }, [toast]);
   useEffect(() => {
     if (health > 0) { if (knockoutHandled) setKnockoutHandled(false); return; }
@@ -273,7 +286,10 @@ export default function FableFurySoloRunV2() {
     const cards: FableCard[] = [];
     for (let i = 0; i < count; i += 1) {
       const result = await postJson<{ card: FableCard | null; remaining: number }>("/api/fablefury/draw", { runId: run.run_id, deckKey: "loot" });
-      if (result.card) cards.push(result.card);
+      if (result.card) {
+        cards.push(result.card);
+        void preloadImage(cardFrontArt(result.card));
+      }
     }
     if (cards.length) setLootInbox((current) => [...current, ...cards]);
     return cards;
@@ -284,7 +300,10 @@ export default function FableFurySoloRunV2() {
     const cards: FableCard[] = [];
     for (let i = 0; i < count; i += 1) {
       const result = await postJson<{ card: FableCard | null; remaining: number }>("/api/fablefury/draw", { runId: run.run_id, deckKey: `skills-${color}` });
-      if (result.card) cards.push(result.card);
+      if (result.card) {
+        cards.push(result.card);
+        void preloadImage(cardFrontArt(result.card));
+      }
     }
     return cards;
   }
@@ -296,6 +315,7 @@ export default function FableFurySoloRunV2() {
       const setup = await postJson<RunSetup>("/api/fablefury/run", { heroIds: [hero.id] });
       setRun(setup); setHealth(hero.startingHealth); setArmor(hero.startingArmor); setAttackDice(hero.startingAttackDice); setCoinSlots([2, 0, 0]); setTokens({ ...EMPTY_TOKENS, [startingToken]: 1 }); setBackpack([null, null, null]); setSkills([null, null, null]); setSkillFaceUp([true, true, true]); setSkillUse(null); setSkillRoll(null); setTrapMods({ ...EMPTY_TRAP_MODS }); setLastEnemyDamagedHero(false); setKnockoutHandled(false); setRevealed({ 1: [], 2: [], 3: [] }); setCardsByCell({}); setScoutedByCell({}); setResolvedKeys([]); setCombatMods({ ...EMPTY_COMBAT_MODS }); setLootDiscard([]); setRealmThreeShrineId(null); setGameWon(null); setEnemy(null);
       const result = await postJson<{ card: FableCard | null }>("/api/fablefury/draw", { runId: setup.run_id, deckKey: "loot" });
+      if (result.card) await preloadImage(cardFrontArt(result.card));
       setLootInbox(result.card ? [result.card] : []); setPhase("gear");
     } catch (err) { setError(err instanceof Error ? err.message : "Could not start run."); }
     finally { setLoading(null); }
