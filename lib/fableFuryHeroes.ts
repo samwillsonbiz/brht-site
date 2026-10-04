@@ -19,7 +19,7 @@ export type FableHero = {
 };
 
 const thumb = (id: string, size = 1200) =>
-  `/api/fablefury/media/asset?id=${encodeURIComponent(id)}&size=${size}`;
+  `https://drive.google.com/thumbnail?id=${id}&sz=w${size}`;
 
 export const FABLE_HEROES: FableHero[] = [
   {

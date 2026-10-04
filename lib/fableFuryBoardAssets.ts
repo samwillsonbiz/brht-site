@@ -1,7 +1,7 @@
 import type { TokenKind } from "@/lib/fableFuryHeroes";
 
 const thumb = (id: string, size = 1200) =>
-  `/api/fablefury/media/asset?id=${encodeURIComponent(id)}&size=${size}`;
+  `https://drive.google.com/thumbnail?id=${id}&sz=w${size}`;
 
 export const FABLE_BOARD_ART = thumb("1HJ36G-XDFal5VCHLzg2-ZUA8YnEzhaId", 2200);
 export const FABLE_BACKPACK_ART = thumb("16RqDmbyxMq5Kq9fi_CP9H55uMvXxxenz", 1800);
