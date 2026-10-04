@@ -22,6 +22,7 @@ import {
   type EnemyEffect,
   type EnemySetupStep,
 } from "@/lib/fableFuryEnemyEngine";
+import { preloadRealmAssets } from "@/lib/fableFuryPreload";
 import {
   allAttackEndedTriggers,
   clearTriggers,
@@ -253,6 +254,18 @@ export default function FableFurySoloRunV2() {
   const inventoryLocked = lootInbox.length > 0;
   const portalCanLeave = resolvedKeys.some((key) => key.startsWith(`${realm}:`) && cardsByCell[key]?.subtype === "shrine");
   const shopArmorCost = hasSkill(triggerCtx, "skill-designer-parry") ? 4 : 6;
+
+  useEffect(() => {
+    if (!run?.run_id) return;
+    void preloadRealmAssets(run.run_id, realm, run.maps[realm - 1]?.id);
+    const nextRealm = realm + 1;
+    if (nextRealm <= 3) {
+      const timer = window.setTimeout(() => {
+        void preloadRealmAssets(run.run_id, nextRealm, run.maps[nextRealm - 1]?.id);
+      }, 1200);
+      return () => window.clearTimeout(timer);
+    }
+  }, [run, realm]);
 
   useEffect(() => { if (!toast) return; const t = window.setTimeout(() => setToast(null), 2600); return () => window.clearTimeout(t); }, [toast]);
   useEffect(() => {
