@@ -814,6 +814,18 @@ export default function FableFurySoloRunV2() {
       : adjusted.slice(1).filter((die) => die >= enemy.agility).length;
     const hits = coreHits + attackHits;
     const misses = adjusted.length - hits;
+    const missedAttackDice = combatMods.forceAttackDiceHit ? 0 : adjusted.slice(1).filter((die) => die < enemy.agility).length;
+    const zorgaOnes = enemy.card.id === "monster-battleaxe-zorga" ? raw.slice(1).filter((die) => die === 1).length : 0;
+    const bossMessages: string[] = [];
+
+    if (enemy.card.id === "monster-massive-max" && missedAttackDice > 0) {
+      setAttackDice((value) => Math.max(0, value - missedAttackDice));
+      bossMessages.push(`Immovable Object: lost ${missedAttackDice} missed Attack Die${missedAttackDice === 1 ? "" : "s"}.`);
+    }
+    if (zorgaOnes > 0) {
+      setHealth((value) => Math.max(0, value - zorgaOnes));
+      bossMessages.push(`Shadow Blade: ${zorgaOnes} Attack Die ${zorgaOnes === 1 ? "was" : "were"} 1 → lost ${zorgaOnes} Health.`);
+    }
 
     const reaction = heroRollReaction(enemy.card, raw, misses);
     await applyEnemyEffects(reaction.auto);
@@ -824,7 +836,8 @@ export default function FableFurySoloRunV2() {
     }
 
     const remainingHp = Math.max(0, enemy.health - hits);
-    setEnemy((v) => v ? { ...v, health: remainingHp, dice: undefined, messages: [...v.messages, `${hits} hit${hits === 1 ? "" : "s"} at Agility ${v.agility}+ → ${hits} damage.`] } : v);
+    const heroHealthAfterBossPassive = Math.max(0, health - zorgaOnes);
+    setEnemy((v) => v ? { ...v, health: remainingHp, dice: undefined, messages: [...v.messages, `${hits} hit${hits === 1 ? "" : "s"} at Agility ${v.agility}+ → ${hits} damage.`, ...bossMessages] } : v);
     setCombatMods((v) => ({ ...v, attackDiceBonus: 0, attackRollBonus: 0, rerollAttack: false, forceAttackDiceHit: false }));
 
     if (reaction.choice) {
@@ -832,14 +845,20 @@ export default function FableFurySoloRunV2() {
       return;
     }
     if (remainingHp <= 0) { setEnemy((v) => v ? { ...v, phase: "victory" } : v); return; }
-    if (health <= 0) { setEnemy((v) => v ? { ...v, phase: "defeat" } : v); return; }
+    if (heroHealthAfterBossPassive <= 0) { setEnemy((v) => v ? { ...v, phase: "defeat" } : v); return; }
     setEnemy((v) => v ? { ...v, phase: "enemyStart" } : v);
   }
 
   async function beginEnemyTurn() {
     if (!enemy) return; const start = enemyTurnStart(enemy.card);
     if (!start) { setEnemy((v) => v ? { ...v, phase: "enemy" } : v); return; }
-    if (start.kind === "auto") { await applyEnemyEffects(start.effects); setEnemy((v) => v ? { ...v, phase: "enemy" } : v); return; }
+    if (start.kind === "auto") {
+      const healthDelta = start.effects.reduce((sum, effect) => effect.type === "health" ? sum + effect.amount : sum, 0);
+      const willKnockOutHero = health + healthDelta <= 0;
+      await applyEnemyEffects(start.effects);
+      setEnemy((v) => v ? { ...v, phase: willKnockOutHero ? "defeat" : "enemy" } : v);
+      return;
+    }
     setEnemy((v) => v ? { ...v, choice: { prompt: start.prompt, options: start.options.map((o) => ({ label: o.label, effects: o.effects, disabled: !!o.requiresAttackDice && attackDice < o.requiresAttackDice })) } } : v);
   }
 
@@ -858,7 +877,7 @@ export default function FableFurySoloRunV2() {
     return lost;
   }
 
-  async function finishEnemyAction(attack: EnemyAttack, targetedMiss: boolean, heroWasDamaged: boolean) {
+  async function finishEnemyAction(attack: EnemyAttack, targetedMiss: boolean, heroWasDamaged: boolean, heroWasKnockedOut = false) {
     if (!enemy) return;
     setLastEnemyDamagedHero(heroWasDamaged);
     const after = afterEnemyAction(enemy.card, attack, targetedMiss);
@@ -873,7 +892,7 @@ export default function FableFurySoloRunV2() {
       enemyKilled = enemyKilled || enemy.health <= 1;
     }
     if (enemyKilled) { setEnemy((v) => v ? { ...v, phase: "victory", targetPending: false, targetRoll: undefined } : v); return; }
-    if (health <= 0) { setEnemy((v) => v ? { ...v, phase: "defeat" } : v); return; }
+    if (heroWasKnockedOut || health <= 0) { setEnemy((v) => v ? { ...v, phase: "defeat" } : v); return; }
     setEnemy((v) => v ? (v.health <= 0 ? { ...v, phase: "victory", targetPending: false, targetRoll: undefined } : { ...v, actionIndex: (v.actionIndex + 1) % Math.max(1, enemyData(v.card).attacks.length), phase: "hero", targetPending: false, targetRoll: undefined }) : v);
   }
 
@@ -888,7 +907,7 @@ export default function FableFurySoloRunV2() {
     if (hit) lost = enemyDamageHero(enemy.damage);
     setCombatMods((v) => ({ ...v, targeting: null }));
     if (hit && hero.id === "hero-helga") setReactionRoll({ label: "Holding Space · Core Roll 5+ to gain 1 Armor", requirement: 5, onPass: "armor" });
-    await finishEnemyAction(attack, !hit, lost > 0);
+    await finishEnemyAction(attack, !hit, lost > 0, hit && health - lost <= 0);
   }
 
   async function executeEnemyAction() {
@@ -906,7 +925,7 @@ export default function FableFurySoloRunV2() {
     }
     if (attack.type === "[AA]") {
       const lost = enemyDamageHero(enemy.damage);
-      await finishEnemyAction(attack, false, lost > 0);
+      await finishEnemyAction(attack, false, lost > 0, health - lost <= 0);
       return;
     }
     if (attack.type === "[BA]") {
