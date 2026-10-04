@@ -4,6 +4,7 @@ import { useMemo, useRef, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { FABLE_HEROES, TOKEN_LABELS, getHero, type TokenKind } from "@/lib/fableFuryHeroes";
 import { FABLE_TOKEN_ART } from "@/lib/fableFuryBoardAssets";
+import { preloadCriticalFableAssets } from "@/lib/fableFuryPreload";
 import { FABLE_BOOTSTRAP_KEY } from "@/components/fableFury/FableFuryConnectedExperience";
 
 type Screen = "home" | "heroes" | "token";
@@ -41,6 +42,10 @@ export default function FableFuryConnectedExperienceV2() {
 
   const hero = useMemo(() => getHero(heroId), [heroId]);
   const hoveredHero = useMemo(() => FABLE_HEROES.find((item) => item.id === hoveredHeroId) ?? null, [hoveredHeroId]);
+
+  useEffect(() => {
+    void preloadCriticalFableAssets();
+  }, []);
 
   useEffect(() => {
     const audio = audioRef.current;
