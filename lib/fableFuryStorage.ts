@@ -5,3 +5,5 @@ export function fableAsset(path: string) {
   const encoded = path.split("/").map((segment) => encodeURIComponent(segment)).join("/");
   return `${FABLE_STORAGE_ROOT}/${encoded}`;
 }
+
+// Runtime asset host.
