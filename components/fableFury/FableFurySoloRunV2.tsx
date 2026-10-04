@@ -178,7 +178,7 @@ function ShopModal({ realm, coins, armor, maxArmor, armorCost, attackDice, maxAt
     </div>
     <div className="mt-6 rounded-2xl border border-white/10 bg-white/[.03] p-4"><div className="text-[10px] font-black uppercase tracking-[.14em] text-white/35">Sell Loot · 1 Coin each</div><div className="mt-3 grid grid-cols-3 gap-3">{backpack.map((card, slot) => <div key={slot} className="rounded-xl border border-white/10 bg-black/20 p-2">{card ? <><CardImage card={card} className="mx-auto h-36 rounded-lg" /><div className="mt-2 truncate text-center text-xs font-black">{card.title}</div><button onClick={() => onSellLoot(slot)} className="mt-2 w-full rounded-lg bg-amber-300 px-2 py-2 text-xs font-black text-[#231707]">Sell +1 Coin</button></> : <div className="grid h-44 place-items-center text-xs text-white/25">No Loot</div>}</div>)}</div></div>
     {lootInbox.length > 0 && <div className="mt-5 rounded-2xl border border-fuchsia-300/25 bg-fuchsia-300/10 p-4"><div className="font-black text-fuchsia-100">Purchased Loot — store it before leaving the shop.</div>{lootInbox.map((card, index) => <div key={`${card.id}-${index}`} className="mt-3 grid gap-3 sm:grid-cols-[110px_1fr]"><CardImage card={card} className="w-full rounded-lg" /><div><div className="font-black">{card.title}</div><div className="mt-2 flex flex-wrap gap-2">{[0,1,2].map((slot) => <button key={slot} disabled={coinSlots[slot] > 0 || !!backpack[slot]} onClick={() => onPackLoot(index, slot)} className="rounded-lg border border-white/10 px-3 py-2 text-xs font-bold disabled:opacity-25">Pocket {slot+1}</button>)}<button onClick={() => onDiscardLoot(index)} className="rounded-lg border border-white/10 px-3 py-2 text-xs text-white/50">Discard</button></div></div></div>)}</div>}
-    <button disabled={lootInbox.length > 0} onClick={onFinish} className="mt-6 w-full rounded-2xl bg-amber-300 px-5 py-4 text-lg font-black text-[#231707] disabled:opacity-30">{realm < 3 ? `Finish Shopping · Enter Realm ${realm + 1}` : "Finish Shopping"}</button>
+    <button disabled={lootInbox.length > 0} onClick={onFinish} className="mt-6 w-full rounded-2xl bg-amber-300 px-5 py-4 text-lg font-black text-[#231707] disabled:opacity-30">{realm < 3 ? `Finish Shopping · Enter Realm ${realm + 1}` : "Finish Shopping · Face Final Monster"}</button>
   </section></ModalShell>;
 }
 
@@ -223,8 +223,10 @@ export default function FableFurySoloRunV2() {
   const [eventHistory, setEventHistory] = useState<Record<string, string[]>>({});
   const [specialHistory, setSpecialHistory] = useState<Record<string, string[]>>({});
   const [shrineStarted, setShrineStarted] = useState<string[]>([]);
+  const [realmThreeShrineId, setRealmThreeShrineId] = useState<string | null>(null);
   const [shopOpen, setShopOpen] = useState(false);
   const [enemy, setEnemy] = useState<EnemyCombatState | null>(null);
+  const [gameWon, setGameWon] = useState<FableCard | null>(null);
   const [reactionRoll, setReactionRoll] = useState<{ label: string; requirement: number; roll?: number; onPass: "armor" | "attackDice" } | null>(null);
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -292,7 +294,7 @@ export default function FableFurySoloRunV2() {
     setLoading("setup"); setError(null);
     try {
       const setup = await postJson<RunSetup>("/api/fablefury/run", { heroIds: [hero.id] });
-      setRun(setup); setHealth(hero.startingHealth); setArmor(hero.startingArmor); setAttackDice(hero.startingAttackDice); setCoinSlots([2, 0, 0]); setTokens({ ...EMPTY_TOKENS, [startingToken]: 1 }); setBackpack([null, null, null]); setSkills([null, null, null]); setSkillFaceUp([true, true, true]); setSkillUse(null); setSkillRoll(null); setTrapMods({ ...EMPTY_TRAP_MODS }); setLastEnemyDamagedHero(false); setKnockoutHandled(false); setRevealed({ 1: [], 2: [], 3: [] }); setCardsByCell({}); setScoutedByCell({}); setResolvedKeys([]); setCombatMods({ ...EMPTY_COMBAT_MODS }); setLootDiscard([]); setEnemy(null);
+      setRun(setup); setHealth(hero.startingHealth); setArmor(hero.startingArmor); setAttackDice(hero.startingAttackDice); setCoinSlots([2, 0, 0]); setTokens({ ...EMPTY_TOKENS, [startingToken]: 1 }); setBackpack([null, null, null]); setSkills([null, null, null]); setSkillFaceUp([true, true, true]); setSkillUse(null); setSkillRoll(null); setTrapMods({ ...EMPTY_TRAP_MODS }); setLastEnemyDamagedHero(false); setKnockoutHandled(false); setRevealed({ 1: [], 2: [], 3: [] }); setCardsByCell({}); setScoutedByCell({}); setResolvedKeys([]); setCombatMods({ ...EMPTY_COMBAT_MODS }); setLootDiscard([]); setRealmThreeShrineId(null); setGameWon(null); setEnemy(null);
       const result = await postJson<{ card: FableCard | null }>("/api/fablefury/draw", { runId: setup.run_id, deckKey: "loot" });
       setLootInbox(result.card ? [result.card] : []); setPhase("gear");
     } catch (err) { setError(err instanceof Error ? err.message : "Could not start run."); }
@@ -666,6 +668,7 @@ export default function FableFurySoloRunV2() {
 
   async function prepareShrine(card: FableCard, key: string) {
     if (resolvedKeys.includes(key) || shrineStarted.includes(key)) return;
+    if (realm === 3) setRealmThreeShrineId(card.id);
     setShrineStarted((v) => [...v, key]); const messages: string[] = [];
     setHealth((v) => Math.min(hero.maxHealth, v + 1)); messages.push("Shrine: +1 Health.");
     if (card.id === "special-dragon-sanctuary") { setCoinSlots((v) => adjustCoinSlots(v, backpack, 1).slots); messages.push("Dragon Sanctuary: +1 Coin."); }
@@ -752,7 +755,29 @@ export default function FableFurySoloRunV2() {
     if (resolvedKeys.includes(key)) { notify(`${card.title} has already been defeated.`); return; }
     setLastEnemyDamagedHero(false);
     const data = enemyData(card); const setup = setupSteps(card, enemyContext());
-    setEnemy({ key, card, maxHealth: data.health * PARTY_COUNT, health: data.health * PARTY_COUNT, damage: Math.max(0, data.damage + combatMods.enemyDamageDelta), agility: clamp(data.agility + combatMods.enemyAgilityDelta, 1, 6), actionIndex: 0, phase: "setup", setup, setupIndex: 0, disabledSkillColors: [], noReward: false, messages: [`${data.haste ? "Haste — Enemy attacks first." : "Heroes attack first."}`] });
+    const damageMod = data.isBoss ? 0 : combatMods.enemyDamageDelta;
+    const agilityMod = data.isBoss ? 0 : combatMods.enemyAgilityDelta;
+    setEnemy({ key, card, maxHealth: data.health * PARTY_COUNT, health: data.health * PARTY_COUNT, damage: Math.max(0, data.damage + damageMod), agility: clamp(data.agility + agilityMod, 1, 6), actionIndex: 0, phase: "setup", setup, setupIndex: 0, disabledSkillColors: [], noReward: false, messages: [`${data.isBoss ? "FINAL MONSTER · " : ""}${data.haste ? "Haste — Monster attacks first." : "Heroes attack first."}`] });
+  }
+
+  async function startFinalMonster() {
+    const fallbackShrine = Object.entries(cardsByCell).find(([key, card]) => key.startsWith("3:") && card.subtype === "shrine" && resolvedKeys.includes(key))?.[1];
+    const shrineId = realmThreeShrineId ?? fallbackShrine?.id ?? null;
+    if (!shrineId) {
+      setError("Could not determine the Realm 3 Shrine for the final Monster.");
+      return;
+    }
+    setLoading("monster");
+    setError(null);
+    try {
+      const result = await postJson<{ card: FableCard }>("/api/fablefury/monster", { shrineId });
+      await prepareEnemy(result.card, `final:${result.card.id}`);
+      notify(`Final Monster: ${result.card.title}. Defeat it to win!`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not load the final Monster.");
+    } finally {
+      setLoading(null);
+    }
   }
 
   async function advanceEnemySetup(effects?: EnemyEffect[]) {
@@ -789,6 +814,18 @@ export default function FableFurySoloRunV2() {
       : adjusted.slice(1).filter((die) => die >= enemy.agility).length;
     const hits = coreHits + attackHits;
     const misses = adjusted.length - hits;
+    const missedAttackDice = combatMods.forceAttackDiceHit ? 0 : adjusted.slice(1).filter((die) => die < enemy.agility).length;
+    const zorgaOnes = enemy.card.id === "monster-battleaxe-zorga" ? raw.slice(1).filter((die) => die === 1).length : 0;
+    const bossMessages: string[] = [];
+
+    if (enemy.card.id === "monster-massive-max" && missedAttackDice > 0) {
+      setAttackDice((value) => Math.max(0, value - missedAttackDice));
+      bossMessages.push(`Immovable Object: lost ${missedAttackDice} missed Attack Die${missedAttackDice === 1 ? "" : "s"}.`);
+    }
+    if (zorgaOnes > 0) {
+      setHealth((value) => Math.max(0, value - zorgaOnes));
+      bossMessages.push(`Shadow Blade: ${zorgaOnes} Attack Die ${zorgaOnes === 1 ? "was" : "were"} 1 → lost ${zorgaOnes} Health.`);
+    }
 
     const reaction = heroRollReaction(enemy.card, raw, misses);
     await applyEnemyEffects(reaction.auto);
@@ -799,7 +836,8 @@ export default function FableFurySoloRunV2() {
     }
 
     const remainingHp = Math.max(0, enemy.health - hits);
-    setEnemy((v) => v ? { ...v, health: remainingHp, dice: undefined, messages: [...v.messages, `${hits} hit${hits === 1 ? "" : "s"} at Agility ${v.agility}+ → ${hits} damage.`] } : v);
+    const heroHealthAfterBossPassive = Math.max(0, health - zorgaOnes);
+    setEnemy((v) => v ? { ...v, health: remainingHp, dice: undefined, messages: [...v.messages, `${hits} hit${hits === 1 ? "" : "s"} at Agility ${v.agility}+ → ${hits} damage.`, ...bossMessages] } : v);
     setCombatMods((v) => ({ ...v, attackDiceBonus: 0, attackRollBonus: 0, rerollAttack: false, forceAttackDiceHit: false }));
 
     if (reaction.choice) {
@@ -807,14 +845,20 @@ export default function FableFurySoloRunV2() {
       return;
     }
     if (remainingHp <= 0) { setEnemy((v) => v ? { ...v, phase: "victory" } : v); return; }
-    if (health <= 0) { setEnemy((v) => v ? { ...v, phase: "defeat" } : v); return; }
+    if (heroHealthAfterBossPassive <= 0) { setEnemy((v) => v ? { ...v, phase: "defeat" } : v); return; }
     setEnemy((v) => v ? { ...v, phase: "enemyStart" } : v);
   }
 
   async function beginEnemyTurn() {
     if (!enemy) return; const start = enemyTurnStart(enemy.card);
     if (!start) { setEnemy((v) => v ? { ...v, phase: "enemy" } : v); return; }
-    if (start.kind === "auto") { await applyEnemyEffects(start.effects); setEnemy((v) => v ? { ...v, phase: "enemy" } : v); return; }
+    if (start.kind === "auto") {
+      const healthDelta = start.effects.reduce((sum, effect) => effect.type === "health" ? sum + effect.amount : sum, 0);
+      const willKnockOutHero = health + healthDelta <= 0;
+      await applyEnemyEffects(start.effects);
+      setEnemy((v) => v ? { ...v, phase: willKnockOutHero ? "defeat" : "enemy" } : v);
+      return;
+    }
     setEnemy((v) => v ? { ...v, choice: { prompt: start.prompt, options: start.options.map((o) => ({ label: o.label, effects: o.effects, disabled: !!o.requiresAttackDice && attackDice < o.requiresAttackDice })) } } : v);
   }
 
@@ -825,10 +869,15 @@ export default function FableFurySoloRunV2() {
   }
 
   function enemyDamageHero(amount: number) {
-    if (!enemy) return 0; const blocked = armorBlocksEnemy(enemy.card) ? Math.min(armor, amount) : 0; const lost = Math.max(0, amount - blocked); setHealth((v) => Math.max(0, v - lost)); return lost;
+    if (!enemy) return 0;
+    const blocked = armorBlocksEnemy(enemy.card) ? Math.min(armor, amount) : 0;
+    const lost = Math.max(0, amount - blocked);
+    if (enemy.card.id === "monster-massive-max" && health - lost <= 0) setArmor(0);
+    setHealth((v) => Math.max(0, v - lost));
+    return lost;
   }
 
-  async function finishEnemyAction(attack: EnemyAttack, targetedMiss: boolean, heroWasDamaged: boolean) {
+  async function finishEnemyAction(attack: EnemyAttack, targetedMiss: boolean, heroWasDamaged: boolean, heroWasKnockedOut = false) {
     if (!enemy) return;
     setLastEnemyDamagedHero(heroWasDamaged);
     const after = afterEnemyAction(enemy.card, attack, targetedMiss);
@@ -843,7 +892,7 @@ export default function FableFurySoloRunV2() {
       enemyKilled = enemyKilled || enemy.health <= 1;
     }
     if (enemyKilled) { setEnemy((v) => v ? { ...v, phase: "victory", targetPending: false, targetRoll: undefined } : v); return; }
-    if (health <= 0) { setEnemy((v) => v ? { ...v, phase: "defeat" } : v); return; }
+    if (heroWasKnockedOut || health <= 0) { setEnemy((v) => v ? { ...v, phase: "defeat" } : v); return; }
     setEnemy((v) => v ? (v.health <= 0 ? { ...v, phase: "victory", targetPending: false, targetRoll: undefined } : { ...v, actionIndex: (v.actionIndex + 1) % Math.max(1, enemyData(v.card).attacks.length), phase: "hero", targetPending: false, targetRoll: undefined }) : v);
   }
 
@@ -858,7 +907,7 @@ export default function FableFurySoloRunV2() {
     if (hit) lost = enemyDamageHero(enemy.damage);
     setCombatMods((v) => ({ ...v, targeting: null }));
     if (hit && hero.id === "hero-helga") setReactionRoll({ label: "Holding Space · Core Roll 5+ to gain 1 Armor", requirement: 5, onPass: "armor" });
-    await finishEnemyAction(attack, !hit, lost > 0);
+    await finishEnemyAction(attack, !hit, lost > 0, hit && health - lost <= 0);
   }
 
   async function executeEnemyAction() {
@@ -876,7 +925,7 @@ export default function FableFurySoloRunV2() {
     }
     if (attack.type === "[AA]") {
       const lost = enemyDamageHero(enemy.damage);
-      await finishEnemyAction(attack, false, lost > 0);
+      await finishEnemyAction(attack, false, lost > 0, health - lost <= 0);
       return;
     }
     if (attack.type === "[BA]") {
@@ -896,6 +945,17 @@ export default function FableFurySoloRunV2() {
 
   async function claimReward() {
     if (!enemy) return;
+    if (enemy.card.card_type === "monster") {
+      const defeatedMonster = enemy.card;
+      setResolvedKeys((v) => v.includes(enemy.key) ? v : [...v, enemy.key]);
+      setCombatMods({ ...EMPTY_COMBAT_MODS });
+      setEnemy(null);
+      setSelectedCard(null);
+      setSelectedCell(null);
+      setLastEnemyDamagedHero(false);
+      setGameWon(defeatedMonster);
+      return;
+    }
     const reward = parseReward(enemy.card);
     const boosting = skills.some((s) => s?.id === "skill-boosting" && skillActive(s)) ? 1 : 0;
     const bonus = combatMods.rewardBonus + boosting;
@@ -973,7 +1033,7 @@ export default function FableFurySoloRunV2() {
     notify(hasSkill(triggerCtx, "skill-lemonade-stand") ? "Portal: +1 Health. Lemonade Stand: +2 Coins. Welcome to the Gift Shop." : "Portal: +1 Health. Welcome to the Gift Shop.");
   }
 
-  function finishShopping() {
+  async function finishShopping() {
     if (lootInbox.length > 0) return notify("Store or discard purchased Loot first.");
     setShopOpen(false);
     setSelectedCard(null); setSelectedCell(null); setEventState(null); setEnemy(null); setScoutRemaining(0);
@@ -982,7 +1042,7 @@ export default function FableFurySoloRunV2() {
       setRealm((value) => value + 1);
       notify(`Realm ${realm + 1} begins.`);
     } else {
-      notify("Realm 3 complete. The Final Monster flow is the next system to wire.");
+      await startFinalMonster();
     }
   }
 
@@ -995,7 +1055,7 @@ export default function FableFurySoloRunV2() {
     if (result.card.card_type === "event" || result.card.id.startsWith("trap-")) await prepareEvent(result.card, key); else if (result.card.card_type === "enemy") await prepareEnemy(result.card, key); else if (result.card.card_type === "special" && result.card.subtype === "shrine") await prepareShrine(result.card, key);
   }
 
-  function resetRun() { setPhase("hero"); setRun(null); setStartingToken(null); setTargetNumber(null); setHealth(hero.startingHealth); setArmor(hero.startingArmor); setAttackDice(hero.startingAttackDice); setCoinSlots([0,0,0]); setTokens({ ...EMPTY_TOKENS }); setBackpack([null,null,null]); setSkills([null,null,null]); setSkillFaceUp([true,true,true]); setSkillUse(null); setSkillRoll(null); setSkillDraft(null); setSkillPaymentSlots([]); setTrapMods({ ...EMPTY_TRAP_MODS }); setLastEnemyDamagedHero(false); setKnockoutHandled(false); setLootInbox([]); setEnemy(null); setSelectedCard(null); setEventState(null); setShopOpen(false); }
+  function resetRun() { setPhase("hero"); setRun(null); setStartingToken(null); setTargetNumber(null); setHealth(hero.startingHealth); setArmor(hero.startingArmor); setAttackDice(hero.startingAttackDice); setCoinSlots([0,0,0]); setTokens({ ...EMPTY_TOKENS }); setBackpack([null,null,null]); setSkills([null,null,null]); setSkillFaceUp([true,true,true]); setSkillUse(null); setSkillRoll(null); setSkillDraft(null); setSkillPaymentSlots([]); setTrapMods({ ...EMPTY_TRAP_MODS }); setLastEnemyDamagedHero(false); setKnockoutHandled(false); setLootInbox([]); setRealmThreeShrineId(null); setGameWon(null); setEnemy(null); setSelectedCard(null); setEventState(null); setShopOpen(false); }
 
   const activeCells = map?.grid.active_cells ?? [];
 
@@ -1031,6 +1091,10 @@ export default function FableFurySoloRunV2() {
 
     {enemy && <EnemyModal enemy={enemy} heroName={hero.name} heroHealth={health} heroArmor={armor} heroAttackDice={attackDice} targetNumber={targetNumber ?? 1} tokens={tokens} combatMods={combatMods} skills={skills} skillFaceUp={skillFaceUp} onUseSkill={openSkill} triggerCtx={triggerCtx} coins={coins} onUseLoot={openLoot} backpack={backpack} coinSlots={coinSlots} onUseToken={useToken} onAdvanceSetup={advanceEnemySetup} onSetupRoll={() => setEnemy((v) => v ? { ...v, setupRoll: rollD6() } : v)} onResolveSetupRoll={resolveSetupRoll} onRollHero={rollHeroAttack} onRerollDie={rerollCombatDie} onPolymorph={polymorphDie} onResolveHero={resolveHeroAttack} onBeginEnemy={beginEnemyTurn} onEnemyAction={executeEnemyAction} onResolveTarget={resolveTargetedAttack} onChoice={applyEnemyChoice} onClaim={claimReward} />}
 
+    {gameWon && <ModalShell z="z-[800]"><section className="w-full max-w-[760px] rounded-[34px] border border-amber-300/30 bg-[#111821] p-8 text-center shadow-2xl"><div className="text-[11px] font-black uppercase tracking-[.28em] text-amber-300">Adventure Complete</div><div className="mt-3 text-6xl font-black tracking-[-.06em] text-[#fff2cf]">YOU WIN!</div><p className="mx-auto mt-4 max-w-xl text-base leading-7 text-white/60">You cleared all three Realms, passed through the final Portal, stocked up at the Gift Shop, and defeated <span className="font-black text-white">{gameWon.title}</span>.</p><div className="mx-auto mt-6 max-w-md rounded-3xl border border-amber-300/20 bg-amber-300/[.06] p-5"><div className="text-[9px] font-black uppercase tracking-[.16em] text-amber-300">Final Monster</div><div className="mt-1 text-3xl font-black text-[#fff2cf]">{gameWon.title}</div><div className="mt-1 text-sm font-bold text-white/45">{gameWon.race}</div></div><button onClick={resetRun} className="mt-7 w-full rounded-2xl bg-amber-300 px-6 py-4 text-lg font-black text-[#231707]">Start a New Adventure</button></section></ModalShell>}
+
+    {loading === "monster" && !enemy && !gameWon && <ModalShell z="z-[700]"><div className="rounded-[28px] border border-amber-300/20 bg-[#111821] px-10 py-8 text-center"><div className="text-[10px] font-black uppercase tracking-[.2em] text-amber-300">Final Battle</div><div className="mt-2 text-2xl font-black text-[#fff2cf]">Summoning your Monster…</div><div className="mt-2 text-sm text-white/45">Your Realm 3 Shrine decides who answers the Portal.</div></div></ModalShell>}
+
     {shopOpen && <ShopModal realm={realm} coins={coins} armor={armor} maxArmor={effectiveMaxArmor} armorCost={shopArmorCost} attackDice={attackDice} maxAttackDice={effectiveMaxDice} backpack={backpack} coinSlots={coinSlots} lootInbox={lootInbox} onBuyToken={buyShopToken} onBuyLoot={buyShopLoot} onBuyAttackDice={buyShopAttackDie} onBuyArmor={buyShopArmor} onSellLoot={sellShopLoot} onPackLoot={packLoot} onDiscardLoot={discardInbox} onFinish={finishShopping} />}
 
     {skillRoll && <ModalShell z="z-[600]"><section className="grid w-full max-w-[850px] gap-5 md:grid-cols-[280px_1fr]"><CardImage card={skillRoll.card} className="w-full rounded-[24px]" /><div className="rounded-[28px] border border-white/10 bg-[#111821] p-6"><div className="text-[10px] font-black uppercase tracking-[.16em] text-amber-300">Skill Core Roll</div><h2 className="mt-2 text-3xl font-black">{skillRoll.card.title}</h2><p className="mt-2 text-sm text-white/50">Core Roll {skillRoll.requirement}+ to apply this Skill.</p>{skillRoll.roll == null ? <button onClick={() => setSkillRoll((state) => state ? { ...state, roll: rollD6() } : state)} className="mt-5 rounded-2xl bg-amber-300 px-6 py-3 font-black text-[#231707]">Roll Core Die</button> : <><div className="mt-5 flex items-center gap-3"><div className="grid h-20 w-20 place-items-center rounded-2xl bg-[#fff2cf] text-4xl font-black text-[#231707]">{skillRoll.roll}</div><button disabled={tokens.lucky <= 0} onClick={() => useToken("lucky")} className="rounded-xl border border-white/10 px-4 py-3 text-xs font-black text-amber-300 disabled:opacity-30">Lucky reroll</button></div><div className="mt-5 rounded-2xl border border-white/10 bg-black/20 p-3"><div className="mb-2 text-[9px] font-black uppercase tracking-[.14em] text-white/35">Dice Skills may modify this roll</div><SkillRack skills={skills} faceUp={skillFaceUp} disabledColors={disabledSkillColors} onUse={openSkill} compact /></div><button onClick={resolveSkillRoll} className="mt-4 w-full rounded-2xl bg-amber-300 px-5 py-3 font-black text-[#231707]">Accept {skillRoll.roll}</button></>}</div></section></ModalShell>}
@@ -1050,17 +1114,28 @@ function EventControls({ state, coins, tokens, onRoll, onLucky, onAccept, onChoi
   return <button onClick={onRoll} className="mt-5 w-full rounded-xl bg-amber-300 p-3 font-black text-[#231707]">Roll Core Die</button>;
 }
 
+function MonsterMat({ enemy }: { enemy: EnemyCombatState }) {
+  const data = enemyData(enemy.card);
+  return <div className="overflow-hidden rounded-[30px] border border-amber-300/25 bg-gradient-to-b from-[#241b13] via-[#17151a] to-[#0d1219] p-5 shadow-2xl">
+    <div className="flex items-center justify-between gap-3"><div className="text-[10px] font-black uppercase tracking-[.2em] text-amber-300">Final Monster</div><div className="rounded-full border border-white/10 bg-black/30 px-3 py-1 text-[9px] font-black uppercase tracking-[.12em] text-white/55">{enemy.card.race}</div></div>
+    <h2 className="mt-2 text-4xl font-black tracking-[-.04em] text-[#fff2cf]">{enemy.card.title}</h2>
+    <div className="mt-4 grid grid-cols-3 gap-2"><div className="rounded-2xl bg-red-400/10 p-3 text-center"><div className="text-[8px] font-black uppercase text-red-200/55">Health</div><div className="text-3xl font-black text-red-100">{enemy.health}<span className="text-sm text-white/30">/{enemy.maxHealth}</span></div></div><div className="rounded-2xl bg-orange-400/10 p-3 text-center"><div className="text-[8px] font-black uppercase text-orange-200/55">Damage</div><div className="text-3xl font-black text-orange-100">{enemy.damage}</div></div><div className="rounded-2xl bg-cyan-400/10 p-3 text-center"><div className="text-[8px] font-black uppercase text-cyan-200/55">Agility</div><div className="text-3xl font-black text-cyan-100">{enemy.agility}+</div></div></div>
+    <div className="mt-4 grid grid-cols-2 gap-2">{data.passives.map((passive, index) => <div key={`${passive.title}-${index}`} className="rounded-2xl border border-amber-300/15 bg-amber-300/[.06] p-3"><div className="text-[9px] font-black uppercase tracking-[.12em] text-amber-300">{passive.title}</div><div className="mt-1 text-[11px] font-semibold leading-5 text-white/65">{passive.text}</div></div>)}</div>
+    <div className="mt-4 rounded-2xl border border-white/10 bg-black/25 p-3"><div className="mb-2 flex items-center justify-between"><div className="text-[9px] font-black uppercase tracking-[.14em] text-white/35">6-turn attack cycle</div><div className="text-[9px] font-black text-white/35">{data.haste ? "⚡ Haste" : "Heroes first"}</div></div><div className="grid grid-cols-2 gap-2">{data.attacks.map((attack, index) => <div key={`${attack.name}-${index}`} className={`rounded-xl border p-2 ${index === enemy.actionIndex && enemy.phase !== "setup" ? "border-amber-300/55 bg-amber-300/10" : "border-white/10 bg-white/[.025]"}`}><div className="text-[8px] font-black uppercase text-white/30">Turn {index + 1} · {attack.type}</div><div className="mt-1 text-xs font-black text-[#fff2cf]">{attack.name}</div><div className="mt-1 text-[9px] text-white/40">{(attack.effects ?? []).join(" · ") || (attack.type === "[TA]" ? "Targeted Attack" : attack.type === "[AA]" ? "Area Attack" : "Buff")}</div></div>)}</div></div>
+  </div>;
+}
+
 function EnemyModal({ enemy, heroName, heroHealth, heroArmor, heroAttackDice, targetNumber, tokens, combatMods, skills, skillFaceUp, onUseSkill, triggerCtx, coins, onUseLoot, backpack, coinSlots, onUseToken, onAdvanceSetup, onSetupRoll, onResolveSetupRoll, onRollHero, onRerollDie, onPolymorph, onResolveHero, onBeginEnemy, onEnemyAction, onResolveTarget, onChoice, onClaim }: {
   enemy: EnemyCombatState; heroName: string; heroHealth: number; heroArmor: number; heroAttackDice: number; targetNumber: number; tokens: TokenCounts; combatMods: CombatMods; skills: Array<FableCard | null>; skillFaceUp: boolean[]; onUseSkill: (slot: number) => void; triggerCtx: { heroId: string; skills: Array<FableCard | null>; disabledSkillColors?: SkillColor[] }; coins: number; onUseLoot: (slot:number)=>void; backpack:Array<FableCard|null>; coinSlots:number[]; onUseToken:(token:TokenKind)=>void; onAdvanceSetup:(effects?:EnemyEffect[])=>void; onSetupRoll:()=>void; onResolveSetupRoll:()=>void; onRollHero:()=>void; onRerollDie:(index:number,free?:boolean)=>void; onPolymorph:(index:number)=>void; onResolveHero:()=>void; onBeginEnemy:()=>void; onEnemyAction:()=>void; onResolveTarget:()=>void; onChoice:(index:number)=>void; onClaim:()=>void;
 }) {
-  const data = enemyData(enemy.card); const attack = data.attacks[enemy.actionIndex]; const step = enemy.setup[enemy.setupIndex]; const counts = enemy.dice ? diceCounts(enemy.dice) : new Map<number,number>(); const hasBeBetter = hasSkill(triggerCtx, "skill-be-better"); const hasPolymorph = hasSkill(triggerCtx, "skill-polymorph");
-  return <ModalShell z="z-[300]"><section className="grid w-full max-w-[1320px] gap-5 xl:grid-cols-[380px_1fr_340px]"><div className="rounded-[28px] border border-white/10 bg-[#111821] p-4"><CardImage card={enemy.card} className="w-full rounded-[22px]" /><div className="mt-3 grid grid-cols-3 gap-2"><div className="rounded-xl bg-red-400/10 p-3 text-center"><div className="text-[9px] font-black uppercase text-red-200/60">Health × Party</div><div className="text-2xl font-black text-red-200">{enemy.health}/{enemy.maxHealth}</div></div><div className="rounded-xl bg-orange-400/10 p-3 text-center"><div className="text-[9px] font-black uppercase text-orange-200/60">Damage</div><div className="text-2xl font-black text-orange-200">{enemy.damage}</div></div><div className="rounded-xl bg-cyan-400/10 p-3 text-center"><div className="text-[9px] font-black uppercase text-cyan-200/60">Agility</div><div className="text-2xl font-black text-cyan-200">{enemy.agility}+</div></div></div><div className="mt-3 flex items-center justify-between rounded-xl border border-white/10 p-3"><div><div className="text-[9px] font-black uppercase text-white/30">Initiative</div><div className="font-black">{data.haste ? "⚡ Haste — Enemy first" : "Heroes first"}</div></div><div className="text-right"><div className="text-[9px] font-black uppercase text-white/30">Reward</div><div className="font-black text-amber-300">{data.rewards || "None"}</div></div></div></div><div className="rounded-[28px] border border-white/10 bg-[#111821] p-6"><div className="flex flex-wrap items-center justify-between gap-3"><div><div className="text-[10px] font-black uppercase tracking-[.16em] text-amber-300">{enemy.card.difficulty} {enemy.card.race}</div><h2 className="text-4xl font-black text-[#fff2cf]">{enemy.card.title}</h2></div><div className={`rounded-full px-4 py-2 text-xs font-black uppercase ${enemy.phase === "hero" ? "bg-emerald-300 text-[#102319]" : enemy.phase.startsWith("enemy") ? "bg-red-300 text-[#291010]" : "bg-amber-300 text-[#271a0b]"}`}>{enemy.phase}</div></div><div className="mt-4 rounded-2xl border border-white/10 bg-black/20 p-4"><div className="text-[10px] font-black uppercase tracking-[.14em] text-white/35">{data.action_name ?? "Special Action"}</div><div className="mt-1 whitespace-pre-line text-sm font-semibold leading-6 text-white/70">{enemy.card.rules_text || "No special action."}</div></div><div className="mt-4 grid grid-cols-3 gap-2">{data.attacks.map((a,i) => <div key={`${a.name}-${i}`} className={`rounded-2xl border p-3 ${i === enemy.actionIndex && enemy.phase !== "setup" ? "border-amber-300/60 bg-amber-300/10" : "border-white/10 bg-black/20"}`}><div className="text-[9px] font-black uppercase text-white/35">Turn {i+1} · {a.type}</div><div className="mt-1 font-black">{a.name}</div><div className="mt-1 text-[10px] text-white/45">{(a.effects ?? []).join(" · ") || (a.type === "[TA]" ? "Targeted Attack" : a.type === "[AA]" ? "Attack Everyone" : "Stat action")}</div></div>)}</div>
+  const data = enemyData(enemy.card); const isBoss = data.isBoss || enemy.card.card_type === "monster"; const attack = data.attacks[enemy.actionIndex]; const step = enemy.setup[enemy.setupIndex]; const counts = enemy.dice ? diceCounts(enemy.dice) : new Map<number,number>(); const hasBeBetter = hasSkill(triggerCtx, "skill-be-better"); const hasPolymorph = hasSkill(triggerCtx, "skill-polymorph");
+  return <ModalShell z="z-[300]"><section className={`grid w-full gap-5 ${isBoss ? "max-w-[1500px] xl:grid-cols-[500px_1fr_340px]" : "max-w-[1320px] xl:grid-cols-[380px_1fr_340px]"}`}><div className={isBoss ? "" : "rounded-[28px] border border-white/10 bg-[#111821] p-4"}>{isBoss ? <MonsterMat enemy={enemy} /> : <><CardImage card={enemy.card} className="w-full rounded-[22px]" /><div className="mt-3 grid grid-cols-3 gap-2"><div className="rounded-xl bg-red-400/10 p-3 text-center"><div className="text-[9px] font-black uppercase text-red-200/60">Health × Party</div><div className="text-2xl font-black text-red-200">{enemy.health}/{enemy.maxHealth}</div></div><div className="rounded-xl bg-orange-400/10 p-3 text-center"><div className="text-[9px] font-black uppercase text-orange-200/60">Damage</div><div className="text-2xl font-black text-orange-200">{enemy.damage}</div></div><div className="rounded-xl bg-cyan-400/10 p-3 text-center"><div className="text-[9px] font-black uppercase text-cyan-200/60">Agility</div><div className="text-2xl font-black text-cyan-200">{enemy.agility}+</div></div></div><div className="mt-3 flex items-center justify-between rounded-xl border border-white/10 p-3"><div><div className="text-[9px] font-black uppercase text-white/30">Initiative</div><div className="font-black">{data.haste ? "⚡ Haste — Enemy first" : "Heroes first"}</div></div><div className="text-right"><div className="text-[9px] font-black uppercase text-white/30">Reward</div><div className="font-black text-amber-300">{data.rewards || "None"}</div></div></div></>}</div><div className="rounded-[28px] border border-white/10 bg-[#111821] p-6"><div className="flex flex-wrap items-center justify-between gap-3"><div><div className="text-[10px] font-black uppercase tracking-[.16em] text-amber-300">{isBoss ? `Final Monster · ${enemy.card.race}` : `${enemy.card.difficulty ?? ""} ${enemy.card.race ?? ""}`}</div><h2 className="text-4xl font-black text-[#fff2cf]">{enemy.card.title}</h2></div><div className={`rounded-full px-4 py-2 text-xs font-black uppercase ${enemy.phase === "hero" ? "bg-emerald-300 text-[#102319]" : enemy.phase.startsWith("enemy") ? "bg-red-300 text-[#291010]" : "bg-amber-300 text-[#271a0b]"}`}>{enemy.phase}</div></div>{isBoss ? <div className="mt-4 grid gap-2 md:grid-cols-2">{data.passives.map((passive, index) => <div key={`${passive.title}-detail-${index}`} className="rounded-2xl border border-amber-300/20 bg-amber-300/[.07] p-4"><div className="text-[10px] font-black uppercase tracking-[.14em] text-amber-300">{passive.title}</div><div className="mt-1 text-sm font-semibold leading-6 text-white/70">{passive.text}</div></div>)}</div> : <div className="mt-4 rounded-2xl border border-white/10 bg-black/20 p-4"><div className="text-[10px] font-black uppercase tracking-[.14em] text-white/35">{data.action_name ?? "Special Action"}</div><div className="mt-1 whitespace-pre-line text-sm font-semibold leading-6 text-white/70">{enemy.card.rules_text || "No special action."}</div></div>}<div className={`mt-4 grid gap-2 ${isBoss ? "grid-cols-2 md:grid-cols-3" : "grid-cols-3"}`}>{data.attacks.map((a,i) => <div key={`${a.name}-${i}`} className={`rounded-2xl border p-3 ${i === enemy.actionIndex && enemy.phase !== "setup" ? "border-amber-300/60 bg-amber-300/10" : "border-white/10 bg-black/20"}`}><div className="text-[9px] font-black uppercase text-white/35">Turn {i+1} · {a.type}</div><div className="mt-1 font-black">{a.name}</div><div className="mt-1 text-[10px] text-white/45">{(a.effects ?? []).join(" · ") || (a.type === "[TA]" ? "Targeted Attack" : a.type === "[AA]" ? "Attack Everyone" : "Stat action")}</div></div>)}</div>
       {enemy.phase === "setup" && <div className="mt-5 rounded-2xl border border-amber-300/20 bg-amber-300/10 p-4">{step ? <>{step.kind === "auto" && <><div className="font-black">Setup effect</div><button onClick={() => onAdvanceSetup(step.effects)} className="mt-3 rounded-xl bg-amber-300 px-4 py-3 font-black text-[#231707]">Apply & Continue</button></>}{step.kind === "choice" && <><div className="font-black">{step.prompt}</div><div className="mt-3 grid gap-2">{step.options.map((o,i) => <button key={i} disabled={(o.requiresCoins ?? 0) > coins || (o.requiresArmor ?? 0) > heroArmor || (o.requiresLoot ?? 0) > backpack.filter(Boolean).length} onClick={() => onAdvanceSetup(o.effects)} className="rounded-xl bg-amber-300 p-3 text-left font-black text-[#231707] disabled:opacity-25">{o.label}</button>)}</div></>}{step.kind === "roll" && <><div className="font-black">{step.prompt}</div>{enemy.setupRoll == null ? <button onClick={onSetupRoll} className="mt-3 rounded-xl bg-amber-300 px-4 py-3 font-black text-[#231707]">Roll Core Die</button> : <div className="mt-3 flex items-center gap-3"><Die value={enemy.setupRoll} onLucky={() => onUseToken("lucky")} lucky={tokens.lucky} /><button onClick={onResolveSetupRoll} className="rounded-xl bg-amber-300 px-4 py-3 font-black text-[#231707]">Accept {enemy.setupRoll}</button></div>}</>}</> : <button onClick={() => onAdvanceSetup()} className="rounded-xl bg-amber-300 px-4 py-3 font-black text-[#231707]">Begin Combat</button>}</div>}
       {enemy.choice && <div className="mt-5 rounded-2xl border border-fuchsia-300/20 bg-fuchsia-300/10 p-4"><div className="font-black">{enemy.choice.prompt}</div><div className="mt-3 grid gap-2">{enemy.choice.options.map((o,i) => <button key={i} disabled={o.disabled} onClick={() => onChoice(i)} className="rounded-xl bg-fuchsia-200 p-3 text-left font-black text-[#2a1430] disabled:opacity-25">{o.label}</button>)}</div></div>}
       {enemy.phase === "hero" && !enemy.choice && <div className="mt-5 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4"><div className="font-black">{heroName}'s turn · Roll 1 Core Die + {heroAttackDice + combatMods.attackDiceBonus} Attack Dice</div>{!enemy.dice ? <button onClick={onRollHero} className="mt-3 rounded-xl bg-emerald-300 px-5 py-3 font-black text-[#102319]">Roll {1 + heroAttackDice + combatMods.attackDiceBonus} Dice</button> : <><div className="mt-3 flex flex-wrap gap-2">{enemy.dice.map((die,i) => <Die key={i} value={Math.min(6, die + combatMods.attackRollBonus)} hit={Math.min(6, die + combatMods.attackRollBonus) >= enemy.agility} onLucky={() => onRerollDie(i)} lucky={tokens.lucky} extra={<div className="mt-1 space-y-1">{hasBeBetter && die === 1 && <button onClick={() => onRerollDie(i,true)} className="block w-full text-[8px] font-black uppercase text-emerald-300">Be Better: reroll</button>}{hasPolymorph && die === 2 && <button onClick={() => onPolymorph(i)} className="block w-full text-[8px] font-black uppercase text-cyan-300">Polymorph → 6</button>}</div>} />)}</div>{combatMods.rerollAttack && <div className="mt-2 text-xs text-amber-200">A Loot reroll is armed; Lucky Charm and passive rerolls are also available before resolving.</div>}<button onClick={onResolveHero} className="mt-3 rounded-xl bg-emerald-300 px-5 py-3 font-black text-[#102319]">Resolve Attack</button></>}</div>}
-      {enemy.phase === "enemyStart" && !enemy.choice && <div className="mt-5 rounded-2xl border border-red-300/20 bg-red-300/10 p-4"><div className="font-black">Enemy turn begins.</div><button onClick={onBeginEnemy} className="mt-3 rounded-xl bg-red-200 px-5 py-3 font-black text-[#291010]">Begin Enemy Turn</button></div>}
-      {enemy.phase === "enemy" && !enemy.choice && <div className="mt-5 rounded-2xl border border-red-300/20 bg-red-300/10 p-4"><div className="font-black">Turn {enemy.actionIndex + 1}: {attack?.name} {attack?.type}</div>{enemy.targetPending && enemy.targetRoll != null ? <div className="mt-3"><div className="text-xs text-white/55">Target Spot is {targetNumber}. The Enemy rolled:</div><div className="mt-2 flex items-center gap-3"><Die value={enemy.targetRoll} onLucky={() => onUseToken("lucky")} lucky={tokens.lucky} /><button onClick={onResolveTarget} className="rounded-xl bg-red-200 px-5 py-3 font-black text-[#291010]">Resolve Target</button></div></div> : <button onClick={onEnemyAction} className="mt-3 rounded-xl bg-red-200 px-5 py-3 font-black text-[#291010]">Resolve Enemy Action</button>}</div>}
-      {enemy.phase === "victory" && <div className="mt-5 rounded-2xl border border-amber-300/30 bg-amber-300/10 p-5"><div className="text-2xl font-black text-amber-100">Enemy defeated!</div><p className="mt-2 text-sm text-white/55">In solo, the Party Leader receives the full reward. Clear-trigger Core Skills and Shrine Skills also fire now.</p><button onClick={onClaim} className="mt-4 rounded-xl bg-amber-300 px-5 py-3 font-black text-[#231707]">Claim Reward & Clear Location</button></div>}
+      {enemy.phase === "enemyStart" && !enemy.choice && <div className="mt-5 rounded-2xl border border-red-300/20 bg-red-300/10 p-4"><div className="font-black">{isBoss ? "Monster" : "Enemy"} turn begins.</div><button onClick={onBeginEnemy} className="mt-3 rounded-xl bg-red-200 px-5 py-3 font-black text-[#291010]">Begin Enemy Turn</button></div>}
+      {enemy.phase === "enemy" && !enemy.choice && <div className="mt-5 rounded-2xl border border-red-300/20 bg-red-300/10 p-4"><div className="font-black">Turn {enemy.actionIndex + 1}: {attack?.name} {attack?.type}</div>{enemy.targetPending && enemy.targetRoll != null ? <div className="mt-3"><div className="text-xs text-white/55">Target Spot is {targetNumber}. The {isBoss ? "Monster" : "Enemy"} rolled:</div><div className="mt-2 flex items-center gap-3"><Die value={enemy.targetRoll} onLucky={() => onUseToken("lucky")} lucky={tokens.lucky} /><button onClick={onResolveTarget} className="rounded-xl bg-red-200 px-5 py-3 font-black text-[#291010]">Resolve Target</button></div></div> : <button onClick={onEnemyAction} className="mt-3 rounded-xl bg-red-200 px-5 py-3 font-black text-[#291010]">Resolve {isBoss ? "Monster" : "Enemy"} Action</button>}</div>}
+      {enemy.phase === "victory" && <div className="mt-5 rounded-2xl border border-amber-300/30 bg-amber-300/10 p-5"><div className="text-2xl font-black text-amber-100">{isBoss ? "Final Monster defeated!" : "Enemy defeated!"}</div><p className="mt-2 text-sm text-white/55">{isBoss ? "You survived all three Realms and defeated the Monster tied to your Realm 3 Rune." : "In solo, the Party Leader receives the full reward. Clear-trigger Core Skills and Shrine Skills also fire now."}</p><button onClick={onClaim} className="mt-4 rounded-xl bg-amber-300 px-5 py-3 font-black text-[#231707]">{isBoss ? "Finish the Adventure" : "Claim Reward & Clear Location"}</button></div>}
       {enemy.phase === "defeat" && <div className="mt-5 rounded-2xl border border-red-400/30 bg-red-400/10 p-5"><div className="text-2xl font-black text-red-100">{heroName} is knocked out.</div><div className="mt-2 text-sm text-white/50">KO flow/revival will be wired with the next systems pass.</div></div>}
       {enemy.messages.length > 0 && <div className="mt-5 max-h-36 space-y-1 overflow-y-auto">{enemy.messages.slice(-8).map((m,i) => <div key={i} className="rounded-lg bg-black/20 px-3 py-2 text-[11px] text-white/50">{m}</div>)}</div>}</div><div className="space-y-4"><div className="rounded-[24px] border border-white/10 bg-[#111821] p-4"><div className="text-[9px] font-black uppercase tracking-[.14em] text-amber-300">Your Hero</div><div className="mt-2 grid gap-2"><Stat art={FABLE_STAT_ART.health} label="Health" value={heroHealth} /><Stat art={FABLE_STAT_ART.armor} label="Armor" value={heroArmor} /><Stat art={FABLE_STAT_ART.attackDice} label="Attack Dice" value={heroAttackDice} /><Stat art={FABLE_STAT_ART.coins} label="Target Spot" value={targetNumber} /></div></div><Backpack backpack={backpack} coinSlots={coinSlots} tokens={tokens} onUseLoot={onUseLoot} onUseToken={onUseToken} /><div className="rounded-[24px] border border-white/10 bg-[#111821] p-4"><div className="text-[9px] font-black uppercase tracking-[.14em] text-white/35">Skills · click to use</div><div className="mt-2"><SkillRack skills={skills} faceUp={skillFaceUp} disabledColors={enemy.disabledSkillColors} onUse={onUseSkill} compact /></div></div></div></section></ModalShell>;
 }
