@@ -1,0 +1,7 @@
+const FABLE_STORAGE_ROOT =
+  "https://zqwdooykgwkfhwyayucg.supabase.co/storage/v1/object/public/fable-fury-assets";
+
+export function fableAsset(path: string) {
+  const encoded = path.split("/").map((segment) => encodeURIComponent(segment)).join("/");
+  return `${FABLE_STORAGE_ROOT}/${encoded}`;
+}
