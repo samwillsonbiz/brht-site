@@ -1,4 +1,4 @@
-const FABLE_STORAGE_ROOT =
+// Public game-art origin. Keep runtime assets off Google Drive.\nconst FABLE_STORAGE_ROOT =
   "https://zqwdooykgwkfhwyayucg.supabase.co/storage/v1/object/public/fable-fury-assets";
 
 export function fableAsset(path: string) {
