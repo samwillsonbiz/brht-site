@@ -223,8 +223,10 @@ export default function FableFurySoloRunV2() {
   const [eventHistory, setEventHistory] = useState<Record<string, string[]>>({});
   const [specialHistory, setSpecialHistory] = useState<Record<string, string[]>>({});
   const [shrineStarted, setShrineStarted] = useState<string[]>([]);
+  const [realmThreeShrineId, setRealmThreeShrineId] = useState<string | null>(null);
   const [shopOpen, setShopOpen] = useState(false);
   const [enemy, setEnemy] = useState<EnemyCombatState | null>(null);
+  const [gameWon, setGameWon] = useState<FableCard | null>(null);
   const [reactionRoll, setReactionRoll] = useState<{ label: string; requirement: number; roll?: number; onPass: "armor" | "attackDice" } | null>(null);
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -292,7 +294,7 @@ export default function FableFurySoloRunV2() {
     setLoading("setup"); setError(null);
     try {
       const setup = await postJson<RunSetup>("/api/fablefury/run", { heroIds: [hero.id] });
-      setRun(setup); setHealth(hero.startingHealth); setArmor(hero.startingArmor); setAttackDice(hero.startingAttackDice); setCoinSlots([2, 0, 0]); setTokens({ ...EMPTY_TOKENS, [startingToken]: 1 }); setBackpack([null, null, null]); setSkills([null, null, null]); setSkillFaceUp([true, true, true]); setSkillUse(null); setSkillRoll(null); setTrapMods({ ...EMPTY_TRAP_MODS }); setLastEnemyDamagedHero(false); setKnockoutHandled(false); setRevealed({ 1: [], 2: [], 3: [] }); setCardsByCell({}); setScoutedByCell({}); setResolvedKeys([]); setCombatMods({ ...EMPTY_COMBAT_MODS }); setLootDiscard([]); setEnemy(null);
+      setRun(setup); setHealth(hero.startingHealth); setArmor(hero.startingArmor); setAttackDice(hero.startingAttackDice); setCoinSlots([2, 0, 0]); setTokens({ ...EMPTY_TOKENS, [startingToken]: 1 }); setBackpack([null, null, null]); setSkills([null, null, null]); setSkillFaceUp([true, true, true]); setSkillUse(null); setSkillRoll(null); setTrapMods({ ...EMPTY_TRAP_MODS }); setLastEnemyDamagedHero(false); setKnockoutHandled(false); setRevealed({ 1: [], 2: [], 3: [] }); setCardsByCell({}); setScoutedByCell({}); setResolvedKeys([]); setCombatMods({ ...EMPTY_COMBAT_MODS }); setLootDiscard([]); setRealmThreeShrineId(null); setGameWon(null); setEnemy(null);
       const result = await postJson<{ card: FableCard | null }>("/api/fablefury/draw", { runId: setup.run_id, deckKey: "loot" });
       setLootInbox(result.card ? [result.card] : []); setPhase("gear");
     } catch (err) { setError(err instanceof Error ? err.message : "Could not start run."); }
@@ -666,6 +668,7 @@ export default function FableFurySoloRunV2() {
 
   async function prepareShrine(card: FableCard, key: string) {
     if (resolvedKeys.includes(key) || shrineStarted.includes(key)) return;
+    if (realm === 3) setRealmThreeShrineId(card.id);
     setShrineStarted((v) => [...v, key]); const messages: string[] = [];
     setHealth((v) => Math.min(hero.maxHealth, v + 1)); messages.push("Shrine: +1 Health.");
     if (card.id === "special-dragon-sanctuary") { setCoinSlots((v) => adjustCoinSlots(v, backpack, 1).slots); messages.push("Dragon Sanctuary: +1 Coin."); }
@@ -752,7 +755,29 @@ export default function FableFurySoloRunV2() {
     if (resolvedKeys.includes(key)) { notify(`${card.title} has already been defeated.`); return; }
     setLastEnemyDamagedHero(false);
     const data = enemyData(card); const setup = setupSteps(card, enemyContext());
-    setEnemy({ key, card, maxHealth: data.health * PARTY_COUNT, health: data.health * PARTY_COUNT, damage: Math.max(0, data.damage + combatMods.enemyDamageDelta), agility: clamp(data.agility + combatMods.enemyAgilityDelta, 1, 6), actionIndex: 0, phase: "setup", setup, setupIndex: 0, disabledSkillColors: [], noReward: false, messages: [`${data.haste ? "Haste — Enemy attacks first." : "Heroes attack first."}`] });
+    const damageMod = data.isBoss ? 0 : combatMods.enemyDamageDelta;
+    const agilityMod = data.isBoss ? 0 : combatMods.enemyAgilityDelta;
+    setEnemy({ key, card, maxHealth: data.health * PARTY_COUNT, health: data.health * PARTY_COUNT, damage: Math.max(0, data.damage + damageMod), agility: clamp(data.agility + agilityMod, 1, 6), actionIndex: 0, phase: "setup", setup, setupIndex: 0, disabledSkillColors: [], noReward: false, messages: [`${data.isBoss ? "FINAL MONSTER · " : ""}${data.haste ? "Haste — Monster attacks first." : "Heroes attack first."}`] });
+  }
+
+  async function startFinalMonster() {
+    const fallbackShrine = Object.entries(cardsByCell).find(([key, card]) => key.startsWith("3:") && card.subtype === "shrine" && resolvedKeys.includes(key))?.[1];
+    const shrineId = realmThreeShrineId ?? fallbackShrine?.id ?? null;
+    if (!shrineId) {
+      setError("Could not determine the Realm 3 Shrine for the final Monster.");
+      return;
+    }
+    setLoading("monster");
+    setError(null);
+    try {
+      const result = await postJson<{ card: FableCard }>("/api/fablefury/monster", { shrineId });
+      await prepareEnemy(result.card, `final:${result.card.id}`);
+      notify(`Final Monster: ${result.card.title}. Defeat it to win!`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not load the final Monster.");
+    } finally {
+      setLoading(null);
+    }
   }
 
   async function advanceEnemySetup(effects?: EnemyEffect[]) {
@@ -825,7 +850,12 @@ export default function FableFurySoloRunV2() {
   }
 
   function enemyDamageHero(amount: number) {
-    if (!enemy) return 0; const blocked = armorBlocksEnemy(enemy.card) ? Math.min(armor, amount) : 0; const lost = Math.max(0, amount - blocked); setHealth((v) => Math.max(0, v - lost)); return lost;
+    if (!enemy) return 0;
+    const blocked = armorBlocksEnemy(enemy.card) ? Math.min(armor, amount) : 0;
+    const lost = Math.max(0, amount - blocked);
+    if (enemy.card.id === "monster-massive-max" && health - lost <= 0) setArmor(0);
+    setHealth((v) => Math.max(0, v - lost));
+    return lost;
   }
 
   async function finishEnemyAction(attack: EnemyAttack, targetedMiss: boolean, heroWasDamaged: boolean) {
@@ -896,6 +926,17 @@ export default function FableFurySoloRunV2() {
 
   async function claimReward() {
     if (!enemy) return;
+    if (enemy.card.card_type === "monster") {
+      const defeatedMonster = enemy.card;
+      setResolvedKeys((v) => v.includes(enemy.key) ? v : [...v, enemy.key]);
+      setCombatMods({ ...EMPTY_COMBAT_MODS });
+      setEnemy(null);
+      setSelectedCard(null);
+      setSelectedCell(null);
+      setLastEnemyDamagedHero(false);
+      setGameWon(defeatedMonster);
+      return;
+    }
     const reward = parseReward(enemy.card);
     const boosting = skills.some((s) => s?.id === "skill-boosting" && skillActive(s)) ? 1 : 0;
     const bonus = combatMods.rewardBonus + boosting;
@@ -973,7 +1014,7 @@ export default function FableFurySoloRunV2() {
     notify(hasSkill(triggerCtx, "skill-lemonade-stand") ? "Portal: +1 Health. Lemonade Stand: +2 Coins. Welcome to the Gift Shop." : "Portal: +1 Health. Welcome to the Gift Shop.");
   }
 
-  function finishShopping() {
+  async function finishShopping() {
     if (lootInbox.length > 0) return notify("Store or discard purchased Loot first.");
     setShopOpen(false);
     setSelectedCard(null); setSelectedCell(null); setEventState(null); setEnemy(null); setScoutRemaining(0);
@@ -982,7 +1023,7 @@ export default function FableFurySoloRunV2() {
       setRealm((value) => value + 1);
       notify(`Realm ${realm + 1} begins.`);
     } else {
-      notify("Realm 3 complete. The Final Monster flow is the next system to wire.");
+      await startFinalMonster();
     }
   }
 
@@ -995,7 +1036,7 @@ export default function FableFurySoloRunV2() {
     if (result.card.card_type === "event" || result.card.id.startsWith("trap-")) await prepareEvent(result.card, key); else if (result.card.card_type === "enemy") await prepareEnemy(result.card, key); else if (result.card.card_type === "special" && result.card.subtype === "shrine") await prepareShrine(result.card, key);
   }
 
-  function resetRun() { setPhase("hero"); setRun(null); setStartingToken(null); setTargetNumber(null); setHealth(hero.startingHealth); setArmor(hero.startingArmor); setAttackDice(hero.startingAttackDice); setCoinSlots([0,0,0]); setTokens({ ...EMPTY_TOKENS }); setBackpack([null,null,null]); setSkills([null,null,null]); setSkillFaceUp([true,true,true]); setSkillUse(null); setSkillRoll(null); setSkillDraft(null); setSkillPaymentSlots([]); setTrapMods({ ...EMPTY_TRAP_MODS }); setLastEnemyDamagedHero(false); setKnockoutHandled(false); setLootInbox([]); setEnemy(null); setSelectedCard(null); setEventState(null); setShopOpen(false); }
+  function resetRun() { setPhase("hero"); setRun(null); setStartingToken(null); setTargetNumber(null); setHealth(hero.startingHealth); setArmor(hero.startingArmor); setAttackDice(hero.startingAttackDice); setCoinSlots([0,0,0]); setTokens({ ...EMPTY_TOKENS }); setBackpack([null,null,null]); setSkills([null,null,null]); setSkillFaceUp([true,true,true]); setSkillUse(null); setSkillRoll(null); setSkillDraft(null); setSkillPaymentSlots([]); setTrapMods({ ...EMPTY_TRAP_MODS }); setLastEnemyDamagedHero(false); setKnockoutHandled(false); setLootInbox([]); setRealmThreeShrineId(null); setGameWon(null); setEnemy(null); setSelectedCard(null); setEventState(null); setShopOpen(false); }
 
   const activeCells = map?.grid.active_cells ?? [];
 
