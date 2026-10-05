@@ -11,3 +11,5 @@ export function fableAsset(path: string) {
 // Preview deployment retry.
 
 // Deployment retry after Vercel daily window reset.
+
+// Deployment retry marker 2026-10-05.
