@@ -528,6 +528,56 @@ export default function SamPage() {
         </div>
       </section>
 
+      <section className="bg-[#0a1730] px-5 py-20 text-white lg:py-28">
+        <div className="mx-auto grid max-w-[1240px] gap-10 lg:grid-cols-[1.08fr_.92fr] lg:items-center lg:gap-16">
+          <div className="relative overflow-hidden border border-white/10 bg-[#061126] shadow-[0_28px_80px_rgba(0,0,0,.24)]">
+            <img
+              src="/sam/war-room.webp"
+              alt="AI-generated campaign strategy room featuring fictional parody politician Sam"
+              className="aspect-[16/10] h-full w-full object-cover"
+            />
+            <div className="absolute left-4 top-4">
+              <ImageTag>BEHIND THE PODIUM</ImageTag>
+            </div>
+          </div>
+
+          <div>
+            <div className="text-[10px] font-black tracking-[0.22em] text-[#a9c5ff]">
+              HOW SAM WORKS
+            </div>
+            <h2 className="mt-4 text-[clamp(2.8rem,5.5vw,4.7rem)] font-black leading-[0.92] tracking-[-0.06em]">
+              Listen. Research.
+              <br />
+              <span className="text-[#f16b78]">Make the point land.</span>
+            </h2>
+            <p className="mt-6 max-w-[560px] text-[15px] font-medium leading-7 text-[#bdc8da]">
+              The joke is the delivery, not the homework. The idea is to start with
+              what people care about, understand the strongest evidence and
+              counterarguments, then turn it into something people will actually
+              watch.
+            </p>
+
+            <div className="mt-8 border-t border-white/15">
+              {[
+                ["01", "Listen", "Surface the issues people actually want addressed."],
+                ["02", "Research", "Separate the strongest evidence from the talking points."],
+                ["03", "Say it straight", "Use parody and humor to make the argument memorable."],
+                ["04", "Show the receipts", "Publish what was funded, produced and learned."],
+              ].map(([number, title, copy]) => (
+                <div
+                  key={number}
+                  className="grid grid-cols-[42px_105px_1fr] gap-3 border-b border-white/15 py-4"
+                >
+                  <span className="text-[11px] font-black text-[#f16b78]">{number}</span>
+                  <strong className="text-[13px]">{title}</strong>
+                  <span className="text-[12px] leading-5 text-[#9eabc0]">{copy}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section
         id="receipts"
         className="bg-gradient-to-br from-[#102b5f] to-[#061126] px-5 py-20 text-white lg:py-28"
