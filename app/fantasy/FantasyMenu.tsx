@@ -7,6 +7,7 @@ import { createPortal } from "react-dom";
 import {
   BarChart3,
   CalendarDays,
+  CircleDot,
   Database,
   Menu,
   Trophy,
@@ -18,12 +19,14 @@ const appleFont =
 
 const items = [
   { href: "/fantasy", label: "Matchup", icon: Trophy, exact: true },
-  { href: "/fantasy/draft", label: "Draft Board", icon: CalendarDays },
+  { href: "/fantasy/draft/live", label: "Draft Room", icon: CircleDot },
+  { href: "/fantasy/draft", label: "Draft Board", icon: CalendarDays, exact: true },
   { href: "/fantasy/outlook", label: "6-Week Outlook", icon: BarChart3 },
   { href: "/fantasy/admin", label: "Admin", icon: Database },
 ];
 
 function currentLabel(pathname: string) {
+  if (pathname.startsWith("/fantasy/draft/live")) return "Draft Room";
   if (pathname.startsWith("/fantasy/draft")) return "Draft Board";
   if (pathname.startsWith("/fantasy/outlook")) return "6-Week Outlook";
   if (pathname.startsWith("/fantasy/admin")) return "Admin";
