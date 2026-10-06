@@ -45,6 +45,33 @@ type Player = {
   averageDraftPosition?: number | null;
 };
 type PlayerPoolResponse = { ok: boolean; count?: number; players?: Player[] };
+type DraftIntel = {
+  espn_player_id: number;
+  recommendation: "priority" | "target" | "neutral" | "fade" | "dnd";
+  rank_adjustment: number;
+  custom_rank: number | null;
+  draft_at_low: number | null;
+  draft_at_high: number | null;
+  first_six_grade: string | null;
+  confidence: "low" | "medium" | "high" | null;
+  summary: string | null;
+  updated_at: string;
+};
+type DraftIntelUpdate = {
+  id: number;
+  observed_at: string;
+  source_title: string | null;
+  source_url: string | null;
+  source_type: string | null;
+  analysis: string;
+  adjustment_delta: number | null;
+  confidence: "low" | "medium" | "high" | null;
+};
+type DraftIntelResponse = {
+  ok: boolean;
+  intel?: DraftIntel[];
+  updates?: DraftIntelUpdate[];
+};
 
 type DraftStatus = "available" | "gone" | "mine";
 type PlayerMark = {
@@ -134,15 +161,25 @@ function eligiblePositions(player: Player) {
 function boardPriority(
   player: Player,
   mark: PlayerMark,
+  intel: DraftIntel | undefined,
   totalGames: number,
   averageGames: number,
 ) {
-  if (mark.dnd) return Number.POSITIVE_INFINITY;
-  const adp = player.averageDraftPosition ?? 999;
-  const scheduleMove = (totalGames - averageGames) * 3;
+  if (mark.dnd || intel?.recommendation === "dnd") {
+    return Number.POSITIVE_INFINITY;
+  }
+
   const manualMove = mark.boost ?? 0;
   const targetMove = mark.target ? 6 : 0;
-  return adp - scheduleMove - manualMove - targetMove;
+
+  if (intel?.custom_rank != null) {
+    return Number(intel.custom_rank) - manualMove - targetMove;
+  }
+
+  const adp = player.averageDraftPosition ?? 999;
+  const scheduleMove = (totalGames - averageGames) * 3;
+  const intelMove = Number(intel?.rank_adjustment ?? 0);
+  return adp - scheduleMove - intelMove - manualMove - targetMove;
 }
 
 function assignRoster(players: Player[]) {
@@ -193,6 +230,8 @@ function shortName(name?: string | null) {
 export default function LiveDraftPage() {
   const [pool, setPool] = useState<PlayerPoolResponse | null>(null);
   const [outlook, setOutlook] = useState<OutlookResponse | null>(null);
+  const [intel, setIntel] = useState<DraftIntel[]>([]);
+  const [intelUpdates, setIntelUpdates] = useState<DraftIntelUpdate[]>([]);
   const [marks, setMarks] = useState<Marks>({});
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
@@ -204,12 +243,15 @@ export default function LiveDraftPage() {
   async function refresh() {
     setLoading(true);
     try {
-      const [poolRes, outlookRes] = await Promise.all([
+      const [poolRes, outlookRes, intelRes] = await Promise.all([
         fetch("/api/fantasy/espn/players?limit=1000", { cache: "no-store" }),
         fetch("/api/fantasy/espn/schedule-outlook?weeks=6", { cache: "no-store" }),
+        fetch("/api/fantasy/draft-intel", { cache: "no-store" }),
       ]);
       setPool(await poolRes.json());
       setOutlook(await outlookRes.json());
+      const intelBody = (await intelRes.json()) as DraftIntelResponse;
+      setIntel(intelBody.intel ?? []);
     } finally {
       setLoading(false);
     }
@@ -223,6 +265,11 @@ export default function LiveDraftPage() {
   const teamById = useMemo(
     () => new Map((outlook?.teams ?? []).map((team) => [team.id, team])),
     [outlook],
+  );
+
+  const intelById = useMemo(
+    () => new Map(intel.map((item) => [Number(item.espn_player_id), item])),
+    [intel],
   );
 
   const averageGames = useMemo(() => {
@@ -258,33 +305,60 @@ export default function LiveDraftPage() {
   const nextMyPick = MY_PICKS[Math.min(myPlayers.length, MY_PICKS.length - 1)];
   const { assigned, bench } = useMemo(() => assignRoster(myPlayers), [myPlayers]);
 
+  useEffect(() => {
+    if (!selectedId) {
+      setIntelUpdates([]);
+      return;
+    }
+    let cancelled = false;
+    fetch(`/api/fantasy/draft-intel?playerId=${selectedId}`, { cache: "no-store" })
+      .then((response) => response.json())
+      .then((body: DraftIntelResponse) => {
+        if (!cancelled) setIntelUpdates(body.updates ?? []);
+      })
+      .catch(() => {
+        if (!cancelled) setIntelUpdates([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedId]);
+
   const rows = useMemo(() => {
     const q = query.trim().toLowerCase();
 
     return allPlayers
       .filter((player) => {
         const mark = marks[String(player.id)] ?? {};
+        const dbIntel = intelById.get(player.id);
         const status = mark.status ?? "available";
+        const isTarget =
+          mark.target ||
+          dbIntel?.recommendation === "priority" ||
+          dbIntel?.recommendation === "target";
+        const isDnd = mark.dnd || dbIntel?.recommendation === "dnd";
 
         if (q && !player.name?.toLowerCase().includes(q)) return false;
         if (position !== "ALL" && !eligiblePositions(player).includes(position)) return false;
         if (view === "available" && status !== "available") return false;
-        if (view === "targets" && !mark.target) return false;
+        if (view === "targets" && !isTarget) return false;
         if (view === "mine" && status !== "mine") return false;
-        if (view === "dnd" && !mark.dnd) return false;
+        if (view === "dnd" && !isDnd) return false;
         if (view === "gone" && status !== "gone") return false;
         return true;
       })
       .map((player) => {
         const mark = marks[String(player.id)] ?? {};
+        const dbIntel = intelById.get(player.id);
         const team = player.proTeamId ? teamById.get(player.proTeamId) : undefined;
         const totalGames = team?.total ?? 0;
         return {
           player,
           mark,
+          intel: dbIntel,
           team,
           totalGames,
-          priority: boardPriority(player, mark, totalGames, averageGames),
+          priority: boardPriority(player, mark, dbIntel, totalGames, averageGames),
         };
       })
       .sort((a, b) => {
@@ -293,10 +367,11 @@ export default function LiveDraftPage() {
         if (sort === "adp") return (a.player.averageDraftPosition ?? 9999) - (b.player.averageDraftPosition ?? 9999);
         return a.priority - b.priority || (a.player.averageDraftPosition ?? 9999) - (b.player.averageDraftPosition ?? 9999);
       });
-  }, [allPlayers, averageGames, marks, position, query, sort, teamById, view]);
+  }, [allPlayers, averageGames, intelById, marks, position, query, sort, teamById, view]);
 
   const selected = selectedId ? playerById.get(selectedId) ?? null : null;
   const selectedMark = selected ? marks[String(selected.id)] ?? {} : {};
+  const selectedIntel = selected ? intelById.get(selected.id) : undefined;
   const selectedTeam = selected?.proTeamId ? teamById.get(selected.proTeamId) : undefined;
 
   function patchMark(playerId: number, patch: Partial<PlayerMark>) {
@@ -431,8 +506,13 @@ export default function LiveDraftPage() {
                 </thead>
                 <tbody>
                   {rows.slice(0, 250).map((row, index) => {
-                    const { player, mark, team, totalGames, priority } = row;
+                    const { player, mark, intel: dbIntel, team, totalGames, priority } = row;
                     const status = mark.status ?? "available";
+                    const isDnd = mark.dnd || dbIntel?.recommendation === "dnd";
+                    const isTarget =
+                      mark.target ||
+                      dbIntel?.recommendation === "priority" ||
+                      dbIntel?.recommendation === "target";
                     const premium =
                       player.averageDraftPosition == null || !Number.isFinite(priority)
                         ? null
@@ -447,13 +527,19 @@ export default function LiveDraftPage() {
                         } ${selectedId === player.id ? "bg-[#f7fbff]" : ""}`}
                       >
                         <td className="px-3 py-3 text-center font-semibold text-black/45">
-                          {sort === "priority" && status === "available" && !mark.dnd ? index + 1 : "—"}
+                          {sort === "priority" && status === "available" && !isDnd ? index + 1 : "—"}
                         </td>
                         <td className="px-3 py-3">
                           <div className="flex items-center gap-2">
                             <div className="font-semibold">{player.name}</div>
-                            {mark.target ? <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" /> : null}
-                            {mark.dnd ? <span className="rounded-full bg-red-50 px-2 py-0.5 text-[10px] font-semibold text-red-600">DND</span> : null}
+                            {isTarget ? <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" /> : null}
+                            {isDnd ? <span className="rounded-full bg-red-50 px-2 py-0.5 text-[10px] font-semibold text-red-600">DND</span> : null}
+                            {dbIntel?.recommendation === "priority" ? (
+                              <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">PRIORITY</span>
+                            ) : null}
+                            {dbIntel?.first_six_grade ? (
+                              <span className="rounded-full bg-[#f5f5f7] px-2 py-0.5 text-[10px] font-semibold text-black/50">6W {dbIntel.first_six_grade}</span>
+                            ) : null}
                             {(mark.boost ?? 0) > 0 ? <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-semibold text-[#0071e3]">+{mark.boost}</span> : null}
                           </div>
                           <div className="mt-0.5 text-[11px] text-black/35">
@@ -585,6 +671,30 @@ export default function LiveDraftPage() {
                       <div className="mt-1 text-xs text-black/40">
                         {selectedTeam?.abbreviation ?? "—"} · {primaryPosition(selected)} · ADP {selected.averageDraftPosition?.toFixed(1) ?? "—"}
                       </div>
+                      {selectedIntel ? (
+                        <div className="mt-3 flex flex-wrap gap-1.5">
+                          {selectedIntel.custom_rank != null ? (
+                            <span className="rounded-full bg-[#e8f2ff] px-2.5 py-1 text-[11px] font-semibold text-[#0071e3]">
+                              Our rank {Number(selectedIntel.custom_rank).toFixed(0)}
+                            </span>
+                          ) : null}
+                          {selectedIntel.draft_at_low != null || selectedIntel.draft_at_high != null ? (
+                            <span className="rounded-full bg-[#f5f5f7] px-2.5 py-1 text-[11px] font-semibold text-black/55">
+                              Draft {selectedIntel.draft_at_low ?? "—"}–{selectedIntel.draft_at_high ?? "—"}
+                            </span>
+                          ) : null}
+                          {selectedIntel.first_six_grade ? (
+                            <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">
+                              6W {selectedIntel.first_six_grade}
+                            </span>
+                          ) : null}
+                          {selectedIntel.confidence ? (
+                            <span className="rounded-full bg-[#f5f5f7] px-2.5 py-1 text-[11px] font-semibold capitalize text-black/50">
+                              {selectedIntel.confidence} confidence
+                            </span>
+                          ) : null}
+                        </div>
+                      ) : null}
                     </div>
                     <button onClick={() => setSelectedId(null)} className="grid h-8 w-8 place-items-center rounded-full bg-[#f5f5f7] text-black/45">
                       <X className="h-3.5 w-3.5" />
@@ -659,8 +769,36 @@ export default function LiveDraftPage() {
                     </div>
                   </div>
 
+                  {selectedIntel?.summary ? (
+                    <div className="mt-4 rounded-[16px] border border-black/[0.05] bg-white p-3.5 shadow-[0_6px_20px_rgba(0,0,0,.03)]">
+                      <div className="text-[11px] font-semibold uppercase tracking-[0.1em] text-black/35">Fantasy Lab intel</div>
+                      <p className="mt-2 text-sm leading-5 text-black/65">{selectedIntel.summary}</p>
+                    </div>
+                  ) : null}
+
+                  {intelUpdates.length ? (
+                    <div className="mt-4">
+                      <div className="text-[11px] font-semibold uppercase tracking-[0.1em] text-black/35">Updates</div>
+                      <div className="mt-2 space-y-2">
+                        {intelUpdates.slice(0, 4).map((update) => (
+                          <div key={update.id} className="rounded-[14px] bg-[#f7f7f9] p-3">
+                            <div className="flex items-center justify-between gap-2">
+                              <div className="truncate text-xs font-semibold">{update.source_title ?? update.source_type ?? "Update"}</div>
+                              {update.adjustment_delta ? (
+                                <span className={`text-[11px] font-semibold ${update.adjustment_delta > 0 ? "text-emerald-600" : "text-amber-600"}`}>
+                                  {update.adjustment_delta > 0 ? "+" : ""}{update.adjustment_delta}
+                                </span>
+                              ) : null}
+                            </div>
+                            <p className="mt-1.5 text-xs leading-5 text-black/55">{update.analysis}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null}
+
                   <div className="mt-4">
-                    <label className="text-[11px] font-semibold uppercase tracking-[0.1em] text-black/35">Notes</label>
+                    <label className="text-[11px] font-semibold uppercase tracking-[0.1em] text-black/35">Draft-night note</label>
                     <textarea
                       value={selectedMark.note ?? ""}
                       onChange={(event) => patchMark(selected.id, { note: event.target.value })}
