@@ -6,6 +6,7 @@ import {
   teamDisplayName,
 } from "@/lib/espnFantasy";
 import { fetchNbaSchedule } from "@/lib/espnNba";
+import { persistPlayerMarket } from "@/lib/fantasyPlayerMarket";
 import {
   insertRows,
   isSupabaseConfigured,
@@ -168,7 +169,9 @@ async function performSync(request: NextRequest) {
       updated_at: new Date().toISOString(),
     }));
 
-  await upsertRows("fantasy_players", players, "espn_player_id");
+  // Keep the current player row fresh, but also append an immutable market snapshot
+  // so ADP, injury, ownership and role changes are not lost on refresh.
+  await persistPlayerMarket(playerPool, "bootstrap-sync");
 
   await upsertRows(
     "nba_games",
