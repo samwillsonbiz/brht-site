@@ -121,6 +121,7 @@ export async function persistPlayerMarket(
         entry.player!.ownership?.averageDraftPosition ?? null,
       auction_value_average:
         entry.player!.ownership?.auctionValueAverage ?? null,
+      draft_ranks: entry.player!.draftRanksByRankType ?? null,
       updated_at: capturedAt,
     }));
 
@@ -147,6 +148,7 @@ export async function persistPlayerMarket(
         entry.player!.ownership?.averageDraftPosition ?? null,
       auction_value_average:
         entry.player!.ownership?.auctionValueAverage ?? null,
+      draft_ranks: entry.player!.draftRanksByRankType ?? null,
     }));
 
   for (let index = 0; index < snapshots.length; index += 250) {
