@@ -23,7 +23,6 @@ export async function GET() {
       nbaTeams,
       games,
       assignments,
-      marketSnapshots,
       syncRuns,
       marketSyncRuns,
     ] = await Promise.all([
@@ -33,7 +32,6 @@ export async function GET() {
         selectRows("nba_teams", { select: "espn_team_id" }),
         selectRows("nba_games", { select: "espn_event_id" }),
         selectRows("fantasy_roster_assignments", { select: "id" }),
-        selectRows("fantasy_player_market_snapshots", { select: "id" }),
         selectRows("fantasy_sync_runs", {
           select: "sync_type,started_at,completed_at,success,detail",
           order: "started_at.desc",
@@ -57,7 +55,6 @@ export async function GET() {
         nbaTeams: Array.isArray(nbaTeams) ? nbaTeams.length : 0,
         nbaGames: Array.isArray(games) ? games.length : 0,
         rosterAssignments: Array.isArray(assignments) ? assignments.length : 0,
-        marketSnapshots: Array.isArray(marketSnapshots) ? marketSnapshots.length : 0,
       },
       lastSync: Array.isArray(syncRuns) ? syncRuns[0] ?? null : null,
       lastPlayerMarketSync: Array.isArray(marketSyncRuns)
