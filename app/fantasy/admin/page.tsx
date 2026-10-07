@@ -80,6 +80,13 @@ type DbStatus = {
     success?: boolean;
     detail?: Record<string, unknown>;
   } | null;
+  lastPlayerMarketSync?: {
+    sync_type?: string;
+    started_at?: string;
+    completed_at?: string;
+    success?: boolean;
+    detail?: Record<string, unknown>;
+  } | null;
   message?: string;
 };
 
@@ -92,6 +99,11 @@ type SyncResponse = {
     nbaTeams?: number;
     nbaGames?: number;
   };
+  players?: EspnPlayer[];
+  count?: number;
+  persisted?: boolean;
+  persistedAt?: string | null;
+  snapshotCount?: number;
 };
 
 function formatTimestamp(value?: string | null) {
@@ -113,6 +125,7 @@ export default function FantasyAdminPage() {
   const [db, setDb] = useState<DbStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
+  const [marketSyncing, setMarketSyncing] = useState(false);
   const [syncMessage, setSyncMessage] = useState<string | null>(null);
   const [query, setQuery] = useState("");
 
@@ -131,6 +144,34 @@ export default function FantasyAdminPage() {
       setDb(await dbRes.json());
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function refreshPlayerMarket() {
+    setMarketSyncing(true);
+    setSyncMessage(null);
+    try {
+      const response = await fetch("/api/fantasy/sync/player-market", {
+        method: "POST",
+        cache: "no-store",
+      });
+      const body = (await response.json()) as SyncResponse;
+      if (!response.ok || !body.ok) {
+        throw new Error(body.message || "ESPN player refresh failed.");
+      }
+      if (body.players) {
+        setPool({ ok: true, count: body.count ?? body.players.length, players: body.players });
+      }
+      setSyncMessage(
+        body.persisted
+          ? `Saved current ESPN market data and ${body.snapshotCount ?? 0} historical player snapshots.`
+          : body.message || "ESPN player data is already current.",
+      );
+      await refresh();
+    } catch (error) {
+      setSyncMessage(error instanceof Error ? error.message : "ESPN player refresh failed.");
+    } finally {
+      setMarketSyncing(false);
     }
   }
 
@@ -178,6 +219,10 @@ export default function FantasyAdminPage() {
   const databaseReady = Boolean(db?.ok && db?.configured);
   const persistedPlayers = db?.counts?.players ?? 0;
   const lastSyncAt = db?.lastSync?.completed_at ?? db?.lastSync?.started_at ?? null;
+  const lastMarketSyncAt =
+    db?.lastPlayerMarketSync?.completed_at ??
+    db?.lastPlayerMarketSync?.started_at ??
+    null;
 
   return (
     <main
@@ -207,12 +252,12 @@ export default function FantasyAdminPage() {
               Refresh view
             </button>
             <button
-              onClick={syncDatabase}
-              disabled={syncing || !status?.authenticated || !databaseReady}
+              onClick={refreshPlayerMarket}
+              disabled={marketSyncing || !status?.authenticated || !databaseReady}
               className="inline-flex items-center gap-2 rounded-full bg-[#1d1d1f] px-4 py-2 text-xs font-semibold text-white disabled:opacity-40"
             >
-              <Cloud className={`h-3.5 w-3.5 ${syncing ? "animate-pulse" : ""}`} />
-              {syncing ? "Syncing…" : "Sync database"}
+              <Cloud className={`h-3.5 w-3.5 ${marketSyncing ? "animate-pulse" : ""}`} />
+              {marketSyncing ? "Refreshing…" : "Refresh ESPN"}
             </button>
           </div>
         </div>
@@ -247,7 +292,7 @@ export default function FantasyAdminPage() {
               <HeroMetric label="Players persisted" value={String(persistedPlayers)} />
               <HeroMetric label="NBA games stored" value={String(db?.counts?.nbaGames ?? 0)} />
               <HeroMetric label="Fantasy teams" value={String(db?.counts?.fantasyTeams ?? 0)} />
-              <HeroMetric label="Last database sync" value={lastSyncAt ? formatTimestamp(lastSyncAt) : "Not yet"} compact />
+              <HeroMetric label="Player data saved" value={lastMarketSyncAt ? formatTimestamp(lastMarketSyncAt) : "Not yet"} compact />
             </div>
           </div>
         </section>
@@ -281,7 +326,11 @@ export default function FantasyAdminPage() {
             icon={<Activity className="h-5 w-5" />}
             label="ESPN player pool"
             value={String(pool?.count ?? "—")}
-            detail={`${persistedPlayers} stored in database`}
+            detail={
+              lastMarketSyncAt
+                ? `${persistedPlayers} stored · saved ${formatTimestamp(lastMarketSyncAt)}`
+                : `${persistedPlayers} stored in database`
+            }
           />
           <StatusCard
             icon={<CalendarDays className="h-5 w-5" />}
@@ -313,7 +362,7 @@ export default function FantasyAdminPage() {
               className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-[#0071e3] px-5 py-2.5 text-sm font-semibold text-white shadow-sm disabled:opacity-40"
             >
               <RefreshCw className={`h-4 w-4 ${syncing ? "animate-spin" : ""}`} />
-              {persistedPlayers > 0 ? "Sync ESPN → Database" : "Run first database sync"}
+              {syncing ? "Full sync…" : persistedPlayers > 0 ? "Full schedule + league sync" : "Run first database sync"}
             </button>
           </div>
         </section>
