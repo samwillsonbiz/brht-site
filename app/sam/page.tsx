@@ -160,7 +160,7 @@ export default function SamPage() {
 
       <section id="top" className="relative min-h-[720px] overflow-hidden bg-[#07142c] text-white lg:min-h-[790px]">
         <img
-          src="/sam/hero-rally.jpg"
+          src="/sam/Campaign%20Speech%20with%20Patriotic%20Backdrop.png"
           alt="AI-generated image of fictional parody politician Sam speaking at a campaign-style rally"
           className="absolute inset-0 h-full w-full object-cover object-[67%_center]"
         />
@@ -254,7 +254,7 @@ export default function SamPage() {
             <article className="group overflow-hidden bg-[#07142c]">
               <div className="relative min-h-[500px] overflow-hidden sm:min-h-[590px]">
                 <img
-                  src="/sam/portrait.jpg"
+                  src="/sam/Confident%20American%20Campaign%20Speech.png"
                   alt="AI-generated portrait of fictional parody politician Sam at a campaign podium"
                   className="absolute inset-0 h-full w-full object-cover object-center transition duration-700 group-hover:scale-[1.015]"
                 />
@@ -291,13 +291,13 @@ export default function SamPage() {
                 {
                   label: "NATIONAL EMERGENCY*",
                   title: "When the obvious solution somehow requires 900 pages.",
-                  image: "/sam/hero-rally.jpg",
+                  image: "/sam/Half%20body%20Rally.png",
                   pos: "object-[75%_center]",
                 },
                 {
                   label: "SAM RESPONDS",
                   title: "“I asked the staff if this was satire. They said no.”",
-                  image: "/sam/town-hall.jpg",
+                  image: "/sam/Relax%20Campaign%20speech.png",
                   pos: "object-[50%_center]",
                 },
               ].map((item) => (
@@ -336,7 +336,7 @@ export default function SamPage() {
       <section className="relative overflow-hidden bg-[#08152f] text-white">
         <div className="absolute inset-y-0 right-0 w-full lg:w-[56%]">
           <img
-            src="/sam/town-hall.jpg"
+            src="/sam/Jeans%20Town%20hall.png"
             alt="AI-generated town hall scene featuring fictional parody politician Sam"
             className="h-full w-full object-cover object-center"
           />
@@ -357,6 +357,13 @@ export default function SamPage() {
               into explainers, arguments and projects — then the community can see
               what actually happened.
             </p>
+            <div className="mt-7 overflow-hidden border border-white/10 lg:max-w-[430px]">
+              <img
+                src="/sam/Half%20body%20hand%20shake.png"
+                alt="AI-generated image of fictional parody politician Sam greeting a supporter"
+                className="aspect-[16/9] w-full object-cover object-center"
+              />
+            </div>
             <div className="mt-7 grid gap-3 text-[12px] font-extrabold sm:grid-cols-2">
               {[
                 "People choose the priorities",
@@ -532,7 +539,7 @@ export default function SamPage() {
         <div className="mx-auto grid max-w-[1240px] gap-10 lg:grid-cols-[1.08fr_.92fr] lg:items-center lg:gap-16">
           <div className="relative overflow-hidden border border-white/10 bg-[#061126] shadow-[0_28px_80px_rgba(0,0,0,.24)]">
             <img
-              src="/sam/war-room.webp"
+              src="/sam/Upper%20Body%20Desk.png"
               alt="AI-generated campaign strategy room featuring fictional parody politician Sam"
               className="aspect-[16/10] h-full w-full object-cover"
             />
@@ -584,6 +591,13 @@ export default function SamPage() {
       >
         <div className="mx-auto grid max-w-[1180px] gap-14 lg:grid-cols-[1fr_.9fr] lg:items-center">
           <div>
+            <div className="mb-7 overflow-hidden border border-white/10 bg-[#07142c]">
+              <img
+                src="/sam/Signing%20Paperwork.png"
+                alt="AI-generated image of fictional parody politician Sam reviewing paperwork"
+                className="aspect-[16/9] w-full object-cover object-center"
+              />
+            </div>
             <div className="text-[10px] font-black tracking-[0.22em] text-[#a9c5ff]">
               THE RECEIPTS
             </div>
@@ -637,7 +651,7 @@ export default function SamPage() {
 
       <section className="relative min-h-[520px] overflow-hidden bg-[#07142c] text-white">
         <img
-          src="/sam/hero-rally.jpg"
+          src="/sam/Upper%20Body%20Speech.png"
           alt=""
           className="absolute inset-0 h-full w-full object-cover object-[72%_center]"
         />
