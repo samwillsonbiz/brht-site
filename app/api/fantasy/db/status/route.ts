@@ -16,16 +16,32 @@ export async function GET() {
   }
 
   try {
-    const [leagues, teams, players, nbaTeams, games, assignments, syncRuns] =
-      await Promise.all([
+    const [
+      leagues,
+      teams,
+      players,
+      nbaTeams,
+      games,
+      assignments,
+      marketSnapshots,
+      syncRuns,
+      marketSyncRuns,
+    ] = await Promise.all([
         selectRows("fantasy_leagues", { select: "espn_league_id" }),
         selectRows("fantasy_teams", { select: "id" }),
         selectRows("fantasy_players", { select: "espn_player_id" }),
         selectRows("nba_teams", { select: "espn_team_id" }),
         selectRows("nba_games", { select: "espn_event_id" }),
         selectRows("fantasy_roster_assignments", { select: "id" }),
+        selectRows("fantasy_player_market_snapshots", { select: "id" }),
         selectRows("fantasy_sync_runs", {
           select: "sync_type,started_at,completed_at,success,detail",
+          order: "started_at.desc",
+          limit: "1",
+        }),
+        selectRows("fantasy_sync_runs", {
+          select: "sync_type,started_at,completed_at,success,detail",
+          sync_type: "eq.player_market",
           order: "started_at.desc",
           limit: "1",
         }),
@@ -41,8 +57,12 @@ export async function GET() {
         nbaTeams: Array.isArray(nbaTeams) ? nbaTeams.length : 0,
         nbaGames: Array.isArray(games) ? games.length : 0,
         rosterAssignments: Array.isArray(assignments) ? assignments.length : 0,
+        marketSnapshots: Array.isArray(marketSnapshots) ? marketSnapshots.length : 0,
       },
       lastSync: Array.isArray(syncRuns) ? syncRuns[0] ?? null : null,
+      lastPlayerMarketSync: Array.isArray(marketSyncRuns)
+        ? marketSyncRuns[0] ?? null
+        : null,
     });
   } catch (error) {
     return NextResponse.json(
