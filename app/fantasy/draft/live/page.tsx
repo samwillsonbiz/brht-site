@@ -303,6 +303,7 @@ export default function LiveDraftPage() {
   );
 
   const nextMyPick = MY_PICKS[Math.min(myPlayers.length, MY_PICKS.length - 1)];
+  const lastMyPlayer = myPlayers.length ? myPlayers[myPlayers.length - 1] : null;
   const { assigned, bench } = useMemo(() => assignRoster(myPlayers), [myPlayers]);
 
   useEffect(() => {
@@ -401,6 +402,11 @@ export default function LiveDraftPage() {
     });
   }
 
+  function undoMyPick(playerId: number) {
+    patchMark(playerId, { status: "available", draftedAt: undefined });
+    setSelectedId(playerId);
+  }
+
   function resetDraft() {
     if (!window.confirm("Reset every draft status, target, DND flag, boost and note?")) return;
     setMarks({});
@@ -417,6 +423,16 @@ export default function LiveDraftPage() {
             <div className="text-[11px] text-black/40">Pick #9 · 12-team snake</div>
           </div>
           <div className="ml-auto flex items-center gap-2">
+            {lastMyPlayer ? (
+              <button
+                onClick={() => undoMyPick(lastMyPlayer.id)}
+                className="inline-flex h-9 items-center gap-2 rounded-full bg-amber-50 px-3 text-xs font-semibold text-amber-700"
+                title={`Undo my last pick: ${lastMyPlayer.name ?? "player"}`}
+              >
+                <RotateCcw className="h-3.5 w-3.5" />
+                Undo last pick
+              </button>
+            ) : null}
             <button
               onClick={refresh}
               disabled={loading}
@@ -638,12 +654,20 @@ export default function LiveDraftPage() {
                         {player ? shortName(player.name) : "—"}
                       </div>
                       {player ? (
-                        <button
-                          onClick={() => setSelectedId(player.id)}
-                          className="text-[10px] font-semibold text-[#0071e3]"
-                        >
-                          View
-                        </button>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => setSelectedId(player.id)}
+                            className="text-[10px] font-semibold text-[#0071e3]"
+                          >
+                            View
+                          </button>
+                          <button
+                            onClick={() => undoMyPick(player.id)}
+                            className="text-[10px] font-semibold text-amber-700"
+                          >
+                            Undo
+                          </button>
+                        </div>
                       ) : null}
                     </div>
                   );
@@ -656,6 +680,14 @@ export default function LiveDraftPage() {
                       <div className={`min-w-0 flex-1 truncate text-sm ${player ? "font-semibold" : "text-black/25"}`}>
                         {player ? shortName(player.name) : "—"}
                       </div>
+                      {player ? (
+                        <button
+                          onClick={() => undoMyPick(player.id)}
+                          className="text-[10px] font-semibold text-amber-700"
+                        >
+                          Undo
+                        </button>
+                      ) : null}
                     </div>
                   );
                 })}
@@ -719,10 +751,14 @@ export default function LiveDraftPage() {
                       Gone
                     </button>
                     <button
-                      onClick={() => patchMark(selected.id, { status: "available", draftedAt: undefined })}
-                      className="rounded-[13px] bg-[#f5f5f7] px-2 py-2.5 text-xs font-semibold text-black/60"
+                      onClick={() => undoMyPick(selected.id)}
+                      className={`rounded-[13px] px-2 py-2.5 text-xs font-semibold ${
+                        selectedMark.status === "mine"
+                          ? "bg-amber-50 text-amber-700"
+                          : "bg-[#f5f5f7] text-black/60"
+                      }`}
                     >
-                      Available
+                      {selectedMark.status === "mine" ? "Undo pick" : "Available"}
                     </button>
                   </div>
 
