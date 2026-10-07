@@ -426,7 +426,8 @@ export default function LiveDraftPage() {
     });
   }
 
-  function undoMyPick(playerId: number) {
+  function undoMyPick(playerId: number | null) {
+    if (!playerId) return;
     patchMark(playerId, { status: "available", draftedAt: undefined });
     setSelectedId(playerId);
   }
