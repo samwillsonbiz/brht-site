@@ -44,7 +44,14 @@ type Player = {
   percentOwned: number | null;
   averageDraftPosition?: number | null;
 };
-type PlayerPoolResponse = { ok: boolean; count?: number; players?: Player[] };
+type PlayerPoolResponse = {
+  ok: boolean;
+  count?: number;
+  players?: Player[];
+  persisted?: boolean;
+  persistedAt?: string | null;
+  message?: string;
+};
 type DraftIntel = {
   espn_player_id: number;
   recommendation: "priority" | "target" | "neutral" | "fade" | "dnd";
@@ -234,6 +241,7 @@ export default function LiveDraftPage() {
   const [intelUpdates, setIntelUpdates] = useState<DraftIntelUpdate[]>([]);
   const [marks, setMarks] = useState<Marks>({});
   const [loading, setLoading] = useState(true);
+  const [playerSyncAt, setPlayerSyncAt] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [position, setPosition] = useState("ALL");
   const [view, setView] = useState<ViewKey>("available");
@@ -243,12 +251,28 @@ export default function LiveDraftPage() {
   async function refresh() {
     setLoading(true);
     try {
-      const [poolRes, outlookRes, intelRes] = await Promise.all([
-        fetch("/api/fantasy/espn/players?limit=1000", { cache: "no-store" }),
+      const poolPromise = fetch("/api/fantasy/sync/player-market", {
+        method: "POST",
+        cache: "no-store",
+      }).then(async (response) => {
+        if (response.ok) {
+          return (await response.json()) as PlayerPoolResponse;
+        }
+
+        const fallback = await fetch("/api/fantasy/espn/players?limit=1000", {
+          cache: "no-store",
+        });
+        return (await fallback.json()) as PlayerPoolResponse;
+      });
+
+      const [poolBody, outlookRes, intelRes] = await Promise.all([
+        poolPromise,
         fetch("/api/fantasy/espn/schedule-outlook?weeks=6", { cache: "no-store" }),
         fetch("/api/fantasy/draft-intel", { cache: "no-store" }),
       ]);
-      setPool(await poolRes.json());
+
+      setPool(poolBody);
+      setPlayerSyncAt(poolBody.persistedAt ?? null);
       setOutlook(await outlookRes.json());
       const intelBody = (await intelRes.json()) as DraftIntelResponse;
       setIntel(intelBody.intel ?? []);
@@ -433,13 +457,19 @@ export default function LiveDraftPage() {
                 Undo last pick
               </button>
             ) : null}
+            <div className="hidden text-right sm:block">
+              <div className="text-[10px] font-semibold uppercase tracking-[0.08em] text-black/30">ESPN saved</div>
+              <div className="text-[11px] font-medium text-black/45">
+                {playerSyncAt ? new Date(playerSyncAt).toLocaleString(undefined, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : "Not yet"}
+              </div>
+            </div>
             <button
               onClick={refresh}
               disabled={loading}
               className="inline-flex h-9 items-center gap-2 rounded-full bg-[#f5f5f7] px-3 text-xs font-semibold text-black/60 disabled:opacity-50"
             >
               <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} />
-              Refresh
+              Refresh ESPN
             </button>
           </div>
         </div>
