@@ -8,6 +8,7 @@ import {
 
 type Team = { id: number; name: string; short: string };
 type Answer = { team_id: number; blocked_slots: string[]; available_slots: string[]; submitted_at: string; updated_at: string };
+type SavedSelection = Pick<Answer, "blocked_slots" | "available_slots">;
 type SlotInfo = { available: Team[]; unavailable: Team[]; pending: Team[]; confirmed: boolean };
 
 const TEAMS: Team[] = [
@@ -82,7 +83,7 @@ function zoneDisplay(zone: string) {
   const labels: Record<string, string> = {
     "America/Denver":"US Mountain (Denver)","America/Los_Angeles":"US Pacific (Los Angeles)",
     "America/Chicago":"US Central (Chicago)","America/New_York":"US Eastern (New York)",
-    "Australia/Perth":"Perth, Australia","Australia/Sydney":"Sydney, Australia",
+    "Australia/Perth":"Perth · AWST (UTC+8)","Australia/Sydney":"Sydney, Australia",
     "Europe/London":"London, UK","Europe/Paris":"Paris, France",
     "Asia/Dubai":"Dubai, UAE","Asia/Singapore":"Singapore",
     "Asia/Tokyo":"Tokyo, Japan","Pacific/Auckland":"Auckland, NZ","UTC":"UTC",
@@ -102,7 +103,9 @@ export default function DraftSchedulePage() {
   const [teamId, setTeamId] = useState<number | null>(null);
   const [blocked, setBlocked] = useState<string[]>([]);
   const [available, setAvailable] = useState<string[]>([]);
-  const [dirty, setDirty] = useState(false);
+  // Local baseline of the selected manager's last saved responses.
+  // Never update shared availability just to calculate dashboard counters.
+  const [savedBaseline, setSavedBaseline] = useState<SavedSelection>({ blocked_slots: [], available_slots: [] });
   const [week, setWeek] = useState(0);
   const [selected, setSelected] = useState(SLOTS[START_DAY][10]);
   const [zone, setZone] = useState("America/Denver");
@@ -117,7 +120,7 @@ export default function DraftSchedulePage() {
   useEffect(() => {
     try {
       const detected = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      if (detected) setViewerZone(detected);
+      if (detected) { setViewerZone(detected); setZone(detected); }
     } catch { /* default Perth */ }
   }, []);
 
@@ -156,15 +159,37 @@ export default function DraftSchedulePage() {
   }, [reload]);
 
   const answerMap = useMemo(() => new Map(answers.map(a => [a.team_id, a])), [answers]);
-  const selectTeam = (id: number | null) => {
-    if (dirty && !window.confirm("Discard your unsaved availability changes?")) return;
-    setTeamId(id);
-    setBlocked(id ? (answerMap.get(id)?.blocked_slots ?? []).filter(s => ALL_IDS.has(s)) : []);
-    setAvailable(id ? (answerMap.get(id)?.available_slots ?? []).filter(s => ALL_IDS.has(s)) : []);
-    setDirty(false); setSuccess(""); setError("");
-  };
   const blockedSet = useMemo(() => new Set(blocked), [blocked]);
   const availableSet = useMemo(() => new Set(available), [available]);
+  const savedBlockedSet = useMemo(() => new Set(savedBaseline.blocked_slots), [savedBaseline.blocked_slots]);
+  const savedAvailableSet = useMemo(() => new Set(savedBaseline.available_slots), [savedBaseline.available_slots]);
+
+  // Count changed hours, not button presses: undoing an edit reduces the count.
+  const unsavedChanges = useMemo(() => {
+    if (!teamId) return 0;
+    let changed = 0;
+    for (const id of ALL_IDS) {
+      const previous = savedBlockedSet.has(id) ? "blocked" : savedAvailableSet.has(id) ? "available" : "unmarked";
+      const current = blockedSet.has(id) ? "blocked" : availableSet.has(id) ? "available" : "unmarked";
+      if (previous !== current) changed++;
+    }
+    return changed;
+  }, [teamId, savedBlockedSet, savedAvailableSet, blockedSet, availableSet]);
+  const undecidedHours = teamId ? ALL_IDS.size - blockedSet.size - availableSet.size : ALL_IDS.size;
+  const decidedHours = ALL_IDS.size - undecidedHours;
+  const dirty = unsavedChanges > 0;
+
+  const selectTeam = (id: number | null) => {
+    if (dirty && !window.confirm("Discard your unsaved availability changes?")) return;
+    const existing = id ? answerMap.get(id) : undefined;
+    const savedBlocked = (existing?.blocked_slots ?? []).filter(slot => ALL_IDS.has(slot));
+    const savedAvailable = (existing?.available_slots ?? []).filter(slot => ALL_IDS.has(slot));
+    setTeamId(id);
+    setBlocked(savedBlocked);
+    setAvailable(savedAvailable);
+    setSavedBaseline({ blocked_slots: savedBlocked, available_slots: savedAvailable });
+    setSuccess(""); setError("");
+  };
   const markSlot = (id: string, status: "available" | "blocked") => {
     setSelected(id);
     if (!teamId) return;
@@ -181,21 +206,21 @@ export default function DraftSchedulePage() {
         setBlocked(previous => previous.filter(slot => slot !== id));
       }
     }
-    setDirty(true); setSuccess("");
+    setSuccess("");
   };
   const wholeDay = (day: string) => {
     if (!teamId) return;
     const list = SLOTS[day], allBlocked = list.every(id => blockedSet.has(id));
     setBlocked(previous => allBlocked ? previous.filter(id => !list.includes(id)) : Array.from(new Set([...previous, ...list])));
     if (!allBlocked) setAvailable(previous => previous.filter(id => !list.includes(id)));
-    setDirty(true); setSuccess("");
+    setSuccess("");
   };
   const availableWholeDay = (day: string) => {
     if (!teamId) return;
     const list = SLOTS[day], allAvailable = list.every(id => availableSet.has(id));
     setAvailable(previous => allAvailable ? previous.filter(id => !list.includes(id)) : Array.from(new Set([...previous, ...list])));
     if (!allAvailable) setBlocked(previous => previous.filter(id => !list.includes(id)));
-    setDirty(true); setSuccess("");
+    setSuccess("");
   };
 
   const save = async () => {
@@ -216,7 +241,11 @@ export default function DraftSchedulePage() {
       const data = await res.json() as Answer[];
       const updated = data[0] ?? row;
       setAnswers(previous => [...previous.filter(x => x.team_id !== teamId), updated]);
-      setDirty(false); setSuccess("Saved! Your team is included in the results.");
+      setSavedBaseline({
+        blocked_slots: updated.blocked_slots.filter(slot => ALL_IDS.has(slot)),
+        available_slots: updated.available_slots.filter(slot => ALL_IDS.has(slot)),
+      });
+      setSuccess("Saved! Your team is included in the results.");
       setLastUpdated(new Date());
     } catch (e) { setError(e instanceof Error ? e.message : "Unable to save."); }
     finally { setSaving(false); }
@@ -262,24 +291,47 @@ export default function DraftSchedulePage() {
             <span className="grid h-10 w-10 place-items-center rounded-[14px] bg-[#e9f4ec] text-[#0b6b45]"><Users size={19}/></span>
             <div className="flex-1">
               <h2 className="text-[18px] font-semibold tracking-[-0.02em]">1. Choose your name</h2>
-              <p className="mt-1 text-[12px] leading-5 text-[#86868b]">Use ✓ or × on the calendar below. Unmarked times count as available after you submit.</p>
+              <p className="mt-1 text-[12px] leading-5 text-[#86868b]">Mark ✓ or × below. See how many hours you have left and how many changes still need saving.</p>
             </div>
           </div>
           <div className="mt-4 flex flex-wrap items-center gap-3">
-            <select aria-label="Choose your name" value={teamId ?? ""} onChange={e => selectTeam(e.target.value ? Number(e.target.value) : null)} className="min-w-[200px] flex-1 rounded-[13px] border border-[#dedee3] bg-[#f8f8fa] px-3 py-3 text-[14px] font-medium outline-none focus:border-[#0b6b45]">
+            <select aria-label="Choose your name" disabled={saving} value={teamId ?? ""} onChange={e => selectTeam(e.target.value ? Number(e.target.value) : null)} className="min-w-[200px] flex-1 rounded-[13px] border border-[#dedee3] bg-[#f8f8fa] px-3 py-3 text-[14px] font-medium outline-none focus:border-[#0b6b45]">
               <option value="">Select your name…</option>
               {TEAMS.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
             </select>
-            {teamId && <button type="button" onClick={() => selectTeam(null)} className="grid h-11 w-11 shrink-0 place-items-center rounded-[13px] bg-[#f3f3f5] text-[#86868b]" aria-label="Clear selection"><X size={18}/></button>}
+            {teamId && <button type="button" onClick={() => selectTeam(null)} disabled={saving} className="grid h-11 w-11 shrink-0 place-items-center rounded-[13px] bg-[#f3f3f5] text-[#86868b]" aria-label="Clear selection"><X size={18}/></button>}
             <button type="button" disabled={!teamId || saving} onClick={save} className="inline-flex h-11 min-w-[170px] items-center justify-center gap-2 rounded-[13px] bg-[#0b6b45] px-5 text-[13px] font-semibold text-white transition hover:bg-[#09593a] disabled:cursor-not-allowed disabled:opacity-45">
               {saving ? <Loader2 size={16} className="animate-spin"/> : dirty || !hasSubmitted ? <Save size={16}/> : <CheckCircle2 size={16}/>}
-              {saving ? "Saving…" : dirty || !hasSubmitted ? "Save availability" : "Saved — edit anytime"}
+              {saving ? "Saving…" : dirty || !hasSubmitted ? "Save availability" + (unsavedChanges ? " (" + unsavedChanges + ")" : "") : "Saved — edit anytime"}
             </button>
           </div>
           <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
             <span className="text-[12px] text-[#86868b]">{joinedTeam ? (hasSubmitted ? "Editing " : "First response for ") + joinedTeam.name : "Select your name to start."}</span>
-            {teamId && <span className="text-[12px] font-medium text-[#b0604c]">{blocked.length} blocked · {available.length} checked available{dirty ? " · Unsaved" : ""}</span>}
+            {teamId && <span className="text-[12px] font-medium text-[#86868b]">{blocked.length} blocked · {available.length} checked available</span>}
           </div>
+          {teamId && (
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              <div className="rounded-[15px] border border-[#e9e9ed] bg-[#f8f8fa] p-3.5">
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-[12px] font-semibold text-[#66666e]">Undecided hours</p>
+                  <span className="text-[23px] font-semibold tabular-nums tracking-[-0.04em] text-[#1d1d1f]">{undecidedHours}</span>
+                </div>
+                <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[#e7e7eb]">
+                  <div role="progressbar" aria-label="Hours you have marked" aria-valuemin={0} aria-valuemax={ALL_IDS.size} aria-valuenow={decidedHours} className="h-full rounded-full bg-[#278459] transition-all" style={{ width: (decidedHours / ALL_IDS.size * 100) + "%" }}/>
+                </div>
+                <p className="mt-2 text-[11px] text-[#86868b]">{decidedHours} of {ALL_IDS.size} hours marked ✓ or ×</p>
+              </div>
+              <div className={"rounded-[15px] border p-3.5 " + (unsavedChanges ? "border-[#f2dfac] bg-[#fff9e9]" : "border-[#e9e9ed] bg-[#f8f8fa]")}>
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-[12px] font-semibold text-[#66666e]">Unsaved changes</p>
+                  <span className={"text-[23px] font-semibold tabular-nums tracking-[-0.04em] " + (unsavedChanges ? "text-[#a8761c]" : "text-[#1d1d1f]")}>{unsavedChanges}</span>
+                </div>
+                <p className="mt-2 text-[11px] text-[#86868b]">{unsavedChanges ? "Press Save availability to share your updates." : hasSubmitted ? "All changes saved." : "No changes since selecting your name."}</p>
+                <p className="mt-1 text-[10px] text-[#9999a0]">Reverting a selection reduces this count.</p>
+              </div>
+            </div>
+          )}
+          {teamId && <p className="mt-2 text-[11px] leading-5 text-[#929298]">Unmarked hours count as available for the shared calendar after you save. Undecided is simply a checklist for your own responses.</p>}
           {success && <p className="mt-3 flex items-center gap-1.5 text-[12px] font-medium text-[#1f8551]"><Check size={15}/>{success}</p>}
           {error && <p role="alert" className="mt-3 text-[12px] font-medium text-[#b64646]">{error}</p>}
         </section>
@@ -291,14 +343,16 @@ export default function DraftSchedulePage() {
               <h2 className="text-[21px] font-semibold tracking-[-0.03em]">2. Two-week calendar</h2>
               <p className="mt-1 max-w-[535px] text-[12px] leading-5 text-[#86868b]">Click ✓ if you're available or × if you're not. The calendar dates stay in US Mountain Time, and the smaller clock shows your selected time zone.</p>
             </div>
-            <div className="flex w-full flex-col gap-2 sm:w-auto sm:min-w-[270px]">
+            <div className="flex w-full flex-col gap-2 sm:w-auto sm:min-w-[275px]">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-[#86868b]">Display times in</p>
               <label className="flex items-center gap-2 rounded-[12px] bg-[#f5f5f7] px-3 py-2 text-[12px] font-medium">
                 <Globe2 size={16} className="shrink-0 text-[#8e8e93]"/>
-                <select aria-label="Choose any world time zone" value={zone} onChange={e => setZone(e.target.value)} className="w-full min-w-0 bg-transparent outline-none">
+                <select aria-label="Choose any world time zone" value={zone} onChange={e => { setZone(e.target.value); setZoneFilter(""); }} className="w-full min-w-0 bg-transparent outline-none">
                   {filteredZones.map(value => <option key={value} value={value}>{zoneDisplay(value)}</option>)}
                 </select>
               </label>
-              <input aria-label="Search world time zones" type="search" placeholder="Search any city or time zone…" value={zoneFilter} onChange={e => setZoneFilter(e.target.value)} className="w-full rounded-[12px] border border-black/[0.07] bg-white px-3 py-2 text-[12px] outline-none focus:border-[#0b6b45]" />
+              <input aria-label="Search world time zones" type="search" placeholder="Search a city or time zone…" value={zoneFilter} onChange={e => setZoneFilter(e.target.value)} className="w-full rounded-[12px] border border-black/[0.07] bg-white px-3 py-2 text-[12px] outline-none focus:border-[#0b6b45]" />
+              <button type="button" onClick={() => { setZone("Australia/Perth"); setZoneFilter(""); }} className="self-start rounded-full border border-[#cce7d7] bg-[#f0faf4] px-3 py-1.5 text-[11px] font-semibold text-[#147247] transition hover:bg-[#e2f5ea]">Use Perth time (AWST, UTC+8)</button>
             </div>
           </div>
           <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
