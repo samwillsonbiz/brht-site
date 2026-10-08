@@ -190,6 +190,13 @@ export default function DraftSchedulePage() {
     if (!allBlocked) setAvailable(previous => previous.filter(id => !list.includes(id)));
     setDirty(true); setSuccess("");
   };
+  const availableWholeDay = (day: string) => {
+    if (!teamId) return;
+    const list = SLOTS[day], allAvailable = list.every(id => availableSet.has(id));
+    setAvailable(previous => allAvailable ? previous.filter(id => !list.includes(id)) : Array.from(new Set([...previous, ...list])));
+    if (!allAvailable) setBlocked(previous => previous.filter(id => !list.includes(id)));
+    setDirty(true); setSuccess("");
+  };
 
   const save = async () => {
     if (!teamId || saving) return;
@@ -314,12 +321,33 @@ export default function DraftSchedulePage() {
             <div className="min-w-[800px]">
               <div className="grid grid-cols-[90px_repeat(7,minmax(0,1fr))] bg-[#f9f9fb]">
                 <div className="flex items-center justify-center border-b border-r border-[#e9e9ed] p-2 text-[10px] font-semibold uppercase tracking-wider text-[#9999a1]">MT / Local</div>
-                {weeks[week].map(day => <div key={day} className="border-b border-r border-[#e9e9ed] p-2 text-center last:border-r-0">
-                  <p className="text-[12px] font-semibold">{dateLabel(day)}</p>
-                  <button disabled={!teamId} type="button" onClick={() => wholeDay(day)} className="mt-1 rounded-full px-2 py-1 text-[10px] font-semibold text-[#ad5555] transition hover:bg-red-50 disabled:cursor-default disabled:text-[#b0b0b6]">
-                    {teamId ? (SLOTS[day].every(id => blockedSet.has(id)) ? "Undo day" : "× Block day") : "Select name"}
-                  </button>
-                </div>)}
+                {weeks[week].map(day => {
+                  const allAvailable = SLOTS[day].every(id => availableSet.has(id));
+                  const allBlocked = SLOTS[day].every(id => blockedSet.has(id));
+                  return <div key={day} className="border-b border-r border-[#e9e9ed] px-1 py-2 text-center last:border-r-0">
+                    <p className="text-[12px] font-semibold">{dateLabel(day)}</p>
+                    <div className="mt-1.5 flex items-center justify-center gap-1">
+                      <button
+                        disabled={!teamId}
+                        type="button"
+                        aria-label={allAvailable ? "Undo available all day on " + dateLabel(day) : "Available all day on " + dateLabel(day)}
+                        aria-pressed={allAvailable}
+                        title={allAvailable ? "Undo available all day" : "Available all day"}
+                        onClick={() => availableWholeDay(day)}
+                        className={"rounded-lg border px-1.5 py-1 text-[9px] font-semibold transition disabled:cursor-not-allowed disabled:opacity-35 " + (allAvailable ? "border-[#16824e] bg-[#178450] text-white" : "border-[#bfe4cf] bg-[#eefaf2] text-[#13784a] hover:bg-[#d6f3e2]")}
+                      >{allAvailable ? "Undo ✓" : "✓ All"}</button>
+                      <button
+                        disabled={!teamId}
+                        type="button"
+                        aria-label={allBlocked ? "Undo block all day on " + dateLabel(day) : "Block all day on " + dateLabel(day)}
+                        aria-pressed={allBlocked}
+                        title={allBlocked ? "Undo block all day" : "Block all day"}
+                        onClick={() => wholeDay(day)}
+                        className={"rounded-lg border px-1.5 py-1 text-[9px] font-semibold transition disabled:cursor-not-allowed disabled:opacity-35 " + (allBlocked ? "border-[#bc4949] bg-[#c65151] text-white" : "border-[#f4caca] bg-[#fff1f0] text-[#b44b4b] hover:bg-[#ffe0dc]")}
+                      >{allBlocked ? "Undo ×" : "× All"}</button>
+                    </div>
+                  </div>;
+                })}
               </div>
               {HOURS.map((hour, h) => <div key={hour} className="grid grid-cols-[90px_repeat(7,minmax(0,1fr))] border-b border-[#efeff1] last:border-b-0">
                 <div className="flex min-h-[67px] flex-col items-center justify-center border-r border-[#ececf0] bg-[#fbfbfc] px-1 text-center">
