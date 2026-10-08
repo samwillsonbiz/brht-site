@@ -3,7 +3,7 @@
 import React, { FormEvent, useEffect, useMemo, useState } from "react";
 import { ArrowRight, Check, Play, ShieldCheck, X } from "lucide-react";
 
-type Issue = { name: string; votes: number };
+type Issue = { slug: string; name: string; votes: number };
 type Project = {
   tag: string;
   title: string;
@@ -14,15 +14,32 @@ type Project = {
 };
 
 const initialIssues: Issue[] = [
-  { name: "Cost of living", votes: 15574 },
-  { name: "Housing affordability", votes: 14282 },
-  { name: "Government waste", votes: 11960 },
-  { name: "Healthcare costs", votes: 10853 },
-  { name: "Congressional stock trading", votes: 9518 },
-  { name: "Immigration reform", votes: 8410 },
-  { name: "Education", votes: 7622 },
-  { name: "Energy + infrastructure", votes: 6000 },
+  { slug: "cost-of-living", name: "Cost of living", votes: 0 },
+  { slug: "housing-affordability", name: "Housing affordability", votes: 0 },
+  { slug: "government-waste", name: "Government waste", votes: 0 },
+  { slug: "healthcare-costs", name: "Healthcare costs", votes: 0 },
+  { slug: "congressional-stock-trading", name: "Congressional stock trading", votes: 0 },
+  { slug: "immigration-reform", name: "Immigration reform", votes: 0 },
+  { slug: "education", name: "Education", votes: 0 },
+  { slug: "energy-infrastructure", name: "Energy + infrastructure", votes: 0 },
 ];
+
+const SAM_SUPABASE_URL = "https://zqwdooykgwkfhwyayucg.supabase.co";
+const SAM_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpxd2Rvb3lrZ3drZmh3eWF5dWNnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA3NDcxNjIsImV4cCI6MjEwNjMyMzE2Mn0._PjizrlrLH-5fxk_ZicCen3IuleP9BvYL9vu4l1wLNs";
+
+async function samRpc<T>(fn: string, body: Record<string, unknown>): Promise<T> {
+  const response = await fetch(`${SAM_SUPABASE_URL}/rest/v1/rpc/${fn}`, {
+    method: "POST",
+    headers: {
+      apikey: SAM_SUPABASE_ANON_KEY,
+      Authorization: `Bearer ${SAM_SUPABASE_ANON_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+  if (!response.ok) throw new Error(await response.text());
+  return response.json() as Promise<T>;
+}
 
 const projects: Project[] = [
   {
@@ -56,15 +73,6 @@ const money = (value: number) =>
     maximumFractionDigits: 0,
   }).format(value);
 
-function ImageTag({ children }: { children: React.ReactNode }) {
-  return (
-    <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-[#061127]/65 px-3 py-2 text-[9px] font-black tracking-[0.14em] text-white backdrop-blur-md">
-      <span className="h-1.5 w-1.5 rounded-full bg-[#ef4050]" />
-      {children}
-    </span>
-  );
-}
-
 export default function SamPage() {
   const [issues, setIssues] = useState(initialIssues);
   const [myVote, setMyVote] = useState<string | null>(null);
@@ -75,7 +83,34 @@ export default function SamPage() {
 
   useEffect(() => {
     document.title = "SAM 2028 — AI Leadership";
+
+    let voterId = window.localStorage.getItem("samVoterId");
+    if (!voterId) {
+      voterId = crypto.randomUUID();
+      window.localStorage.setItem("samVoterId", voterId);
+    }
+
     setMyVote(window.localStorage.getItem("samPriorityVote"));
+
+    const loadVotes = async () => {
+      try {
+        const rows = await samRpc<Array<{ slug: string; name: string; votes: number | string }>>(
+          "sam_get_issue_totals",
+          {},
+        );
+        setIssues(rows.map((row) => ({
+          slug: row.slug,
+          name: row.name,
+          votes: Number(row.votes),
+        })));
+      } catch {
+        setVoteNotice("Live totals are temporarily unavailable. Please try again shortly.");
+      }
+    };
+
+    loadVotes();
+    const timer = window.setInterval(loadVotes, 15000);
+    return () => window.clearInterval(timer);
   }, []);
 
   const sortedIssues = useMemo(
@@ -84,23 +119,36 @@ export default function SamPage() {
   );
   const totalVotes = issues.reduce((sum, issue) => sum + issue.votes, 0);
 
-  function voteFor(name: string) {
-    if (myVote) {
-      setVoteNotice(
-        `Prototype rule: one person, one priority vote. Your current choice is “${myVote}.”`,
-      );
+  async function voteFor(issue: Issue) {
+    const voterId = window.localStorage.getItem("samVoterId");
+    if (!voterId) {
+      setVoteNotice("Unable to identify this browser. Refresh and try again.");
       return;
     }
-    setIssues((current) =>
-      current.map((issue) =>
-        issue.name === name ? { ...issue, votes: issue.votes + 1 } : issue,
-      ),
-    );
-    setMyVote(name);
-    window.localStorage.setItem("samPriorityVote", name);
-    setVoteNotice(
-      `Vote recorded locally for “${name}.” No data was transmitted.`,
-    );
+
+    try {
+      setVoteNotice("Recording your vote…");
+      await samRpc<string>("sam_cast_vote", {
+        p_voter_id: voterId,
+        p_issue_slug: issue.slug,
+      });
+
+      window.localStorage.setItem("samPriorityVote", issue.slug);
+      setMyVote(issue.slug);
+
+      const rows = await samRpc<Array<{ slug: string; name: string; votes: number | string }>>(
+        "sam_get_issue_totals",
+        {},
+      );
+      setIssues(rows.map((row) => ({
+        slug: row.slug,
+        name: row.name,
+        votes: Number(row.votes),
+      })));
+      setVoteNotice(`Your active priority is “${issue.name}.” You can change it anytime.`);
+    } catch {
+      setVoteNotice("That vote did not go through. Please try again.");
+    }
   }
 
   function join(event: FormEvent<HTMLFormElement>) {
@@ -172,7 +220,7 @@ export default function SamPage() {
             </div>
 
             <div className="mt-7 text-[20px] font-black tracking-[0.39em] sm:text-[24px]">
-              20<span className="text-[#f16b78]">XX</span>
+              20<span className="text-[#f16b78]">28</span>
             </div>
 
             <h1 className="mt-8 max-w-[760px] text-[clamp(2.6rem,5.5vw,4.8rem)] font-black leading-[0.92] tracking-[-0.06em]">
@@ -204,7 +252,7 @@ export default function SamPage() {
             </div>
 
             <div className="mt-7 flex flex-wrap gap-x-6 gap-y-2 text-[10px] font-bold tracking-[0.02em] text-[#9fadc3]">
-              <span>1 PERSON = 1 PRIORITY VOTE</span>
+              <span>1 ACTIVE PRIORITY PER BROWSER · BETA</span>
               <span>•</span>
               <span>FUNDING FLOWS WILL BE PUBLIC</span>
             </div>
@@ -240,25 +288,25 @@ export default function SamPage() {
             </div>
             <div>
               <p className="max-w-[520px] text-[15px] font-medium leading-7 text-[#b7c2d5]">
-                Everyone gets one priority vote. Your contribution never buys extra
-                influence. The people decide what rises to the top.
+                Choose one active priority. You can change it anytime. Funding never
+                buys an extra vote or a louder voice.
               </p>
               <div className="mt-4 text-[12px] font-bold text-[#8fa0bd]">
                 <span className="mr-2 text-[28px] font-black text-white">
                   {totalVotes.toLocaleString()}
                 </span>
-                demo priority votes
+                live votes
               </div>
             </div>
           </div>
 
           <div className="border-t border-white/15">
             {sortedIssues.map((issue, index) => {
-              const pct = (issue.votes / totalVotes) * 100;
-              const selected = myVote === issue.name;
+              const pct = totalVotes > 0 ? (issue.votes / totalVotes) * 100 : 0;
+              const selected = myVote === issue.slug;
               return (
                 <div
-                  key={issue.name}
+                  key={issue.slug}
                   className="relative grid grid-cols-[38px_1fr_58px] items-center gap-3 border-b border-white/15 py-4 sm:grid-cols-[55px_1fr_75px_125px]"
                 >
                   <div className="text-[20px] font-medium text-[#7686a2]">
@@ -272,7 +320,7 @@ export default function SamPage() {
                   </div>
                   <button
                     type="button"
-                    onClick={() => voteFor(issue.name)}
+                    onClick={() => voteFor(issue)}
                     className={
                       "col-start-2 col-end-4 mt-1 border px-3 py-2 text-[9px] font-black uppercase tracking-[0.1em] transition sm:col-auto sm:mt-0 " +
                       (selected
@@ -280,7 +328,7 @@ export default function SamPage() {
                         : "border-white/40 text-white hover:bg-white hover:text-[#08152f]")
                     }
                   >
-                    {selected ? "Your vote" : "Vote"}
+                    {selected ? "Your vote" : myVote ? "Switch" : "Vote"}
                   </button>
                   <div
                     className="absolute bottom-0 left-0 h-[2px] bg-[#d82335]"
@@ -292,9 +340,9 @@ export default function SamPage() {
           </div>
           <div className="mt-4 flex min-h-5 flex-wrap items-center justify-between gap-4 text-[12px] font-bold text-[#a9c5ff]">
             <span>{voteNotice}</span>
-            <a href="#fund" className="inline-flex items-center gap-2 text-white">
-              Fund the priorities <ArrowRight className="h-3.5 w-3.5" />
-            </a>
+            <span className="text-[#8fa0bd]">
+              Beta voting is live now. Verified accounts are the next anti-abuse upgrade.
+            </span>
           </div>
         </div>
       </section>
