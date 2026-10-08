@@ -69,37 +69,11 @@ function slotStatus(id: string, answerMap: Map<number, Answer>): SlotInfo {
   }
   return { available, unavailable, pending, confirmed: available.length === 12 };
 }
-/**
- * Build local calendar positions from the SAME UTC slot IDs everyone uses.
- * A slot moves between local dates/hours when the viewer changes time zone,
- * but its database ID never changes. Minutes are included for +05:30/+05:45 etc.
- */
-function calendarForZone(zone: string) {
-  const formatter = new Intl.DateTimeFormat("en-US", {
-    timeZone: zone, year: "numeric", month: "2-digit", day: "2-digit",
-    hour: "2-digit", minute: "2-digit", hourCycle: "h23",
-  });
-  const byDay: Record<string, string[]> = {};
-  const byClock: Record<string, Record<string, string>> = {};
-  const clocks = new Set<string>();
-  for (const id of ALL_IDS) {
-    const parts = formatter.formatToParts(new Date(id));
-    const get = (type: string) => parts.find(part => part.type === type)?.value ?? "";
-    const day = get("year") + "-" + get("month") + "-" + get("day");
-    const clock = get("hour") + ":" + get("minute");
-    if (!byDay[day]) { byDay[day] = []; byClock[day] = {}; }
-    byDay[day].push(id);
-    byClock[day][clock] = id;
-    clocks.add(clock);
-  }
-  // Ordered local dates and clock labels are presentation-only; UTC save IDs stay stable.
-  return { dates: Object.keys(byDay).sort(), byDay, byClock, clocks: [...clocks].sort() };
-}
-
-function localClockLabel(clock: string) {
-  return new Intl.DateTimeFormat("en-US", {
-    timeZone: "UTC", hour: "numeric", minute: "2-digit", hour12: true,
-  }).format(new Date("2026-01-01T" + clock + ":00Z"));
+function relativeDaySuffix(iso: string, zone: string, mountainDate: string) {
+  const parts = new Intl.DateTimeFormat("en-US", { timeZone: zone, year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(new Date(iso));
+  const read = (kind: string) => parts.find(item => item.type === kind)?.value ?? "";
+  const local = read("year") + "-" + read("month") + "-" + read("day");
+  return local === mountainDate ? "" : local > mountainDate ? " +1d" : " -1d";
 }
 const FAVORITE_ZONES = [
   "America/Denver","America/Los_Angeles","America/Chicago","America/New_York",
@@ -188,7 +162,6 @@ export default function DraftSchedulePage() {
   const answerMap = useMemo(() => new Map(answers.map(a => [a.team_id, a])), [answers]);
   const blockedSet = useMemo(() => new Set(blocked), [blocked]);
   const availableSet = useMemo(() => new Set(available), [available]);
-  const calendar = useMemo(() => calendarForZone(zone), [zone]);
   const savedBlockedSet = useMemo(() => new Set(savedBaseline.blocked_slots), [savedBaseline.blocked_slots]);
   const savedAvailableSet = useMemo(() => new Set(savedBaseline.available_slots), [savedBaseline.available_slots]);
 
@@ -238,14 +211,14 @@ export default function DraftSchedulePage() {
   };
   const wholeDay = (day: string) => {
     if (!teamId) return;
-    const list = calendar.byDay[day] ?? [], allBlocked = list.length > 0 && list.every(id => blockedSet.has(id));
+    const list = SLOTS[day], allBlocked = list.every(id => blockedSet.has(id));
     setBlocked(previous => allBlocked ? previous.filter(id => !list.includes(id)) : Array.from(new Set([...previous, ...list])));
     if (!allBlocked) setAvailable(previous => previous.filter(id => !list.includes(id)));
     setSuccess("");
   };
   const availableWholeDay = (day: string) => {
     if (!teamId) return;
-    const list = calendar.byDay[day] ?? [], allAvailable = list.length > 0 && list.every(id => availableSet.has(id));
+    const list = SLOTS[day], allAvailable = list.every(id => availableSet.has(id));
     setAvailable(previous => allAvailable ? previous.filter(id => !list.includes(id)) : Array.from(new Set([...previous, ...list])));
     if (!allAvailable) setBlocked(previous => previous.filter(id => !list.includes(id)));
     setSuccess("");
@@ -283,10 +256,7 @@ export default function DraftSchedulePage() {
   const submitted = answers.filter(x => TEAMS.some(t => t.id === x.team_id)).length;
   const joinedTeam = TEAMS.find(t => t.id === teamId);
   const hasSubmitted = !!(teamId && answerMap.has(teamId));
-  // Some zones show an additional local date (e.g. midnight in New York).
-  // Include it in week 2, so no saved hour disappears from the calendar.
-  const weeks = [calendar.dates.slice(0, 7), calendar.dates.slice(7)];
-  const weekDays = weeks[week];
+  const weeks = [DAYS.slice(0,7), DAYS.slice(7,14)];
   const zones = useMemo(() => Array.from(new Set([...FAVORITE_ZONES, viewerZone, ...Intl.supportedValuesOf("timeZone")])), [viewerZone]);
   const filteredZones = zones.filter(value => !zoneFilter.trim() || zoneDisplay(value).toLowerCase().includes(zoneFilter.toLowerCase()) || value.toLowerCase().includes(zoneFilter.toLowerCase()) || value === zone);
   const completeSlots = submitted === 12 ? Object.values(SLOTS).flat().filter(id => slotStatus(id, answerMap).confirmed).length : 0;
@@ -372,7 +342,7 @@ export default function DraftSchedulePage() {
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
               <h2 className="text-[21px] font-semibold tracking-[-0.03em]">2. Two-week calendar</h2>
-              <p className="mt-1 max-w-[535px] text-[12px] leading-5 text-[#86868b]">All dates and hours below are shown in your selected time zone. Everyone's ✓ and × answers refer to the same underlying instant, wherever they live.</p>
+              <p className="mt-1 max-w-[535px] text-[12px] leading-5 text-[#86868b]">Grey slots already have a conflict but are still open for ✓ or × answers from everyone. Dates use US Mountain Time; the smaller clock shows your local time.</p>
             </div>
             <div className="flex w-full flex-col gap-2 sm:w-auto sm:min-w-[275px]">
               <p className="text-[11px] font-semibold uppercase tracking-wide text-[#86868b]">Display times in</p>
@@ -388,7 +358,8 @@ export default function DraftSchedulePage() {
           </div>
           <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
             <div className="inline-flex rounded-[13px] bg-[#f2f2f7] p-1">
-              {weeks.map((dates, index) => <button key={index} type="button" onClick={() => setWeek(index)} className={"rounded-[10px] px-3 py-2 text-[12px] font-semibold transition " + (week === index ? "bg-white text-[#1d1d1f] shadow-sm" : "text-[#7c7c83]")}>{dateLabel(dates[0])} – {dateLabel(dates[dates.length - 1])}</button>)}
+              <button type="button" onClick={() => setWeek(0)} className={"rounded-[10px] px-4 py-2 text-[12px] font-semibold transition " + (week === 0 ? "bg-white text-[#1d1d1f] shadow-sm" : "text-[#7c7c83]")}>Oct 8–14</button>
+              <button type="button" onClick={() => setWeek(1)} className={"rounded-[10px] px-4 py-2 text-[12px] font-semibold transition " + (week === 1 ? "bg-white text-[#1d1d1f] shadow-sm" : "text-[#7c7c83]")}>Oct 15–21</button>
             </div>
             <div className="flex items-center gap-3 text-[11px] text-[#86868b]">
               <span className="hidden sm:block">{lastUpdated && "Updated " + lastUpdated.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</span>
@@ -402,13 +373,12 @@ export default function DraftSchedulePage() {
             <span className="inline-flex items-center gap-1.5"><span className="h-4 w-4 rounded border border-[#e7e7ea] bg-white"/> Awaiting responses</span>
           </div>
           <div className="mt-3 overflow-x-auto rounded-[16px] border border-[#e9e9ed]">
-            <div className={weekDays.length > 7 ? "min-w-[920px]" : "min-w-[800px]"}>
-              <div className="grid bg-[#f9f9fb]" style={{ gridTemplateColumns: "90px repeat(" + weekDays.length + ", minmax(0, 1fr))" }}>
-                <div className="flex items-center justify-center border-b border-r border-[#e9e9ed] p-2 text-center text-[10px] font-semibold text-[#9999a1]">{zoneDisplay(zone)}</div>
-                {weekDays.map(day => {
-                  const daySlots = calendar.byDay[day] ?? [];
-                  const allAvailable = daySlots.length > 0 && daySlots.every(id => availableSet.has(id));
-                  const allBlocked = daySlots.length > 0 && daySlots.every(id => blockedSet.has(id));
+            <div className="min-w-[800px]">
+              <div className="grid grid-cols-[90px_repeat(7,minmax(0,1fr))] bg-[#f9f9fb]">
+                <div className="flex items-center justify-center border-b border-r border-[#e9e9ed] p-2 text-[10px] font-semibold uppercase tracking-wider text-[#9999a1]">MT / Local</div>
+                {weeks[week].map(day => {
+                  const allAvailable = SLOTS[day].every(id => availableSet.has(id));
+                  const allBlocked = SLOTS[day].every(id => blockedSet.has(id));
                   return <div key={day} className="border-b border-r border-[#e9e9ed] px-1 py-2 text-center last:border-r-0">
                     <p className="text-[12px] font-semibold">{dateLabel(day)}</p>
                     <div className="mt-1.5 flex items-center justify-center gap-1">
@@ -417,7 +387,7 @@ export default function DraftSchedulePage() {
                         type="button"
                         aria-label={allAvailable ? "Undo available all day on " + dateLabel(day) : "Available all day on " + dateLabel(day)}
                         aria-pressed={allAvailable}
-                        title={allAvailable ? "Undo available for these listed local hours" : "Available for all listed hours on this local date"}
+                        title={allAvailable ? "Undo available all day" : "Available all day"}
                         onClick={() => availableWholeDay(day)}
                         className={"rounded-lg border px-1.5 py-1 text-[9px] font-semibold transition disabled:cursor-not-allowed disabled:opacity-35 " + (allAvailable ? "border-[#16824e] bg-[#178450] text-white" : "border-[#bfe4cf] bg-[#eefaf2] text-[#13784a] hover:bg-[#d6f3e2]")}
                       >{allAvailable ? "Undo ✓" : "✓ All"}</button>
@@ -426,7 +396,7 @@ export default function DraftSchedulePage() {
                         type="button"
                         aria-label={allBlocked ? "Undo block all day on " + dateLabel(day) : "Block all day on " + dateLabel(day)}
                         aria-pressed={allBlocked}
-                        title={allBlocked ? "Undo blocked for these listed local hours" : "Block all listed hours on this local date"}
+                        title={allBlocked ? "Undo block all day" : "Block all day"}
                         onClick={() => wholeDay(day)}
                         className={"rounded-lg border px-1.5 py-1 text-[9px] font-semibold transition disabled:cursor-not-allowed disabled:opacity-35 " + (allBlocked ? "border-[#bc4949] bg-[#c65151] text-white" : "border-[#f4caca] bg-[#fff1f0] text-[#b44b4b] hover:bg-[#ffe0dc]")}
                       >{allBlocked ? "Undo ×" : "× All"}</button>
@@ -434,14 +404,13 @@ export default function DraftSchedulePage() {
                   </div>;
                 })}
               </div>
-              {calendar.clocks.map(clock => <div key={clock} className="grid border-b border-[#efeff1] last:border-b-0" style={{ gridTemplateColumns: "90px repeat(" + weekDays.length + ", minmax(0, 1fr))" }}>
+              {HOURS.map((hour, h) => <div key={hour} className="grid grid-cols-[90px_repeat(7,minmax(0,1fr))] border-b border-[#efeff1] last:border-b-0">
                 <div className="flex min-h-[67px] flex-col items-center justify-center border-r border-[#ececf0] bg-[#fbfbfc] px-1 text-center">
-                  <span className="text-[12px] font-semibold text-[#5f5f68]">{localClockLabel(clock)}</span>
+                  <span className="text-[12px] font-semibold text-[#5f5f68]">{timeLabel(SLOTS[weeks[week][0]][h], "America/Denver")}</span>
+                  {zone !== "America/Denver" && <span className="mt-1 text-[10px] leading-4 text-[#92939b]">{timeLabel(SLOTS[weeks[week][0]][h], zone)}{relativeDaySuffix(SLOTS[weeks[week][0]][h], zone, weeks[week][0])}</span>}
                 </div>
-                {weekDays.map(day => {
-                  const id = calendar.byClock[day]?.[clock];
-                  if (!id) return <div key={day + "-" + clock} className="m-[3px] min-h-[61px] rounded-[11px] border border-dashed border-[#f0f0f3] bg-[#fafafb]" title="No draft time offered for this local hour" aria-label={dateLabel(day) + " " + localClockLabel(clock) + ": not an offered draft hour" />;
-                  
+                {weeks[week].map(day => {
+                  const id = SLOTS[day][h];
                   const info = slotStatus(id, answerMap);
                   const myBlocked = !!teamId && blockedSet.has(id);
                   const myAvailable = !!teamId && availableSet.has(id);
@@ -451,13 +420,13 @@ export default function DraftSchedulePage() {
                     : someoneElseBlocked ? "border-[#e0e1e5] bg-[#eeeef1]"
                     : myAvailable || info.confirmed ? "border-[#c6e6d4] bg-[#e5f7ed]"
                     : "border-[#e9e9ed] bg-white";
-                  return <div key={id} title={"Local: " + dateLabel(day) + " " + localClockLabel(clock) + " · Mountain: " + rangeLabel(id, 1, "America/Denver")} className={"m-[3px] flex min-h-[61px] flex-col items-center justify-center rounded-[11px] border px-1 py-1.5 transition-colors " + shade + (focused ? " ring-2 ring-[#5f7183] ring-offset-1" : "")}>
+                  return <div key={id} className={"m-[3px] flex min-h-[61px] flex-col items-center justify-center rounded-[11px] border px-1 py-1.5 transition-colors " + shade + (focused ? " ring-2 ring-[#5f7183] ring-offset-1" : "")}>
                     <div className="flex items-center justify-center gap-1">
-                      <button type="button" aria-label={dateLabel(day) + " " + localClockLabel(clock) + " " + zoneDisplay(zone) + ": mark available"} aria-pressed={myAvailable} onClick={() => markSlot(id, "available")} disabled={!teamId}
+                      <button type="button" aria-label={dateLabel(day) + " " + timeLabel(id, "America/Denver") + ": mark available"} aria-pressed={myAvailable} onClick={() => markSlot(id, "available")} disabled={!teamId}
                         className={"grid h-6 w-7 place-items-center rounded-[7px] border transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#268954] disabled:cursor-not-allowed disabled:opacity-40 " + (myAvailable ? "border-[#198452] bg-[#198452] text-white" : "border-[#bedaca] bg-white/80 text-[#15804c] hover:bg-[#e6f7ed]")}>
                         <Check size={15} strokeWidth={2.5}/>
                       </button>
-                      <button type="button" aria-label={dateLabel(day) + " " + localClockLabel(clock) + " " + zoneDisplay(zone) + ": mark unavailable"} aria-pressed={myBlocked} onClick={() => markSlot(id, "blocked")} disabled={!teamId}
+                      <button type="button" aria-label={dateLabel(day) + " " + timeLabel(id, "America/Denver") + ": mark unavailable"} aria-pressed={myBlocked} onClick={() => markSlot(id, "blocked")} disabled={!teamId}
                         className={"grid h-6 w-7 place-items-center rounded-[7px] border transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#c34b4b] disabled:cursor-not-allowed disabled:opacity-40 " + (myBlocked ? "border-[#c55252] bg-[#c55252] text-white" : "border-[#f0c2c2] bg-white/80 text-[#ba5656] hover:bg-[#ffebeb]")}>
                         <X size={15} strokeWidth={2.5}/>
                       </button>
@@ -471,7 +440,7 @@ export default function DraftSchedulePage() {
               </div>)}
             </div>
           </div>
-          <p className="mt-3 text-[11px] leading-5 text-[#929298]">Each column is a real local date in {zoneDisplay(zone)}. The ✓ All / × All buttons affect only hours offered on that local date. Grey means someone else answered ×, but you can still vote. All 12 must explicitly answer ✓ for a fully available hour.</p>
+          <p className="mt-3 text-[11px] leading-5 text-[#929298]">Grey means someone else answered ×, not that the hour is locked. Everyone should still choose ✓ or ×, and each cell counts only saved, explicit answers. A fully available hour requires 12 saved ✓ responses.</p>
         </section>
 
         <section className="mt-5 grid gap-4 lg:grid-cols-[1.2fr_1fr]">
