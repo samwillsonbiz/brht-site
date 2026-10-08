@@ -2,8 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
-  CalendarDays, Check, CheckCircle2, ChevronLeft, ChevronRight, Clock3,
-  Eraser, Globe2, Loader2, RefreshCw, Save, Sparkles, Users, X,
+  CalendarDays, Check, CheckCircle2, ChevronLeft, ChevronRight,
+  Globe2, Loader2, RefreshCw, Save, Sparkles, Users, X,
 } from "lucide-react";
 
 type Team = { id: number; name: string; short: string };
@@ -42,10 +42,14 @@ const ALL_IDS = new Set(Object.values(SLOTS).flat());
 const font = '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif';
 
 function timeLabel(iso: string, zone: string, long = false) {
-  return new Intl.DateTimeFormat("en-US", {
-    timeZone: zone, hour: "numeric", minute: long ? "2-digit" : undefined, hour12: true,
-    ...(long ? { weekday: "short", month: "short", day: "numeric" } : {}),
-  }).format(new Date(iso));
+  const options: Intl.DateTimeFormatOptions = { timeZone: zone, hour: "numeric", hour12: true };
+  if (long) {
+    options.minute = "2-digit";
+    options.weekday = "short";
+    options.month = "short";
+    options.day = "numeric";
+  }
+  return new Intl.DateTimeFormat("en-US", options).format(new Date(iso));
 }
 function rangeLabel(iso: string, duration: number, zone: string) {
   const end = new Date(Date.parse(iso) + duration * 3_600_000).toISOString();
@@ -218,7 +222,7 @@ export default function DraftSchedulePage() {
 
         <section className="mt-7 grid gap-4 lg:grid-cols-[1.4fr_1fr]">
           <div className="rounded-[24px] border border-black/[0.06] bg-white p-5 shadow-[0_2px_25px_rgba(0,0,0,0.035)] sm:p-6">
-            <div className="flex items-start gap-3"><div className="grid h-10 w-10 shrink-0 place-items-center rounded-[14px] bg-[#e9f4ec] text-[#0b6b45]"><Users size={19}/></div><div><h2 className="text-[18px] font-semibold tracking-[-0.02em]">Step 1. Choose your team</h2><p className="mt-1 text-[13px] leading-5 text-[#86868b]">Then tap or drag over hours you are unavailable. Unmarked hours count as available when you save.</p></div></div>
+            <div className="flex items-start gap-3"><div className="grid h-10 w-10 shrink-0 place-items-center rounded-[14px] bg-[#e9f4ec] text-[#0b6b45]"><Users size={19}/></div><div><h2 className="text-[18px] font-semibold tracking-[-0.02em]">Step 1. Choose your team</h2><p className="mt-1 text-[13px] leading-5 text-[#86868b]">Then tap the hours you are unavailable, or block an entire day. Unmarked hours count as available when you save.</p></div></div>
             <div className="mt-4 flex gap-2">
               <select aria-label="Choose your fantasy team" value={teamId ?? ""} onChange={e => selectTeam(e.target.value ? Number(e.target.value) : null)} className="min-w-0 flex-1 rounded-[13px] border border-[#dedee3] bg-[#f8f8fa] px-3 py-3 text-[14px] font-medium outline-none focus:border-[#0b6b45]">
                 <option value="">Select your team…</option>{TEAMS.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
