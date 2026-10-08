@@ -3,27 +3,26 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   CalendarDays, Check, CheckCircle2, ChevronLeft, ChevronRight,
-  Globe2, Loader2, RefreshCw, Save, Sparkles, Users, X,
+  Globe2, Loader2, RefreshCw, Save, Users, X,
 } from "lucide-react";
 
 type Team = { id: number; name: string; short: string };
-type Answer = { team_id: number; blocked_slots: string[]; submitted_at: string; updated_at: string };
+type Answer = { team_id: number; blocked_slots: string[]; available_slots: string[]; submitted_at: string; updated_at: string };
 type SlotInfo = { available: Team[]; unavailable: Team[]; pending: Team[]; confirmed: boolean };
-type WindowOption = { ids: string[]; available: number; blocked: number; pending: number };
 
 const TEAMS: Team[] = [
-  { id: 1, name: "Tim Donaghy's Parlays", short: "TDP" },
-  { id: 4, name: "The Royal Jesters", short: "LAL" },
-  { id: 5, name: "Donovan Klingon", short: "DON" },
-  { id: 6, name: "Jason Kidd's Totaled Car", short: "DUI" },
-  { id: 8, name: "Giddey's Kiddies", short: "ZDT" },
-  { id: 9, name: "NonDisplaced Hardon", short: "HRD" },
-  { id: 10, name: "Club Shai Shai", short: "CSS" },
-  { id: 11, name: "Delusional Pistons Fan", short: "CADE" },
-  { id: 12, name: "Giannis The Menace", short: "VAND" },
-  { id: 13, name: "Edwards Scissorhands", short: "ESH" },
-  { id: 14, name: "Talk of the Towns", short: "TOTT" },
-  { id: 15, name: "New World Heathens", short: "NWH" },
+  { id: 1, name: "Gavin", short: "GA" },
+  { id: 4, name: "Zach", short: "ZA" },
+  { id: 5, name: "Connor", short: "CO" },
+  { id: 6, name: "Alex", short: "AL" },
+  { id: 8, name: "Ian", short: "IA" },
+  { id: 9, name: "Will", short: "WI" },
+  { id: 10, name: "Demarko", short: "DE" },
+  { id: 11, name: "Brennan", short: "BR" },
+  { id: 12, name: "Sam W", short: "SA" },
+  { id: 13, name: "Scott", short: "SC" },
+  { id: 14, name: "Mckenna", short: "MC" },
+  { id: 15, name: "Sam M", short: "SA" },
 ];
 
 const URL = "https://zqwdooykgwkfhwyayucg.supabase.co";
@@ -68,13 +67,29 @@ function slotStatus(id: string, answerMap: Map<number, Answer>): SlotInfo {
   }
   return { available, unavailable, pending, confirmed: available.length === 12 };
 }
-function tone(status: SlotInfo) {
-  if (status.confirmed) return "border-[#a6dec2] bg-[#e2f7ec] text-[#167248] hover:bg-[#d4f3e2]";
-  if (status.unavailable.length === 0) return "border-[#d6e7da] bg-[#f2f8f3] text-[#38835e] hover:bg-[#eaf4ec]";
-  if (status.unavailable.length <= 2) return "border-[#f4dfa9] bg-[#fff5db] text-[#8b6917] hover:bg-[#ffefc5]";
-  if (status.unavailable.length <= 4) return "border-[#fad1ae] bg-[#fff0e2] text-[#aa632d] hover:bg-[#ffe5ce]";
-  return "border-[#f0cbcb] bg-[#fce9e9] text-[#aa4d50] hover:bg-[#f9dada]";
+function relativeDaySuffix(iso: string, zone: string, mountainDate: string) {
+  const parts = new Intl.DateTimeFormat("en-US", { timeZone: zone, year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(new Date(iso));
+  const read = (kind: string) => parts.find(item => item.type === kind)?.value ?? "";
+  const local = read("year") + "-" + read("month") + "-" + read("day");
+  return local === mountainDate ? "" : local > mountainDate ? " +1d" : " -1d";
 }
+const FAVORITE_ZONES = [
+  "America/Denver","America/Los_Angeles","America/Chicago","America/New_York",
+  "Australia/Perth","Australia/Sydney","Europe/London","Europe/Paris",
+  "Asia/Dubai","Asia/Singapore","Asia/Tokyo","Pacific/Auckland","UTC",
+];
+function zoneDisplay(zone: string) {
+  const labels: Record<string, string> = {
+    "America/Denver":"US Mountain (Denver)","America/Los_Angeles":"US Pacific (Los Angeles)",
+    "America/Chicago":"US Central (Chicago)","America/New_York":"US Eastern (New York)",
+    "Australia/Perth":"Perth, Australia","Australia/Sydney":"Sydney, Australia",
+    "Europe/London":"London, UK","Europe/Paris":"Paris, France",
+    "Asia/Dubai":"Dubai, UAE","Asia/Singapore":"Singapore",
+    "Asia/Tokyo":"Tokyo, Japan","Pacific/Auckland":"Auckland, NZ","UTC":"UTC",
+  };
+  return labels[zone] || zone.replaceAll("_"," ");
+}
+
 function TeamPill({ team, mode = "neutral" }: {team: Team; mode?: "neutral" | "bad" | "good"}) {
   const bg = mode === "bad" ? "bg-[#fff0f0] text-[#ad454b] border-[#f5d7d8]"
     : mode === "good" ? "bg-[#ebf7ef] text-[#2a7950] border-[#d7eade]"
@@ -86,12 +101,13 @@ export default function DraftSchedulePage() {
   const [answers, setAnswers] = useState<Answer[]>([]);
   const [teamId, setTeamId] = useState<number | null>(null);
   const [blocked, setBlocked] = useState<string[]>([]);
+  const [available, setAvailable] = useState<string[]>([]);
   const [dirty, setDirty] = useState(false);
   const [week, setWeek] = useState(0);
   const [selected, setSelected] = useState(SLOTS[START_DAY][10]);
   const [zone, setZone] = useState("America/Denver");
   const [viewerZone, setViewerZone] = useState("Australia/Perth");
-  const [duration, setDuration] = useState(2);
+  const [zoneFilter, setZoneFilter] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -108,7 +124,7 @@ export default function DraftSchedulePage() {
   const reload = useCallback(async (silent = false) => {
     if (!silent) setLoading(true);
     try {
-      const res = await fetch(API + "?select=team_id,blocked_slots,submitted_at,updated_at&order=team_id.asc", {
+      const res = await fetch(API + "?select=team_id,blocked_slots,available_slots,submitted_at,updated_at&order=team_id.asc", {
         headers: { apikey: KEY }, cache: "no-store",
       });
       if (!res.ok) throw new Error("Unable to load group availability (" + res.status + ")");
@@ -130,27 +146,43 @@ export default function DraftSchedulePage() {
     if (dirty && !window.confirm("Discard your unsaved availability changes?")) return;
     setTeamId(id);
     setBlocked(id ? (answerMap.get(id)?.blocked_slots ?? []).filter(s => ALL_IDS.has(s)) : []);
+    setAvailable(id ? (answerMap.get(id)?.available_slots ?? []).filter(s => ALL_IDS.has(s)) : []);
     setDirty(false); setSuccess(""); setError("");
   };
   const blockedSet = useMemo(() => new Set(blocked), [blocked]);
-  const updateBlocked = (list: string[]) => { setBlocked(list); setDirty(true); setSuccess(""); };
-  const toggle = (id: string) => {
+  const availableSet = useMemo(() => new Set(available), [available]);
+  const markSlot = (id: string, status: "available" | "blocked") => {
     setSelected(id);
     if (!teamId) return;
-    updateBlocked(blockedSet.has(id) ? blocked.filter(x => x !== id) : [...blocked, id]);
+    if (status === "blocked") {
+      if (blockedSet.has(id)) setBlocked(previous => previous.filter(slot => slot !== id));
+      else {
+        setBlocked(previous => [...previous, id]);
+        setAvailable(previous => previous.filter(slot => slot !== id));
+      }
+    } else {
+      if (availableSet.has(id)) setAvailable(previous => previous.filter(slot => slot !== id));
+      else {
+        setAvailable(previous => [...previous, id]);
+        setBlocked(previous => previous.filter(slot => slot !== id));
+      }
+    }
+    setDirty(true); setSuccess("");
   };
   const wholeDay = (day: string) => {
     if (!teamId) return;
-    const slots = SLOTS[day];
-    const allMarked = slots.every(x => blockedSet.has(x));
-    const next = allMarked ? blocked.filter(x => !slots.includes(x)) : Array.from(new Set([...blocked, ...slots]));
-    updateBlocked(next);
+    const list = SLOTS[day], allBlocked = list.every(id => blockedSet.has(id));
+    setBlocked(previous => allBlocked ? previous.filter(id => !list.includes(id)) : Array.from(new Set([...previous, ...list])));
+    if (!allBlocked) setAvailable(previous => previous.filter(id => !list.includes(id)));
+    setDirty(true); setSuccess("");
   };
+
   const save = async () => {
     if (!teamId || saving) return;
     setSaving(true); setError(""); setSuccess("");
     const row = {
       team_id: teamId, blocked_slots: [...new Set(blocked)].filter(s => ALL_IDS.has(s)).sort(),
+      available_slots: [...new Set(available)].filter(s => ALL_IDS.has(s) && !blockedSet.has(s)).sort(),
       submitted_at: new Date().toISOString(), updated_at: new Date().toISOString(),
     };
     try {
@@ -173,27 +205,10 @@ export default function DraftSchedulePage() {
   const submitted = answers.filter(x => TEAMS.some(t => t.id === x.team_id)).length;
   const joinedTeam = TEAMS.find(t => t.id === teamId);
   const hasSubmitted = !!(teamId && answerMap.has(teamId));
-  const candidates = useMemo(() => {
-    const options: WindowOption[] = [];
-    for (const day of DAYS) {
-      const list = SLOTS[day];
-      for (let i = 0; i <= list.length - duration; i++) {
-        const ids = list.slice(i, i + duration);
-        if (Date.parse(ids[0]) < Date.now() - 1800000) continue;
-        const statuses = ids.map(id => slotStatus(id, answerMap));
-        const blockedPeople = new Set(statuses.flatMap(s => s.unavailable.map(t => t.id)));
-        const pendingPeople = new Set(statuses.flatMap(s => s.pending.map(t => t.id)));
-        options.push({
-          ids, blocked: blockedPeople.size, pending: pendingPeople.size,
-          available: 12 - blockedPeople.size - pendingPeople.size,
-        });
-      }
-    }
-    return options.sort((a,b) => a.blocked - b.blocked || b.available - a.available || a.ids[0].localeCompare(b.ids[0])).slice(0,5);
-  }, [answerMap, duration]);
   const weeks = [DAYS.slice(0,7), DAYS.slice(7,14)];
-  const zones = Array.from(new Set([viewerZone, "America/Denver", "America/Los_Angeles", "America/Chicago", "America/New_York", "Australia/Perth", "Europe/London"]));
-  const zoneName = (z: string) => ({ "America/Denver":"Mountain Time", "America/Los_Angeles":"Pacific Time", "America/Chicago":"Central Time", "America/New_York":"Eastern Time", "Australia/Perth":"Perth Time", "Europe/London":"UK Time" } as Record<string,string>)[z] || z.replaceAll("_"," ");
+  const zones = useMemo(() => Array.from(new Set([...FAVORITE_ZONES, viewerZone, ...Intl.supportedValuesOf("timeZone")])), [viewerZone]);
+  const filteredZones = zones.filter(value => !zoneFilter.trim() || zoneDisplay(value).toLowerCase().includes(zoneFilter.toLowerCase()) || value.toLowerCase().includes(zoneFilter.toLowerCase()) || value === zone);
+  const completeSlots = submitted === 12 ? Object.values(SLOTS).flat().filter(id => slotStatus(id, answerMap).confirmed).length : 0;
 
   return (
     <main style={{ fontFamily: font }} className="min-h-screen bg-[#f5f5f7] text-[#1d1d1f] antialiased">
@@ -212,11 +227,11 @@ export default function DraftSchedulePage() {
           <div>
             <p className="text-[13px] font-semibold text-[#0b6b45]">October 8 – 21, 2026</p>
             <h1 className="mt-2 text-[36px] font-semibold leading-[1.04] tracking-[-0.05em] sm:text-[52px]">Find our draft window.</h1>
-            <p className="mt-3 max-w-2xl text-[15px] leading-6 text-[#6e6e73] sm:text-[17px]">Mark the times you <strong>cannot</strong> attend. We'll find the best overlap across all 12 teams, with no endless group chat.</p>
+            <p className="mt-3 max-w-2xl text-[15px] leading-6 text-[#6e6e73] sm:text-[17px]">Choose ✓ when you can attend, or × when you cannot. Other managers’ conflicts appear grey, so it’s easy to find an hour that works for everyone.</p>
           </div>
           <div className="grid grid-cols-2 gap-3 sm:min-w-[290px]">
             <div className="rounded-[20px] border border-black/[0.06] bg-white p-4 shadow-sm"><p className="text-[12px] font-medium text-[#86868b]">Submitted</p><p className="mt-1 text-[29px] font-semibold tracking-[-0.04em]">{submitted}<span className="text-[17px] font-medium text-[#a0a0a5]">/12</span></p></div>
-            <div className="rounded-[20px] border border-black/[0.06] bg-white p-4 shadow-sm"><p className="text-[12px] font-medium text-[#86868b]">Full overlap</p><p className="mt-1 text-[29px] font-semibold tracking-[-0.04em] text-[#0b6b45]">{candidates.filter(c=>c.available===12).length}<span className="ml-1 text-[11px] font-medium text-[#86868b]">top slots</span></p></div>
+            <div className="rounded-[20px] border border-black/[0.06] bg-white p-4 shadow-sm"><p className="text-[12px] font-medium text-[#86868b]">Fully open hours</p><p className="mt-1 text-[29px] font-semibold tracking-[-0.04em] text-[#0b6b45]">{completeSlots}<span className="ml-1 text-[11px] font-medium text-[#86868b]">confirmed</span></p></div>
           </div>
         </section>
 
