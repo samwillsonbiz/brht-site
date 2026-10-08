@@ -93,6 +93,13 @@ export async function POST(request: NextRequest) {
       params.set("subscription_data[metadata][project_slug]", projectSlug);
       params.set("subscription_data[metadata][project_title]", projectTitle);
 
+      if (amount === 100) {
+        params.set("metadata[action_fund_allocation_usd]", "30");
+        params.set("metadata[action_fund_split]", "10|10|10");
+        params.set("subscription_data[metadata][action_fund_allocation_usd]", "30");
+        params.set("subscription_data[metadata][action_fund_split]", "10|10|10");
+      }
+
       if (amount >= 25) {
         params.set("shipping_address_collection[allowed_countries][0]", "US");
         params.set("phone_number_collection[enabled]", "true");
