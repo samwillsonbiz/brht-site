@@ -64,7 +64,8 @@ function slotStatus(id: string, answerMap: Map<number, Answer>): SlotInfo {
     const response = answerMap.get(team.id);
     if (!response) pending.push(team);
     else if (response.blocked_slots.includes(id)) unavailable.push(team);
-    else available.push(team);
+    else if (response.available_slots.includes(id)) available.push(team);
+    else pending.push(team);
   }
   return { available, unavailable, pending, confirmed: available.length === 12 };
 }
@@ -277,10 +278,10 @@ export default function DraftSchedulePage() {
           <div>
             <p className="text-[13px] font-semibold text-[#0b6b45]">October 8 – 21, 2026</p>
             <h1 className="mt-2 text-[36px] font-semibold leading-[1.04] tracking-[-0.05em] sm:text-[52px]">Find our draft window.</h1>
-            <p className="mt-3 max-w-2xl text-[15px] leading-6 text-[#6e6e73] sm:text-[17px]">Choose ✓ when you can attend, or × when you cannot. Other managers’ conflicts appear grey, so it’s easy to find an hour that works for everyone.</p>
+            <p className="mt-3 max-w-2xl text-[15px] leading-6 text-[#6e6e73] sm:text-[17px]">Choose ✓ when you can attend or × when you cannot—even if someone else has already said no. Grey shows an existing conflict, but everyone still gets a vote.</p>
           </div>
           <div className="grid grid-cols-2 gap-3 sm:min-w-[290px]">
-            <div className="rounded-[20px] border border-black/[0.06] bg-white p-4 shadow-sm"><p className="text-[12px] font-medium text-[#86868b]">Submitted</p><p className="mt-1 text-[29px] font-semibold tracking-[-0.04em]">{submitted}<span className="text-[17px] font-medium text-[#a0a0a5]">/12</span></p></div>
+            <div className="rounded-[20px] border border-black/[0.06] bg-white p-4 shadow-sm"><p className="text-[12px] font-medium text-[#86868b]">Managers started</p><p className="mt-1 text-[29px] font-semibold tracking-[-0.04em]">{submitted}<span className="text-[17px] font-medium text-[#a0a0a5]">/12</span></p></div>
             <div className="rounded-[20px] border border-black/[0.06] bg-white p-4 shadow-sm"><p className="text-[12px] font-medium text-[#86868b]">Fully open hours</p><p className="mt-1 text-[29px] font-semibold tracking-[-0.04em] text-[#0b6b45]">{completeSlots}<span className="ml-1 text-[11px] font-medium text-[#86868b]">confirmed</span></p></div>
           </div>
         </section>
@@ -291,7 +292,7 @@ export default function DraftSchedulePage() {
             <span className="grid h-10 w-10 place-items-center rounded-[14px] bg-[#e9f4ec] text-[#0b6b45]"><Users size={19}/></span>
             <div className="flex-1">
               <h2 className="text-[18px] font-semibold tracking-[-0.02em]">1. Choose your name</h2>
-              <p className="mt-1 text-[12px] leading-5 text-[#86868b]">Mark ✓ or × below. See how many hours you have left and how many changes still need saving.</p>
+              <p className="mt-1 text-[12px] leading-5 text-[#86868b]">Answer ✓ or × for any hour, including grey ones. See how many hours still need answers and how many edits need saving.</p>
             </div>
           </div>
           <div className="mt-4 flex flex-wrap items-center gap-3">
@@ -331,7 +332,7 @@ export default function DraftSchedulePage() {
               </div>
             </div>
           )}
-          {teamId && <p className="mt-2 text-[11px] leading-5 text-[#929298]">Unmarked hours count as available for the shared calendar after you save. Undecided is simply a checklist for your own responses.</p>}
+          {teamId && <p className="mt-2 text-[11px] leading-5 text-[#929298]">Unmarked hours remain unanswered, even after you save. Please mark ✓ or × for each hour so we know where everyone stands.</p>}
           {success && <p className="mt-3 flex items-center gap-1.5 text-[12px] font-medium text-[#1f8551]"><Check size={15}/>{success}</p>}
           {error && <p role="alert" className="mt-3 text-[12px] font-medium text-[#b64646]">{error}</p>}
         </section>
@@ -341,7 +342,7 @@ export default function DraftSchedulePage() {
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
               <h2 className="text-[21px] font-semibold tracking-[-0.03em]">2. Two-week calendar</h2>
-              <p className="mt-1 max-w-[535px] text-[12px] leading-5 text-[#86868b]">Click ✓ if you're available or × if you're not. The calendar dates stay in US Mountain Time, and the smaller clock shows your selected time zone.</p>
+              <p className="mt-1 max-w-[535px] text-[12px] leading-5 text-[#86868b]">Grey slots already have a conflict but are still open for ✓ or × answers from everyone. Dates use US Mountain Time; the smaller clock shows your local time.</p>
             </div>
             <div className="flex w-full flex-col gap-2 sm:w-auto sm:min-w-[275px]">
               <p className="text-[11px] font-semibold uppercase tracking-wide text-[#86868b]">Display times in</p>
@@ -368,7 +369,7 @@ export default function DraftSchedulePage() {
           <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-[11px] font-medium text-[#777980]">
             <span className="inline-flex items-center gap-1.5"><span className="inline-grid h-4 w-4 place-items-center rounded bg-[#dff4e8] text-[#087a48]"><Check size={11}/></span> Available</span>
             <span className="inline-flex items-center gap-1.5"><span className="inline-grid h-4 w-4 place-items-center rounded bg-[#ffe1e0] text-[#ad4141]"><X size={11}/></span> Your unavailable time</span>
-            <span className="inline-flex items-center gap-1.5"><span className="h-4 w-4 rounded border border-[#e1e2e7] bg-[#eeeef1]"/> Someone else is unavailable</span>
+            <span className="inline-flex items-center gap-1.5"><span className="h-4 w-4 rounded border border-[#e1e2e7] bg-[#eeeef1]"/> Someone else is unavailable · You can still respond</span>
             <span className="inline-flex items-center gap-1.5"><span className="h-4 w-4 rounded border border-[#e7e7ea] bg-white"/> Awaiting responses</span>
           </div>
           <div className="mt-3 overflow-x-auto rounded-[16px] border border-[#e9e9ed]">
@@ -431,14 +432,15 @@ export default function DraftSchedulePage() {
                       </button>
                     </div>
                     <button type="button" onClick={() => setSelected(id)} className={"mt-1 text-[10px] font-semibold tracking-tight " + (someoneElseBlocked ? "text-[#7a7c87]" : myBlocked ? "text-[#a84949]" : info.confirmed ? "text-[#18734b]" : "text-[#8b8b93]")}>
-                      {info.available.length}/12 free{someoneElseBlocked ? " · " + info.unavailable.length + " out" : ""}
+                      <span className="block">{info.available.length} ✓ · {info.unavailable.length} ×</span>
+                      <span className="mt-0.5 block text-[9px] font-normal opacity-75">{12 - info.pending.length}/12 answered</span>
                     </button>
                   </div>;
                 })}
               </div>)}
             </div>
           </div>
-          <p className="mt-3 text-[11px] leading-5 text-[#929298]">Grey means at least one other manager is unavailable. You can still add your own ✓ or ×. {submitted < 12 ? "A slot is only fully confirmed when all 12 managers have submitted." : "All 12 managers have submitted."}</p>
+          <p className="mt-3 text-[11px] leading-5 text-[#929298]">Grey means someone else answered ×, not that the hour is locked. Everyone should still choose ✓ or ×, and each cell counts only saved, explicit answers. A fully available hour requires 12 saved ✓ responses.</p>
         </section>
 
         <section className="mt-5 grid gap-4 lg:grid-cols-[1.2fr_1fr]">
@@ -451,15 +453,28 @@ export default function DraftSchedulePage() {
               {label:"Cannot attend",value:currentInfo.unavailable.length,color:"text-[#ba5757]"},
               {label:"Awaiting reply",value:currentInfo.pending.length,color:"text-[#86868b]"}
             ].map(x=><div className="rounded-[13px] bg-[#f7f7f9] p-3" key={x.label}><p className={"text-[25px] font-semibold tracking-tight "+x.color}>{x.value}</p><p className="mt-0.5 text-[11px] text-[#86868b]">{x.label}</p></div>)}</div>
-            <p className="mt-5 text-[12px] font-semibold">Unavailable teams</p>
-            <div className="mt-2 flex flex-wrap gap-2">{currentInfo.unavailable.length ? currentInfo.unavailable.map(t=><TeamPill key={t.id} team={t} mode="bad"/>) : <span className="text-[12px] text-[#86868b]">No submitted conflicts for this hour.</span>}</div>
-            <p className="mt-4 text-[12px] font-semibold">Still to respond</p>
-            <div className="mt-2 flex flex-wrap gap-2">{currentInfo.pending.length ? currentInfo.pending.map(t=><TeamPill key={t.id} team={t}/>) : <span className="text-[12px] font-medium text-[#248052]">All 12 teams have responded.</span>}</div>
+            <p className="mt-5 text-[12px] font-semibold">Available ✓</p>
+            <div className="mt-2 flex flex-wrap gap-2">{currentInfo.available.length ? currentInfo.available.map(t=><TeamPill key={t.id} team={t} mode="good"/>) : <span className="text-[12px] text-[#86868b]">No saved yes responses for this hour yet.</span>}</div>
+            <p className="mt-4 text-[12px] font-semibold">Unavailable ×</p>
+            <div className="mt-2 flex flex-wrap gap-2">{currentInfo.unavailable.length ? currentInfo.unavailable.map(t=><TeamPill key={t.id} team={t} mode="bad"/>) : <span className="text-[12px] text-[#86868b]">No saved conflicts for this hour.</span>}</div>
+            <p className="mt-4 text-[12px] font-semibold">No answer for this hour</p>
+            <div className="mt-2 flex flex-wrap gap-2">{currentInfo.pending.length ? currentInfo.pending.map(t=><TeamPill key={t.id} team={t}/>) : <span className="text-[12px] font-medium text-[#248052]">All 12 managers answered this hour.</span>}</div>
           </div>
           <div className="rounded-[24px] border border-black/[0.06] bg-white p-5 sm:p-6">
-            <div className="flex items-center justify-between"><h3 className="text-[18px] font-semibold tracking-[-0.02em]">League responses</h3><p className="text-[12px] text-[#86868b]">{submitted}/12</p></div>
+            <div className="flex items-center justify-between"><h3 className="text-[18px] font-semibold tracking-[-0.02em]">League responses</h3><p className="text-[12px] text-[#86868b]">{submitted}/12 started</p></div>
             <div className="mt-4 grid grid-cols-2 gap-2">
-              {TEAMS.map(t=><div key={t.id} className="flex items-center gap-2.5 rounded-[12px] bg-[#f8f8fa] px-3 py-2.5"><span className={"grid h-8 w-8 shrink-0 place-items-center rounded-full text-[10px] font-bold "+(answerMap.has(t.id)?"bg-[#dff2e7] text-[#167248]":"bg-[#ebebef] text-[#909098]")}>{answerMap.has(t.id)?<Check size={15}/>:t.short.slice(0,3)}</span><div className="min-w-0"><p className="truncate text-[11px] font-semibold">{t.name}</p><p className={"text-[10px] "+(answerMap.has(t.id)?"text-[#2a8855]":"text-[#a0a0a5]")}>{answerMap.has(t.id)?"Submitted":"Awaiting reply"}</p></div></div>)}
+              {TEAMS.map(t=>{
+                const response = answerMap.get(t.id);
+                const count = response ? response.blocked_slots.length + response.available_slots.length : 0;
+                const complete = count === ALL_IDS.size;
+                return <div key={t.id} className="flex items-center gap-2.5 rounded-[12px] bg-[#f8f8fa] px-3 py-2.5">
+                  <span className={"grid h-8 w-8 shrink-0 place-items-center rounded-full text-[10px] font-bold "+(complete ? "bg-[#dff2e7] text-[#167248]" : response ? "bg-[#fff2d9] text-[#aa7a26]" : "bg-[#ebebef] text-[#909098]")}>{complete ? <Check size={15}/> : t.short.slice(0,3)}</span>
+                  <div className="min-w-0">
+                    <p className="truncate text-[11px] font-semibold">{t.name}</p>
+                    <p className={"text-[10px] "+(complete ? "text-[#2a8855]" : response ? "text-[#a1782f]" : "text-[#a0a0a5]")}>{complete ? "All 210 answered" : response ? count + "/210 answered" : "Not started"}</p>
+                  </div>
+                </div>;
+              })}
             </div>
           </div>
         </section>
