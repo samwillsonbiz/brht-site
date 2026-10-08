@@ -235,84 +235,114 @@ export default function DraftSchedulePage() {
           </div>
         </section>
 
-        <section className="mt-7 grid gap-4 lg:grid-cols-[1.4fr_1fr]">
-          <div className="rounded-[24px] border border-black/[0.06] bg-white p-5 shadow-[0_2px_25px_rgba(0,0,0,0.035)] sm:p-6">
-            <div className="flex items-start gap-3"><div className="grid h-10 w-10 shrink-0 place-items-center rounded-[14px] bg-[#e9f4ec] text-[#0b6b45]"><Users size={19}/></div><div><h2 className="text-[18px] font-semibold tracking-[-0.02em]">Step 1. Choose your team</h2><p className="mt-1 text-[13px] leading-5 text-[#86868b]">Then tap the hours you are unavailable, or block an entire day. Unmarked hours count as available when you save.</p></div></div>
-            <div className="mt-4 flex gap-2">
-              <select aria-label="Choose your fantasy team" value={teamId ?? ""} onChange={e => selectTeam(e.target.value ? Number(e.target.value) : null)} className="min-w-0 flex-1 rounded-[13px] border border-[#dedee3] bg-[#f8f8fa] px-3 py-3 text-[14px] font-medium outline-none focus:border-[#0b6b45]">
-                <option value="">Select your team…</option>{TEAMS.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
-              </select>
-              {teamId && <button type="button" onClick={()=>selectTeam(null)} className="grid w-11 shrink-0 place-items-center rounded-[13px] bg-[#f3f3f5] text-[#86868b]" aria-label="Clear team"><X size={18}/></button>}
+
+        <section className="mt-7 rounded-[24px] border border-black/[0.06] bg-white p-5 shadow-sm sm:p-6">
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="grid h-10 w-10 place-items-center rounded-[14px] bg-[#e9f4ec] text-[#0b6b45]"><Users size={19}/></span>
+            <div className="flex-1">
+              <h2 className="text-[18px] font-semibold tracking-[-0.02em]">1. Choose your name</h2>
+              <p className="mt-1 text-[12px] leading-5 text-[#86868b]">Use ✓ or × on the calendar below. Unmarked times count as available after you submit.</p>
             </div>
-            <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
-              <span className="text-[12px] text-[#86868b]">{joinedTeam ? (hasSubmitted ? "Updating " : "First response for ") + joinedTeam.name : "No team selected"}</span>
-              {teamId && <span className="text-[12px] font-medium text-[#b0604c]">{blocked.length} unavailable hours{dirty ? " · Unsaved changes" : ""}</span>}
-            </div>
-            <button type="button" disabled={!teamId || saving} onClick={save} className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-[14px] bg-[#0b6b45] px-5 py-3.5 text-[14px] font-semibold text-white shadow-sm transition hover:bg-[#09593a] disabled:cursor-not-allowed disabled:opacity-45">
-              {saving ? <Loader2 size={17} className="animate-spin"/> : dirty || !hasSubmitted ? <Save size={17}/> : <CheckCircle2 size={17}/>}
-              {saving ? "Saving…" : dirty || !hasSubmitted ? "Save my availability" : "Saved — update anytime"}
+          </div>
+          <div className="mt-4 flex flex-wrap items-center gap-3">
+            <select aria-label="Choose your name" value={teamId ?? ""} onChange={e => selectTeam(e.target.value ? Number(e.target.value) : null)} className="min-w-[200px] flex-1 rounded-[13px] border border-[#dedee3] bg-[#f8f8fa] px-3 py-3 text-[14px] font-medium outline-none focus:border-[#0b6b45]">
+              <option value="">Select your name…</option>
+              {TEAMS.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
+            </select>
+            {teamId && <button type="button" onClick={() => selectTeam(null)} className="grid h-11 w-11 shrink-0 place-items-center rounded-[13px] bg-[#f3f3f5] text-[#86868b]" aria-label="Clear selection"><X size={18}/></button>}
+            <button type="button" disabled={!teamId || saving} onClick={save} className="inline-flex h-11 min-w-[170px] items-center justify-center gap-2 rounded-[13px] bg-[#0b6b45] px-5 text-[13px] font-semibold text-white transition hover:bg-[#09593a] disabled:cursor-not-allowed disabled:opacity-45">
+              {saving ? <Loader2 size={16} className="animate-spin"/> : dirty || !hasSubmitted ? <Save size={16}/> : <CheckCircle2 size={16}/>}
+              {saving ? "Saving…" : dirty || !hasSubmitted ? "Save availability" : "Saved — edit anytime"}
             </button>
-            {success && <p className="mt-3 flex items-center gap-1.5 text-[12px] font-medium text-[#1f8551]"><Check size={15}/>{success}</p>}
-            {error && <p role="alert" className="mt-3 text-[12px] font-medium text-[#b64646]">{error}</p>}
           </div>
-          <div className="rounded-[24px] border border-black/[0.06] bg-white p-5 shadow-[0_2px_25px_rgba(0,0,0,0.035)] sm:p-6">
-            <div className="flex items-center gap-2"><Sparkles size={20} className="text-[#0b6b45]"/><h2 className="text-[18px] font-semibold tracking-[-0.02em]">Best draft windows</h2></div>
-            <div className="mt-3 flex items-center gap-2"><span className="text-[12px] text-[#86868b]">Draft length</span><select aria-label="Draft length" value={duration} onChange={e=>setDuration(Number(e.target.value))} className="rounded-lg border border-[#e6e6eb] bg-[#f7f7f9] px-2 py-1.5 text-[12px] font-semibold"><option value={1}>1 hour</option><option value={2}>2 hours</option><option value={3}>3 hours</option></select></div>
-            <div className="mt-3 space-y-2">
-              {submitted===0 && <p className="rounded-[13px] bg-[#f7f7f9] p-3 text-[13px] leading-5 text-[#86868b]">Waiting for the first team to submit. Suggestions will populate as responses come in.</p>}
-              {submitted>0 && candidates.map((c,i) => <button key={c.ids[0]} type="button" onClick={()=>{setWeek(DAYS.indexOf(new Date(Date.parse(c.ids[0])-6*3600000).toISOString().slice(0,10))>=7?1:0);setSelected(c.ids[0]);}} className="flex w-full items-center justify-between gap-2 rounded-[13px] border border-[#e9e9ed] bg-[#fbfbfc] p-3 text-left hover:border-[#9acfb0] hover:bg-[#f4faf6]">
-                <div><p className="text-[13px] font-semibold">{rangeLabel(c.ids[0],duration,zone)}</p><p className="mt-0.5 text-[11px] text-[#86868b]">{c.pending ? c.pending + " waiting to respond" : "All teams responded"}</p></div>
-                <div className="shrink-0 text-right"><p className={"text-[14px] font-bold " + (c.available===12 ? "text-[#087c47]" : "text-[#6c6c73]")}>{c.available}/12</p><p className="text-[10px] text-[#86868b]">{c.blocked ? c.blocked + " blocked" : "No conflicts"}</p></div>
-              </button>)}
-            </div>
-            <p className="mt-3 text-[11px] leading-4 text-[#929298]">Ranked by the fewest conflicts, then the most confirmed attendees. A green 12/12 means everyone has responded and can attend.</p>
+          <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
+            <span className="text-[12px] text-[#86868b]">{joinedTeam ? (hasSubmitted ? "Editing " : "First response for ") + joinedTeam.name : "Select your name to start."}</span>
+            {teamId && <span className="text-[12px] font-medium text-[#b0604c]">{blocked.length} blocked · {available.length} checked available{dirty ? " · Unsaved" : ""}</span>}
           </div>
+          {success && <p className="mt-3 flex items-center gap-1.5 text-[12px] font-medium text-[#1f8551]"><Check size={15}/>{success}</p>}
+          {error && <p role="alert" className="mt-3 text-[12px] font-medium text-[#b64646]">{error}</p>}
         </section>
 
+
         <section className="mt-7 rounded-[24px] border border-black/[0.06] bg-white p-4 shadow-[0_2px_25px_rgba(0,0,0,0.035)] sm:p-6">
-          <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
-            <div><h2 className="text-[21px] font-semibold tracking-[-0.03em]">Two-week availability</h2><p className="mt-1 text-[13px] text-[#86868b]">Times shown in Mountain Time. Select a cell to see who is unavailable{teamId ? ", or to block it for your team" : ""}.</p></div>
-            <div className="flex flex-wrap items-center gap-2">
-              <label className="flex items-center gap-2 rounded-[11px] bg-[#f5f5f7] px-3 py-2 text-[12px] font-medium"><Globe2 size={15} className="text-[#8e8e93]"/><select aria-label="Convert selected time to" value={zone} onChange={e=>setZone(e.target.value)} className="min-w-0 max-w-[190px] bg-transparent outline-none">{zones.map(z=><option key={z} value={z}>{zoneName(z)}</option>)}</select></label>
-              <button aria-label="Refresh availability" type="button" onClick={()=>void reload()} className="grid h-9 w-9 place-items-center rounded-[11px] bg-[#f5f5f7] text-[#6e6e73] hover:bg-[#ececef]"><RefreshCw size={16} className={loading?"animate-spin":""}/></button>
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <h2 className="text-[21px] font-semibold tracking-[-0.03em]">2. Two-week calendar</h2>
+              <p className="mt-1 max-w-[535px] text-[12px] leading-5 text-[#86868b]">Click ✓ if you're available or × if you're not. The calendar dates stay in US Mountain Time, and the smaller clock shows your selected time zone.</p>
+            </div>
+            <div className="flex w-full flex-col gap-2 sm:w-auto sm:min-w-[270px]">
+              <label className="flex items-center gap-2 rounded-[12px] bg-[#f5f5f7] px-3 py-2 text-[12px] font-medium">
+                <Globe2 size={16} className="shrink-0 text-[#8e8e93]"/>
+                <select aria-label="Choose any world time zone" value={zone} onChange={e => setZone(e.target.value)} className="w-full min-w-0 bg-transparent outline-none">
+                  {filteredZones.map(value => <option key={value} value={value}>{zoneDisplay(value)}</option>)}
+                </select>
+              </label>
+              <input aria-label="Search world time zones" type="search" placeholder="Search any city or time zone…" value={zoneFilter} onChange={e => setZoneFilter(e.target.value)} className="w-full rounded-[12px] border border-black/[0.07] bg-white px-3 py-2 text-[12px] outline-none focus:border-[#0b6b45]" />
             </div>
           </div>
-          <div className="mt-5 flex items-center justify-between gap-3">
+          <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
             <div className="inline-flex rounded-[13px] bg-[#f2f2f7] p-1">
-              <button onClick={()=>setWeek(0)} className={"rounded-[10px] px-4 py-2 text-[13px] font-semibold transition " + (week===0?"bg-white text-[#1d1d1f] shadow-sm":"text-[#7c7c83]")}>Oct 8 – 14</button>
-              <button onClick={()=>setWeek(1)} className={"rounded-[10px] px-4 py-2 text-[13px] font-semibold transition " + (week===1?"bg-white text-[#1d1d1f] shadow-sm":"text-[#7c7c83]")}>Oct 15 – 21</button>
+              <button type="button" onClick={() => setWeek(0)} className={"rounded-[10px] px-4 py-2 text-[12px] font-semibold transition " + (week === 0 ? "bg-white text-[#1d1d1f] shadow-sm" : "text-[#7c7c83]")}>Oct 8–14</button>
+              <button type="button" onClick={() => setWeek(1)} className={"rounded-[10px] px-4 py-2 text-[12px] font-semibold transition " + (week === 1 ? "bg-white text-[#1d1d1f] shadow-sm" : "text-[#7c7c83]")}>Oct 15–21</button>
             </div>
-            <div className="hidden items-center gap-2 text-[12px] text-[#86868b] sm:flex">{lastUpdated && "Updated " + lastUpdated.toLocaleTimeString([], {hour:"numeric",minute:"2-digit"})}</div>
-            <div className="flex gap-1 sm:hidden"><button onClick={()=>setWeek(0)} disabled={week===0} className="grid h-9 w-9 place-items-center rounded-lg border border-[#eee] disabled:opacity-30"><ChevronLeft size={16}/></button><button onClick={()=>setWeek(1)} disabled={week===1} className="grid h-9 w-9 place-items-center rounded-lg border border-[#eee] disabled:opacity-30"><ChevronRight size={16}/></button></div>
+            <div className="flex items-center gap-3 text-[11px] text-[#86868b]">
+              <span className="hidden sm:block">{lastUpdated && "Updated " + lastUpdated.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</span>
+              <button aria-label="Refresh availability" type="button" onClick={() => void reload()} className="grid h-9 w-9 place-items-center rounded-[11px] bg-[#f5f5f7] text-[#6e6e73] hover:bg-[#ececef]"><RefreshCw size={16} className={loading ? "animate-spin" : ""}/></button>
+            </div>
           </div>
-          <div className="mt-3 overflow-x-auto rounded-[15px] border border-[#e9e9ed]">
-            <div className="min-w-[720px]">
-              <div className="grid grid-cols-[76px_repeat(7,minmax(0,1fr))] bg-[#f9f9fb]">
-                <div className="border-b border-r border-[#e9e9ed] p-3 text-[10px] font-semibold uppercase tracking-wider text-[#a1a1a6]">MT</div>
-                {weeks[week].map(day=><div key={day} className="border-b border-r border-[#e9e9ed] p-2.5 text-center last:border-r-0"><p className="text-[12px] font-semibold">{dateLabel(day)}</p><button disabled={!teamId} onClick={()=>wholeDay(day)} className="mt-1 text-[10px] font-semibold text-[#0b6b45] hover:underline disabled:cursor-default disabled:text-[#b2b2b7]">{teamId ? (SLOTS[day].every(id=>blockedSet.has(id)) ? "Clear day" : "Block day") : "—"}</button></div>)}
+          <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-[11px] font-medium text-[#777980]">
+            <span className="inline-flex items-center gap-1.5"><span className="inline-grid h-4 w-4 place-items-center rounded bg-[#dff4e8] text-[#087a48]"><Check size={11}/></span> Available</span>
+            <span className="inline-flex items-center gap-1.5"><span className="inline-grid h-4 w-4 place-items-center rounded bg-[#ffe1e0] text-[#ad4141]"><X size={11}/></span> Your unavailable time</span>
+            <span className="inline-flex items-center gap-1.5"><span className="h-4 w-4 rounded border border-[#e1e2e7] bg-[#eeeef1]"/> Someone else is unavailable</span>
+            <span className="inline-flex items-center gap-1.5"><span className="h-4 w-4 rounded border border-[#e7e7ea] bg-white"/> Awaiting responses</span>
+          </div>
+          <div className="mt-3 overflow-x-auto rounded-[16px] border border-[#e9e9ed]">
+            <div className="min-w-[800px]">
+              <div className="grid grid-cols-[90px_repeat(7,minmax(0,1fr))] bg-[#f9f9fb]">
+                <div className="flex items-center justify-center border-b border-r border-[#e9e9ed] p-2 text-[10px] font-semibold uppercase tracking-wider text-[#9999a1]">MT / Local</div>
+                {weeks[week].map(day => <div key={day} className="border-b border-r border-[#e9e9ed] p-2 text-center last:border-r-0">
+                  <p className="text-[12px] font-semibold">{dateLabel(day)}</p>
+                  <button disabled={!teamId} type="button" onClick={() => wholeDay(day)} className="mt-1 rounded-full px-2 py-1 text-[10px] font-semibold text-[#ad5555] transition hover:bg-red-50 disabled:cursor-default disabled:text-[#b0b0b6]">
+                    {teamId ? (SLOTS[day].every(id => blockedSet.has(id)) ? "Undo day" : "× Block day") : "Select name"}
+                  </button>
+                </div>)}
               </div>
-              {HOURS.map((hour,h)=><div key={hour} className="grid grid-cols-[76px_repeat(7,minmax(0,1fr))]">
-                <div className="grid min-h-[50px] place-items-center border-b border-r border-[#ececf0] bg-[#fbfbfc] text-[11px] font-medium text-[#96969c]">{timeLabel(SLOTS[weeks[week][0]][h],"America/Denver")}</div>
-                {weeks[week].map(day=>{
-                  const id=SLOTS[day][h];
-                  const s=slotStatus(id,answerMap);
-                  const own=blockedSet.has(id) && !!teamId;
-                  const active=selected===id;
-                  return <button key={id} type="button" onClick={()=>toggle(id)} title={dateLabel(day)+" · "+timeLabel(id,"America/Denver")+"\n"+s.unavailable.map(t=>t.name).join(", ")} aria-label={dateLabel(day)+" "+timeLabel(id,"America/Denver")+", "+s.available.length+" confirmed free, "+s.unavailable.length+" unavailable, "+s.pending.length+" pending"} className={"group relative m-[3px] min-h-[44px] rounded-[9px] border text-center transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#0b6b45] " + tone(s) + (active?" ring-2 ring-[#0b6b45] ring-offset-1":"") + (own?" !border-[#d86d74] !bg-[#f7dadd] !text-[#9f333b]":"")}>
-                    <span className="text-[12px] font-bold tracking-tight">{own ? "✕" : s.available.length + "/12"}</span>
-                    <span className="block text-[9px] font-medium opacity-70">{own ? "Blocked" : s.pending ? s.pending+" pending" : s.unavailable.length ? s.unavailable.length+" out" : "All free"}</span>
-                  </button>;
+              {HOURS.map((hour, h) => <div key={hour} className="grid grid-cols-[90px_repeat(7,minmax(0,1fr))] border-b border-[#efeff1] last:border-b-0">
+                <div className="flex min-h-[67px] flex-col items-center justify-center border-r border-[#ececf0] bg-[#fbfbfc] px-1 text-center">
+                  <span className="text-[12px] font-semibold text-[#5f5f68]">{timeLabel(SLOTS[weeks[week][0]][h], "America/Denver")}</span>
+                  {zone !== "America/Denver" && <span className="mt-1 text-[10px] leading-4 text-[#92939b]">{timeLabel(SLOTS[weeks[week][0]][h], zone)}{relativeDaySuffix(SLOTS[weeks[week][0]][h], zone, weeks[week][0])}</span>}
+                </div>
+                {weeks[week].map(day => {
+                  const id = SLOTS[day][h];
+                  const info = slotStatus(id, answerMap);
+                  const myBlocked = !!teamId && blockedSet.has(id);
+                  const myAvailable = !!teamId && availableSet.has(id);
+                  const someoneElseBlocked = info.unavailable.some(person => person.id !== teamId);
+                  const focused = selected === id;
+                  const shade = myBlocked ? "border-[#f0b5b5] bg-[#ffeded]"
+                    : someoneElseBlocked ? "border-[#e0e1e5] bg-[#eeeef1]"
+                    : myAvailable || info.confirmed ? "border-[#c6e6d4] bg-[#e5f7ed]"
+                    : "border-[#e9e9ed] bg-white";
+                  return <div key={id} className={"m-[3px] flex min-h-[61px] flex-col items-center justify-center rounded-[11px] border px-1 py-1.5 transition-colors " + shade + (focused ? " ring-2 ring-[#5f7183] ring-offset-1" : "")}>
+                    <div className="flex items-center justify-center gap-1">
+                      <button type="button" aria-label={dateLabel(day) + " " + timeLabel(id, "America/Denver") + ": mark available"} aria-pressed={myAvailable} onClick={() => markSlot(id, "available")} disabled={!teamId}
+                        className={"grid h-6 w-7 place-items-center rounded-[7px] border transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#268954] disabled:cursor-not-allowed disabled:opacity-40 " + (myAvailable ? "border-[#198452] bg-[#198452] text-white" : "border-[#bedaca] bg-white/80 text-[#15804c] hover:bg-[#e6f7ed]")}>
+                        <Check size={15} strokeWidth={2.5}/>
+                      </button>
+                      <button type="button" aria-label={dateLabel(day) + " " + timeLabel(id, "America/Denver") + ": mark unavailable"} aria-pressed={myBlocked} onClick={() => markSlot(id, "blocked")} disabled={!teamId}
+                        className={"grid h-6 w-7 place-items-center rounded-[7px] border transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#c34b4b] disabled:cursor-not-allowed disabled:opacity-40 " + (myBlocked ? "border-[#c55252] bg-[#c55252] text-white" : "border-[#f0c2c2] bg-white/80 text-[#ba5656] hover:bg-[#ffebeb]")}>
+                        <X size={15} strokeWidth={2.5}/>
+                      </button>
+                    </div>
+                    <button type="button" onClick={() => setSelected(id)} className={"mt-1 text-[10px] font-semibold tracking-tight " + (someoneElseBlocked ? "text-[#7a7c87]" : myBlocked ? "text-[#a84949]" : info.confirmed ? "text-[#18734b]" : "text-[#8b8b93]")}>
+                      {info.available.length}/12 free{someoneElseBlocked ? " · " + info.unavailable.length + " out" : ""}
+                    </button>
+                  </div>;
                 })}
               </div>)}
             </div>
           </div>
-          <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-[11px] font-medium text-[#797980]">
-            <span className="inline-flex items-center gap-1.5"><span className="h-3 w-3 rounded bg-[#e2f7ec] ring-1 ring-[#a6dec2]"/>12/12 available</span>
-            <span className="inline-flex items-center gap-1.5"><span className="h-3 w-3 rounded bg-[#f2f8f3] ring-1 ring-[#d6e7da]"/>No known conflicts, pending</span>
-            <span className="inline-flex items-center gap-1.5"><span className="h-3 w-3 rounded bg-[#fff5db] ring-1 ring-[#f4dfa9]"/>1–2 unavailable</span>
-            <span className="inline-flex items-center gap-1.5"><span className="h-3 w-3 rounded bg-[#fce9e9] ring-1 ring-[#f0cbcb]"/>3+ unavailable</span>
-            <span className="inline-flex items-center gap-1.5"><span className="h-3 w-3 rounded bg-[#f7dadd] ring-1 ring-[#d86d74]"/>Your blocked hour</span>
-          </div>
+          <p className="mt-3 text-[11px] leading-5 text-[#929298]">Grey means at least one other manager is unavailable. You can still add your own ✓ or ×. {submitted < 12 ? "A slot is only fully confirmed when all 12 managers have submitted." : "All 12 managers have submitted."}</p>
         </section>
 
         <section className="mt-5 grid gap-4 lg:grid-cols-[1.2fr_1fr]">
