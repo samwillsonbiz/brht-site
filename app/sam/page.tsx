@@ -79,6 +79,8 @@ export default function SamPage() {
   const [voteNotice, setVoteNotice] = useState("");
   const [fundingProject, setFundingProject] = useState<Project | null>(null);
   const [amount, setAmount] = useState(25);
+  const [checkoutBusy, setCheckoutBusy] = useState(false);
+  const [checkoutError, setCheckoutError] = useState("");
   const [joined, setJoined] = useState(false);
 
   useEffect(() => {
@@ -148,6 +150,39 @@ export default function SamPage() {
       setVoteNotice(`Your active priority is “${issue.name}.” You can change it anytime.`);
     } catch {
       setVoteNotice("That vote did not go through. Please try again.");
+    }
+  }
+
+  async function startCheckout(
+    supportAmount: number,
+    project?: Project | null,
+  ) {
+    setCheckoutBusy(true);
+    setCheckoutError("");
+
+    try {
+      const response = await fetch("/api/sam/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          mode: "one_time",
+          amount: supportAmount,
+          projectSlug: project
+            ? project.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")
+            : "general",
+          projectTitle: project?.title || "SAM 2028",
+        }),
+      });
+      const data = await response.json();
+      if (!response.ok || !data?.url) {
+        throw new Error(data?.error || "Unable to start checkout.");
+      }
+      window.location.href = data.url;
+    } catch (error) {
+      setCheckoutError(
+        error instanceof Error ? error.message : "Unable to start checkout.",
+      );
+      setCheckoutBusy(false);
     }
   }
 
@@ -414,6 +449,7 @@ export default function SamPage() {
                     onClick={() => {
                       setFundingProject(project);
                       setAmount(25);
+                      setCheckoutError("");
                     }}
                     className={
                       "mt-5 inline-flex items-center justify-center gap-2 rounded-sm px-4 py-3.5 text-[10px] font-black uppercase tracking-[0.09em] text-white " +
@@ -679,10 +715,11 @@ export default function SamPage() {
               PARODY DISCLOSURE
             </div>
             <p className="mt-3 max-w-[720px] text-[11px] font-medium leading-5 text-[#8d99ae]">
-              SAM is an AI-generated fictional political parody personality. SAM is
-              not a real person, candidate, elected official, political party,
-              campaign committee, or government representative. This prototype does
-              not accept donations, campaign contributions or payments.
+              SAM is an AI-generated fictional public-facing personality. SAM is not
+              a real person, candidate, elected official, political party, campaign
+              committee, or government representative. Support payments fund the
+              SAM media, research and social-issues awareness project and do not buy
+              votes or political influence.
             </p>
           </div>
 
@@ -719,7 +756,7 @@ export default function SamPage() {
             </button>
 
             <div className="text-[9px] font-black tracking-[0.16em] text-[#153b79]">
-              PROTOTYPE FUNDING FLOW
+              SECURE STRIPE CHECKOUT
             </div>
             <h3 className="mt-3 text-[38px] font-black leading-none tracking-[-0.05em]">
               Fund this push
@@ -748,15 +785,23 @@ export default function SamPage() {
 
             <button
               type="button"
-              className="mt-5 flex w-full cursor-not-allowed items-center justify-center gap-2 bg-[#08152f] px-4 py-4 text-[9px] font-black uppercase tracking-[0.08em] text-white opacity-75"
+              onClick={() => startCheckout(amount, fundingProject)}
+              disabled={checkoutBusy}
+              className="mt-5 flex w-full items-center justify-center gap-2 bg-[#08152f] px-4 py-4 text-[9px] font-black uppercase tracking-[0.08em] text-white disabled:opacity-60"
             >
-              Checkout disabled pending legal + entity setup
+              {checkoutBusy ? "Opening Stripe…" : "Continue to secure checkout"}
               <ShieldCheck className="h-4 w-4" />
             </button>
 
+            {checkoutError ? (
+              <p className="mt-3 text-[10px] font-bold leading-4 text-[#b4232f]">
+                {checkoutError}
+              </p>
+            ) : null}
+
             <p className="mt-3 text-[9px] font-semibold leading-4 text-[#8d95a3]">
-              No payment information is collected. This demonstrates the intended
-              experience only.
+              Payments are processed by Stripe. Financial support never buys an
+              additional priority vote or changes how votes are counted.
             </p>
           </div>
         </div>
