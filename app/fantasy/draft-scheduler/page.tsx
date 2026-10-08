@@ -92,6 +92,7 @@ function calendarForZone(zone: string) {
     byClock[day][clock] = id;
     clocks.add(clock);
   }
+  // Ordered local dates and clock labels are presentation-only; UTC save IDs stay stable.
   return { dates: Object.keys(byDay).sort(), byDay, byClock, clocks: [...clocks].sort() };
 }
 
