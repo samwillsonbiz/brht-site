@@ -17,10 +17,10 @@ type Issue = { slug: string; name: string; votes: number };
 type Cycle = { slug: string; label: string; starts_at: string; ends_at: string };
 
 type Project = {
+  slug: string;
   tag: string;
   title: string;
   copy: string;
-  raised: number;
   target: number;
   delivers: string[];
   featured?: boolean;
@@ -49,10 +49,10 @@ const initialIssues: Issue[] = [
 
 const projects: Project[] = [
   {
+    slug: "follow-the-money-campaign",
     tag: "ACTION 01 · REACH",
     title: "Run the Follow the Money campaign",
     copy: "A real $10,000 national issue-awareness campaign showing how campaign money, PAC spending and lobbying shape political access.",
-    raised: 0,
     target: 10000,
     delivers: [
       "$2,000 for source-backed creative and short-form video",
@@ -62,10 +62,10 @@ const projects: Project[] = [
     featured: true,
   },
   {
+    slug: "muckrock-transparency-grant",
     tag: "ACTION 02 · HELP",
     title: "Give $10,000 to MuckRock",
     copy: "A direct grant to the nonprofit MuckRock Foundation, which helps people file, track and share public-records requests and supports government-transparency reporting.",
-    raised: 0,
     target: 10000,
     delivers: [
       "Recipient: MuckRock Foundation, a 501(c)(3)",
@@ -74,10 +74,10 @@ const projects: Project[] = [
     ],
   },
   {
+    slug: "sam-influence-tracker",
     tag: "ACTION 03 · BUILD",
     title: "Build the SAM Influence Tracker",
     copy: "A public tool that makes federal campaign money and lobbying records easier for normal people to explore in one place.",
-    raised: 0,
     target: 10000,
     delivers: [
       "Use public FEC campaign-finance data",
@@ -170,6 +170,7 @@ export default function SamPage() {
   const [checkoutBusy, setCheckoutBusy] = useState(false);
   const [checkoutError, setCheckoutError] = useState("");
   const [joinNotice, setJoinNotice] = useState("");
+  const [fundTotals, setFundTotals] = useState<Record<string, number>>({});
 
   useEffect(() => {
     document.title = "SAM 2028 — Collective action, directed by the people";
@@ -182,10 +183,14 @@ export default function SamPage() {
 
     const load = async () => {
       try {
-        const [cycleRows, voteRows] = await Promise.all([
+        const [cycleRows, voteRows, fundRows] = await Promise.all([
           samRpc<Cycle[]>("sam_get_current_cycle", {}),
           samRpc<Array<{ slug: string; name: string; votes: number | string }>>(
             "sam_get_issue_totals",
+            {},
+          ),
+          samRpc<Array<{ project_slug: string; raised_cents: number | string }>>(
+            "sam_get_action_funds",
             {},
           ),
         ]);
@@ -205,6 +210,14 @@ export default function SamPage() {
             votes: Number(row.votes),
           })),
         );
+        setFundTotals(
+          Object.fromEntries(
+            fundRows.map((row) => [
+              row.project_slug,
+              Number(row.raised_cents) / 100,
+            ]),
+          ),
+        );
       } catch {
         setVoteNotice("Live voting is temporarily unavailable. Please try again shortly.");
       }
@@ -213,15 +226,30 @@ export default function SamPage() {
     load();
     const timer = window.setInterval(async () => {
       try {
-        const voteRows = await samRpc<
-          Array<{ slug: string; name: string; votes: number | string }>
-        >("sam_get_issue_totals", {});
+        const [voteRows, fundRows] = await Promise.all([
+          samRpc<Array<{ slug: string; name: string; votes: number | string }>>(
+            "sam_get_issue_totals",
+            {},
+          ),
+          samRpc<Array<{ project_slug: string; raised_cents: number | string }>>(
+            "sam_get_action_funds",
+            {},
+          ),
+        ]);
         setIssues(
           voteRows.map((row) => ({
             slug: row.slug,
             name: row.name,
             votes: Number(row.votes),
           })),
+        );
+        setFundTotals(
+          Object.fromEntries(
+            fundRows.map((row) => [
+              row.project_slug,
+              Number(row.raised_cents) / 100,
+            ]),
+          ),
         );
       } catch {
         // Keep the last successful totals on screen.
@@ -305,12 +333,7 @@ export default function SamPage() {
         body: JSON.stringify({
           mode,
           amount: supportAmount,
-          projectSlug: project
-            ? project.title
-                .toLowerCase()
-                .replace(/[^a-z0-9]+/g, "-")
-                .replace(/(^-|-$)/g, "")
-            : "general",
+          projectSlug: project ? project.slug : "general",
           projectTitle: project?.title || "SAM 2028",
         }),
       });
@@ -666,9 +689,10 @@ export default function SamPage() {
 
           <div className="mt-7 grid gap-5 lg:grid-cols-3">
             {projects.map((project) => {
+              const raised = fundTotals[project.slug] ?? 0;
               const pct =
                 project.target > 0
-                  ? Math.min(100, Math.round((project.raised / project.target) * 100))
+                  ? Math.min(100, Math.round((raised / project.target) * 100))
                   : 0;
 
               return (
@@ -707,7 +731,7 @@ export default function SamPage() {
                       <div>
                         <p className="text-[11px] font-medium text-[#86868b]">Raised</p>
                         <p className="mt-1 text-[26px] font-semibold tracking-[-0.04em]">
-                          {money(project.raised)}
+                          {money(raised)}
                         </p>
                       </div>
                       <p className="text-[12px] font-semibold text-[#07142c]">
