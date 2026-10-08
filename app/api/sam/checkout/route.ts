@@ -11,9 +11,10 @@ const ONE_TIME: Record<number, string> = {
 };
 
 const MONTHLY: Record<number, string> = {
-  5: "sam_member_5_monthly",
   10: "sam_member_10_monthly",
   25: "sam_member_25_monthly",
+  50: "sam_member_50_monthly",
+  100: "sam_member_100_monthly",
 };
 
 async function stripeRequest(path: string, init?: RequestInit) {
@@ -91,6 +92,11 @@ export async function POST(request: NextRequest) {
       params.set("subscription_data[metadata][source]", "brht_sam");
       params.set("subscription_data[metadata][project_slug]", projectSlug);
       params.set("subscription_data[metadata][project_title]", projectTitle);
+
+      if (amount >= 25) {
+        params.set("shipping_address_collection[allowed_countries][0]", "US");
+        params.set("phone_number_collection[enabled]", "true");
+      }
     } else {
       params.set("customer_creation", "always");
       params.set("payment_intent_data[metadata][source]", "brht_sam");
