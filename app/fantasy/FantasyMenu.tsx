@@ -68,6 +68,12 @@ export default function FantasyMenu() {
     };
   }, [open]);
 
+  // The draft scheduler is shared with league managers. Keep its navigation
+  // standalone while preserving the menu everywhere else in Fantasy Lab.
+  if (pathname === "/fantasy/draft-scheduler" || pathname.startsWith("/fantasy/draft-scheduler/")) {
+    return null;
+  }
+
   const menuButton = (
     <button
       type="button"
