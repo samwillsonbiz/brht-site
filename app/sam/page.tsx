@@ -248,8 +248,6 @@ export default function SamPage() {
 
         <div className="relative mx-auto flex min-h-[720px] max-w-[1240px] items-center px-5 py-20 lg:min-h-[790px] lg:px-8">
           <div className="max-w-[690px]">
-            <ImageTag>AI POLITICAL PARODY</ImageTag>
-
             <div className="mt-7 text-[clamp(6rem,13vw,11rem)] font-black leading-[0.68] tracking-[-0.095em]">
               SAM<span className="align-top text-[0.27em] text-[#e42b3f]">★</span>
             </div>
