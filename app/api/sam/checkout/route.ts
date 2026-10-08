@@ -22,12 +22,12 @@ async function stripeRequest(path: string, init?: RequestInit) {
     throw new Error("STRIPE_SECRET_KEY is not configured");
   }
 
+  const headers = new Headers(init?.headers);
+  headers.set("Authorization", `Bearer ${secret}`);
+
   const response = await fetch(`https://api.stripe.com/v1${path}`, {
     ...init,
-    headers: {
-      Authorization: `Bearer ${secret}`,
-      ...(init?.headers || {}),
-    },
+    headers,
     cache: "no-store",
   });
 
