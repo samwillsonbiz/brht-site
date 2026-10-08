@@ -5,11 +5,8 @@ import {
   ArrowRight,
   Check,
   ChevronRight,
-  Megaphone,
   Play,
   ShieldCheck,
-  Users,
-  Vote,
   X,
 } from "lucide-react";
 
@@ -490,74 +487,21 @@ export default function SamPage() {
 
       <section id="why" className="px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
         <div className="mx-auto max-w-6xl">
-          <div className="max-w-3xl">
-            <p className="text-[13px] font-semibold text-[#d82335]">Why SAM exists</p>
-            <h2 className="mt-3 text-[clamp(2.7rem,6vw,5rem)] font-semibold leading-[0.95] tracking-[-0.055em]">
-              Your representatives are supposed to represent you.
+          <div className="grid gap-10 lg:grid-cols-[1.15fr_.85fr] lg:items-end lg:gap-16">
+            <h2 className="text-[clamp(5rem,11vw,9rem)] font-semibold leading-[0.78] tracking-[-0.085em] text-[#07142c]">
+              Represent<span className="text-[#d82335]">.</span>
             </h2>
-            <p className="mt-6 max-w-2xl text-[17px] leading-8 text-[#6e6e73]">
-              That was always the deal: constituents make their priorities known,
-              elected officials carry that mandate into government, and the public can
-              see whether they followed through. Today, those voices often compete with
-              donors, lobbyists, party machinery and organized special interests. SAM
-              puts the public mandate back in one visible place.
-            </p>
-          </div>
 
-          <div className="mt-12 grid gap-4 md:grid-cols-3">
-            {[
-              {
-                icon: Vote,
-                title: "You choose the priority.",
-                copy: "Every month, the community votes. One person gets one active priority vote for that cycle.",
-              },
-              {
-                icon: Megaphone,
-                title: "SAM concentrates attention.",
-                copy: "The winning issue becomes the primary focus of weekly videos, emails, explainers and public conversation.",
-              },
-              {
-                icon: Users,
-                title: "Then we act together.",
-                copy: "One coordinated action gives thousands of individual voices the same timing, message and destination.",
-              },
-            ].map((item) => {
-              const Icon = item.icon;
-              return (
-                <article
-                  key={item.title}
-                  className="rounded-[26px] border border-black/[0.06] bg-white p-7 shadow-[0_1px_2px_rgba(0,0,0,.03),0_12px_34px_rgba(0,0,0,.035)]"
-                >
-                  <div className="grid h-11 w-11 place-items-center rounded-[14px] bg-[#eef3ff] text-[#153b79]">
-                    <Icon className="h-5 w-5" strokeWidth={1.8} />
-                  </div>
-                  <h3 className="mt-7 text-[23px] font-semibold leading-tight tracking-[-0.035em]">
-                    {item.title}
-                  </h3>
-                  <p className="mt-3 text-[14px] leading-6 text-[#6e6e73]">
-                    {item.copy}
-                  </p>
-                </article>
-              );
-            })}
-          </div>
+            <div className="max-w-[520px] lg:pb-2">
+              <p className="text-[clamp(1.7rem,3.2vw,2.55rem)] font-semibold leading-[1.03] tracking-[-0.04em] text-[#1d1d1f]">
+                You tell Sam what matters.
+                <br />
+                Sam makes it his priority.
+              </p>
 
-          <div className="mt-5 rounded-[28px] bg-[#07142c] p-7 text-white sm:p-9">
-            <div className="grid gap-7 lg:grid-cols-[.9fr_1.1fr] lg:items-center">
-              <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#a9c5ff]">
-                  The simple idea
-                </p>
-                <p className="mt-3 text-[31px] font-semibold leading-[1.02] tracking-[-0.045em] sm:text-[40px]">
-                  Representation should not depend on
-                  <br />
-                  <span className="text-[#f16b78]">who can buy the most access.</span>
-                </p>
-              </div>
-              <p className="text-[15px] leading-7 text-[#bcc7d9]">
-                Everyone gets the same public vote. Money can help fund research,
-                tools, distribution and coordinated action. It never buys a louder
-                ballot. The people decide the mandate first.
+              <p className="mt-6 text-[16px] leading-7 text-[#6e6e73]">
+                No donors setting the agenda. No lobbyists buying access.
+                <span className="font-semibold text-[#07142c]"> You vote. Sam represents.</span>
               </p>
             </div>
           </div>
