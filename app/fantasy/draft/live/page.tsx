@@ -234,7 +234,7 @@ function shortName(name?: string | null) {
   return `${parts[0][0]}. ${parts.slice(1).join(" ")}`;
 }
 
-export default function LiveDraftPage() {
+export default function LiveDraftPage({ apiBase = "/api/fantasy" }: { apiBase?: string }) {
   const [pool, setPool] = useState<PlayerPoolResponse | null>(null);
   const [outlook, setOutlook] = useState<OutlookResponse | null>(null);
   const [intel, setIntel] = useState<DraftIntel[]>([]);
@@ -251,15 +251,15 @@ export default function LiveDraftPage() {
   async function refresh() {
     setLoading(true);
     try {
-      const poolPromise = fetch("/api/fantasy/sync/player-market", {
-        method: "POST",
+      const poolPromise = fetch(`${apiBase}/sync/player-market`, {
+        method: apiBase === "/api/fantasy" ? "POST" : "GET",
         cache: "no-store",
       }).then(async (response) => {
         if (response.ok) {
           return (await response.json()) as PlayerPoolResponse;
         }
 
-        const fallback = await fetch("/api/fantasy/espn/players?limit=1000", {
+        const fallback = await fetch(`${apiBase}/espn/players?limit=1000`, {
           cache: "no-store",
         });
         return (await fallback.json()) as PlayerPoolResponse;
@@ -267,8 +267,8 @@ export default function LiveDraftPage() {
 
       const [poolBody, outlookRes, intelRes] = await Promise.all([
         poolPromise,
-        fetch("/api/fantasy/espn/schedule-outlook?weeks=6", { cache: "no-store" }),
-        fetch("/api/fantasy/draft-intel", { cache: "no-store" }),
+        fetch(`${apiBase}/espn/schedule-outlook?weeks=6`, { cache: "no-store" }),
+        fetch(`${apiBase}/draft-intel`, { cache: "no-store" }),
       ]);
 
       setPool(poolBody);
@@ -284,7 +284,7 @@ export default function LiveDraftPage() {
   useEffect(() => {
     setMarks(loadMarks());
     refresh();
-  }, []);
+  }, [apiBase]);
 
   const teamById = useMemo(
     () => new Map((outlook?.teams ?? []).map((team) => [team.id, team])),
@@ -336,7 +336,7 @@ export default function LiveDraftPage() {
       return;
     }
     let cancelled = false;
-    fetch(`/api/fantasy/draft-intel?playerId=${selectedId}`, { cache: "no-store" })
+    fetch(`${apiBase}/draft-intel?playerId=${selectedId}`, { cache: "no-store" })
       .then((response) => response.json())
       .then((body: DraftIntelResponse) => {
         if (!cancelled) setIntelUpdates(body.updates ?? []);
@@ -347,7 +347,7 @@ export default function LiveDraftPage() {
     return () => {
       cancelled = true;
     };
-  }, [selectedId]);
+  }, [selectedId, apiBase]);
 
   const rows = useMemo(() => {
     const q = query.trim().toLowerCase();
