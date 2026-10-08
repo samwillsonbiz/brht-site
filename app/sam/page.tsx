@@ -46,14 +46,14 @@ const projects: Project[] = [
     tag: "PROJECT 01",
     title: "Where did the money go?",
     copy: "Build a plain-English public spending explorer and turn the findings into short explainers normal people can actually use.",
-    raised: 73420,
+    raised: 0,
     target: 100000,
   },
   {
     tag: "COMMUNITY #1",
     title: "Congressional stock trading",
     copy: "Research the current rules, compare reform proposals, publish the evidence and build a public-facing pressure campaign.",
-    raised: 113750,
+    raised: 0,
     target: 125000,
     featured: true,
   },
@@ -61,7 +61,7 @@ const projects: Project[] = [
     tag: "PROJECT 03",
     title: "Healthcare price reality check",
     copy: "Compare published prices, cash prices and insured rates, then show where the money is actually going.",
-    raised: 43200,
+    raised: 0,
     target: 80000,
   },
 ];
@@ -154,6 +154,7 @@ export default function SamPage() {
   }
 
   async function startCheckout(
+    mode: "one_time" | "monthly",
     supportAmount: number,
     project?: Project | null,
   ) {
@@ -165,7 +166,7 @@ export default function SamPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          mode: "one_time",
+          mode,
           amount: supportAmount,
           projectSlug: project
             ? project.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")
@@ -394,11 +395,70 @@ export default function SamPage() {
               </h2>
             </div>
             <p className="max-w-[520px] text-[15px] font-medium leading-7 text-[#667084]">
-              Choose the work you want pushed forward. Funding is still disabled in
-              this prototype while the legal entity and compliant payment flow are
-              being finalized.
+              Choose the work you want pushed forward, or support SAM itself. Stripe
+              Checkout is now connected in sandbox mode while we complete final launch testing.
             </p>
           </div>
+
+          <div className="mb-10 grid gap-5 lg:grid-cols-2">
+            <article className="border border-[#d8dadf] bg-[#08152f] p-7 text-white">
+              <div className="text-[9px] font-black tracking-[0.14em] text-[#a9c5ff]">
+                SUPPORT SAM
+              </div>
+              <h3 className="mt-3 text-[34px] font-black leading-[1] tracking-[-0.05em]">
+                Back the project directly.
+              </h3>
+              <p className="mt-4 max-w-[520px] text-[13px] font-medium leading-6 text-[#b7c2d5]">
+                One-time support helps fund research, media, technology and public-awareness work.
+                It never buys an extra vote or additional influence.
+              </p>
+              <div className="mt-6 grid grid-cols-4 gap-2">
+                {[5, 10, 25, 50].map((value) => (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() => startCheckout("one_time", value, null)}
+                    disabled={checkoutBusy}
+                    className="border border-white/25 bg-white/5 px-2 py-3 text-[11px] font-black transition hover:bg-white hover:text-[#08152f] disabled:opacity-50"
+                  >
+                    ${value}
+                  </button>
+                ))}
+              </div>
+            </article>
+
+            <article className="border border-[#d8dadf] bg-white p-7">
+              <div className="text-[9px] font-black tracking-[0.14em] text-[#153b79]">
+                MONTHLY SUPPORT
+              </div>
+              <h3 className="mt-3 text-[34px] font-black leading-[1] tracking-[-0.05em]">
+                Keep SAM moving.
+              </h3>
+              <p className="mt-4 max-w-[520px] text-[13px] font-medium leading-6 text-[#667084]">
+                Recurring support gives the project predictable funding while keeping civic voting
+                completely separate from money.
+              </p>
+              <div className="mt-6 grid grid-cols-3 gap-2">
+                {[5, 10, 25].map((value) => (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() => startCheckout("monthly", value, null)}
+                    disabled={checkoutBusy}
+                    className="border border-[#08152f] bg-white px-2 py-3 text-[11px] font-black text-[#08152f] transition hover:bg-[#08152f] hover:text-white disabled:opacity-50"
+                  >
+                    ${value}/MO
+                  </button>
+                ))}
+              </div>
+            </article>
+          </div>
+
+          {checkoutError ? (
+            <div className="mb-8 border border-[#d82335]/30 bg-[#fff3f4] px-4 py-3 text-[12px] font-bold text-[#a61f2d]">
+              {checkoutError}
+            </div>
+          ) : null}
 
           <div className="grid gap-5 lg:grid-cols-3">
             {projects.map((project) => {
@@ -438,7 +498,7 @@ export default function SamPage() {
                   <div className="mt-3 flex items-end justify-between">
                     <strong className="text-[20px]">{money(project.raised)}</strong>
                     <span className="max-w-[120px] text-right text-[9px] font-bold leading-4 text-[#8b92a0]">
-                      prototype of {money(project.target)} target
+                      of {money(project.target)} goal
                     </span>
                   </div>
 
@@ -730,7 +790,7 @@ export default function SamPage() {
         </div>
 
         <div className="mx-auto mt-10 max-w-[1180px] border-t border-[#1c2940] pt-5 text-[8px] font-bold tracking-[0.13em] text-[#66758d]">
-          © 2028 SAM PROJECT — FICTIONAL CAMPAIGN PROTOTYPE
+          © 2028 SAM PROJECT — AI-GENERATED CIVIC MEDIA PROJECT
         </div>
       </footer>
 
@@ -783,7 +843,7 @@ export default function SamPage() {
 
             <button
               type="button"
-              onClick={() => startCheckout(amount, fundingProject)}
+              onClick={() => startCheckout("one_time", amount, fundingProject)}
               disabled={checkoutBusy}
               className="mt-5 flex w-full items-center justify-center gap-2 bg-[#08152f] px-4 py-4 text-[9px] font-black uppercase tracking-[0.08em] text-white disabled:opacity-60"
             >
