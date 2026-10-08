@@ -410,16 +410,30 @@ export default function SamPage() {
         id="top"
         className="relative min-h-[720px] overflow-hidden bg-[#07142c] text-white lg:min-h-[800px]"
       >
+        {/* Mobile: full-bleed crop with the subject held to the right. */}
         <img
           src="/sam/Campaign%20Speech%20with%20Patriotic%20Backdrop.png"
           alt="AI-generated image of fictional SAM speaking at a campaign-style event"
-          className="absolute inset-0 h-full w-full object-cover object-[82%_center]"
+          className="absolute inset-0 h-full w-full object-cover object-[72%_center] lg:hidden"
         />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(4,11,25,.98)_0%,rgba(4,11,25,.9)_34%,rgba(4,11,25,.55)_58%,rgba(4,11,25,.16)_100%)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(4,11,25,.72)_0%,transparent_38%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(4,11,25,.98)_0%,rgba(4,11,25,.9)_48%,rgba(4,11,25,.42)_78%,rgba(4,11,25,.16)_100%)] lg:hidden" />
+        <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(4,11,25,.78)_0%,transparent_42%)] lg:hidden" />
 
-        <div className="relative mx-auto flex min-h-[720px] max-w-6xl items-center px-4 py-20 sm:px-6 lg:min-h-[800px] lg:px-8">
-          <div className="max-w-[720px]">
+        {/* Desktop: the photograph occupies only the right side. This creates a
+            protected text zone instead of relying on object-position to avoid overlap. */}
+        <div className="absolute inset-y-0 right-0 hidden left-[43%] overflow-hidden lg:block">
+          <img
+            src="/sam/Campaign%20Speech%20with%20Patriotic%20Backdrop.png"
+            alt=""
+            aria-hidden="true"
+            className="h-full w-full object-cover object-center"
+          />
+          <div className="absolute inset-0 bg-[linear-gradient(90deg,#07142c_0%,rgba(7,20,44,.92)_10%,rgba(7,20,44,.55)_24%,rgba(7,20,44,.12)_46%,rgba(7,20,44,0)_68%)]" />
+          <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(4,11,25,.62)_0%,transparent_34%)]" />
+        </div>
+
+        <div className="relative z-10 mx-auto flex min-h-[720px] max-w-6xl items-center px-4 py-20 sm:px-6 lg:min-h-[800px] lg:px-8">
+          <div className="max-w-[720px] lg:max-w-[610px]">
             <div className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#a9c5ff]">
               Representation, the way it was supposed to be
             </div>
