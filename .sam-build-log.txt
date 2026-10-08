@@ -1,0 +1,28 @@
+
+> backbone-bi@0.1.0 build
+> next build
+
+⚠ No build cache found. Please configure build caching for faster rebuilds. Read more: https://nextjs.org/docs/messages/no-cache
+Attention: Next.js now collects completely anonymous telemetry regarding usage.
+This information is used to shape Next.js' roadmap and prioritize features.
+You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+https://nextjs.org/telemetry
+
+▲ Next.js 16.2.6 (Turbopack)
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 5.7s
+  Running TypeScript ...
+Failed to type check.
+
+./app/sam/page.tsx:251:14
+Type error: Cannot find name 'ImageTag'. Did you mean 'ImageData'?
+
+  [90m249 |[0m         <div className=[32m"relative mx-auto flex min-h-[720px] max-w-[1240px] items-center p...[0m
+  [90m250 |[0m           <div className=[32m"max-w-[690px]"[0m>
+[31m[1m>[0m [90m251 |[0m             <[33mImageTag[0m>[33mAI[0m [33mPOLITICAL[0m [33mPARODY[0m</[33mImageTag[0m>
+  [90m    |[0m              [31m[1m^[0m
+  [90m252 |[0m
+  [90m253 |[0m             <div className=[32m"mt-7 text-[clamp(6rem,13vw,11rem)] font-black leading-[0.68] ...[0m
+  [90m254 |[0m               [33mSAM[0m<span className=[32m"align-top text-[0.27em] text-[#e42b3f]"[0m>★</span>
+Next.js build worker exited with code: 1 and signal: null
