@@ -50,39 +50,39 @@ const initialIssues: Issue[] = [
 const projects: Project[] = [
   {
     tag: "ACTION 01 · REACH",
-    title: "Run a public awareness campaign",
-    copy: "Turn the month’s winning issue into a professional message and put real distribution behind it.",
+    title: "Run the Follow the Money campaign",
+    copy: "A real $10,000 national issue-awareness campaign showing how campaign money, PAC spending and lobbying shape political access.",
     raised: 0,
     target: 10000,
     delivers: [
-      "Creative production built around verified facts",
-      "Paid issue-awareness distribution",
-      "Public report showing reach and results",
+      "$2,000 for source-backed creative and short-form video",
+      "$7,000 in paid digital distribution",
+      "$1,000 for measurement and a public results report",
     ],
     featured: true,
   },
   {
     tag: "ACTION 02 · HELP",
-    title: "Fund direct help",
-    copy: "Put money directly into a named, vetted organization, program, school, shelter, family or community need tied to the winning issue.",
+    title: "Give $10,000 to MuckRock",
+    copy: "A direct grant to the nonprofit MuckRock Foundation, which helps people file, track and share public-records requests and supports government-transparency reporting.",
     raised: 0,
     target: 10000,
     delivers: [
-      "Recipient named before funding opens",
-      "Amount and transfer publicly documented",
-      "Follow-up showing what the money accomplished",
+      "Recipient: MuckRock Foundation, a 501(c)(3)",
+      "Grant confirmed with the recipient before release",
+      "Receipt and follow-up published publicly",
     ],
   },
   {
     tag: "ACTION 03 · BUILD",
-    title: "Build something useful",
-    copy: "Fund research, a public tool, a pilot program or another concrete resource that can keep helping after the month ends.",
+    title: "Build the SAM Influence Tracker",
+    copy: "A public tool that makes federal campaign money and lobbying records easier for normal people to explore in one place.",
     raised: 0,
     target: 10000,
     delivers: [
-      "Specific deliverable published before funding",
-      "Budget and milestones made public",
-      "Finished work released with a results update",
+      "Use public FEC campaign-finance data",
+      "Add Senate lobbying-disclosure records",
+      "Release a searchable first version free to the public",
     ],
   },
 ];
@@ -126,7 +126,7 @@ const membershipTiers: MembershipTier[] = [
     benefits: [
       "Everything in Shirt Club",
       "Monthly hat or premium SAM merch item",
-      "Early access to new member experiences",
+      "$30 every month allocated to the 3 current Action Funds ($10 each)",
     ],
   },
 ];
@@ -390,7 +390,7 @@ export default function SamPage() {
         <img
           src="/sam/Campaign%20Speech%20with%20Patriotic%20Backdrop.png"
           alt="AI-generated image of fictional SAM speaking at a campaign-style event"
-          className="absolute inset-0 h-full w-full object-cover object-[58%_center]"
+          className="absolute inset-0 h-full w-full object-cover object-[82%_center]"
         />
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(4,11,25,.98)_0%,rgba(4,11,25,.9)_34%,rgba(4,11,25,.55)_58%,rgba(4,11,25,.16)_100%)]" />
         <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(4,11,25,.72)_0%,transparent_38%)]" />
@@ -641,12 +641,11 @@ export default function SamPage() {
             <div>
               <p className="text-[13px] font-semibold text-[#d82335]">Put money behind the mandate</p>
               <h2 className="mt-3 text-[clamp(3rem,6vw,5rem)] font-semibold leading-[0.92] tracking-[-0.06em]">
-                Fund the difference.
+                Fund<span className="text-[#d82335]">.</span>
               </h2>
             </div>
             <p className="max-w-[500px] text-[16px] leading-7 text-[#6e6e73]">
-              Last month’s #1 vote sets the issue. Then SAM gives you three concrete
-              ways to put money to work on it.
+              You chose the issue. Now choose what SAM actually does about it.
             </p>
           </div>
 
@@ -743,6 +742,14 @@ export default function SamPage() {
               );
             })}
           </div>
+
+          <p className="mt-5 max-w-4xl text-[10px] leading-5 text-[#86868b]">
+            Launch-action research: MuckRock Foundation is a registered 501(c)(3) that
+            supports public-records access and government-transparency reporting. The SAM
+            Influence Tracker would use public Federal Election Commission campaign-finance
+            data and U.S. Senate lobbying-disclosure data. Final third-party grants are
+            confirmed with the recipient before funds are released.
+          </p>
         </div>
       </section>
 
@@ -752,15 +759,13 @@ export default function SamPage() {
             <div>
               <p className="text-[13px] font-semibold text-[#d82335]">Membership, not pay-to-vote</p>
               <h2 className="mt-3 text-[clamp(2.9rem,5.8vw,4.8rem)] font-semibold leading-[0.94] tracking-[-0.055em]">
-                Support the system.
-                <br />
-                <span className="text-[#6e6e73]">Get something real back.</span>
+                Support<span className="text-[#d82335]">.</span>
               </h2>
             </div>
             <p className="max-w-[520px] text-[16px] leading-7 text-[#6e6e73]">
-              The main way to support SAM is membership: AI access, member tools and
-              physical monthly drops. Every tier gets the exact same public ballot.
-              More money never means more votes.
+              Membership funds SAM, unlocks AI access and includes physical monthly
+              drops. Every tier gets the exact same public ballot. At $100/month, $30
+              is automatically allocated across the three current Action Funds.
             </p>
           </div>
 
@@ -869,14 +874,12 @@ export default function SamPage() {
             <div>
               <p className="text-[13px] font-semibold text-[#153b79]">The monthly focus in public</p>
               <h2 className="mt-3 text-[clamp(2.8rem,5.5vw,4.6rem)] font-semibold leading-[0.95] tracking-[-0.055em]">
-                The issue follows you
-                <br />
-                <span className="text-[#6e6e73]">through the whole month.</span>
+                Watch<span className="text-[#d82335]">.</span>
               </h2>
             </div>
             <p className="max-w-[520px] text-[16px] leading-7 text-[#6e6e73]">
-              Weekly social videos, the month’s emails and the coordinated action all
-              reinforce the same public mandate instead of chasing a different headline every day.
+              Weekly videos, monthly briefings and real-world action stay focused on
+              the issue the public chose.
             </p>
           </div>
 
@@ -891,8 +894,8 @@ export default function SamPage() {
               {
                 label: "PUBLIC ACTION",
                 title: "Take the month’s mandate out into the real world.",
-                image: "/sam/Half%20body%20Rally.png",
-                pos: "object-[center_30%]",
+                image: "/sam/Jeans%20Town%20hall.png",
+                pos: "object-[center_22%]",
               },
               {
                 label: "PROGRESS REPORT",
