@@ -3,12 +3,9 @@
 import React, { FormEvent, useEffect, useMemo, useState } from "react";
 import {
   ArrowRight,
-  BarChart3,
   Check,
   ChevronRight,
-  Mail,
   Megaphone,
-  MessageCircle,
   Play,
   ShieldCheck,
   Users,
@@ -379,8 +376,8 @@ export default function SamPage() {
           <nav className="ml-auto hidden items-center gap-7 text-[12px] font-semibold text-[#4b4b50] md:flex">
             <a className="transition hover:text-[#d82335]" href="#why">Why</a>
             <a className="transition hover:text-[#d82335]" href="#agenda">Vote</a>
-            <a className="transition hover:text-[#d82335]" href="#membership">Membership</a>
             <a className="transition hover:text-[#d82335]" href="#fund">Action Funds</a>
+            <a className="transition hover:text-[#d82335]" href="#membership">Membership</a>
           </nav>
 
           <a
@@ -407,7 +404,7 @@ export default function SamPage() {
         <div className="relative mx-auto flex min-h-[720px] max-w-6xl items-center px-4 py-20 sm:px-6 lg:min-h-[800px] lg:px-8">
           <div className="max-w-[720px]">
             <div className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#a9c5ff]">
-              A new model for public representation
+              Representation, the way it was supposed to work
             </div>
 
             <div className="mt-6 text-[clamp(5.6rem,13vw,10rem)] font-semibold leading-[0.72] tracking-[-0.095em]">
@@ -421,9 +418,8 @@ export default function SamPage() {
             </h1>
 
             <p className="mt-7 max-w-[620px] text-[17px] font-medium leading-7 text-[#d5ddea] sm:text-[19px] sm:leading-8">
-              One opinion is easy to ignore. Thousands of people choosing the same
-              priority, amplifying the same message, and taking the same action become
-              a constituency.
+              Your representatives are supposed to represent you. SAM gives people a
+              way to make that mandate visible, coordinated, and much harder to ignore.
             </p>
 
             <div className="mt-9 flex flex-wrap gap-3">
@@ -463,12 +459,14 @@ export default function SamPage() {
           <div className="max-w-3xl">
             <p className="text-[13px] font-semibold text-[#d82335]">Why SAM exists</p>
             <h2 className="mt-3 text-[clamp(2.7rem,6vw,5rem)] font-semibold leading-[0.95] tracking-[-0.055em]">
-              Representation gets stronger when it gets organized.
+              Your representatives are supposed to represent you.
             </h2>
             <p className="mt-6 max-w-2xl text-[17px] leading-8 text-[#6e6e73]">
-              Public frustration is usually fragmented: different posts, different
-              petitions, different messages, different days. SAM turns that scattered
-              energy into a simple monthly mandate everyone can see and act on together.
+              That was always the deal: constituents make their priorities known,
+              elected officials carry that mandate into government, and the public can
+              see whether they followed through. Today, those voices often compete with
+              donors, lobbyists, party machinery and organized special interests. SAM
+              puts the public mandate back in one visible place.
             </p>
           </div>
 
@@ -517,60 +515,17 @@ export default function SamPage() {
                   The simple idea
                 </p>
                 <p className="mt-3 text-[31px] font-semibold leading-[1.02] tracking-[-0.045em] sm:text-[40px]">
-                  A million isolated opinions are noise.
+                  Representation should not depend on
                   <br />
-                  <span className="text-[#f16b78]">A million coordinated people are leverage.</span>
+                  <span className="text-[#f16b78]">who can buy the most access.</span>
                 </p>
               </div>
               <p className="text-[15px] leading-7 text-[#bcc7d9]">
-                SAM does not sell extra political influence. Membership money, cause
-                funding and merch help pay for the tools, research, content and
-                distribution. The public ballot remains separate from money.
+                Everyone gets the same public vote. Money can help fund research,
+                tools, distribution and coordinated action — but it never buys a louder
+                ballot. The people decide the mandate first.
               </p>
             </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="border-y border-black/[0.06] bg-white px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
-        <div className="mx-auto max-w-6xl">
-          <div className="max-w-3xl">
-            <p className="text-[13px] font-semibold text-[#153b79]">The monthly operating system</p>
-            <h2 className="mt-3 text-[clamp(2.6rem,5vw,4.3rem)] font-semibold leading-[0.96] tracking-[-0.05em]">
-              Vote. Focus. Amplify. Act. Report.
-            </h2>
-          </div>
-
-          <div className="mt-12 grid gap-3 lg:grid-cols-5">
-            {[
-              ["01", "Vote", "Choose the issue you want SAM to prioritize next month."],
-              ["02", "Focus", "The #1 issue becomes the next month’s primary editorial platform."],
-              ["03", "Amplify", "Weekly social videos and that month’s email briefings stay centered on it."],
-              ["04", "Act", "SAM launches one coordinated action: calls, emails, public comments, or a share campaign."],
-              ["05", "Report", "We publish what happened, what moved, what did not, and what comes next."],
-            ].map(([number, title, copy]) => (
-              <article key={number} className="rounded-[22px] bg-[#f5f5f7] p-6">
-                <div className="text-[11px] font-semibold text-[#d82335]">{number}</div>
-                <h3 className="mt-5 text-[20px] font-semibold tracking-[-0.025em]">{title}</h3>
-                <p className="mt-2 text-[13px] leading-5 text-[#6e6e73]">{copy}</p>
-              </article>
-            ))}
-          </div>
-
-          <div className="mt-8 grid gap-4 rounded-[24px] bg-[#f5f5f7] p-6 sm:grid-cols-4 sm:p-8">
-            {[
-              "Vote once each month",
-              "Take the coordinated action",
-              "Share the monthly focus",
-              "Support financially if you can",
-            ].map((item) => (
-              <div key={item} className="flex items-start gap-3">
-                <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-[#07142c] text-white">
-                  <Check className="h-3 w-3" strokeWidth={2.2} />
-                </span>
-                <span className="text-[13px] font-semibold leading-5 text-[#3a3a3c]">{item}</span>
-              </div>
-            ))}
           </div>
         </div>
       </section>
@@ -582,10 +537,8 @@ export default function SamPage() {
               <p className="text-[13px] font-semibold text-[#a9c5ff]">
                 {cycle ? cycle.label + " ballot" : "This month’s ballot"}
               </p>
-              <h2 className="mt-3 text-[clamp(3rem,6vw,5rem)] font-semibold leading-[0.92] tracking-[-0.06em]">
-                You decide what
-                <br />
-                <span className="text-[#f16b78]">gets the microphone.</span>
+              <h2 className="mt-3 text-[clamp(4rem,8vw,6.5rem)] font-semibold leading-[0.88] tracking-[-0.07em]">
+                VOTE<span className="text-[#f16b78]">.</span>
               </h2>
             </div>
             <div className="lg:pb-1">
@@ -647,123 +600,26 @@ export default function SamPage() {
             <span className="font-medium text-[#c3cede]">{voteNotice}</span>
             <span>Beta: one active vote per browser each month. Verified member voting is next.</span>
           </div>
-        </div>
-      </section>
 
-      <section id="membership" className="px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
-        <div className="mx-auto max-w-6xl">
-          <div className="grid gap-8 lg:grid-cols-[1.08fr_.92fr] lg:items-end">
-            <div>
-              <p className="text-[13px] font-semibold text-[#d82335]">Membership, not pay-to-vote</p>
-              <h2 className="mt-3 text-[clamp(2.9rem,5.8vw,4.8rem)] font-semibold leading-[0.94] tracking-[-0.055em]">
-                Support the system.
-                <br />
-                <span className="text-[#6e6e73]">Get something real back.</span>
-              </h2>
-            </div>
-            <p className="max-w-[520px] text-[16px] leading-7 text-[#6e6e73]">
-              The main way to support SAM is membership: AI access, member tools and
-              physical monthly drops. Every tier gets the exact same public ballot.
-              More money never means more votes.
-            </p>
-          </div>
-
-          <div className="mt-12 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            {membershipTiers.map((tier) => (
-              <article
-                key={tier.amount}
-                className={
-                  "relative flex min-h-[430px] flex-col rounded-[26px] border p-6 shadow-[0_1px_2px_rgba(0,0,0,.03),0_12px_34px_rgba(0,0,0,.035)] " +
-                  (tier.featured
-                    ? "border-[#d82335] bg-[#07142c] text-white"
-                    : "border-black/[0.07] bg-white")
-                }
-              >
-                {tier.featured ? (
-                  <span className="absolute right-5 top-5 rounded-full bg-[#d82335] px-3 py-1 text-[9px] font-semibold uppercase tracking-[0.08em] text-white">
-                    Popular
-                  </span>
-                ) : null}
-
-                <p className={tier.featured ? "text-[12px] font-semibold text-[#a9c5ff]" : "text-[12px] font-semibold text-[#153b79]"}>
-                  {tier.name}
+          <div className="mt-9 rounded-[22px] border border-white/10 bg-white/[0.05] p-5 sm:p-6">
+            <div className="grid gap-5 lg:grid-cols-[.9fr_1.1fr] lg:items-center">
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-[#a9c5ff]">
+                  What happens after the vote
                 </p>
-
-                <div className="mt-5 flex items-end gap-1">
-                  <span className="text-[46px] font-semibold leading-none tracking-[-0.06em]">
-                    {"$"}{tier.amount}
-                  </span>
-                  <span className={tier.featured ? "pb-1 text-[12px] text-white/55" : "pb-1 text-[12px] text-[#86868b]"}>
-                    / month
-                  </span>
-                </div>
-
-                <p className={tier.featured ? "mt-3 text-[13px] text-white/65" : "mt-3 text-[13px] text-[#6e6e73]"}>
-                  {tier.subtitle}
+                <p className="mt-2 text-[22px] font-semibold leading-tight tracking-[-0.035em]">
+                  One public mandate. One coordinated action.
                 </p>
-
-                <div className="mt-7 space-y-3">
-                  {tier.benefits.map((benefit) => (
-                    <div key={benefit} className="flex items-start gap-2.5">
-                      <span className={tier.featured ? "mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-white text-[#07142c]" : "mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-[#eef3ff] text-[#153b79]"}>
-                        <Check className="h-3 w-3" strokeWidth={2.2} />
-                      </span>
-                      <span className={tier.featured ? "text-[13px] leading-5 text-white/84" : "text-[13px] leading-5 text-[#4b4b50]"}>
-                        {benefit}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => startCheckout("monthly", tier.amount, null)}
-                  disabled={checkoutBusy}
-                  className={
-                    "mt-auto rounded-full px-4 py-3 text-[11px] font-semibold transition disabled:opacity-50 " +
-                    (tier.featured
-                      ? "bg-[#d82335] text-white hover:bg-[#ea3045]"
-                      : "bg-[#07142c] text-white hover:bg-[#122747]")
-                  }
-                >
-                  {checkoutBusy ? "Opening Stripe…" : "Choose " + tier.name}
-                </button>
-              </article>
-            ))}
-          </div>
-
-          <div className="mt-5 rounded-[22px] border border-black/[0.06] bg-white p-5 sm:flex sm:items-center sm:justify-between sm:gap-6">
-            <div>
-              <p className="text-[13px] font-semibold">Prefer not to subscribe?</p>
-              <p className="mt-1 text-[12px] leading-5 text-[#6e6e73]">
-                One-time support stays available as a secondary option for the SAM media project.
-              </p>
-            </div>
-            <div className="mt-4 flex flex-wrap gap-2 sm:mt-0">
-              {[10, 25, 50, 100].map((value) => (
-                <button
-                  type="button"
-                  key={value}
-                  onClick={() => startCheckout("one_time", value, null)}
-                  disabled={checkoutBusy}
-                  className="rounded-full bg-[#f2f2f7] px-4 py-2.5 text-[11px] font-semibold text-[#3a3a3c] transition hover:bg-[#e7e7ec] disabled:opacity-50"
-                >
-                  {"$"}{value}
-                </button>
-              ))}
+              </div>
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                {["Email officials", "Call / text", "Public comment", "Share campaign"].map((item) => (
+                  <div key={item} className="rounded-full border border-white/12 bg-white/[0.05] px-3 py-2.5 text-center text-[10px] font-semibold text-[#d5ddea]">
+                    {item}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-
-          {checkoutError ? (
-            <div className="mt-4 rounded-[16px] border border-[#d82335]/25 bg-[#fff2f4] px-4 py-3 text-[12px] font-semibold text-[#a61f2d]">
-              {checkoutError}
-            </div>
-          ) : null}
-
-          <p className="mt-4 text-[11px] leading-5 text-[#86868b]">
-            Member chat is the next product build and physical benefits require a valid US shipping address.
-            Stripe checkout is currently operating in sandbox while launch setup is completed.
-          </p>
         </div>
       </section>
 
@@ -887,52 +743,120 @@ export default function SamPage() {
         </div>
       </section>
 
-      <section className="px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
+      <section id="membership" className="px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
         <div className="mx-auto max-w-6xl">
-          <div className="max-w-3xl">
-            <p className="text-[13px] font-semibold text-[#d82335]">What coordinated action can look like</p>
-            <h2 className="mt-3 text-[clamp(2.8rem,5.5vw,4.6rem)] font-semibold leading-[0.95] tracking-[-0.055em]">
-              One clear ask.
-              <br />
-              Thousands of people at once.
-            </h2>
+          <div className="grid gap-8 lg:grid-cols-[1.08fr_.92fr] lg:items-end">
+            <div>
+              <p className="text-[13px] font-semibold text-[#d82335]">Membership, not pay-to-vote</p>
+              <h2 className="mt-3 text-[clamp(2.9rem,5.8vw,4.8rem)] font-semibold leading-[0.94] tracking-[-0.055em]">
+                Support the system.
+                <br />
+                <span className="text-[#6e6e73]">Get something real back.</span>
+              </h2>
+            </div>
+            <p className="max-w-[520px] text-[16px] leading-7 text-[#6e6e73]">
+              The main way to support SAM is membership: AI access, member tools and
+              physical monthly drops. Every tier gets the exact same public ballot.
+              More money never means more votes.
+            </p>
           </div>
 
-          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {[
-              {
-                icon: Mail,
-                title: "Email / letter day",
-                copy: "A source-backed message and the correct public recipients, sent during the same window.",
-              },
-              {
-                icon: MessageCircle,
-                title: "Phone or message push",
-                copy: "A simple script, numbers and timing so participation takes minutes instead of research.",
-              },
-              {
-                icon: Megaphone,
-                title: "Public awareness push",
-                copy: "One shareable message, visual kit or hashtag campaign built around verifiable information.",
-              },
-              {
-                icon: BarChart3,
-                title: "Public comment / accountability",
-                copy: "Help people participate in public comment, hearings, surveys or transparency requests where appropriate.",
-              },
-            ].map((item) => {
-              const Icon = item.icon;
-              return (
-                <article key={item.title} className="rounded-[24px] bg-white p-6 shadow-[0_1px_2px_rgba(0,0,0,.03),0_10px_30px_rgba(0,0,0,.035)]">
-                  <div className="grid h-10 w-10 place-items-center rounded-[13px] bg-[#eef3ff] text-[#153b79]">
-                    <Icon className="h-5 w-5" strokeWidth={1.8} />
-                  </div>
-                  <h3 className="mt-6 text-[19px] font-semibold tracking-[-0.025em]">{item.title}</h3>
-                  <p className="mt-2 text-[13px] leading-5 text-[#6e6e73]">{item.copy}</p>
-                </article>
-              );
-            })}
+          <div className="mt-12 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {membershipTiers.map((tier) => (
+              <article
+                key={tier.amount}
+                className={
+                  "relative flex min-h-[430px] flex-col rounded-[26px] border p-6 shadow-[0_1px_2px_rgba(0,0,0,.03),0_12px_34px_rgba(0,0,0,.035)] " +
+                  (tier.featured
+                    ? "border-[#d82335] bg-[#07142c] text-white"
+                    : "border-black/[0.07] bg-white")
+                }
+              >
+                {tier.featured ? (
+                  <span className="absolute right-5 top-5 rounded-full bg-[#d82335] px-3 py-1 text-[9px] font-semibold uppercase tracking-[0.08em] text-white">
+                    Popular
+                  </span>
+                ) : null}
+
+                <p className={tier.featured ? "text-[12px] font-semibold text-[#a9c5ff]" : "text-[12px] font-semibold text-[#153b79]"}>
+                  {tier.name}
+                </p>
+
+                <div className="mt-5 flex items-end gap-1">
+                  <span className="text-[46px] font-semibold leading-none tracking-[-0.06em]">
+                    {"$"}{tier.amount}
+                  </span>
+                  <span className={tier.featured ? "pb-1 text-[12px] text-white/55" : "pb-1 text-[12px] text-[#86868b]"}>
+                    / month
+                  </span>
+                </div>
+
+                <p className={tier.featured ? "mt-3 text-[13px] text-white/65" : "mt-3 text-[13px] text-[#6e6e73]"}>
+                  {tier.subtitle}
+                </p>
+
+                <div className="mt-7 space-y-3">
+                  {tier.benefits.map((benefit) => (
+                    <div key={benefit} className="flex items-start gap-2.5">
+                      <span className={tier.featured ? "mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-white text-[#07142c]" : "mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-[#eef3ff] text-[#153b79]"}>
+                        <Check className="h-3 w-3" strokeWidth={2.2} />
+                      </span>
+                      <span className={tier.featured ? "text-[13px] leading-5 text-white/84" : "text-[13px] leading-5 text-[#4b4b50]"}>
+                        {benefit}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => startCheckout("monthly", tier.amount, null)}
+                  disabled={checkoutBusy}
+                  className={
+                    "mt-auto rounded-full px-4 py-3 text-[11px] font-semibold transition disabled:opacity-50 " +
+                    (tier.featured
+                      ? "bg-[#d82335] text-white hover:bg-[#ea3045]"
+                      : "bg-[#07142c] text-white hover:bg-[#122747]")
+                  }
+                >
+                  {checkoutBusy ? "Opening Stripe…" : "Choose " + tier.name}
+                </button>
+              </article>
+            ))}
           </div>
+
+          <div className="mt-5 rounded-[22px] border border-black/[0.06] bg-white p-5 sm:flex sm:items-center sm:justify-between sm:gap-6">
+            <div>
+              <p className="text-[13px] font-semibold">Prefer not to subscribe?</p>
+              <p className="mt-1 text-[12px] leading-5 text-[#6e6e73]">
+                One-time support stays available as a secondary option for the SAM media project.
+              </p>
+            </div>
+            <div className="mt-4 flex flex-wrap gap-2 sm:mt-0">
+              {[10, 25, 50, 100].map((value) => (
+                <button
+                  type="button"
+                  key={value}
+                  onClick={() => startCheckout("one_time", value, null)}
+                  disabled={checkoutBusy}
+                  className="rounded-full bg-[#f2f2f7] px-4 py-2.5 text-[11px] font-semibold text-[#3a3a3c] transition hover:bg-[#e7e7ec] disabled:opacity-50"
+                >
+                  {"$"}{value}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {checkoutError ? (
+            <div className="mt-4 rounded-[16px] border border-[#d82335]/25 bg-[#fff2f4] px-4 py-3 text-[12px] font-semibold text-[#a61f2d]">
+              {checkoutError}
+            </div>
+          ) : null}
+
+          <p className="mt-4 text-[11px] leading-5 text-[#86868b]">
+            Member chat is the next product build and physical benefits require a valid US shipping address.
+            Stripe checkout is currently operating in sandbox while launch setup is completed.
+          </p>
         </div>
       </section>
 
@@ -962,16 +886,16 @@ export default function SamPage() {
                 pos: "object-[center_18%]",
               },
               {
-                label: "SAM RESPONDS",
-                title: "Answer the latest development through the month’s chosen issue.",
-                image: "/sam/Upper%20Body%20Speech.png",
-                pos: "object-[center_12%]",
+                label: "PUBLIC ACTION",
+                title: "Take the month’s mandate out into the real world.",
+                image: "/sam/Half%20body%20hand%20shake.png",
+                pos: "object-[center_18%]",
               },
               {
-                label: "MEMBER BRIEF",
-                title: "Show what moved, what did not, and what action comes next.",
-                image: "/sam/Upper%20Body%20Desk.png",
-                pos: "object-[center_12%]",
+                label: "PROGRESS REPORT",
+                title: "Show what changed, what didn’t, and what comes next.",
+                image: "/sam/Signing%20Paperwork.png",
+                pos: "object-[center_18%]",
               },
             ].map((item) => (
               <article key={item.title} className="group relative aspect-[4/5] overflow-hidden rounded-[26px] bg-[#07142c]">
@@ -1001,7 +925,7 @@ export default function SamPage() {
           <div>
             <p className="text-[12px] font-semibold text-[#a9c5ff]">Stay in the loop</p>
             <h2 className="mt-3 text-[clamp(2.7rem,5vw,4.2rem)] font-semibold leading-[0.95] tracking-[-0.055em]">
-              Vote. Act. See what happened.
+              Make a difference.
             </h2>
             <p className="mt-4 max-w-xl text-[14px] leading-6 text-[#b7c2d5]">
               Get the monthly ballot, the focus briefing and the coordinated action when it goes live.
@@ -1049,8 +973,8 @@ export default function SamPage() {
           <div className="flex flex-col gap-2 text-[11px] font-semibold">
             <a href="#why">Why SAM</a>
             <a href="#agenda">Vote</a>
-            <a href="#membership">Membership</a>
             <a href="#fund">Action Funds</a>
+            <a href="#membership">Membership</a>
           </div>
         </div>
 
