@@ -75,6 +75,37 @@ function relativeDaySuffix(iso: string, zone: string, mountainDate: string) {
   const local = read("year") + "-" + read("month") + "-" + read("day");
   return local === mountainDate ? "" : local > mountainDate ? " +1d" : " -1d";
 }
+/**
+ * Build local calendar positions from the SAME UTC slot IDs everyone uses.
+ * A slot moves between local dates/hours when the viewer changes time zone,
+ * but its database ID never changes. Minutes are included for +05:30/+05:45 etc.
+ */
+function calendarForZone(zone: string) {
+  const formatter = new Intl.DateTimeFormat("en-US", {
+    timeZone: zone, year: "numeric", month: "2-digit", day: "2-digit",
+    hour: "2-digit", minute: "2-digit", hourCycle: "h23",
+  });
+  const byDay: Record<string, string[]> = {};
+  const byClock: Record<string, Record<string, string>> = {};
+  const clocks = new Set<string>();
+  for (const id of ALL_IDS) {
+    const parts = formatter.formatToParts(new Date(id));
+    const get = (type: string) => parts.find(part => part.type === type)?.value ?? "";
+    const day = get("year") + "-" + get("month") + "-" + get("day");
+    const clock = get("hour") + ":" + get("minute");
+    if (!byDay[day]) { byDay[day] = []; byClock[day] = {}; }
+    byDay[day].push(id);
+    byClock[day][clock] = id;
+    clocks.add(clock);
+  }
+  return { dates: Object.keys(byDay).sort(), byDay, byClock, clocks: [...clocks].sort() };
+}
+
+function localClockLabel(clock: string) {
+  return new Intl.DateTimeFormat("en-US", {
+    timeZone: "UTC", hour: "numeric", minute: "2-digit", hour12: true,
+  }).format(new Date("2026-01-01T" + clock + ":00Z"));
+}
 const FAVORITE_ZONES = [
   "America/Denver","America/Los_Angeles","America/Chicago","America/New_York",
   "Australia/Perth","Australia/Sydney","Europe/London","Europe/Paris",
@@ -162,6 +193,7 @@ export default function DraftSchedulePage() {
   const answerMap = useMemo(() => new Map(answers.map(a => [a.team_id, a])), [answers]);
   const blockedSet = useMemo(() => new Set(blocked), [blocked]);
   const availableSet = useMemo(() => new Set(available), [available]);
+  const calendar = useMemo(() => calendarForZone(zone), [zone]);
   const savedBlockedSet = useMemo(() => new Set(savedBaseline.blocked_slots), [savedBaseline.blocked_slots]);
   const savedAvailableSet = useMemo(() => new Set(savedBaseline.available_slots), [savedBaseline.available_slots]);
 
