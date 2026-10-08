@@ -1,15 +1,41 @@
 "use client";
 
 import React, { FormEvent, useEffect, useMemo, useState } from "react";
-import { ArrowRight, Check, Play, ShieldCheck, X } from "lucide-react";
+import {
+  ArrowRight,
+  BarChart3,
+  Check,
+  ChevronRight,
+  Mail,
+  Megaphone,
+  MessageCircle,
+  Play,
+  ShieldCheck,
+  Users,
+  Vote,
+  X,
+} from "lucide-react";
 
 type Issue = { slug: string; name: string; votes: number };
+type Cycle = { slug: string; label: string; starts_at: string; ends_at: string };
+
 type Project = {
   tag: string;
   title: string;
   copy: string;
   raised: number;
   target: number;
+  level: number;
+  nextTarget: number;
+  levelOne: string[];
+  featured?: boolean;
+};
+
+type MembershipTier = {
+  amount: number;
+  name: string;
+  subtitle: string;
+  benefits: string[];
   featured?: boolean;
 };
 
@@ -24,47 +50,114 @@ const initialIssues: Issue[] = [
   { slug: "energy-infrastructure", name: "Energy + infrastructure", votes: 0 },
 ];
 
+const projects: Project[] = [
+  {
+    tag: "CURRENT ACTION 01",
+    title: "Congressional stock trading reform",
+    copy: "Make the rules understandable, show where reform proposals differ, and give constituents a simple way to act together.",
+    raised: 0,
+    target: 10000,
+    level: 1,
+    nextTarget: 50000,
+    levelOne: [
+      "Research + source-backed public explainer",
+      "Short-form video and shareable campaign assets",
+      "One coordinated constituent outreach action",
+    ],
+    featured: true,
+  },
+  {
+    tag: "CURRENT ACTION 02",
+    title: "Healthcare price transparency",
+    copy: "Turn confusing healthcare pricing into something normal people can compare, understand, share, and act on.",
+    raised: 0,
+    target: 10000,
+    level: 1,
+    nextTarget: 50000,
+    levelOne: [
+      "Collect and organize public pricing evidence",
+      "Build a plain-English comparison tool",
+      "Coordinate one public awareness + action push",
+    ],
+  },
+  {
+    tag: "CURRENT ACTION 03",
+    title: "Government spending transparency",
+    copy: "Follow the money, explain it without political jargon, and build public tools that make waste and trade-offs easier to see.",
+    raised: 0,
+    target: 10000,
+    level: 1,
+    nextTarget: 50000,
+    levelOne: [
+      "Build the first public spending explorer",
+      "Publish weekly evidence-led explainers",
+      "Create one coordinated accountability action",
+    ],
+  },
+];
+
+const membershipTiers: MembershipTier[] = [
+  {
+    amount: 10,
+    name: "SAM Access",
+    subtitle: "The core membership.",
+    benefits: [
+      "Up to 60 minutes of SAM AI chat each week",
+      "Monthly focus briefing + progress recap",
+      "Member access to new SAM tools as they launch",
+    ],
+  },
+  {
+    amount: 25,
+    name: "SAM Sticker Club",
+    subtitle: "Digital access + something physical.",
+    benefits: [
+      "Everything in SAM Access",
+      "Monthly sticker / bumper sticker pack",
+      "US shipping included at launch",
+    ],
+    featured: true,
+  },
+  {
+    amount: 50,
+    name: "SAM Shirt Club",
+    subtitle: "Wear the issue of the month.",
+    benefits: [
+      "Everything in Sticker Club",
+      "One SAM shirt each month",
+      "Member apparel preferences saved to your account",
+    ],
+  },
+  {
+    amount: 100,
+    name: "SAM Full Kit",
+    subtitle: "The complete monthly drop.",
+    benefits: [
+      "Everything in Shirt Club",
+      "Monthly hat or premium SAM merch item",
+      "Early access to new member experiences",
+    ],
+  },
+];
+
 const SAM_SUPABASE_URL = "https://zqwdooykgwkfhwyayucg.supabase.co";
-const SAM_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpxd2Rvb3lrZ3drZmh3eWF5dWNnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA3NDcxNjIsImV4cCI6MjEwNjMyMzE2Mn0._PjizrlrLH-5fxk_ZicCen3IuleP9BvYL9vu4l1wLNs";
+const SAM_SUPABASE_ANON_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJIUzI1NiIsInJlZiI6Inpxd2Rvb3lrZ3drZmh3eWF5dWNnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA3NDcxNjIsImV4cCI6MjEwNjMyMzE2Mn0._PjizrlrLH-5fxk_ZicCen3IuleP9BvYL9vu4l1wLNs";
 
 async function samRpc<T>(fn: string, body: Record<string, unknown>): Promise<T> {
-  const response = await fetch(`${SAM_SUPABASE_URL}/rest/v1/rpc/${fn}`, {
+  const response = await fetch(SAM_SUPABASE_URL + "/rest/v1/rpc/" + fn, {
     method: "POST",
     headers: {
       apikey: SAM_SUPABASE_ANON_KEY,
-      Authorization: `Bearer ${SAM_SUPABASE_ANON_KEY}`,
+      Authorization: "Bearer " + SAM_SUPABASE_ANON_KEY,
       "Content-Type": "application/json",
     },
     body: JSON.stringify(body),
   });
+
   if (!response.ok) throw new Error(await response.text());
   return response.json() as Promise<T>;
 }
-
-const projects: Project[] = [
-  {
-    tag: "PROJECT 01",
-    title: "Where did the money go?",
-    copy: "Build a plain-English public spending explorer and turn the findings into short explainers normal people can actually use.",
-    raised: 0,
-    target: 100000,
-  },
-  {
-    tag: "COMMUNITY #1",
-    title: "Congressional stock trading",
-    copy: "Research the current rules, compare reform proposals, publish the evidence and build a public-facing pressure campaign.",
-    raised: 0,
-    target: 125000,
-    featured: true,
-  },
-  {
-    tag: "PROJECT 03",
-    title: "Healthcare price reality check",
-    copy: "Compare published prices, cash prices and insured rates, then show where the money is actually going.",
-    raised: 0,
-    target: 80000,
-  },
-];
 
 const money = (value: number) =>
   new Intl.NumberFormat("en-US", {
@@ -73,18 +166,22 @@ const money = (value: number) =>
     maximumFractionDigits: 0,
   }).format(value);
 
+const appleFont =
+  '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif';
+
 export default function SamPage() {
   const [issues, setIssues] = useState(initialIssues);
+  const [cycle, setCycle] = useState<Cycle | null>(null);
   const [myVote, setMyVote] = useState<string | null>(null);
   const [voteNotice, setVoteNotice] = useState("");
   const [fundingProject, setFundingProject] = useState<Project | null>(null);
   const [amount, setAmount] = useState(25);
   const [checkoutBusy, setCheckoutBusy] = useState(false);
   const [checkoutError, setCheckoutError] = useState("");
-  const [joined, setJoined] = useState(false);
+  const [joinNotice, setJoinNotice] = useState("");
 
   useEffect(() => {
-    document.title = "SAM 2028 — AI Leadership";
+    document.title = "SAM 2028 — Collective action, directed by the people";
 
     let voterId = window.localStorage.getItem("samVoterId");
     if (!voterId) {
@@ -92,26 +189,54 @@ export default function SamPage() {
       window.localStorage.setItem("samVoterId", voterId);
     }
 
-    setMyVote(window.localStorage.getItem("samPriorityVote"));
-
-    const loadVotes = async () => {
+    const load = async () => {
       try {
-        const rows = await samRpc<Array<{ slug: string; name: string; votes: number | string }>>(
-          "sam_get_issue_totals",
-          {},
+        const [cycleRows, voteRows] = await Promise.all([
+          samRpc<Cycle[]>("sam_get_current_cycle", {}),
+          samRpc<Array<{ slug: string; name: string; votes: number | string }>>(
+            "sam_get_issue_totals",
+            {},
+          ),
+        ]);
+
+        const currentCycle = cycleRows[0] ?? null;
+        setCycle(currentCycle);
+        if (currentCycle) {
+          setMyVote(
+            window.localStorage.getItem("samPriorityVote:" + currentCycle.slug),
+          );
+        }
+
+        setIssues(
+          voteRows.map((row) => ({
+            slug: row.slug,
+            name: row.name,
+            votes: Number(row.votes),
+          })),
         );
-        setIssues(rows.map((row) => ({
-          slug: row.slug,
-          name: row.name,
-          votes: Number(row.votes),
-        })));
       } catch {
-        setVoteNotice("Live totals are temporarily unavailable. Please try again shortly.");
+        setVoteNotice("Live voting is temporarily unavailable. Please try again shortly.");
       }
     };
 
-    loadVotes();
-    const timer = window.setInterval(loadVotes, 15000);
+    load();
+    const timer = window.setInterval(async () => {
+      try {
+        const voteRows = await samRpc<
+          Array<{ slug: string; name: string; votes: number | string }>
+        >("sam_get_issue_totals", {});
+        setIssues(
+          voteRows.map((row) => ({
+            slug: row.slug,
+            name: row.name,
+            votes: Number(row.votes),
+          })),
+        );
+      } catch {
+        // Keep the last successful totals on screen.
+      }
+    }, 15000);
+
     return () => window.clearInterval(timer);
   }, []);
 
@@ -119,12 +244,23 @@ export default function SamPage() {
     () => [...issues].sort((a, b) => b.votes - a.votes),
     [issues],
   );
+
   const totalVotes = issues.reduce((sum, issue) => sum + issue.votes, 0);
+
+  const nextFocusLabel = useMemo(() => {
+    if (!cycle) return "next month";
+    const date = new Date(cycle.ends_at);
+    return new Intl.DateTimeFormat("en-US", {
+      month: "long",
+      year: "numeric",
+      timeZone: "UTC",
+    }).format(date);
+  }, [cycle]);
 
   async function voteFor(issue: Issue) {
     const voterId = window.localStorage.getItem("samVoterId");
-    if (!voterId) {
-      setVoteNotice("Unable to identify this browser. Refresh and try again.");
+    if (!voterId || !cycle) {
+      setVoteNotice("Voting is still loading. Try again in a moment.");
       return;
     }
 
@@ -135,19 +271,29 @@ export default function SamPage() {
         p_issue_slug: issue.slug,
       });
 
-      window.localStorage.setItem("samPriorityVote", issue.slug);
+      window.localStorage.setItem(
+        "samPriorityVote:" + cycle.slug,
+        issue.slug,
+      );
       setMyVote(issue.slug);
 
-      const rows = await samRpc<Array<{ slug: string; name: string; votes: number | string }>>(
-        "sam_get_issue_totals",
-        {},
+      const rows = await samRpc<
+        Array<{ slug: string; name: string; votes: number | string }>
+      >("sam_get_issue_totals", {});
+      setIssues(
+        rows.map((row) => ({
+          slug: row.slug,
+          name: row.name,
+          votes: Number(row.votes),
+        })),
       );
-      setIssues(rows.map((row) => ({
-        slug: row.slug,
-        name: row.name,
-        votes: Number(row.votes),
-      })));
-      setVoteNotice(`Your active priority is “${issue.name}.” You can change it anytime.`);
+      setVoteNotice(
+        "Your " +
+          cycle.label +
+          " vote is now “" +
+          issue.name +
+          ".” You can change it until the monthly ballot closes.",
+      );
     } catch {
       setVoteNotice("That vote did not go through. Please try again.");
     }
@@ -169,15 +315,20 @@ export default function SamPage() {
           mode,
           amount: supportAmount,
           projectSlug: project
-            ? project.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")
+            ? project.title
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, "-")
+                .replace(/(^-|-$)/g, "")
             : "general",
           projectTitle: project?.title || "SAM 2028",
         }),
       });
+
       const data = await response.json();
       if (!response.ok || !data?.url) {
         throw new Error(data?.error || "Unable to start checkout.");
       }
+
       window.location.href = data.url;
     } catch (error) {
       setCheckoutError(
@@ -187,335 +338,548 @@ export default function SamPage() {
     }
   }
 
-  function join(event: FormEvent<HTMLFormElement>) {
+  async function join(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setJoined(true);
-    event.currentTarget.reset();
+    setJoinNotice("Joining…");
+
+    const form = event.currentTarget;
+    const data = new FormData(form);
+    const email = String(data.get("email") ?? "");
+
+    try {
+      await samRpc<boolean>("sam_join_list", { p_email: email });
+      setJoinNotice("You’re on the list.");
+      form.reset();
+    } catch {
+      setJoinNotice("That email could not be saved. Please try again.");
+    }
   }
 
   return (
     <main
-      className="min-h-screen overflow-x-hidden bg-[#f7f4ed] text-[#0f1728] selection:bg-[#d82335] selection:text-white"
-      style={{
-        fontFamily:
-          '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif',
-      }}
+      className="min-h-screen bg-[#f5f5f7] text-[#1d1d1f] antialiased"
+      style={{ fontFamily: appleFont }}
     >
-      <div className="relative z-50 bg-[#040a16] px-4 py-2 text-center text-[9px] font-black tracking-[0.15em] text-[#e9edf5] sm:text-[10px]">
-        AI LEADERSHIP YOU CAN TRUST · BUILT TO REPRESENT PEOPLE, NOT SPECIAL INTERESTS
+      <div className="bg-[#07142c] px-4 py-2.5 text-center text-[10px] font-semibold tracking-[0.08em] text-white/88">
+        AI LEADERSHIP YOU CAN TRUST · PEOPLE SET THE AGENDA · MONEY NEVER BUYS A VOTE
       </div>
 
-      <header className="sticky top-0 z-40 border-b border-[#08152f]/10 bg-[#f7f4ed]/94 backdrop-blur-xl">
-        <div className="mx-auto flex h-[72px] max-w-[1240px] items-center px-5 lg:px-8">
+      <header className="sticky top-0 z-40 border-b border-black/[0.06] bg-white/82 backdrop-blur-2xl supports-[backdrop-filter]:bg-white/72">
+        <div className="mx-auto flex h-[64px] max-w-6xl items-center px-4 sm:px-6 lg:px-8">
           <a
             href="#top"
-            className="text-[30px] font-black tracking-[-0.075em] text-[#08152f]"
+            className="text-[25px] font-semibold tracking-[-0.055em] text-[#07142c]"
           >
-            SAM<span className="ml-1 text-[15px] text-[#d82335]">★</span>
-            <span className="ml-2 text-[9px] font-black tracking-[0.22em] text-[#d82335]">
+            SAM<span className="ml-1 text-[#d82335]">★</span>
+            <span className="ml-2 text-[10px] font-semibold tracking-[0.18em] text-[#d82335]">
               2028
             </span>
           </a>
 
-          <nav className="ml-auto hidden items-center gap-7 text-[12px] font-extrabold text-[#08152f]/80 md:flex">
-            <a className="transition hover:text-[#d82335]" href="#agenda">
-              Cast Your Vote
-            </a>
-            <a className="transition hover:text-[#d82335]" href="#fund">
-              Fund Action
-            </a>
-            <a className="transition hover:text-[#d82335]" href="#watch">
-              Watch
-            </a>
+          <nav className="ml-auto hidden items-center gap-7 text-[12px] font-semibold text-[#4b4b50] md:flex">
+            <a className="transition hover:text-[#d82335]" href="#why">Why</a>
+            <a className="transition hover:text-[#d82335]" href="#agenda">Vote</a>
+            <a className="transition hover:text-[#d82335]" href="#membership">Membership</a>
+            <a className="transition hover:text-[#d82335]" href="#fund">Action Funds</a>
           </nav>
 
           <a
-            href="#join"
-            className="ml-5 hidden rounded-sm bg-[#08152f] px-4 py-3 text-[10px] font-black uppercase tracking-[0.1em] text-white sm:inline-flex"
+            href="#membership"
+            className="ml-5 inline-flex rounded-full bg-[#07142c] px-4 py-2.5 text-[11px] font-semibold text-white"
           >
-            Join Sam
+            Join SAM
           </a>
         </div>
       </header>
 
-      <section id="top" className="relative min-h-[720px] overflow-hidden bg-[#07142c] text-white lg:min-h-[790px]">
+      <section
+        id="top"
+        className="relative min-h-[720px] overflow-hidden bg-[#07142c] text-white lg:min-h-[800px]"
+      >
         <img
           src="/sam/Campaign%20Speech%20with%20Patriotic%20Backdrop.png"
-          alt="AI-generated image of fictional parody politician Sam speaking at a campaign-style rally"
+          alt="AI-generated image of fictional SAM speaking at a campaign-style event"
           className="absolute inset-0 h-full w-full object-cover object-[67%_center]"
         />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(4,11,25,.98)_0%,rgba(4,11,25,.91)_32%,rgba(4,11,25,.52)_58%,rgba(4,11,25,.16)_100%)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(4,11,25,.75)_0%,transparent_35%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(4,11,25,.98)_0%,rgba(4,11,25,.9)_34%,rgba(4,11,25,.55)_58%,rgba(4,11,25,.16)_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(4,11,25,.72)_0%,transparent_38%)]" />
 
-        <div className="relative mx-auto flex min-h-[720px] max-w-[1240px] items-center px-5 py-20 lg:min-h-[790px] lg:px-8">
-          <div className="max-w-[690px]">
-            <div className="mt-7 text-[clamp(6rem,13vw,11rem)] font-black leading-[0.68] tracking-[-0.095em]">
-              SAM<span className="align-top text-[0.27em] text-[#e42b3f]">★</span>
+        <div className="relative mx-auto flex min-h-[720px] max-w-6xl items-center px-4 py-20 sm:px-6 lg:min-h-[800px] lg:px-8">
+          <div className="max-w-[720px]">
+            <div className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#a9c5ff]">
+              A new model for public representation
             </div>
 
-            <div className="mt-7 text-[20px] font-black tracking-[0.39em] sm:text-[24px]">
-              20<span className="text-[#f16b78]">28</span>
+            <div className="mt-6 text-[clamp(5.6rem,13vw,10rem)] font-semibold leading-[0.72] tracking-[-0.095em]">
+              SAM<span className="align-top text-[0.25em] text-[#e42b3f]">★</span>
             </div>
 
-            <h1 className="mt-8 max-w-[760px] text-[clamp(2.6rem,5.5vw,4.8rem)] font-black leading-[0.92] tracking-[-0.06em]">
-              Real Leadership.
+            <h1 className="mt-9 max-w-[740px] text-[clamp(3rem,6.5vw,5.7rem)] font-semibold leading-[0.9] tracking-[-0.065em]">
+              Collective power.
               <br />
-              Real Action.
-              <br />
-              <span className="text-[#f16b78]">Zero Corruption.</span>
+              <span className="text-[#f16b78]">Directed by the people.</span>
             </h1>
 
-            <p className="mt-6 max-w-[620px] text-[15px] font-medium leading-7 text-[#d0d8e5] sm:text-[17px]">
-              Leadership by the people, for the people. Your votes set the agenda —
-              not corporate donors, party insiders, or special interests.
+            <p className="mt-7 max-w-[620px] text-[17px] font-medium leading-7 text-[#d5ddea] sm:text-[19px] sm:leading-8">
+              One opinion is easy to ignore. Thousands of people choosing the same
+              priority, amplifying the same message, and taking the same action become
+              a constituency.
             </p>
 
-            <div className="mt-8 flex flex-wrap gap-3">
+            <div className="mt-9 flex flex-wrap gap-3">
               <a
                 href="#agenda"
-                className="inline-flex items-center gap-2 rounded-sm bg-[#d82335] px-5 py-3.5 text-[11px] font-black uppercase tracking-[0.09em] text-white transition hover:bg-[#ec3045]"
+                className="inline-flex items-center gap-2 rounded-full bg-[#d82335] px-5 py-3.5 text-[12px] font-semibold text-white transition hover:bg-[#ea3045]"
               >
-                Cast Your Vote <ArrowRight className="h-3.5 w-3.5" />
+                Vote this month <ArrowRight className="h-4 w-4" />
               </a>
               <a
-                href="#fund"
-                className="inline-flex items-center gap-2 rounded-sm border border-white/35 bg-white/[0.06] px-5 py-3.5 text-[11px] font-black uppercase tracking-[0.09em] text-white backdrop-blur-sm transition hover:bg-white/10"
+                href="#why"
+                className="inline-flex items-center gap-2 rounded-full border border-white/28 bg-white/[0.08] px-5 py-3.5 text-[12px] font-semibold text-white backdrop-blur-sm transition hover:bg-white/14"
               >
-                Fund Action <ArrowRight className="h-3.5 w-3.5" />
+                See how it works <ChevronRight className="h-4 w-4" />
               </a>
             </div>
 
-            <div className="mt-7 flex flex-wrap gap-x-6 gap-y-2 text-[10px] font-bold tracking-[0.02em] text-[#9fadc3]">
-              <span>1 ACTIVE PRIORITY PER BROWSER · BETA</span>
+            <div className="mt-8 flex flex-wrap gap-x-5 gap-y-2 text-[11px] font-medium text-white/58">
+              <span>Vote monthly</span>
               <span>•</span>
-              <span>FUNDING FLOWS WILL BE PUBLIC</span>
+              <span>One coordinated action</span>
+              <span>•</span>
+              <span>Transparent funding levels</span>
             </div>
           </div>
         </div>
 
-        <div className="absolute bottom-5 right-5 hidden text-right text-[8px] font-bold tracking-[0.13em] text-white/55 md:block">
-          FICTIONAL CAMPAIGN IMAGE
+        <div className="absolute bottom-5 right-5 hidden text-right text-[8px] font-medium tracking-[0.11em] text-white/45 md:block">
+          AI-GENERATED SAM IMAGE
           <br />
-          AI-GENERATED
+          SAM IS NOT A REAL CANDIDATE OR OFFICEHOLDER
         </div>
       </section>
 
-      <div className="bg-[#d82335] px-4 py-3 text-center text-[11px] font-black tracking-[0.05em] text-white sm:text-[13px]">
-        YOUR VOTE SETS THE AGENDA
-        <span className="mx-4 text-[#ffc0c8]">★</span>
-        YOUR SUPPORT FUNDS THE ACTION
-        <span className="mx-4 hidden text-[#ffc0c8] md:inline">★</span>
-        <span className="hidden md:inline">SAM ANSWERS TO THE PEOPLE.</span>
-      </div>
+      <section id="why" className="px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
+        <div className="mx-auto max-w-6xl">
+          <div className="max-w-3xl">
+            <p className="text-[13px] font-semibold text-[#d82335]">Why SAM exists</p>
+            <h2 className="mt-3 text-[clamp(2.7rem,6vw,5rem)] font-semibold leading-[0.95] tracking-[-0.055em]">
+              Representation gets stronger when it gets organized.
+            </h2>
+            <p className="mt-6 max-w-2xl text-[17px] leading-8 text-[#6e6e73]">
+              Public frustration is usually fragmented: different posts, different
+              petitions, different messages, different days. SAM turns that scattered
+              energy into a simple monthly mandate everyone can see and act on together.
+            </p>
+          </div>
 
-      <section id="agenda" className="bg-[#07142c] px-5 py-20 text-white lg:py-28">
-        <div className="mx-auto max-w-[1180px]">
-          <div className="mb-12 grid gap-8 lg:grid-cols-[1.15fr_.85fr] lg:items-end">
-            <div>
-              <div className="text-[10px] font-black tracking-[0.22em] text-[#a9c5ff]">
-                THE SAM AGENDA
+          <div className="mt-12 grid gap-4 md:grid-cols-3">
+            {[
+              {
+                icon: Vote,
+                title: "You choose the priority.",
+                copy: "Every month, the community votes. One person gets one active priority vote for that cycle.",
+              },
+              {
+                icon: Megaphone,
+                title: "SAM concentrates attention.",
+                copy: "The winning issue becomes the primary focus of weekly videos, emails, explainers and public conversation.",
+              },
+              {
+                icon: Users,
+                title: "Then we act together.",
+                copy: "One coordinated action gives thousands of individual voices the same timing, message and destination.",
+              },
+            ].map((item) => {
+              const Icon = item.icon;
+              return (
+                <article
+                  key={item.title}
+                  className="rounded-[26px] border border-black/[0.06] bg-white p-7 shadow-[0_1px_2px_rgba(0,0,0,.03),0_12px_34px_rgba(0,0,0,.035)]"
+                >
+                  <div className="grid h-11 w-11 place-items-center rounded-[14px] bg-[#eef3ff] text-[#153b79]">
+                    <Icon className="h-5 w-5" strokeWidth={1.8} />
+                  </div>
+                  <h3 className="mt-7 text-[23px] font-semibold leading-tight tracking-[-0.035em]">
+                    {item.title}
+                  </h3>
+                  <p className="mt-3 text-[14px] leading-6 text-[#6e6e73]">
+                    {item.copy}
+                  </p>
+                </article>
+              );
+            })}
+          </div>
+
+          <div className="mt-5 rounded-[28px] bg-[#07142c] p-7 text-white sm:p-9">
+            <div className="grid gap-7 lg:grid-cols-[.9fr_1.1fr] lg:items-center">
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#a9c5ff]">
+                  The simple idea
+                </p>
+                <p className="mt-3 text-[31px] font-semibold leading-[1.02] tracking-[-0.045em] sm:text-[40px]">
+                  A million isolated opinions are noise.
+                  <br />
+                  <span className="text-[#f16b78]">A million coordinated people are leverage.</span>
+                </p>
               </div>
-              <h2 className="mt-4 text-[clamp(2.8rem,6vw,4.8rem)] font-black leading-[0.92] tracking-[-0.06em]">
+              <p className="text-[15px] leading-7 text-[#bcc7d9]">
+                SAM does not sell extra political influence. Membership money, cause
+                funding and merch help pay for the tools, research, content and
+                distribution. The public ballot remains separate from money.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="border-y border-black/[0.06] bg-white px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
+        <div className="mx-auto max-w-6xl">
+          <div className="max-w-3xl">
+            <p className="text-[13px] font-semibold text-[#153b79]">The monthly operating system</p>
+            <h2 className="mt-3 text-[clamp(2.6rem,5vw,4.3rem)] font-semibold leading-[0.96] tracking-[-0.05em]">
+              Vote. Focus. Amplify. Act. Report.
+            </h2>
+          </div>
+
+          <div className="mt-12 grid gap-3 lg:grid-cols-5">
+            {[
+              ["01", "Vote", "Choose the issue you want SAM to prioritize next month."],
+              ["02", "Focus", "The #1 issue becomes the next month’s primary editorial platform."],
+              ["03", "Amplify", "Weekly social videos and that month’s email briefings stay centered on it."],
+              ["04", "Act", "SAM launches one coordinated action: calls, emails, public comments, or a share campaign."],
+              ["05", "Report", "We publish what happened, what moved, what did not, and what comes next."],
+            ].map(([number, title, copy]) => (
+              <article key={number} className="rounded-[22px] bg-[#f5f5f7] p-6">
+                <div className="text-[11px] font-semibold text-[#d82335]">{number}</div>
+                <h3 className="mt-5 text-[20px] font-semibold tracking-[-0.025em]">{title}</h3>
+                <p className="mt-2 text-[13px] leading-5 text-[#6e6e73]">{copy}</p>
+              </article>
+            ))}
+          </div>
+
+          <div className="mt-8 grid gap-4 rounded-[24px] bg-[#f5f5f7] p-6 sm:grid-cols-4 sm:p-8">
+            {[
+              "Vote once each month",
+              "Take the coordinated action",
+              "Share the monthly focus",
+              "Support financially if you can",
+            ].map((item) => (
+              <div key={item} className="flex items-start gap-3">
+                <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-[#07142c] text-white">
+                  <Check className="h-3 w-3" strokeWidth={2.2} />
+                </span>
+                <span className="text-[13px] font-semibold leading-5 text-[#3a3a3c]">{item}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="agenda" className="bg-[#07142c] px-4 py-20 text-white sm:px-6 lg:px-8 lg:py-28">
+        <div className="mx-auto max-w-6xl">
+          <div className="grid gap-9 lg:grid-cols-[1.05fr_.95fr] lg:items-end">
+            <div>
+              <p className="text-[13px] font-semibold text-[#a9c5ff]">
+                {cycle ? cycle.label + " ballot" : "This month’s ballot"}
+              </p>
+              <h2 className="mt-3 text-[clamp(3rem,6vw,5rem)] font-semibold leading-[0.92] tracking-[-0.06em]">
                 You decide what
-                <br />gets the microphone.
+                <br />
+                <span className="text-[#f16b78]">gets the microphone.</span>
               </h2>
             </div>
-            <div>
-              <p className="max-w-[520px] text-[15px] font-medium leading-7 text-[#b7c2d5]">
-                Choose one active priority. You can change it anytime. Funding never
-                buys an extra vote or a louder voice.
+            <div className="lg:pb-1">
+              <p className="max-w-[520px] text-[16px] leading-7 text-[#bcc7d9]">
+                The #1 issue becomes SAM’s main focus for {nextFocusLabel}. The top
+                three issues become the starting point for the next three action funds.
               </p>
-              <div className="mt-4 text-[12px] font-bold text-[#8fa0bd]">
-                <span className="mr-2 text-[28px] font-black text-white">
+              <div className="mt-5 flex items-baseline gap-2">
+                <span className="text-[34px] font-semibold tracking-[-0.04em]">
                   {totalVotes.toLocaleString()}
                 </span>
-                live votes
+                <span className="text-[12px] font-medium text-[#8291aa]">live votes</span>
               </div>
             </div>
           </div>
 
-          <div className="border-t border-white/15">
+          <div className="mt-10 overflow-hidden rounded-[24px] border border-white/12 bg-white/[0.04]">
             {sortedIssues.map((issue, index) => {
               const pct = totalVotes > 0 ? (issue.votes / totalVotes) * 100 : 0;
               const selected = myVote === issue.slug;
+
               return (
                 <div
                   key={issue.slug}
-                  className="relative grid grid-cols-[38px_1fr_58px] items-center gap-3 border-b border-white/15 py-4 sm:grid-cols-[55px_1fr_75px_125px]"
+                  className={
+                    "relative grid grid-cols-[34px_1fr_64px] items-center gap-3 px-4 py-4 sm:grid-cols-[44px_1fr_72px_116px] sm:px-5 " +
+                    (index !== sortedIssues.length - 1 ? "border-b border-white/10" : "")
+                  }
                 >
-                  <div className="text-[20px] font-medium text-[#7686a2]">
+                  <div className="text-[14px] font-medium text-[#70809b]">
                     {String(index + 1).padStart(2, "0")}
                   </div>
-                  <div className="text-[15px] font-extrabold sm:text-[17px]">
-                    {issue.name}
+                  <div>
+                    <div className="text-[15px] font-semibold sm:text-[16px]">{issue.name}</div>
+                    <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/10 sm:hidden">
+                      <div className="h-full rounded-full bg-[#d82335]" style={{ width: String(pct) + "%" }} />
+                    </div>
                   </div>
-                  <div className="text-right text-[18px] font-black sm:text-[22px]">
-                    {pct.toFixed(1)}%
-                  </div>
+                  <div className="text-right text-[17px] font-semibold">{pct.toFixed(1)}%</div>
                   <button
                     type="button"
                     onClick={() => voteFor(issue)}
                     className={
-                      "col-start-2 col-end-4 mt-1 border px-3 py-2 text-[9px] font-black uppercase tracking-[0.1em] transition sm:col-auto sm:mt-0 " +
+                      "col-start-2 col-end-4 mt-1 rounded-full border px-3 py-2 text-[10px] font-semibold transition sm:col-auto sm:mt-0 " +
                       (selected
-                        ? "border-white bg-white text-[#08152f]"
-                        : "border-white/40 text-white hover:bg-white hover:text-[#08152f]")
+                        ? "border-white bg-white text-[#07142c]"
+                        : "border-white/24 text-white hover:bg-white hover:text-[#07142c]")
                     }
                   >
-                    {selected ? "Your vote" : myVote ? "Switch" : "Vote"}
+                    {selected ? "Your vote" : myVote ? "Switch vote" : "Vote"}
                   </button>
-                  <div
-                    className="absolute bottom-0 left-0 h-[2px] bg-[#d82335]"
-                    style={{ width: `${pct}%` }}
-                  />
+                  <div className="absolute bottom-0 left-0 hidden h-[2px] bg-[#d82335] sm:block" style={{ width: String(pct) + "%" }} />
                 </div>
               );
             })}
           </div>
-          <div className="mt-4 flex min-h-5 flex-wrap items-center justify-between gap-4 text-[12px] font-bold text-[#a9c5ff]">
-            <span>{voteNotice}</span>
-            <span className="text-[#8fa0bd]">
-              Beta voting is live now. Verified accounts are the next anti-abuse upgrade.
-            </span>
+
+          <div className="mt-5 flex flex-col gap-2 text-[12px] text-[#93a0b7] sm:flex-row sm:items-center sm:justify-between">
+            <span className="font-medium text-[#c3cede]">{voteNotice}</span>
+            <span>Beta: one active vote per browser each month. Verified member voting is next.</span>
           </div>
         </div>
       </section>
 
-      <section id="fund" className="px-5 py-20 lg:py-28">
-        <div className="mx-auto max-w-[1180px]">
-          <div className="mb-12 grid gap-8 lg:grid-cols-[1.15fr_.85fr] lg:items-end">
+      <section id="membership" className="px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
+        <div className="mx-auto max-w-6xl">
+          <div className="grid gap-8 lg:grid-cols-[1.08fr_.92fr] lg:items-end">
             <div>
-              <div className="text-[10px] font-black tracking-[0.22em] text-[#153b79]">
-                TURN A VOTE INTO ACTION
-              </div>
-              <h2 className="mt-4 text-[clamp(2.8rem,6vw,4.8rem)] font-black leading-[0.92] tracking-[-0.06em]">
-                Back the work.
+              <p className="text-[13px] font-semibold text-[#d82335]">Membership, not pay-to-vote</p>
+              <h2 className="mt-3 text-[clamp(2.9rem,5.8vw,4.8rem)] font-semibold leading-[0.94] tracking-[-0.055em]">
+                Support the system.
                 <br />
-                <span className="text-[#d82335]">Fund real action.</span>
+                <span className="text-[#6e6e73]">Get something real back.</span>
               </h2>
             </div>
-            <p className="max-w-[520px] text-[15px] font-medium leading-7 text-[#667084]">
-              Choose the work you want pushed forward, or support SAM itself. Stripe
-              Checkout is now connected in sandbox mode while we complete final launch testing.
+            <p className="max-w-[520px] text-[16px] leading-7 text-[#6e6e73]">
+              The main way to support SAM is membership: AI access, member tools and
+              physical monthly drops. Every tier gets the exact same public ballot.
+              More money never means more votes.
             </p>
           </div>
 
-          <div className="mb-10 grid gap-5 lg:grid-cols-2">
-            <article className="border border-[#d8dadf] bg-[#08152f] p-7 text-white">
-              <div className="text-[9px] font-black tracking-[0.14em] text-[#a9c5ff]">
-                SUPPORT SAM
-              </div>
-              <h3 className="mt-3 text-[34px] font-black leading-[1] tracking-[-0.05em]">
-                Back the project directly.
-              </h3>
-              <p className="mt-4 max-w-[520px] text-[13px] font-medium leading-6 text-[#b7c2d5]">
-                One-time support helps fund research, media, technology and public-awareness work.
-                It never buys an extra vote or additional influence.
-              </p>
-              <div className="mt-6 grid grid-cols-4 gap-2">
-                {[5, 10, 25, 50].map((value) => (
-                  <button
-                    key={value}
-                    type="button"
-                    onClick={() => startCheckout("one_time", value, null)}
-                    disabled={checkoutBusy}
-                    className="border border-white/25 bg-white/5 px-2 py-3 text-[11px] font-black transition hover:bg-white hover:text-[#08152f] disabled:opacity-50"
-                  >
-                    ${value}
-                  </button>
-                ))}
-              </div>
-            </article>
+          <div className="mt-12 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {membershipTiers.map((tier) => (
+              <article
+                key={tier.amount}
+                className={
+                  "relative flex min-h-[430px] flex-col rounded-[26px] border p-6 shadow-[0_1px_2px_rgba(0,0,0,.03),0_12px_34px_rgba(0,0,0,.035)] " +
+                  (tier.featured
+                    ? "border-[#d82335] bg-[#07142c] text-white"
+                    : "border-black/[0.07] bg-white")
+                }
+              >
+                {tier.featured ? (
+                  <span className="absolute right-5 top-5 rounded-full bg-[#d82335] px-3 py-1 text-[9px] font-semibold uppercase tracking-[0.08em] text-white">
+                    Popular
+                  </span>
+                ) : null}
 
-            <article className="border border-[#d8dadf] bg-white p-7">
-              <div className="text-[9px] font-black tracking-[0.14em] text-[#153b79]">
-                MONTHLY SUPPORT
-              </div>
-              <h3 className="mt-3 text-[34px] font-black leading-[1] tracking-[-0.05em]">
-                Keep SAM moving.
-              </h3>
-              <p className="mt-4 max-w-[520px] text-[13px] font-medium leading-6 text-[#667084]">
-                Recurring support gives the project predictable funding while keeping civic voting
-                completely separate from money.
+                <p className={tier.featured ? "text-[12px] font-semibold text-[#a9c5ff]" : "text-[12px] font-semibold text-[#153b79]"}>
+                  {tier.name}
+                </p>
+
+                <div className="mt-5 flex items-end gap-1">
+                  <span className="text-[46px] font-semibold leading-none tracking-[-0.06em]">
+                    {"$"}{tier.amount}
+                  </span>
+                  <span className={tier.featured ? "pb-1 text-[12px] text-white/55" : "pb-1 text-[12px] text-[#86868b]"}>
+                    / month
+                  </span>
+                </div>
+
+                <p className={tier.featured ? "mt-3 text-[13px] text-white/65" : "mt-3 text-[13px] text-[#6e6e73]"}>
+                  {tier.subtitle}
+                </p>
+
+                <div className="mt-7 space-y-3">
+                  {tier.benefits.map((benefit) => (
+                    <div key={benefit} className="flex items-start gap-2.5">
+                      <span className={tier.featured ? "mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-white text-[#07142c]" : "mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-[#eef3ff] text-[#153b79]"}>
+                        <Check className="h-3 w-3" strokeWidth={2.2} />
+                      </span>
+                      <span className={tier.featured ? "text-[13px] leading-5 text-white/84" : "text-[13px] leading-5 text-[#4b4b50]"}>
+                        {benefit}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => startCheckout("monthly", tier.amount, null)}
+                  disabled={checkoutBusy}
+                  className={
+                    "mt-auto rounded-full px-4 py-3 text-[11px] font-semibold transition disabled:opacity-50 " +
+                    (tier.featured
+                      ? "bg-[#d82335] text-white hover:bg-[#ea3045]"
+                      : "bg-[#07142c] text-white hover:bg-[#122747]")
+                  }
+                >
+                  {checkoutBusy ? "Opening Stripe…" : "Choose " + tier.name}
+                </button>
+              </article>
+            ))}
+          </div>
+
+          <div className="mt-5 rounded-[22px] border border-black/[0.06] bg-white p-5 sm:flex sm:items-center sm:justify-between sm:gap-6">
+            <div>
+              <p className="text-[13px] font-semibold">Prefer not to subscribe?</p>
+              <p className="mt-1 text-[12px] leading-5 text-[#6e6e73]">
+                One-time support stays available as a secondary option for the SAM media project.
               </p>
-              <div className="mt-6 grid grid-cols-3 gap-2">
-                {[5, 10, 25].map((value) => (
-                  <button
-                    key={value}
-                    type="button"
-                    onClick={() => startCheckout("monthly", value, null)}
-                    disabled={checkoutBusy}
-                    className="border border-[#08152f] bg-white px-2 py-3 text-[11px] font-black text-[#08152f] transition hover:bg-[#08152f] hover:text-white disabled:opacity-50"
-                  >
-                    ${value}/MO
-                  </button>
-                ))}
-              </div>
-            </article>
+            </div>
+            <div className="mt-4 flex flex-wrap gap-2 sm:mt-0">
+              {[10, 25, 50, 100].map((value) => (
+                <button
+                  type="button"
+                  key={value}
+                  onClick={() => startCheckout("one_time", value, null)}
+                  disabled={checkoutBusy}
+                  className="rounded-full bg-[#f2f2f7] px-4 py-2.5 text-[11px] font-semibold text-[#3a3a3c] transition hover:bg-[#e7e7ec] disabled:opacity-50"
+                >
+                  {"$"}{value}
+                </button>
+              ))}
+            </div>
           </div>
 
           {checkoutError ? (
-            <div className="mb-8 border border-[#d82335]/30 bg-[#fff3f4] px-4 py-3 text-[12px] font-bold text-[#a61f2d]">
+            <div className="mt-4 rounded-[16px] border border-[#d82335]/25 bg-[#fff2f4] px-4 py-3 text-[12px] font-semibold text-[#a61f2d]">
               {checkoutError}
             </div>
           ) : null}
 
-          <div className="grid gap-5 lg:grid-cols-3">
+          <p className="mt-4 text-[11px] leading-5 text-[#86868b]">
+            Member chat is the next product build and physical benefits require a valid US shipping address.
+            Stripe checkout is currently operating in sandbox while launch setup is completed.
+          </p>
+        </div>
+      </section>
+
+      <section id="fund" className="border-y border-black/[0.06] bg-white px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
+        <div className="mx-auto max-w-6xl">
+          <div className="grid gap-8 lg:grid-cols-[1.08fr_.92fr] lg:items-end">
+            <div>
+              <p className="text-[13px] font-semibold text-[#153b79]">Three action funds. Clear levels.</p>
+              <h2 className="mt-3 text-[clamp(2.9rem,5.8vw,4.8rem)] font-semibold leading-[0.94] tracking-[-0.055em]">
+                Fund a specific outcome,
+                <br />
+                <span className="text-[#d82335]">not a vague promise.</span>
+              </h2>
+            </div>
+            <p className="max-w-[540px] text-[16px] leading-7 text-[#6e6e73]">
+              Each current cause starts at Level 1 with a $10,000 goal and a public
+              plan for what that level funds. If it reaches Level 1, the next plan and
+              Level 2 goal are published before more money is requested.
+            </p>
+          </div>
+
+          <div className="mt-9 rounded-[24px] bg-[#f5f5f7] p-6 sm:p-7">
+            <div className="grid gap-5 lg:grid-cols-[1fr_1.3fr] lg:items-center">
+              <div>
+                <p className="text-[12px] font-semibold text-[#d82335]">How monthly rotation works</p>
+                <p className="mt-2 text-[24px] font-semibold leading-tight tracking-[-0.035em]">
+                  Next month’s top three votes become the next three action funds.
+                </p>
+              </div>
+              <p className="text-[13px] leading-6 text-[#6e6e73]">
+                Money already raised remains attached to the cause it was raised for.
+                If that cause returns to the top three later, it resumes with its
+                existing balance. Funds are not silently redirected to an unrelated issue.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-8 grid gap-5 lg:grid-cols-3">
             {projects.map((project) => {
-              const pct = Math.min(
-                100,
-                Math.round((project.raised / project.target) * 100),
-              );
+              const pct =
+                project.target > 0
+                  ? Math.min(100, Math.round((project.raised / project.target) * 100))
+                  : 0;
+
               return (
                 <article
                   key={project.title}
                   className={
-                    "flex min-h-[430px] flex-col bg-white p-7 " +
-                    (project.featured
-                      ? "border-2 border-[#d82335] shadow-[0_22px_70px_rgba(8,21,47,.13)]"
-                      : "border border-[#d8dadf]")
+                    "flex min-h-[570px] flex-col rounded-[26px] border bg-white p-6 shadow-[0_1px_2px_rgba(0,0,0,.03),0_12px_34px_rgba(0,0,0,.035)] " +
+                    (project.featured ? "border-[#d82335]" : "border-black/[0.07]")
                   }
                 >
-                  <div className="flex justify-between text-[9px] font-black tracking-[0.1em] text-[#778095]">
-                    <span>{project.tag}</span>
-                    <span className="text-[#d82335]">{pct}%</span>
-                  </div>
-
-                  <h3 className="mt-9 text-[31px] font-black leading-[1] tracking-[-0.045em]">
-                    {project.title}
-                  </h3>
-                  <p className="mt-4 flex-1 text-[14px] font-medium leading-6 text-[#667084]">
-                    {project.copy}
-                  </p>
-
-                  <div className="mt-6 h-[7px] bg-[#ecebe6]">
-                    <div
-                      className="h-full bg-[#d82335]"
-                      style={{ width: `${pct}%` }}
-                    />
-                  </div>
-
-                  <div className="mt-3 flex items-end justify-between">
-                    <strong className="text-[20px]">{money(project.raised)}</strong>
-                    <span className="max-w-[120px] text-right text-[9px] font-bold leading-4 text-[#8b92a0]">
-                      of {money(project.target)} goal
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[#86868b]">
+                      {project.tag}
+                    </span>
+                    <span className="rounded-full bg-[#eef3ff] px-3 py-1 text-[10px] font-semibold text-[#153b79]">
+                      Level {project.level}
                     </span>
                   </div>
 
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setFundingProject(project);
-                      setAmount(25);
-                      setCheckoutError("");
-                    }}
-                    className={
-                      "mt-5 inline-flex items-center justify-center gap-2 rounded-sm px-4 py-3.5 text-[10px] font-black uppercase tracking-[0.09em] text-white " +
-                      (project.featured ? "bg-[#d82335]" : "bg-[#08152f]")
-                    }
-                  >
-                    Fund this push <ArrowRight className="h-3.5 w-3.5" />
-                  </button>
+                  <h3 className="mt-7 text-[29px] font-semibold leading-[1.02] tracking-[-0.04em]">
+                    {project.title}
+                  </h3>
+                  <p className="mt-4 text-[14px] leading-6 text-[#6e6e73]">{project.copy}</p>
+
+                  <div className="mt-7 rounded-[18px] bg-[#f5f5f7] p-4">
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[#86868b]">
+                      What Level 1 pays for
+                    </p>
+                    <div className="mt-3 space-y-2.5">
+                      {project.levelOne.map((item) => (
+                        <div key={item} className="flex items-start gap-2.5">
+                          <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#153b79]" strokeWidth={2} />
+                          <span className="text-[12px] leading-5 text-[#4b4b50]">{item}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="mt-auto pt-7">
+                    <div className="flex items-end justify-between">
+                      <div>
+                        <p className="text-[11px] font-medium text-[#86868b]">Raised</p>
+                        <p className="mt-1 text-[26px] font-semibold tracking-[-0.04em]">{money(project.raised)}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-[11px] font-medium text-[#86868b]">Level 1 goal</p>
+                        <p className="mt-1 text-[16px] font-semibold">{money(project.target)}</p>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 h-2 overflow-hidden rounded-full bg-[#ececf0]">
+                      <div className="h-full rounded-full bg-[#d82335]" style={{ width: String(pct) + "%" }} />
+                    </div>
+
+                    <div className="mt-3 flex items-center justify-between text-[11px] text-[#86868b]">
+                      <span>{pct}% funded</span>
+                      <span>Level 2: {money(project.nextTarget)}</span>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setFundingProject(project);
+                        setAmount(25);
+                        setCheckoutError("");
+                      }}
+                      className={
+                        "mt-5 flex w-full items-center justify-center gap-2 rounded-full px-4 py-3.5 text-[11px] font-semibold text-white " +
+                        (project.featured ? "bg-[#d82335]" : "bg-[#07142c]")
+                      }
+                    >
+                      Fund Level 1 <ArrowRight className="h-4 w-4" />
+                    </button>
+                  </div>
                 </article>
               );
             })}
@@ -523,68 +887,106 @@ export default function SamPage() {
         </div>
       </section>
 
-      <section id="watch" className="px-5 py-20 lg:py-28">
-        <div className="mx-auto max-w-[1240px]">
-          <div className="mb-12 grid gap-8 lg:grid-cols-[1.15fr_.85fr] lg:items-end">
+      <section className="px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
+        <div className="mx-auto max-w-6xl">
+          <div className="max-w-3xl">
+            <p className="text-[13px] font-semibold text-[#d82335]">What coordinated action can look like</p>
+            <h2 className="mt-3 text-[clamp(2.8rem,5.5vw,4.6rem)] font-semibold leading-[0.95] tracking-[-0.055em]">
+              One clear ask.
+              <br />
+              Thousands of people at once.
+            </h2>
+          </div>
+
+          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              {
+                icon: Mail,
+                title: "Email / letter day",
+                copy: "A source-backed message and the correct public recipients, sent during the same window.",
+              },
+              {
+                icon: MessageCircle,
+                title: "Phone or message push",
+                copy: "A simple script, numbers and timing so participation takes minutes instead of research.",
+              },
+              {
+                icon: Megaphone,
+                title: "Public awareness push",
+                copy: "One shareable message, visual kit or hashtag campaign built around verifiable information.",
+              },
+              {
+                icon: BarChart3,
+                title: "Public comment / accountability",
+                copy: "Help people participate in public comment, hearings, surveys or transparency requests where appropriate.",
+              },
+            ].map((item) => {
+              const Icon = item.icon;
+              return (
+                <article key={item.title} className="rounded-[24px] bg-white p-6 shadow-[0_1px_2px_rgba(0,0,0,.03),0_10px_30px_rgba(0,0,0,.035)]">
+                  <div className="grid h-10 w-10 place-items-center rounded-[13px] bg-[#eef3ff] text-[#153b79]">
+                    <Icon className="h-5 w-5" strokeWidth={1.8} />
+                  </div>
+                  <h3 className="mt-6 text-[19px] font-semibold tracking-[-0.025em]">{item.title}</h3>
+                  <p className="mt-2 text-[13px] leading-5 text-[#6e6e73]">{item.copy}</p>
+                </article>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      <section id="watch" className="bg-white px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
+        <div className="mx-auto max-w-6xl">
+          <div className="grid gap-8 lg:grid-cols-[1.08fr_.92fr] lg:items-end">
             <div>
-              <div className="text-[10px] font-black tracking-[0.22em] text-[#153b79]">
-                FROM SAM
-              </div>
-              <h2 className="mt-4 text-[clamp(2.8rem,6vw,5rem)] font-black leading-[0.92] tracking-[-0.065em]">
-                The message,
+              <p className="text-[13px] font-semibold text-[#153b79]">The monthly focus in public</p>
+              <h2 className="mt-3 text-[clamp(2.8rem,5.5vw,4.6rem)] font-semibold leading-[0.95] tracking-[-0.055em]">
+                The issue follows you
                 <br />
-                <span className="text-[#d82335]">without the handlers.</span>
+                <span className="text-[#6e6e73]">through the whole month.</span>
               </h2>
             </div>
-            <p className="max-w-[520px] text-[15px] font-medium leading-7 text-[#667084]">
-              Short speeches, responses and explainers built around the issues the
-              community votes to put on Sam&apos;s desk.
+            <p className="max-w-[520px] text-[16px] leading-7 text-[#6e6e73]">
+              Weekly social videos, the month’s emails and the coordinated action all
+              reinforce the same public mandate instead of chasing a different headline every day.
             </p>
           </div>
 
-          <div className="grid gap-5 md:grid-cols-3">
+          <div className="mt-12 grid gap-4 md:grid-cols-3">
             {[
               {
-                label: "THE BRIEFING",
-                title: "“My fellow Americans, apparently this is real.”",
+                label: "WEEKLY VIDEO",
+                title: "Explain the problem without the political fog.",
                 image: "/sam/Relax%20Campaign%20speech.png",
                 pos: "object-[center_18%]",
               },
               {
                 label: "SAM RESPONDS",
-                title: "When the obvious solution somehow requires 900 pages.",
+                title: "Answer the latest development through the month’s chosen issue.",
                 image: "/sam/Upper%20Body%20Speech.png",
                 pos: "object-[center_12%]",
               },
               {
-                label: "FROM THE DESK",
-                title: "The issue the public voted to the top this week.",
+                label: "MEMBER BRIEF",
+                title: "Show what moved, what did not, and what action comes next.",
                 image: "/sam/Upper%20Body%20Desk.png",
                 pos: "object-[center_12%]",
               },
             ].map((item) => (
-              <article
-                key={item.title}
-                className="group relative aspect-[4/5] overflow-hidden bg-[#08152f]"
-              >
+              <article key={item.title} className="group relative aspect-[4/5] overflow-hidden rounded-[26px] bg-[#07142c]">
                 <img
                   src={item.image}
                   alt=""
-                  className={`absolute inset-0 h-full w-full object-cover ${item.pos} transition duration-700 group-hover:scale-[1.015]`}
+                  className={"absolute inset-0 h-full w-full object-cover " + item.pos + " transition duration-700 group-hover:scale-[1.015]"}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#041027]/95 via-[#041027]/12 to-transparent" />
-                <button
-                  type="button"
-                  aria-label="Play prototype Sam video"
-                  className="absolute right-5 top-5 grid h-12 w-12 place-items-center rounded-full border border-white/50 bg-black/20 text-white backdrop-blur-sm"
-                >
+                <div className="absolute inset-0 bg-gradient-to-t from-[#041027]/95 via-[#041027]/10 to-transparent" />
+                <div className="absolute right-5 top-5 grid h-11 w-11 place-items-center rounded-full border border-white/38 bg-black/18 text-white backdrop-blur-sm">
                   <Play className="ml-0.5 h-4 w-4 fill-current" />
-                </button>
-                <div className="absolute inset-x-0 bottom-0 p-6 sm:p-7">
-                  <div className="text-[8px] font-black tracking-[0.15em] text-white/60">
-                    {item.label}
-                  </div>
-                  <h3 className="mt-2 text-[24px] font-black leading-[1.03] tracking-[-0.045em] text-white">
+                </div>
+                <div className="absolute inset-x-0 bottom-0 p-6">
+                  <div className="text-[9px] font-semibold tracking-[0.11em] text-white/55">{item.label}</div>
+                  <h3 className="mt-2 text-[23px] font-semibold leading-[1.05] tracking-[-0.035em] text-white">
                     {item.title}
                   </h3>
                 </div>
@@ -594,233 +996,99 @@ export default function SamPage() {
         </div>
       </section>
 
-      <section className="bg-[#08152f] px-5 py-20 text-white lg:py-28">
-        <div className="mx-auto grid max-w-[1240px] gap-10 lg:grid-cols-[.9fr_1.1fr] lg:items-center lg:gap-16">
-          <div className="overflow-hidden border border-white/10 bg-[#061126]">
-            <img
-              src="/sam/Jeans%20Town%20hall.png"
-              alt="AI-generated town hall scene featuring fictional Sam"
-              className="aspect-[4/5] w-full object-cover object-[center_12%]"
-            />
-          </div>
-
-          <div className="max-w-[580px]">
-            <div className="text-[10px] font-black tracking-[0.22em] text-[#a9c5ff]">
-              REPRESENTATION, NOT ACCESS
-            </div>
-            <h2 className="mt-4 text-[clamp(2.8rem,5.5vw,4.7rem)] font-black leading-[0.92] tracking-[-0.06em]">
-              Leadership should answer
-              <br />
-              <span className="text-[#f16b78]">to the people.</span>
-            </h2>
-            <p className="mt-6 text-[15px] font-medium leading-7 text-[#c0cada]">
-              The public sets the priorities. Support helps fund the work. But money
-              never buys a louder vote, a private line, or a different answer.
-            </p>
-
-            <div className="mt-8 grid gap-4 sm:grid-cols-2">
-              {[
-                "People choose the priorities",
-                "One person, one priority vote",
-                "Money never buys more influence",
-                "Results stay visible to everyone",
-              ].map((item) => (
-                <div key={item} className="flex items-start gap-3 text-[12px] font-extrabold">
-                  <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-[#d82335]">
-                    <Check className="h-3 w-3" />
-                  </span>
-                  {item}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="relative min-h-[520px] overflow-hidden bg-[#07142c] text-white">
-        <img
-          src="/sam/Upper%20Body%20Speech.png"
-          alt=""
-          className="absolute inset-0 h-full w-full object-cover object-[72%_center]"
-        />
-        <div className="absolute inset-0 bg-[#07142c]/70" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#07142c] via-[#07142c]/85 to-[#07142c]/35" />
-
-        <div className="relative mx-auto flex min-h-[520px] max-w-[1240px] items-center px-5 py-20 lg:px-8">
-          <blockquote className="max-w-[800px]">
-            <div className="text-[10px] font-black tracking-[0.22em] text-[#a9c5ff]">
-              THE DIFFERENCE
-            </div>
-            <p className="mt-6 text-[clamp(2.9rem,6vw,5.4rem)] font-black leading-[0.91] tracking-[-0.065em]">
-              “The public sets the priorities.
-              <br />
-              <span className="text-[#f16b78]">Leadership answers to them.”</span>
-            </p>
-          </blockquote>
-        </div>
-      </section>
-
-      <section className="bg-[#efebe3] px-5 py-20 lg:py-28">
-        <div className="mx-auto max-w-[1180px]">
-          <div className="mb-12 grid gap-8 lg:grid-cols-[1.15fr_.85fr] lg:items-end">
-            <div>
-              <div className="text-[10px] font-black tracking-[0.22em] text-[#153b79]">
-                SAM 2028
-              </div>
-              <h2 className="mt-4 text-[clamp(2.8rem,6vw,4.8rem)] font-black leading-[0.92] tracking-[-0.06em]">
-                Wear the movement.
-                <br />
-                <span className="text-[#d82335]">Make the point.</span>
-              </h2>
-            </div>
-            <p className="max-w-[520px] text-[15px] font-medium leading-7 text-[#667084]">
-              Concept products only for now. Commerce and any future regulated
-              political fundraising will be structured and disclosed separately.
-            </p>
-          </div>
-
-          <div className="grid gap-5 lg:grid-cols-3">
-            <article className="flex min-h-[350px] flex-col justify-between bg-[#08152f] p-7 text-white">
-              <div className="grid flex-1 place-items-center text-center text-[64px] font-black leading-[.8] tracking-[-0.08em]">
-                SAM
-                <br />
-                <span className="mt-4 text-[18px] tracking-[0.25em]">2028</span>
-              </div>
-              <div className="flex items-end justify-between">
-                <strong className="text-[13px]">Not On Your Ballot Tee</strong>
-                <span className="text-[9px] opacity-60">Concept · $32</span>
-              </div>
-            </article>
-
-            <article className="flex min-h-[350px] flex-col justify-between bg-[#e7dcc8] p-7 text-[#08152f]">
-              <div className="grid flex-1 place-items-center text-center text-[62px] font-black tracking-[-0.08em]">
-                SAM★
-              </div>
-              <div className="flex items-end justify-between">
-                <strong className="text-[13px]">
-                  SAM 2028 Cap
-                </strong>
-                <span className="text-[9px] opacity-60">Concept · $28</span>
-              </div>
-            </article>
-
-            <article className="flex min-h-[350px] flex-col justify-between bg-[#d82335] p-7 text-white">
-              <div className="grid flex-1 place-items-center text-center text-[28px] font-black leading-[1.04] tracking-[-0.04em]">
-                THE POLITICIAN
-                <br />
-                ISN&apos;T REAL.
-                <br />
-                THE PROBLEMS ARE.
-              </div>
-              <div className="flex items-end justify-between">
-                <strong className="text-[13px]">Receipt Pack</strong>
-                <span className="text-[9px] opacity-70">Concept · $12</span>
-              </div>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <section id="join" className="bg-[#d82335] px-5 py-16 text-white lg:py-20">
-        <div className="mx-auto grid max-w-[1180px] gap-10 lg:grid-cols-[1fr_.9fr] lg:items-center">
+      <section id="join" className="bg-[#07142c] px-4 py-16 text-white sm:px-6 lg:px-8 lg:py-20">
+        <div className="mx-auto grid max-w-6xl gap-9 lg:grid-cols-[1fr_.9fr] lg:items-center">
           <div>
-            <div className="text-[10px] font-black tracking-[0.22em] text-[#ffd0d5]">
-              JOIN THE MOVEMENT
-            </div>
-            <h2 className="mt-4 text-[clamp(2.6rem,5.3vw,4.5rem)] font-black leading-[0.93] tracking-[-0.06em]">
-              If you want representation,
-              <br />
-              help build it.
+            <p className="text-[12px] font-semibold text-[#a9c5ff]">Stay in the loop</p>
+            <h2 className="mt-3 text-[clamp(2.7rem,5vw,4.2rem)] font-semibold leading-[0.95] tracking-[-0.055em]">
+              Vote. Act. See what happened.
             </h2>
-            <p className="mt-5 max-w-[560px] text-[14px] font-semibold leading-6 text-[#ffd0d5]">
-              Vote on priorities, get the next briefing and help shape what Sam
-              takes on next.
+            <p className="mt-4 max-w-xl text-[14px] leading-6 text-[#b7c2d5]">
+              Get the monthly ballot, the focus briefing and the coordinated action when it goes live.
             </p>
           </div>
 
-          <form onSubmit={join} className="bg-white p-6 text-[#101827]">
-            <label className="text-[9px] font-black tracking-[0.12em]">
-              EMAIL ADDRESS
-            </label>
+          <form onSubmit={join} className="rounded-[22px] bg-white p-5 text-[#1d1d1f]">
+            <label className="text-[11px] font-semibold text-[#6e6e73]">Email address</label>
             <div className="mt-2 flex flex-col gap-2 sm:flex-row">
               <input
                 required
+                name="email"
                 type="email"
                 placeholder="you@example.com"
-                className="min-w-0 flex-1 border border-[#d3d6dc] px-4 py-3 text-[14px] outline-none focus:border-[#153b79]"
+                className="min-w-0 flex-1 rounded-full border border-black/[0.12] bg-[#f5f5f7] px-4 py-3 text-[14px] outline-none focus:border-[#153b79]"
               />
-              <button className="bg-[#08152f] px-5 py-3 text-[10px] font-black uppercase tracking-[0.09em] text-white">
-                Join Sam
+              <button className="rounded-full bg-[#d82335] px-5 py-3 text-[11px] font-semibold text-white">
+                Join the list
               </button>
             </div>
-            <div className="mt-2 text-[9px] font-semibold leading-4 text-[#8d95a3]">
-              {joined
-                ? "You're in — for this prototype only. No email was transmitted or stored."
-                : "Prototype signup — no data is transmitted in this demo."}
-            </div>
+            <div className="mt-2 min-h-4 text-[10px] font-medium text-[#86868b]">{joinNotice}</div>
           </form>
         </div>
       </section>
 
-      <footer className="bg-[#040a16] px-5 pb-6 pt-14 text-[#c3ccdc]">
-        <div className="mx-auto grid max-w-[1180px] gap-10 lg:grid-cols-[.55fr_1.55fr_.45fr]">
-          <div className="text-[50px] font-black tracking-[-0.08em] text-white">
+      <footer className="bg-[#040a16] px-4 pb-7 pt-14 text-[#aab5c7] sm:px-6 lg:px-8">
+        <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[.5fr_1.5fr_.5fr]">
+          <div className="text-[42px] font-semibold tracking-[-0.07em] text-white">
             SAM<span className="text-[#d82335]">★</span>
           </div>
 
           <div>
-            <div className="text-[9px] font-black tracking-[0.13em] text-white">
-              PARODY DISCLOSURE
-            </div>
-            <p className="mt-3 max-w-[720px] text-[11px] font-medium leading-5 text-[#8d99ae]">
-              SAM is an AI-generated fictional public-facing personality. SAM is not
-              a real person, candidate, elected official, political party, campaign
-              committee, or government representative. Support payments fund the
-              SAM media, research and social-issues awareness project and do not buy
-              votes or political influence.
+            <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-white">
+              AI + activity disclosure
+            </p>
+            <p className="mt-3 max-w-[760px] text-[11px] leading-5 text-[#7f8ca1]">
+              SAM is an AI-generated civic media and issue-awareness project, not a real
+              candidate, elected official, political party, campaign committee or government representative.
+              Membership and project support do not purchase votes or additional political influence.
+              Support is not tax-deductible as a charitable contribution unless explicitly stated.
+              Any future regulated political-committee activity would be separately organized and disclosed.
             </p>
           </div>
 
-          <div className="flex flex-col gap-2 text-[11px] font-bold">
-            <a href="#watch">Watch</a>
-            <a href="#agenda">Agenda</a>
-            <a href="#fund">Projects</a>
-            <a href="#receipts">Receipts</a>
+          <div className="flex flex-col gap-2 text-[11px] font-semibold">
+            <a href="#why">Why SAM</a>
+            <a href="#agenda">Vote</a>
+            <a href="#membership">Membership</a>
+            <a href="#fund">Action Funds</a>
           </div>
         </div>
 
-        <div className="mx-auto mt-10 max-w-[1180px] border-t border-[#1c2940] pt-5 text-[8px] font-bold tracking-[0.13em] text-[#66758d]">
-          © 2028 SAM PROJECT — AI-GENERATED CIVIC MEDIA PROJECT
+        <div className="mx-auto mt-10 max-w-6xl border-t border-white/10 pt-5 text-[9px] font-medium tracking-[0.08em] text-[#5d6a7d]">
+          © 2028 SAM PROJECT · AI-GENERATED CIVIC MEDIA PROJECT
         </div>
       </footer>
 
       {fundingProject && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-5">
+        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
           <button
             type="button"
             aria-label="Close"
             onClick={() => setFundingProject(null)}
-            className="absolute inset-0 bg-[#030814]/80 backdrop-blur-sm"
+            className="absolute inset-0 bg-[#020813]/82 backdrop-blur-sm"
           />
 
-          <div className="relative z-10 w-full max-w-[520px] bg-white p-8 shadow-2xl">
+          <div className="relative z-10 w-full max-w-[520px] rounded-[26px] bg-white p-7 shadow-2xl sm:p-8">
             <button
               type="button"
               onClick={() => setFundingProject(null)}
-              className="absolute right-4 top-4 text-[#70798a]"
-              aria-label="Close funding prototype"
+              className="absolute right-4 top-4 grid h-9 w-9 place-items-center rounded-full bg-[#f2f2f7] text-[#6e6e73]"
+              aria-label="Close funding window"
             >
-              <X className="h-6 w-6" />
+              <X className="h-5 w-5" />
             </button>
 
-            <div className="text-[9px] font-black tracking-[0.16em] text-[#153b79]">
-              SECURE STRIPE CHECKOUT
+            <div className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[#153b79]">
+              {fundingProject.title} · Level {fundingProject.level}
             </div>
-            <h3 className="mt-3 text-[38px] font-black leading-none tracking-[-0.05em]">
-              Fund this push
+
+            <h3 className="mt-3 text-[36px] font-semibold leading-[0.98] tracking-[-0.05em]">
+              Help fund the next action.
             </h3>
-            <p className="mt-4 text-[14px] font-semibold leading-6 text-[#747d8d]">
-              {fundingProject.title}
+
+            <p className="mt-4 text-[13px] leading-6 text-[#6e6e73]">
+              Level 1 goal: {money(fundingProject.target)}. Your support remains attached
+              to this cause and does not affect how your public vote is counted.
             </p>
 
             <div className="mt-6 grid grid-cols-4 gap-2">
@@ -830,13 +1098,13 @@ export default function SamPage() {
                   key={value}
                   onClick={() => setAmount(value)}
                   className={
-                    "border px-2 py-3 text-[12px] font-black " +
+                    "rounded-[13px] border px-2 py-3 text-[12px] font-semibold " +
                     (amount === value
-                      ? "border-[#08152f] bg-[#08152f] text-white"
-                      : "border-[#d4d7dc] bg-white text-[#08152f]")
+                      ? "border-[#07142c] bg-[#07142c] text-white"
+                      : "border-black/[0.1] bg-white text-[#07142c]")
                   }
                 >
-                  ${value}
+                  {"$"}{value}
                 </button>
               ))}
             </div>
@@ -845,21 +1113,21 @@ export default function SamPage() {
               type="button"
               onClick={() => startCheckout("one_time", amount, fundingProject)}
               disabled={checkoutBusy}
-              className="mt-5 flex w-full items-center justify-center gap-2 bg-[#08152f] px-4 py-4 text-[9px] font-black uppercase tracking-[0.08em] text-white disabled:opacity-60"
+              className="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-[#d82335] px-4 py-4 text-[11px] font-semibold text-white disabled:opacity-60"
             >
               {checkoutBusy ? "Opening Stripe…" : "Continue to secure checkout"}
               <ShieldCheck className="h-4 w-4" />
             </button>
 
             {checkoutError ? (
-              <p className="mt-3 text-[10px] font-bold leading-4 text-[#b4232f]">
+              <p className="mt-3 text-[10px] font-semibold leading-4 text-[#b4232f]">
                 {checkoutError}
               </p>
             ) : null}
 
-            <p className="mt-3 text-[9px] font-semibold leading-4 text-[#8d95a3]">
-              Payments are processed by Stripe. Financial support never buys an
-              additional priority vote or changes how votes are counted.
+            <p className="mt-3 text-[9px] leading-4 text-[#86868b]">
+              Stripe sandbox is active while launch setup is completed. Project funding is
+              separate from the monthly public ballot.
             </p>
           </div>
         </div>
