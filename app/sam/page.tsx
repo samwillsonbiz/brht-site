@@ -74,7 +74,7 @@ export default function SamPage() {
   const [joined, setJoined] = useState(false);
 
   useEffect(() => {
-    document.title = "SAM — AI Political Parody";
+    document.title = "SAM 2028 — AI Leadership";
     setMyVote(window.localStorage.getItem("samPriorityVote"));
   }, []);
 
@@ -118,8 +118,7 @@ export default function SamPage() {
       }}
     >
       <div className="relative z-50 bg-[#040a16] px-4 py-2 text-center text-[9px] font-black tracking-[0.15em] text-[#e9edf5] sm:text-[10px]">
-        AI-GENERATED POLITICAL PARODY · SAM IS NOT A REAL CANDIDATE OR PUBLIC
-        OFFICIAL
+        AI LEADERSHIP YOU CAN TRUST · BUILT TO REPRESENT PEOPLE, NOT SPECIAL INTERESTS
       </div>
 
       <header className="sticky top-0 z-40 border-b border-[#08152f]/10 bg-[#f7f4ed]/94 backdrop-blur-xl">
@@ -130,22 +129,19 @@ export default function SamPage() {
           >
             SAM<span className="ml-1 text-[15px] text-[#d82335]">★</span>
             <span className="ml-2 text-[9px] font-black tracking-[0.22em] text-[#d82335]">
-              20XX
+              2028
             </span>
           </a>
 
           <nav className="ml-auto hidden items-center gap-7 text-[12px] font-extrabold text-[#08152f]/80 md:flex">
-            <a className="transition hover:text-[#d82335]" href="#watch">
-              Watch
-            </a>
             <a className="transition hover:text-[#d82335]" href="#agenda">
-              The Agenda
+              Cast Your Vote
             </a>
             <a className="transition hover:text-[#d82335]" href="#fund">
-              Fund the Push
+              Fund Action
             </a>
-            <a className="transition hover:text-[#d82335]" href="#receipts">
-              Receipts
+            <a className="transition hover:text-[#d82335]" href="#watch">
+              Watch
             </a>
           </nav>
 
@@ -179,31 +175,31 @@ export default function SamPage() {
               20<span className="text-[#f16b78]">XX</span>
             </div>
 
-            <h1 className="mt-8 max-w-[720px] text-[clamp(2.6rem,5.5vw,4.8rem)] font-black leading-[0.92] tracking-[-0.06em]">
-              He&apos;s not running
-              <br className="hidden sm:block" /> for office.
+            <h1 className="mt-8 max-w-[760px] text-[clamp(2.6rem,5.5vw,4.8rem)] font-black leading-[0.92] tracking-[-0.06em]">
+              Real Leadership.
               <br />
-              <span className="text-[#f16b78]">He&apos;s running out of patience.</span>
+              Real Action.
+              <br />
+              <span className="text-[#f16b78]">Zero Corruption.</span>
             </h1>
 
-            <p className="mt-6 max-w-[570px] text-[15px] font-medium leading-7 text-[#d0d8e5] sm:text-[17px]">
-              Political parody with a straight face. Sharp commentary, uncomfortable
-              facts, dry humor — and an AI politician who can&apos;t actually ask you
-              to vote for him.
+            <p className="mt-6 max-w-[620px] text-[15px] font-medium leading-7 text-[#d0d8e5] sm:text-[17px]">
+              Leadership by the people, for the people. Your votes set the agenda —
+              not corporate donors, party insiders, or special interests.
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3">
               <a
-                href="#watch"
+                href="#agenda"
                 className="inline-flex items-center gap-2 rounded-sm bg-[#d82335] px-5 py-3.5 text-[11px] font-black uppercase tracking-[0.09em] text-white transition hover:bg-[#ec3045]"
               >
-                Watch Sam <Play className="h-3.5 w-3.5 fill-current" />
+                Cast Your Vote <ArrowRight className="h-3.5 w-3.5" />
               </a>
               <a
-                href="#agenda"
+                href="#fund"
                 className="inline-flex items-center gap-2 rounded-sm border border-white/35 bg-white/[0.06] px-5 py-3.5 text-[11px] font-black uppercase tracking-[0.09em] text-white backdrop-blur-sm transition hover:bg-white/10"
               >
-                Tell Sam what matters <ArrowRight className="h-3.5 w-3.5" />
+                Fund Action <ArrowRight className="h-3.5 w-3.5" />
               </a>
             </div>
 
@@ -223,165 +219,12 @@ export default function SamPage() {
       </section>
 
       <div className="bg-[#d82335] px-4 py-3 text-center text-[11px] font-black tracking-[0.05em] text-white sm:text-[13px]">
-        THE POLITICIAN ISN&apos;T REAL. THE PROBLEMS ARE.
+        YOUR VOTE SETS THE AGENDA
         <span className="mx-4 text-[#ffc0c8]">★</span>
-        HUMOR FIRST. RECEIPTS ALWAYS.
+        YOUR SUPPORT FUNDS THE ACTION
         <span className="mx-4 hidden text-[#ffc0c8] md:inline">★</span>
-        <span className="hidden md:inline">YOU PICK THE PRIORITIES.</span>
+        <span className="hidden md:inline">SAM ANSWERS TO THE PEOPLE.</span>
       </div>
-
-      <section id="watch" className="px-5 py-20 lg:py-28">
-        <div className="mx-auto max-w-[1240px]">
-          <div className="mb-12 grid gap-8 lg:grid-cols-[1.15fr_.85fr] lg:items-end">
-            <div>
-              <div className="text-[10px] font-black tracking-[0.22em] text-[#153b79]">
-                FROM THE PODIUM
-              </div>
-              <h2 className="mt-4 text-[clamp(2.8rem,6vw,5rem)] font-black leading-[0.92] tracking-[-0.065em]">
-                Sam says the quiet part
-                <br />
-                <span className="text-[#d82335]">into a microphone.</span>
-              </h2>
-            </div>
-            <p className="max-w-[520px] text-[15px] font-medium leading-7 text-[#667084]">
-              The feed is the front door: campaign-grade visuals, deadpan delivery,
-              original parody, current issues and a recurring fictional political
-              universe.
-            </p>
-          </div>
-
-          <div className="grid gap-5 lg:grid-cols-[1.55fr_.72fr]">
-            <article className="group overflow-hidden bg-[#07142c]">
-              <div className="relative min-h-[500px] overflow-hidden sm:min-h-[590px]">
-                <img
-                  src="/sam/Confident%20American%20Campaign%20Speech.png"
-                  alt="AI-generated portrait of fictional parody politician Sam at a campaign podium"
-                  className="absolute inset-0 h-full w-full object-cover object-center transition duration-700 group-hover:scale-[1.015]"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#040a16] via-[#040a16]/12 to-transparent" />
-
-                <button
-                  type="button"
-                  aria-label="Play prototype Sam video"
-                  className="absolute left-1/2 top-1/2 grid h-20 w-20 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-white/55 bg-[#061127]/35 text-white backdrop-blur-md transition group-hover:scale-105"
-                >
-                  <Play className="ml-1 h-6 w-6 fill-current" />
-                </button>
-
-                <div className="absolute inset-x-0 bottom-0 p-6 sm:p-9">
-                  <div className="text-[9px] font-black tracking-[0.16em] text-[#b9c9e7]">
-                    OFFICIAL STATEMENT*
-                  </div>
-                  <h3 className="mt-3 max-w-[650px] text-[30px] font-black leading-[1.02] tracking-[-0.045em] text-white sm:text-[43px]">
-                    “My fellow Americans, apparently this is real.”
-                  </h3>
-                  <div className="mt-5 flex items-center gap-4 text-[9px] font-black tracking-[0.12em] text-white/60">
-                    <span>THE BRIEFING</span>
-                    <span>•</span>
-                    <span>0:42</span>
-                    <span>•</span>
-                    <span>*PARODY</span>
-                  </div>
-                </div>
-              </div>
-            </article>
-
-            <div className="grid gap-5">
-              {[
-                {
-                  label: "NATIONAL EMERGENCY*",
-                  title: "When the obvious solution somehow requires 900 pages.",
-                  image: "/sam/Half%20body%20Rally.png",
-                  pos: "object-[75%_center]",
-                },
-                {
-                  label: "SAM RESPONDS",
-                  title: "“I asked the staff if this was satire. They said no.”",
-                  image: "/sam/Relax%20Campaign%20speech.png",
-                  pos: "object-[50%_center]",
-                },
-              ].map((item) => (
-                <article
-                  key={item.title}
-                  className="group relative min-h-[285px] overflow-hidden bg-[#08152f]"
-                >
-                  <img
-                    src={item.image}
-                    alt=""
-                    className={`absolute inset-0 h-full w-full object-cover ${item.pos} transition duration-700 group-hover:scale-[1.02]`}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#041027]/95 via-[#041027]/30 to-transparent" />
-                  <button
-                    type="button"
-                    aria-label="Play prototype Sam video"
-                    className="absolute right-5 top-5 grid h-11 w-11 place-items-center rounded-full border border-white/45 bg-black/15 text-white backdrop-blur-sm"
-                  >
-                    <Play className="ml-0.5 h-3.5 w-3.5 fill-current" />
-                  </button>
-                  <div className="absolute inset-x-0 bottom-0 p-6">
-                    <div className="text-[8px] font-black tracking-[0.15em] text-white/60">
-                      {item.label}
-                    </div>
-                    <h3 className="mt-2 text-[22px] font-black leading-[1.05] tracking-[-0.04em] text-white">
-                      {item.title}
-                    </h3>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="relative overflow-hidden bg-[#08152f] text-white">
-        <div className="absolute inset-y-0 right-0 w-full lg:w-[56%]">
-          <img
-            src="/sam/Jeans%20Town%20hall.png"
-            alt="AI-generated town hall scene featuring fictional parody politician Sam"
-            className="h-full w-full object-cover object-center"
-          />
-          <div className="absolute inset-0 bg-[#08152f]/25 lg:bg-gradient-to-r lg:from-[#08152f] lg:via-[#08152f]/35 lg:to-transparent" />
-        </div>
-
-        <div className="relative mx-auto grid min-h-[610px] max-w-[1240px] items-center px-5 py-20 lg:grid-cols-[.9fr_1.1fr] lg:px-8">
-          <div className="max-w-[570px] rounded-sm bg-[#08152f]/88 p-6 backdrop-blur-sm lg:bg-transparent lg:p-0 lg:backdrop-blur-none">
-            <div className="text-[10px] font-black tracking-[0.22em] text-[#a9c5ff]">
-              LISTEN FIRST
-            </div>
-            <h2 className="mt-4 text-[clamp(2.8rem,5.5vw,4.7rem)] font-black leading-[0.92] tracking-[-0.06em]">
-              The agenda doesn&apos;t
-              <br />come from a donor room.
-            </h2>
-            <p className="mt-6 max-w-[530px] text-[15px] font-medium leading-7 text-[#c0cada]">
-              People surface what they want addressed. Sam turns the top priorities
-              into explainers, arguments and projects — then the community can see
-              what actually happened.
-            </p>
-            <div className="mt-7 overflow-hidden border border-white/10 lg:max-w-[430px]">
-              <img
-                src="/sam/Half%20body%20hand%20shake.png"
-                alt="AI-generated image of fictional parody politician Sam greeting a supporter"
-                className="aspect-[16/9] w-full object-cover object-center"
-              />
-            </div>
-            <div className="mt-7 grid gap-3 text-[12px] font-extrabold sm:grid-cols-2">
-              {[
-                "People choose the priorities",
-                "Evidence before talking points",
-                "Show the strongest counterargument",
-                "Publish the receipts",
-              ].map((item) => (
-                <div key={item} className="flex items-center gap-2.5">
-                  <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-[#d82335]">
-                    <Check className="h-3 w-3" />
-                  </span>
-                  {item}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
 
       <section id="agenda" className="bg-[#07142c] px-5 py-20 text-white lg:py-28">
         <div className="mx-auto max-w-[1180px]">
@@ -397,14 +240,14 @@ export default function SamPage() {
             </div>
             <div>
               <p className="max-w-[520px] text-[15px] font-medium leading-7 text-[#b7c2d5]">
-                Everyone gets one priority vote. Money does not buy extra influence
-                in this prototype.
+                Everyone gets one priority vote. Your contribution never buys extra
+                influence. The people decide what rises to the top.
               </p>
               <div className="mt-4 text-[12px] font-bold text-[#8fa0bd]">
                 <span className="mr-2 text-[28px] font-black text-white">
                   {totalVotes.toLocaleString()}
                 </span>
-                priority votes cast
+                demo priority votes
               </div>
             </div>
           </div>
@@ -447,8 +290,11 @@ export default function SamPage() {
               );
             })}
           </div>
-          <div className="mt-4 min-h-5 text-[12px] font-bold text-[#a9c5ff]">
-            {voteNotice}
+          <div className="mt-4 flex min-h-5 flex-wrap items-center justify-between gap-4 text-[12px] font-bold text-[#a9c5ff]">
+            <span>{voteNotice}</span>
+            <a href="#fund" className="inline-flex items-center gap-2 text-white">
+              Fund the priorities <ArrowRight className="h-3.5 w-3.5" />
+            </a>
           </div>
         </div>
       </section>
@@ -458,18 +304,18 @@ export default function SamPage() {
           <div className="mb-12 grid gap-8 lg:grid-cols-[1.15fr_.85fr] lg:items-end">
             <div>
               <div className="text-[10px] font-black tracking-[0.22em] text-[#153b79]">
-                MAKE SOMETHING HAPPEN
+                TURN A VOTE INTO ACTION
               </div>
               <h2 className="mt-4 text-[clamp(2.8rem,6vw,4.8rem)] font-black leading-[0.92] tracking-[-0.06em]">
-                Don&apos;t just donate.
+                Back the work.
                 <br />
-                <span className="text-[#d82335]">Fund an outcome.</span>
+                <span className="text-[#d82335]">Fund real action.</span>
               </h2>
             </div>
             <p className="max-w-[520px] text-[15px] font-medium leading-7 text-[#667084]">
-              These are prototype project flows only. Checkout stays disabled until
-              the operating entity, payment flow and applicable compliance
-              requirements are finalized.
+              Choose the work you want pushed forward. Funding is still disabled in
+              this prototype while the legal entity and compliant payment flow are
+              being finalized.
             </p>
           </div>
 
@@ -535,115 +381,115 @@ export default function SamPage() {
         </div>
       </section>
 
-      <section className="bg-[#0a1730] px-5 py-20 text-white lg:py-28">
-        <div className="mx-auto grid max-w-[1240px] gap-10 lg:grid-cols-[1.08fr_.92fr] lg:items-center lg:gap-16">
-          <div className="relative overflow-hidden border border-white/10 bg-[#061126] shadow-[0_28px_80px_rgba(0,0,0,.24)]">
-            <img
-              src="/sam/Upper%20Body%20Desk.png"
-              alt="AI-generated campaign strategy room featuring fictional parody politician Sam"
-              className="aspect-[16/10] h-full w-full object-cover"
-            />
-            <div className="absolute left-4 top-4">
-              <ImageTag>BEHIND THE PODIUM</ImageTag>
+      <section id="watch" className="px-5 py-20 lg:py-28">
+        <div className="mx-auto max-w-[1240px]">
+          <div className="mb-12 grid gap-8 lg:grid-cols-[1.15fr_.85fr] lg:items-end">
+            <div>
+              <div className="text-[10px] font-black tracking-[0.22em] text-[#153b79]">
+                FROM SAM
+              </div>
+              <h2 className="mt-4 text-[clamp(2.8rem,6vw,5rem)] font-black leading-[0.92] tracking-[-0.065em]">
+                The message,
+                <br />
+                <span className="text-[#d82335]">without the handlers.</span>
+              </h2>
             </div>
+            <p className="max-w-[520px] text-[15px] font-medium leading-7 text-[#667084]">
+              Short speeches, responses and explainers built around the issues the
+              community votes to put on Sam&apos;s desk.
+            </p>
           </div>
 
-          <div>
-            <div className="text-[10px] font-black tracking-[0.22em] text-[#a9c5ff]">
-              HOW SAM WORKS
-            </div>
-            <h2 className="mt-4 text-[clamp(2.8rem,5.5vw,4.7rem)] font-black leading-[0.92] tracking-[-0.06em]">
-              Listen. Research.
-              <br />
-              <span className="text-[#f16b78]">Make the point land.</span>
-            </h2>
-            <p className="mt-6 max-w-[560px] text-[15px] font-medium leading-7 text-[#bdc8da]">
-              The joke is the delivery, not the homework. The idea is to start with
-              what people care about, understand the strongest evidence and
-              counterarguments, then turn it into something people will actually
-              watch.
-            </p>
-
-            <div className="mt-8 border-t border-white/15">
-              {[
-                ["01", "Listen", "Surface the issues people actually want addressed."],
-                ["02", "Research", "Separate the strongest evidence from the talking points."],
-                ["03", "Say it straight", "Use parody and humor to make the argument memorable."],
-                ["04", "Show the receipts", "Publish what was funded, produced and learned."],
-              ].map(([number, title, copy]) => (
-                <div
-                  key={number}
-                  className="grid grid-cols-[42px_105px_1fr] gap-3 border-b border-white/15 py-4"
+          <div className="grid gap-5 md:grid-cols-3">
+            {[
+              {
+                label: "THE BRIEFING",
+                title: "“My fellow Americans, apparently this is real.”",
+                image: "/sam/Relax%20Campaign%20speech.png",
+                pos: "object-[center_18%]",
+              },
+              {
+                label: "SAM RESPONDS",
+                title: "When the obvious solution somehow requires 900 pages.",
+                image: "/sam/Upper%20Body%20Speech.png",
+                pos: "object-[center_12%]",
+              },
+              {
+                label: "FROM THE DESK",
+                title: "The issue the public voted to the top this week.",
+                image: "/sam/Upper%20Body%20Desk.png",
+                pos: "object-[center_12%]",
+              },
+            ].map((item) => (
+              <article
+                key={item.title}
+                className="group relative aspect-[4/5] overflow-hidden bg-[#08152f]"
+              >
+                <img
+                  src={item.image}
+                  alt=""
+                  className={`absolute inset-0 h-full w-full object-cover ${item.pos} transition duration-700 group-hover:scale-[1.015]`}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#041027]/95 via-[#041027]/12 to-transparent" />
+                <button
+                  type="button"
+                  aria-label="Play prototype Sam video"
+                  className="absolute right-5 top-5 grid h-12 w-12 place-items-center rounded-full border border-white/50 bg-black/20 text-white backdrop-blur-sm"
                 >
-                  <span className="text-[11px] font-black text-[#f16b78]">{number}</span>
-                  <strong className="text-[13px]">{title}</strong>
-                  <span className="text-[12px] leading-5 text-[#9eabc0]">{copy}</span>
+                  <Play className="ml-0.5 h-4 w-4 fill-current" />
+                </button>
+                <div className="absolute inset-x-0 bottom-0 p-6 sm:p-7">
+                  <div className="text-[8px] font-black tracking-[0.15em] text-white/60">
+                    {item.label}
+                  </div>
+                  <h3 className="mt-2 text-[24px] font-black leading-[1.03] tracking-[-0.045em] text-white">
+                    {item.title}
+                  </h3>
                 </div>
-              ))}
-            </div>
+              </article>
+            ))}
           </div>
         </div>
       </section>
 
-      <section
-        id="receipts"
-        className="bg-gradient-to-br from-[#102b5f] to-[#061126] px-5 py-20 text-white lg:py-28"
-      >
-        <div className="mx-auto grid max-w-[1180px] gap-14 lg:grid-cols-[1fr_.9fr] lg:items-center">
-          <div>
-            <div className="mb-7 overflow-hidden border border-white/10 bg-[#07142c]">
-              <img
-                src="/sam/Signing%20Paperwork.png"
-                alt="AI-generated image of fictional parody politician Sam reviewing paperwork"
-                className="aspect-[16/9] w-full object-cover object-center"
-              />
-            </div>
-            <div className="text-[10px] font-black tracking-[0.22em] text-[#a9c5ff]">
-              THE RECEIPTS
-            </div>
-            <h2 className="mt-4 text-[clamp(2.8rem,6vw,4.8rem)] font-black leading-[0.92] tracking-[-0.06em]">
-              If we ask for trust,
-              <br />we show the math.
-            </h2>
-            <p className="mt-6 max-w-[560px] text-[15px] font-medium leading-7 text-[#b7c2d5]">
-              Once money actually moves, every funded project should show what came
-              in, what went out, what was produced and what happened next.
-            </p>
+      <section className="bg-[#08152f] px-5 py-20 text-white lg:py-28">
+        <div className="mx-auto grid max-w-[1240px] gap-10 lg:grid-cols-[.9fr_1.1fr] lg:items-center lg:gap-16">
+          <div className="overflow-hidden border border-white/10 bg-[#061126]">
+            <img
+              src="/sam/Jeans%20Town%20hall.png"
+              alt="AI-generated town hall scene featuring fictional Sam"
+              className="aspect-[4/5] w-full object-cover object-[center_12%]"
+            />
           </div>
 
-          <div className="rounded-lg bg-[#f8f9fb] p-7 text-[#101827] shadow-[0_25px_60px_rgba(0,0,0,.35)]">
-            <div className="flex justify-between text-[9px] font-black tracking-[0.13em] text-[#6f788a]">
-              <span>PUBLIC LEDGER</span>
-              <span className="text-[#d82335]">PROTOTYPE</span>
+          <div className="max-w-[580px]">
+            <div className="text-[10px] font-black tracking-[0.22em] text-[#a9c5ff]">
+              REPRESENTATION, NOT ACCESS
             </div>
+            <h2 className="mt-4 text-[clamp(2.8rem,5.5vw,4.7rem)] font-black leading-[0.92] tracking-[-0.06em]">
+              Leadership should answer
+              <br />
+              <span className="text-[#f16b78]">to the people.</span>
+            </h2>
+            <p className="mt-6 text-[15px] font-medium leading-7 text-[#c0cada]">
+              The public sets the priorities. Support helps fund the work. But money
+              never buys a louder vote, a private line, or a different answer.
+            </p>
 
-            <div className="border-b border-[#ddd] py-7">
-              <div className="text-[11px] font-bold text-[#8d95a3]">
-                Community projects shown
-              </div>
-              <div className="mt-1 text-[58px] font-black leading-none tracking-[-0.05em]">
-                03
-              </div>
-            </div>
-
-            {[
-              ["Prototype funds shown", "$230,370"],
-              ["Real funds collected", "$0"],
-              ["Unexplained spending", "$0"],
-            ].map(([label, value]) => (
-              <div
-                key={label}
-                className="flex justify-between border-b border-[#e3e5e8] py-4 text-[12px] font-bold"
-              >
-                <span>{label}</span>
-                <strong>{value}</strong>
-              </div>
-            ))}
-
-            <div className="mt-4 flex items-start gap-2 text-[9px] font-semibold leading-4 text-[#8d95a3]">
-              <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[#153b79]" />
-              Live financial data appears here only after compliant fundraising is
-              activated.
+            <div className="mt-8 grid gap-4 sm:grid-cols-2">
+              {[
+                "People choose the priorities",
+                "One person, one priority vote",
+                "Money never buys more influence",
+                "Results stay visible to everyone",
+              ].map((item) => (
+                <div key={item} className="flex items-start gap-3 text-[12px] font-extrabold">
+                  <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-[#d82335]">
+                    <Check className="h-3 w-3" />
+                  </span>
+                  {item}
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -661,12 +507,12 @@ export default function SamPage() {
         <div className="relative mx-auto flex min-h-[520px] max-w-[1240px] items-center px-5 py-20 lg:px-8">
           <blockquote className="max-w-[800px]">
             <div className="text-[10px] font-black tracking-[0.22em] text-[#a9c5ff]">
-              THE WHOLE JOKE
+              THE DIFFERENCE
             </div>
             <p className="mt-6 text-[clamp(2.9rem,6vw,5.4rem)] font-black leading-[0.91] tracking-[-0.065em]">
-              “The politician isn&apos;t real.
+              “The public sets the priorities.
               <br />
-              <span className="text-[#f16b78]">The problems are.”</span>
+              <span className="text-[#f16b78]">Leadership answers to them.”</span>
             </p>
           </blockquote>
         </div>
@@ -677,17 +523,17 @@ export default function SamPage() {
           <div className="mb-12 grid gap-8 lg:grid-cols-[1.15fr_.85fr] lg:items-end">
             <div>
               <div className="text-[10px] font-black tracking-[0.22em] text-[#153b79]">
-                CAMPAIGN MERCH. SORT OF.
+                SAM 2028
               </div>
               <h2 className="mt-4 text-[clamp(2.8rem,6vw,4.8rem)] font-black leading-[0.92] tracking-[-0.06em]">
-                Wear the joke.
+                Wear the movement.
                 <br />
-                <span className="text-[#d82335]">Keep the point.</span>
+                <span className="text-[#d82335]">Make the point.</span>
               </h2>
             </div>
             <p className="max-w-[520px] text-[15px] font-medium leading-7 text-[#667084]">
-              Concept products only for now. Any real commerce and any future
-              political fundraising would be structured and disclosed separately.
+              Concept products only for now. Commerce and any future regulated
+              political fundraising will be structured and disclosed separately.
             </p>
           </div>
 
@@ -696,7 +542,7 @@ export default function SamPage() {
               <div className="grid flex-1 place-items-center text-center text-[64px] font-black leading-[.8] tracking-[-0.08em]">
                 SAM
                 <br />
-                <span className="mt-4 text-[18px] tracking-[0.25em]">20XX</span>
+                <span className="mt-4 text-[18px] tracking-[0.25em]">2028</span>
               </div>
               <div className="flex items-end justify-between">
                 <strong className="text-[13px]">Not On Your Ballot Tee</strong>
@@ -710,7 +556,7 @@ export default function SamPage() {
               </div>
               <div className="flex items-end justify-between">
                 <strong className="text-[13px]">
-                  Running Out of Patience Cap
+                  SAM 2028 Cap
                 </strong>
                 <span className="text-[9px] opacity-60">Concept · $28</span>
               </div>
@@ -740,13 +586,13 @@ export default function SamPage() {
               JOIN THE MOVEMENT
             </div>
             <h2 className="mt-4 text-[clamp(2.6rem,5.3vw,4.5rem)] font-black leading-[0.93] tracking-[-0.06em]">
-              Sam can&apos;t hold office.
+              If you want representation,
               <br />
-              He can hold attention.
+              help build it.
             </h2>
             <p className="mt-5 max-w-[560px] text-[14px] font-semibold leading-6 text-[#ffd0d5]">
-              Get the next speech, vote on priorities and help shape the fictional
-              campaign universe.
+              Vote on priorities, get the next briefing and help shape what Sam
+              takes on next.
             </p>
           </div>
 
@@ -801,7 +647,7 @@ export default function SamPage() {
         </div>
 
         <div className="mx-auto mt-10 max-w-[1180px] border-t border-[#1c2940] pt-5 text-[8px] font-bold tracking-[0.13em] text-[#66758d]">
-          © 20XX SAM PROJECT — FICTIONAL CAMPAIGN PROTOTYPE
+          © 2028 SAM PROJECT — FICTIONAL CAMPAIGN PROTOTYPE
         </div>
       </footer>
 
