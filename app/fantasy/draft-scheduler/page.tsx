@@ -137,8 +137,22 @@ export default function DraftSchedulePage() {
   }, []);
   useEffect(() => {
     void reload();
-    const id = window.setInterval(() => void reload(true), 20000);
-    return () => window.clearInterval(id);
+
+    // Fast shared updates while managers are coordinating. Hidden tabs pause
+    // polling to avoid unnecessary database requests and refresh on return.
+    const id = window.setInterval(() => {
+      if (document.visibilityState === "visible") void reload(true);
+    }, 5000);
+
+    const onVisibilityChange = () => {
+      if (document.visibilityState === "visible") void reload(true);
+    };
+    document.addEventListener("visibilitychange", onVisibilityChange);
+
+    return () => {
+      window.clearInterval(id);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+    };
   }, [reload]);
 
   const answerMap = useMemo(() => new Map(answers.map(a => [a.team_id, a])), [answers]);
