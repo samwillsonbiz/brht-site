@@ -508,33 +508,33 @@ export default function SamPage() {
         </div>
       </section>
 
-      <section id="agenda" className="bg-[#07142c] px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
+      <section id="agenda" className="bg-[#07142c] px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
         <div className="mx-auto max-w-6xl">
-          <div className="rounded-[30px] bg-white p-5 text-[#1d1d1f] shadow-[0_24px_80px_rgba(0,0,0,.18)] sm:p-8 lg:p-10">
-            <div className="grid gap-8 lg:grid-cols-[1.05fr_.95fr] lg:items-end">
+          <div className="rounded-[28px] bg-white p-5 text-[#1d1d1f] shadow-[0_20px_70px_rgba(0,0,0,.16)] sm:p-7 lg:p-8">
+            <div className="grid gap-5 lg:grid-cols-[1fr_.9fr] lg:items-end">
               <div>
-                <p className="text-[13px] font-semibold text-[#d82335]">
+                <p className="text-[12px] font-semibold text-[#d82335]">
                   {cycle ? cycle.label + " ballot" : "This month’s ballot"}
                 </p>
-                <h2 className="mt-2 text-[clamp(6rem,13vw,11rem)] font-semibold leading-[0.78] tracking-[-0.085em] text-[#07142c]">
+                <h2 className="mt-1 text-[clamp(5.8rem,12vw,10rem)] font-semibold leading-[0.78] tracking-[-0.085em] text-[#07142c]">
                   VOTE<span className="text-[#d82335]">.</span>
                 </h2>
               </div>
-              <div className="lg:pb-2">
-                <p className="max-w-[520px] text-[16px] leading-7 text-[#6e6e73]">
-                  Pick the issue you want represented next month. The #1 issue becomes
-                  SAM’s primary focus. Your vote can be changed until the ballot closes.
+              <div className="lg:pb-1">
+                <p className="max-w-[500px] text-[14px] leading-6 text-[#6e6e73]">
+                  Pick what you want Sam to represent next month. The #1 issue becomes
+                  his primary focus.
                 </p>
-                <div className="mt-5 flex items-baseline gap-2">
-                  <span className="text-[34px] font-semibold tracking-[-0.04em] text-[#07142c]">
+                <div className="mt-3 flex items-baseline gap-2">
+                  <span className="text-[28px] font-semibold tracking-[-0.04em] text-[#07142c]">
                     {totalVotes.toLocaleString()}
                   </span>
-                  <span className="text-[12px] font-medium text-[#86868b]">live votes</span>
+                  <span className="text-[11px] font-medium text-[#86868b]">live votes</span>
                 </div>
               </div>
             </div>
 
-            <div className="mt-9 overflow-hidden rounded-[22px] border border-black/[0.08]">
+            <div className="mt-6 overflow-hidden rounded-[18px] border border-black/[0.08]">
               {sortedIssues.map((issue, index) => {
                 const pct = totalVotes > 0 ? (issue.votes / totalVotes) * 100 : 0;
                 const selected = myVote === issue.slug;
@@ -543,41 +543,35 @@ export default function SamPage() {
                   <div
                     key={issue.slug}
                     className={
-                      "relative grid grid-cols-[34px_1fr_64px] items-center gap-3 px-4 py-4 sm:grid-cols-[44px_1fr_72px_116px] sm:px-5 " +
+                      "relative grid grid-cols-[28px_1fr_54px] items-center gap-2.5 px-3 py-3 sm:grid-cols-[36px_1fr_64px_104px] sm:px-4 " +
                       (index !== sortedIssues.length - 1 ? "border-b border-black/[0.07]" : "")
                     }
                   >
-                    <div className="text-[14px] font-medium text-[#a0a0a6]">
+                    <div className="text-[12px] font-medium text-[#a0a0a6]">
                       {String(index + 1).padStart(2, "0")}
                     </div>
-                    <div>
-                      <div className="text-[15px] font-semibold text-[#1d1d1f] sm:text-[16px]">
+                    <div className="min-w-0">
+                      <div className="text-[13px] font-semibold leading-5 text-[#1d1d1f] sm:text-[14px]">
                         {issue.name}
                       </div>
-                      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[#ededf1] sm:hidden">
-                        <div
-                          className="h-full rounded-full bg-[#d82335]"
-                          style={{ width: String(pct) + "%" }}
-                        />
-                      </div>
                     </div>
-                    <div className="text-right text-[17px] font-semibold text-[#07142c]">
+                    <div className="text-right text-[14px] font-semibold text-[#07142c]">
                       {pct.toFixed(1)}%
                     </div>
                     <button
                       type="button"
                       onClick={() => voteFor(issue)}
                       className={
-                        "col-start-2 col-end-4 mt-1 rounded-full border px-3 py-2 text-[10px] font-semibold transition sm:col-auto sm:mt-0 " +
+                        "col-start-2 col-end-4 rounded-full border px-3 py-1.5 text-[9px] font-semibold transition sm:col-auto " +
                         (selected
                           ? "border-[#07142c] bg-[#07142c] text-white"
-                          : "border-black/[0.12] bg-[#f5f5f7] text-[#07142c] hover:border-[#07142c]")
+                          : "border-black/[0.1] bg-[#f5f5f7] text-[#07142c] hover:border-[#07142c]")
                       }
                     >
-                      {selected ? "Your vote" : myVote ? "Switch vote" : "Vote"}
+                      {selected ? "Your vote" : myVote ? "Switch" : "Vote"}
                     </button>
                     <div
-                      className="absolute bottom-0 left-0 hidden h-[2px] bg-[#d82335] sm:block"
+                      className="absolute bottom-0 left-0 h-[2px] bg-[#d82335]"
                       style={{ width: String(pct) + "%" }}
                     />
                   </div>
@@ -585,67 +579,57 @@ export default function SamPage() {
               })}
             </div>
 
-            <div className="mt-5 flex flex-col gap-2 text-[12px] text-[#86868b] sm:flex-row sm:items-center sm:justify-between">
+            <div className="mt-4 flex flex-col gap-1.5 text-[10px] text-[#86868b] sm:flex-row sm:items-center sm:justify-between">
               <span className="font-medium text-[#3a3a3c]">{voteNotice}</span>
-              <span>Beta: one active vote per browser each month. Verified member voting is next.</span>
+              <span>One active vote per browser each month.</span>
             </div>
 
-            <div className="mt-8 rounded-[20px] bg-[#f5f5f7] p-5 sm:p-6">
-              <div className="grid gap-5 lg:grid-cols-[.9fr_1.1fr] lg:items-center">
-                <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-[#153b79]">
-                    Then SAM represents it
-                  </p>
-                  <p className="mt-2 text-[22px] font-semibold leading-tight tracking-[-0.035em]">
-                    One public mandate. One coordinated push.
-                  </p>
-                </div>
-                <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-                  {["Weekly videos", "Member emails", "Public action", "Funded impact"].map((item) => (
-                    <div
-                      key={item}
-                      className="rounded-full border border-black/[0.07] bg-white px-3 py-2.5 text-center text-[10px] font-semibold text-[#4b4b50]"
-                    >
-                      {item}
-                    </div>
-                  ))}
-                </div>
-              </div>
+            <div className="mt-5 flex flex-wrap items-center gap-2 rounded-[16px] bg-[#f5f5f7] px-4 py-3">
+              <span className="mr-1 text-[10px] font-semibold uppercase tracking-[0.08em] text-[#153b79]">
+                Then Sam represents it
+              </span>
+              {["Weekly videos", "Member emails", "Public action", "Funded impact"].map((item) => (
+                <span
+                  key={item}
+                  className="rounded-full border border-black/[0.06] bg-white px-3 py-1.5 text-[9px] font-semibold text-[#4b4b50]"
+                >
+                  {item}
+                </span>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
-      <section id="fund" className="border-y border-black/[0.06] bg-white px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
+      <section id="fund" className="border-y border-black/[0.06] bg-white px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
         <div className="mx-auto max-w-6xl">
-          <div className="grid gap-8 lg:grid-cols-[1fr_.9fr] lg:items-end">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p className="text-[13px] font-semibold text-[#d82335]">Put money behind the mandate</p>
-              <h2 className="mt-3 text-[clamp(3rem,6vw,5rem)] font-semibold leading-[0.92] tracking-[-0.06em]">
+              <p className="text-[12px] font-semibold text-[#d82335]">Put money behind the mandate</p>
+              <h2 className="mt-2 text-[clamp(3rem,6vw,5rem)] font-semibold leading-[0.9] tracking-[-0.06em]">
                 Fund<span className="text-[#d82335]">.</span>
               </h2>
             </div>
-            <p className="max-w-[500px] text-[16px] leading-7 text-[#6e6e73]">
-              You chose the issue. Now choose what SAM actually does about it.
+            <p className="max-w-[470px] text-[14px] leading-6 text-[#6e6e73]">
+              You chose the issue. Now choose what Sam actually does about it.
             </p>
           </div>
 
-          <div className="mt-8 rounded-[22px] bg-[#f5f5f7] p-5 sm:flex sm:items-center sm:justify-between sm:gap-6 sm:p-6">
+          <div className="mt-6 flex flex-col gap-2 rounded-[18px] bg-[#f5f5f7] px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.09em] text-[#86868b]">
-                Launch cycle example
-              </p>
-              <p className="mt-1 text-[22px] font-semibold tracking-[-0.035em] text-[#1d1d1f]">
+              <span className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[#86868b]">
+                Launch focus
+              </span>
+              <span className="ml-2 text-[14px] font-semibold text-[#1d1d1f]">
                 Money in politics & corruption
-              </p>
+              </span>
             </div>
-            <p className="mt-3 max-w-[530px] text-[12px] leading-5 text-[#6e6e73] sm:mt-0">
-              After the first live ballot closes, this focus is replaced automatically
-              by the previous month’s winning issue.
+            <p className="text-[10px] leading-4 text-[#86868b]">
+              Future months use the previous ballot winner.
             </p>
           </div>
 
-          <div className="mt-7 grid gap-5 lg:grid-cols-3">
+          <div className="mt-6 grid gap-4 lg:grid-cols-3">
             {projects.map((project) => {
               const raised = fundTotals[project.slug] ?? 0;
               const pct =
@@ -657,53 +641,47 @@ export default function SamPage() {
                 <article
                   key={project.title}
                   className={
-                    "flex min-h-[520px] flex-col rounded-[26px] border bg-white p-6 shadow-[0_1px_2px_rgba(0,0,0,.03),0_12px_34px_rgba(0,0,0,.035)] " +
+                    "flex flex-col rounded-[22px] border bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,.03),0_10px_26px_rgba(0,0,0,.03)] " +
                     (project.featured ? "border-[#d82335]" : "border-black/[0.07]")
                   }
                 >
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[#86868b]">
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-[9px] font-semibold uppercase tracking-[0.08em] text-[#86868b]">
                       {project.tag}
                     </span>
-                    <span className="rounded-full bg-[#eef3ff] px-3 py-1 text-[10px] font-semibold text-[#153b79]">
+                    <span className="shrink-0 rounded-full bg-[#eef3ff] px-2.5 py-1 text-[9px] font-semibold text-[#153b79]">
                       $10K goal
                     </span>
                   </div>
 
-                  <h3 className="mt-7 text-[29px] font-semibold leading-[1.02] tracking-[-0.04em]">
+                  <h3 className="mt-5 text-[24px] font-semibold leading-[1] tracking-[-0.04em]">
                     {project.title}
                   </h3>
-                  <p className="mt-4 text-[14px] leading-6 text-[#6e6e73]">{project.copy}</p>
+                  <p className="mt-3 text-[12px] leading-5 text-[#6e6e73]">{project.copy}</p>
 
-                  <div className="mt-7 space-y-2.5">
+                  <div className="mt-5 space-y-2">
                     {project.delivers.map((item) => (
-                      <div key={item} className="flex items-start gap-2.5">
-                        <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#153b79]" strokeWidth={2} />
-                        <span className="text-[12px] leading-5 text-[#4b4b50]">{item}</span>
+                      <div key={item} className="flex items-start gap-2">
+                        <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#153b79]" strokeWidth={2} />
+                        <span className="text-[11px] leading-4.5 text-[#4b4b50]">{item}</span>
                       </div>
                     ))}
                   </div>
 
-                  <div className="mt-auto pt-7">
+                  <div className="mt-6 border-t border-black/[0.06] pt-4">
                     <div className="flex items-end justify-between">
                       <div>
-                        <p className="text-[11px] font-medium text-[#86868b]">Raised</p>
-                        <p className="mt-1 text-[26px] font-semibold tracking-[-0.04em]">
-                          {money(raised)}
-                        </p>
+                        <p className="text-[9px] font-medium text-[#86868b]">Raised</p>
+                        <p className="mt-0.5 text-[22px] font-semibold tracking-[-0.04em]">{money(raised)}</p>
                       </div>
-                      <p className="text-[12px] font-semibold text-[#07142c]">
+                      <p className="text-[10px] font-semibold text-[#07142c]">
                         {money(project.target)} goal
                       </p>
                     </div>
 
-                    <div className="mt-4 h-2 overflow-hidden rounded-full bg-[#ececf0]">
+                    <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[#ececf0]">
                       <div className="h-full rounded-full bg-[#d82335]" style={{ width: String(pct) + "%" }} />
                     </div>
-
-                    <p className="mt-3 text-[11px] text-[#86868b]">
-                      When this reaches $10,000, SAM does it.
-                    </p>
 
                     <button
                       type="button"
@@ -713,11 +691,11 @@ export default function SamPage() {
                         setCheckoutError("");
                       }}
                       className={
-                        "mt-5 flex w-full items-center justify-center gap-2 rounded-full px-4 py-3.5 text-[11px] font-semibold text-white " +
+                        "mt-4 flex w-full items-center justify-center gap-2 rounded-full px-4 py-3 text-[10px] font-semibold text-white " +
                         (project.featured ? "bg-[#d82335]" : "bg-[#07142c]")
                       }
                     >
-                      Fund this action <ArrowRight className="h-4 w-4" />
+                      Fund this action <ArrowRight className="h-3.5 w-3.5" />
                     </button>
                   </div>
                 </article>
@@ -725,73 +703,66 @@ export default function SamPage() {
             })}
           </div>
 
-          <p className="mt-5 max-w-4xl text-[10px] leading-5 text-[#86868b]">
-            Launch-action research: MuckRock Foundation is a registered 501(c)(3) that
-            supports public-records access and government-transparency reporting. The SAM
-            Influence Tracker would use public Federal Election Commission campaign-finance
-            data and U.S. Senate lobbying-disclosure data. Final third-party grants are
-            confirmed with the recipient before funds are released.
+          <p className="mt-4 max-w-4xl text-[9px] leading-4 text-[#99999f]">
+            Third-party grants are confirmed with the recipient before release. The
+            Influence Tracker would use public FEC and U.S. Senate lobbying-disclosure data.
           </p>
         </div>
       </section>
 
-      <section id="membership" className="px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
+      <section id="membership" className="bg-[#f5f5f7] px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
         <div className="mx-auto max-w-6xl">
-          <div className="grid gap-8 lg:grid-cols-[1.08fr_.92fr] lg:items-end">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p className="text-[13px] font-semibold text-[#d82335]">Membership, not pay-to-vote</p>
-              <h2 className="mt-3 text-[clamp(2.9rem,5.8vw,4.8rem)] font-semibold leading-[0.94] tracking-[-0.055em]">
+              <p className="text-[12px] font-semibold text-[#d82335]">Membership, not pay-to-vote</p>
+              <h2 className="mt-2 text-[clamp(3rem,6vw,5rem)] font-semibold leading-[0.9] tracking-[-0.06em]">
                 Support<span className="text-[#d82335]">.</span>
               </h2>
             </div>
-            <p className="max-w-[520px] text-[16px] leading-7 text-[#6e6e73]">
-              Membership funds SAM, unlocks AI access and includes physical monthly
-              drops. Every tier gets the exact same public ballot. At $100/month, $30
-              is automatically allocated across the three current Action Funds.
+            <p className="max-w-[500px] text-[14px] leading-6 text-[#6e6e73]">
+              Support Sam, get member access and monthly drops. Every tier gets the same vote.
             </p>
           </div>
 
-          <div className="mt-12 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            {membershipTiers.map((tier) => (
+          <div className="mt-7 overflow-hidden rounded-[24px] border border-black/[0.07] bg-white shadow-[0_1px_2px_rgba(0,0,0,.03),0_12px_34px_rgba(0,0,0,.03)]">
+            {membershipTiers.map((tier, index) => (
               <article
                 key={tier.amount}
                 className={
-                  "relative flex min-h-[430px] flex-col rounded-[26px] border p-6 shadow-[0_1px_2px_rgba(0,0,0,.03),0_12px_34px_rgba(0,0,0,.035)] " +
-                  (tier.featured
-                    ? "border-[#d82335] bg-[#07142c] text-white"
-                    : "border-black/[0.07] bg-white")
+                  "relative grid gap-4 px-5 py-5 sm:grid-cols-[170px_1fr_auto] sm:items-center sm:px-6 " +
+                  (index !== membershipTiers.length - 1 ? "border-b border-black/[0.07] " : "") +
+                  (tier.featured ? "bg-[#07142c] text-white" : "bg-white")
                 }
               >
-                {tier.featured ? (
-                  <span className="absolute right-5 top-5 rounded-full bg-[#d82335] px-3 py-1 text-[9px] font-semibold uppercase tracking-[0.08em] text-white">
-                    Popular
-                  </span>
-                ) : null}
-
-                <p className={tier.featured ? "text-[12px] font-semibold text-[#a9c5ff]" : "text-[12px] font-semibold text-[#153b79]"}>
-                  {tier.name}
-                </p>
-
-                <div className="mt-5 flex items-end gap-1">
-                  <span className="text-[46px] font-semibold leading-none tracking-[-0.06em]">
-                    {"$"}{tier.amount}
-                  </span>
-                  <span className={tier.featured ? "pb-1 text-[12px] text-white/55" : "pb-1 text-[12px] text-[#86868b]"}>
-                    / month
-                  </span>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <p className={tier.featured ? "text-[11px] font-semibold text-[#a9c5ff]" : "text-[11px] font-semibold text-[#153b79]"}>
+                      {tier.name}
+                    </p>
+                    {tier.featured ? (
+                      <span className="rounded-full bg-[#d82335] px-2 py-0.5 text-[8px] font-semibold uppercase tracking-[0.07em] text-white">
+                        Popular
+                      </span>
+                    ) : null}
+                  </div>
+                  <div className="mt-2 flex items-end gap-1">
+                    <span className="text-[34px] font-semibold leading-none tracking-[-0.055em]">
+                      {"$"}{tier.amount}
+                    </span>
+                    <span className={tier.featured ? "pb-0.5 text-[10px] text-white/55" : "pb-0.5 text-[10px] text-[#86868b]"}>
+                      / month
+                    </span>
+                  </div>
                 </div>
 
-                <p className={tier.featured ? "mt-3 text-[13px] text-white/65" : "mt-3 text-[13px] text-[#6e6e73]"}>
-                  {tier.subtitle}
-                </p>
-
-                <div className="mt-7 space-y-3">
+                <div className="grid gap-1.5 sm:grid-cols-3 sm:gap-3">
                   {tier.benefits.map((benefit) => (
-                    <div key={benefit} className="flex items-start gap-2.5">
-                      <span className={tier.featured ? "mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-white text-[#07142c]" : "mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-[#eef3ff] text-[#153b79]"}>
-                        <Check className="h-3 w-3" strokeWidth={2.2} />
-                      </span>
-                      <span className={tier.featured ? "text-[13px] leading-5 text-white/84" : "text-[13px] leading-5 text-[#4b4b50]"}>
+                    <div key={benefit} className="flex items-start gap-2">
+                      <Check
+                        className={tier.featured ? "mt-0.5 h-3.5 w-3.5 shrink-0 text-[#f16b78]" : "mt-0.5 h-3.5 w-3.5 shrink-0 text-[#153b79]"}
+                        strokeWidth={2}
+                      />
+                      <span className={tier.featured ? "text-[10px] leading-4 text-white/78" : "text-[10px] leading-4 text-[#5f6368]"}>
                         {benefit}
                       </span>
                     </div>
@@ -803,33 +774,31 @@ export default function SamPage() {
                   onClick={() => startCheckout("monthly", tier.amount, null)}
                   disabled={checkoutBusy}
                   className={
-                    "mt-auto rounded-full px-4 py-3 text-[11px] font-semibold transition disabled:opacity-50 " +
+                    "rounded-full px-4 py-2.5 text-[10px] font-semibold transition disabled:opacity-50 " +
                     (tier.featured
                       ? "bg-[#d82335] text-white hover:bg-[#ea3045]"
                       : "bg-[#07142c] text-white hover:bg-[#122747]")
                   }
                 >
-                  {checkoutBusy ? "Opening Stripe…" : "Choose " + tier.name}
+                  {checkoutBusy ? "Opening…" : "Choose"}
                 </button>
               </article>
             ))}
           </div>
 
-          <div className="mt-5 rounded-[22px] border border-black/[0.06] bg-white p-5 sm:flex sm:items-center sm:justify-between sm:gap-6">
+          <div className="mt-4 flex flex-col gap-3 rounded-[18px] bg-white px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="text-[13px] font-semibold">Prefer not to subscribe?</p>
-              <p className="mt-1 text-[12px] leading-5 text-[#6e6e73]">
-                One-time support stays available as a secondary option for the SAM media project.
-              </p>
+              <p className="text-[11px] font-semibold">Prefer a one-time contribution?</p>
+              <p className="mt-0.5 text-[10px] text-[#86868b]">Support the SAM media project without subscribing.</p>
             </div>
-            <div className="mt-4 flex flex-wrap gap-2 sm:mt-0">
+            <div className="flex flex-wrap gap-2">
               {[10, 25, 50, 100].map((value) => (
                 <button
                   type="button"
                   key={value}
                   onClick={() => startCheckout("one_time", value, null)}
                   disabled={checkoutBusy}
-                  className="rounded-full bg-[#f2f2f7] px-4 py-2.5 text-[11px] font-semibold text-[#3a3a3c] transition hover:bg-[#e7e7ec] disabled:opacity-50"
+                  className="rounded-full bg-[#f2f2f7] px-3 py-2 text-[10px] font-semibold text-[#3a3a3c] transition hover:bg-[#e7e7ec] disabled:opacity-50"
                 >
                   {"$"}{value}
                 </button>
@@ -838,72 +807,85 @@ export default function SamPage() {
           </div>
 
           {checkoutError ? (
-            <div className="mt-4 rounded-[16px] border border-[#d82335]/25 bg-[#fff2f4] px-4 py-3 text-[12px] font-semibold text-[#a61f2d]">
+            <div className="mt-3 rounded-[14px] border border-[#d82335]/25 bg-[#fff2f4] px-4 py-3 text-[11px] font-semibold text-[#a61f2d]">
               {checkoutError}
             </div>
           ) : null}
 
-          <p className="mt-4 text-[11px] leading-5 text-[#86868b]">
-            Member chat is the next product build and physical benefits require a valid US shipping address.
-            Stripe checkout is currently operating in sandbox while launch setup is completed.
+          <p className="mt-3 text-[9px] leading-4 text-[#99999f]">
+            Member chat is the next product build. Physical benefits require a valid US shipping address.
+            Stripe checkout is currently in sandbox.
           </p>
         </div>
       </section>
 
-      <section id="watch" className="bg-white px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
+      <section id="watch" className="bg-white px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
         <div className="mx-auto max-w-6xl">
-          <div className="grid gap-8 lg:grid-cols-[1.08fr_.92fr] lg:items-end">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p className="text-[13px] font-semibold text-[#153b79]">The monthly focus in public</p>
-              <h2 className="mt-3 text-[clamp(2.8rem,5.5vw,4.6rem)] font-semibold leading-[0.95] tracking-[-0.055em]">
+              <p className="text-[12px] font-semibold text-[#153b79]">The monthly focus in public</p>
+              <h2 className="mt-2 text-[clamp(3rem,6vw,5rem)] font-semibold leading-[0.9] tracking-[-0.06em]">
                 Watch<span className="text-[#d82335]">.</span>
               </h2>
             </div>
-            <p className="max-w-[520px] text-[16px] leading-7 text-[#6e6e73]">
-              Weekly videos, monthly briefings and real-world action stay focused on
-              the issue the public chose.
+            <p className="max-w-[500px] text-[14px] leading-6 text-[#6e6e73]">
+              Weekly videos, briefings and real-world action stay focused on the issue people chose.
             </p>
           </div>
 
-          <div className="mt-12 grid gap-4 md:grid-cols-3">
-            {[
-              {
-                label: "WEEKLY VIDEO",
-                title: "Explain the problem without the political fog.",
-                image: "/sam/Relax%20Campaign%20speech.png",
-                pos: "object-[center_18%]",
-              },
-              {
-                label: "PUBLIC ACTION",
-                title: "Take the month’s mandate out into the real world.",
-                image: "/sam/Jeans%20Town%20hall.png",
-                pos: "object-[center_22%]",
-              },
-              {
-                label: "PROGRESS REPORT",
-                title: "Show what changed, what didn’t, and what comes next.",
-                image: "/sam/Signing%20Paperwork.png",
-                pos: "object-[center_18%]",
-              },
-            ].map((item) => (
-              <article key={item.title} className="group relative aspect-[4/5] overflow-hidden rounded-[26px] bg-[#07142c]">
-                <img
-                  src={item.image}
-                  alt=""
-                  className={"absolute inset-0 h-full w-full object-cover " + item.pos + " transition duration-700 group-hover:scale-[1.015]"}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#041027]/95 via-[#041027]/10 to-transparent" />
-                <div className="absolute right-5 top-5 grid h-11 w-11 place-items-center rounded-full border border-white/38 bg-black/18 text-white backdrop-blur-sm">
-                  <Play className="ml-0.5 h-4 w-4 fill-current" />
-                </div>
-                <div className="absolute inset-x-0 bottom-0 p-6">
-                  <div className="text-[9px] font-semibold tracking-[0.11em] text-white/55">{item.label}</div>
-                  <h3 className="mt-2 text-[23px] font-semibold leading-[1.05] tracking-[-0.035em] text-white">
-                    {item.title}
-                  </h3>
-                </div>
-              </article>
-            ))}
+          <div className="mt-7 grid gap-4 lg:grid-cols-[1.45fr_.55fr]">
+            <article className="group relative aspect-[16/10] overflow-hidden rounded-[26px] bg-[#07142c]">
+              <img
+                src="/sam/Relax%20Campaign%20speech.png"
+                alt=""
+                className="absolute inset-0 h-full w-full object-cover object-[center_18%] transition duration-700 group-hover:scale-[1.015]"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#041027]/95 via-[#041027]/8 to-transparent" />
+              <div className="absolute right-5 top-5 grid h-11 w-11 place-items-center rounded-full border border-white/38 bg-black/18 text-white backdrop-blur-sm">
+                <Play className="ml-0.5 h-4 w-4 fill-current" />
+              </div>
+              <div className="absolute inset-x-0 bottom-0 p-5 sm:p-7">
+                <div className="text-[9px] font-semibold tracking-[0.11em] text-white/55">WEEKLY VIDEO</div>
+                <h3 className="mt-2 max-w-[540px] text-[24px] font-semibold leading-[1.02] tracking-[-0.04em] text-white sm:text-[30px]">
+                  Explain the problem without the political fog.
+                </h3>
+              </div>
+            </article>
+
+            <div className="grid grid-cols-2 gap-4 lg:grid-cols-1">
+              {[
+                {
+                  label: "PUBLIC ACTION",
+                  title: "Take the mandate into the real world.",
+                  image: "/sam/Jeans%20Town%20hall.png",
+                  pos: "object-[center_22%]",
+                },
+                {
+                  label: "PROGRESS REPORT",
+                  title: "Show what changed and what comes next.",
+                  image: "/sam/Signing%20Paperwork.png",
+                  pos: "object-[center_18%]",
+                },
+              ].map((item) => (
+                <article
+                  key={item.title}
+                  className="group relative aspect-[4/5] overflow-hidden rounded-[22px] bg-[#07142c] lg:aspect-auto lg:min-h-[250px]"
+                >
+                  <img
+                    src={item.image}
+                    alt=""
+                    className={"absolute inset-0 h-full w-full object-cover " + item.pos + " transition duration-700 group-hover:scale-[1.015]"}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#041027]/94 via-[#041027]/8 to-transparent" />
+                  <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
+                    <div className="text-[8px] font-semibold tracking-[0.1em] text-white/55">{item.label}</div>
+                    <h3 className="mt-1.5 text-[15px] font-semibold leading-[1.05] tracking-[-0.03em] text-white sm:text-[18px]">
+                      {item.title}
+                    </h3>
+                  </div>
+                </article>
+              ))}
+            </div>
           </div>
         </div>
       </section>
