@@ -7,7 +7,6 @@ import { createPortal } from "react-dom";
 import {
   BarChart3,
   CalendarDays,
-  Clock3,
   CircleDot,
   Database,
   Menu,
@@ -22,14 +21,12 @@ const items = [
   { href: "/fantasy", label: "Matchup", icon: Trophy, exact: true },
   { href: "/fantasy/draft/live", label: "Draft Room", icon: CircleDot },
   { href: "/fantasy/draft", label: "Draft Board", icon: CalendarDays, exact: true },
-  { href: "/fantasy/draft-scheduler", label: "Draft Scheduler", icon: Clock3 },
   { href: "/fantasy/outlook", label: "6-Week Outlook", icon: BarChart3 },
   { href: "/fantasy/admin", label: "Admin", icon: Database },
 ];
 
 function currentLabel(pathname: string) {
   if (pathname.startsWith("/fantasy/draft/live")) return "Draft Room";
-  if (pathname.startsWith("/fantasy/draft-scheduler")) return "Draft Scheduler";
   if (pathname.startsWith("/fantasy/draft")) return "Draft Board";
   if (pathname.startsWith("/fantasy/outlook")) return "6-Week Outlook";
   if (pathname.startsWith("/fantasy/admin")) return "Admin";
@@ -67,12 +64,6 @@ export default function FantasyMenu() {
       window.removeEventListener("keydown", onKeyDown);
     };
   }, [open]);
-
-  // The draft scheduler is shared with league managers. Keep its navigation
-  // standalone while preserving the menu everywhere else in Fantasy Lab.
-  if (pathname === "/fantasy/draft-scheduler" || pathname.startsWith("/fantasy/draft-scheduler/")) {
-    return null;
-  }
 
   const menuButton = (
     <button
