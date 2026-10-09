@@ -4,6 +4,7 @@ import FantasyMenu from "./FantasyMenu";
 export const metadata: Metadata = {
   title: "Fantasy Lab | BRHT",
   description: "Fantasy basketball tools.",
+  robots: { index: false, follow: false, noarchive: true },
 };
 
 export default function FantasyLayout({ children }: { children: React.ReactNode }) {
