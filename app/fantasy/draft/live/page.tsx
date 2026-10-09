@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowDown,
   ArrowUp,
@@ -165,13 +165,7 @@ function eligiblePositions(player: Player) {
   return Array.from(positions);
 }
 
-function boardPriority(
-  player: Player,
-  mark: PlayerMark,
-  intel: DraftIntel | undefined,
-  totalGames: number,
-  averageGames: number,
-) {
+function boardPriority(player: Player, mark: PlayerMark, intel: DraftIntel | undefined) {
   if (mark.dnd || intel?.recommendation === "dnd") {
     return Number.POSITIVE_INFINITY;
   }
@@ -184,9 +178,9 @@ function boardPriority(
   }
 
   const adp = player.averageDraftPosition ?? 999;
-  const scheduleMove = (totalGames - averageGames) * 3;
   const intelMove = Number(intel?.rank_adjustment ?? 0);
-  return adp - scheduleMove - intelMove - manualMove - targetMove;
+  // NBA game counts are a separate tiebreaker, not a talent-rank multiplier.
+  return adp - intelMove - manualMove - targetMove;
 }
 
 function assignRoster(players: Player[]) {
@@ -332,7 +326,7 @@ export default function LiveDraftPage({ apiBase = "/api/fantasy" }: { apiBase?: 
     [marks],
   );
 
-  const nextMyPick = MY_PICKS[Math.min(myPlayers.length, MY_PICKS.length - 1)];
+  const nextMyPick = MY_PICKS[myPlayers.length] ?? null;
   const lastMyPlayer = myPlayers.length ? myPlayers[myPlayers.length - 1] : null;
   const { assigned, bench } = useMemo(() => assignRoster(myPlayers), [myPlayers]);
 
@@ -389,7 +383,7 @@ export default function LiveDraftPage({ apiBase = "/api/fantasy" }: { apiBase?: 
           intel: dbIntel,
           team,
           totalGames,
-          priority: boardPriority(player, mark, dbIntel, totalGames, averageGames),
+          priority: boardPriority(player, mark, dbIntel),
         };
       })
       .sort((a, b) => {
@@ -398,7 +392,7 @@ export default function LiveDraftPage({ apiBase = "/api/fantasy" }: { apiBase?: 
         if (sort === "adp") return (a.player.averageDraftPosition ?? 9999) - (b.player.averageDraftPosition ?? 9999);
         return a.priority - b.priority || (a.player.averageDraftPosition ?? 9999) - (b.player.averageDraftPosition ?? 9999);
       });
-  }, [allPlayers, averageGames, intelById, marks, position, query, sort, teamById, view]);
+  }, [allPlayers, intelById, marks, position, query, sort, teamById, view]);
 
   const selected = selectedId ? playerById.get(selectedId) ?? null : null;
   const selectedMark = selected ? marks[String(selected.id)] ?? {} : {};
@@ -493,10 +487,10 @@ export default function LiveDraftPage({ apiBase = "/api/fantasy" }: { apiBase?: 
           </div>
         ) : null}
         <section className="mb-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
-          <Metric label="Next pick" value={`#${nextMyPick}`} detail={`Round ${Math.min(myPlayers.length + 1, 13)}`} />
+          <Metric label="Next pick" value={nextMyPick == null ? "Complete" : `#${nextMyPick}`} detail={nextMyPick == null ? "All 13 selections saved" : `Round ${myPlayers.length + 1}`} />
           <Metric label="Overall" value={`#${draftedCount + 1}`} detail="Marked picks" />
           <Metric label="My roster" value={String(myPlayers.length)} detail="13 rounds" />
-          <Metric label="Available" value={String(allPlayers.length - draftedCount)} detail="Player pool" />
+          <Metric label="Available" value={String(allPlayers.filter((p) => (marks[String(p.id)]?.status ?? "available") === "available").length)} detail="Player pool" />
           <Metric label="6W average" value={averageGames ? averageGames.toFixed(1) : "—"} detail="Games per NBA team" />
         </section>
 
@@ -686,7 +680,7 @@ export default function LiveDraftPage({ apiBase = "/api/fantasy" }: { apiBase?: 
                   <div className="mt-1 text-xl font-semibold tracking-tight">{myPlayers.length}/13</div>
                 </div>
                 <div className="rounded-full bg-[#f5f5f7] px-3 py-1.5 text-xs font-semibold text-black/50">
-                  Pick #{nextMyPick}
+                  {nextMyPick == null ? "Draft complete" : `Pick #${nextMyPick}`}
                 </div>
               </div>
 
