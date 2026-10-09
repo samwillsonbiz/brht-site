@@ -775,6 +775,31 @@ export default function LiveDraftPage({ apiBase = "/api/fantasy" }: { apiBase?: 
                   );
                 })}
               </div>
+              <div className="mt-5 border-t border-black/[0.06] pt-4">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="text-[11px] font-semibold uppercase tracking-[0.1em] text-black/40">Saved picks · {myPlayers.length}/13</div>
+                  <span className="inline-flex items-center gap-1 text-[10px] font-medium text-emerald-700">
+                    <Check className="h-3 w-3" /> This browser
+                  </span>
+                </div>
+                <div className="mt-2 space-y-1">
+                  {myPlayers.length === 0 ? (
+                    <p className="text-xs text-black/40">When you click Mine, your pick will appear here and remain after a refresh.</p>
+                  ) : myPlayers.map((player, index) => (
+                    <div key={player.id} className="flex items-center gap-2 rounded-xl px-2 py-1.5 text-xs">
+                      <span className="w-11 shrink-0 font-semibold text-[#0071e3]">#{MY_PICKS[index] ?? "—"}</span>
+                      <span className="min-w-0 flex-1 truncate font-medium text-black/75">{player.name}</span>
+                      <button
+                        onClick={() => undoMyPick(player.id)}
+                        className="shrink-0 font-semibold text-amber-700"
+                        aria-label={`Undo pick of ${player.name ?? "player"}`}
+                      >
+                        Undo
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </section>
 
             <section className="rounded-[24px] border border-black/[0.05] bg-white p-5 shadow-[0_10px_34px_rgba(0,0,0,.04)]">
