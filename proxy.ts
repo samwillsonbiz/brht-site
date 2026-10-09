@@ -2,26 +2,18 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
 /**
- * Temporary private-mode access gate for Fantasy Lab.
+ * The shared draft scheduling calendar has been retired.
  *
- * The draft scheduler is intentionally public so the league can submit its
- * availability. Every other Fantasy Lab page and Fantasy Lab API route is
- * intentionally unavailable until private access is implemented.
- *
- * To restore access later, remove this gate or replace it with authentication.
+ * The previously shared link must NOT redirect to Fantasy Lab, expose
+ * its navigation, or reveal its route structure. The dashboard and
+ * Fantasy Lab API routes are otherwise accessible again.
  */
 export function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname.replace(/\/+$/, "") || "/";
 
-  if (pathname === "/fantasy/draft-scheduler") {
-    return NextResponse.next();
-  }
-
   if (
-    pathname === "/fantasy" ||
-    pathname.startsWith("/fantasy/") ||
-    pathname === "/api/fantasy" ||
-    pathname.startsWith("/api/fantasy/")
+    pathname === "/fantasy/draft-scheduler" ||
+    pathname.startsWith("/fantasy/draft-scheduler/")
   ) {
     return new Response("Not Found", {
       status: 404,
@@ -33,7 +25,12 @@ export function proxy(request: NextRequest) {
     });
   }
 
-  return NextResponse.next();
+  // Keep these tools out of search engines, but allow directly entered URLs.
+  const response = NextResponse.next();
+  if (pathname === "/fantasy" || pathname.startsWith("/fantasy/")) {
+    response.headers.set("X-Robots-Tag", "noindex, nofollow, noarchive");
+  }
+  return response;
 }
 
 export const config = {
