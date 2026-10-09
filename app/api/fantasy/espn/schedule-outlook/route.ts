@@ -28,9 +28,12 @@ function addDays(date: Date, days: number) {
 
 function regularSeasonGames(games: NbaScheduleGame[]) {
   const explicitlyRegular = games.filter((game) => game.seasonType === 2);
-  // ESPN normally returns season.type=2 for regular-season games. If that field is
-  // ever absent, retain the schedule rather than returning an empty dashboard.
-  return explicitlyRegular.length ? explicitlyRegular : games;
+  // Keep explicit preseason games out of draft schedules, even if the
+  // requested period has no regular-season games. ESPN occasionally omits
+  // season type, in which case retain only the untyped fallback.
+  return explicitlyRegular.length
+    ? explicitlyRegular
+    : games.filter((game) => game.seasonType === null);
 }
 
 export async function GET(request: NextRequest) {
@@ -53,8 +56,12 @@ export async function GET(request: NextRequest) {
       // outlook on that fantasy week. Once the regular season has begun, use the
       // current Monday so the page naturally rolls forward every week.
       const todayDate = parseDateOnly(today);
-      const probeFrom = formatDateOnly(addDays(todayDate, -45));
-      const probeTo = formatDateOnly(addDays(todayDate, 100));
+      // fetchNbaSchedule enforces a <=90-day range. The old -45/+100
+      // probe always exceeded that limit and made this endpoint return 502.
+      // A six-week pre-season probe spans 43 days and still finds opening
+      // night when a draft is held within five weeks of the NBA season.
+      const probeFrom = formatDateOnly(addDays(todayDate, -7));
+      const probeTo = formatDateOnly(addDays(todayDate, 35));
       const probe = regularSeasonGames(await fetchNbaSchedule(probeFrom, probeTo));
       const firstRegular = probe.find((game) => game.seasonType === 2) ?? probe[0];
       seasonStart = firstRegular?.gameDateEt ?? null;
