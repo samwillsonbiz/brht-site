@@ -88,6 +88,8 @@ type PlayerMark = {
   boost?: number;
   note?: string;
   draftedAt?: number;
+  // Snapshot survives an ESPN player-pool refresh that temporarily omits a pick.
+  playerSnapshot?: Player;
 };
 type Marks = Record<string, PlayerMark>;
 type ViewKey = "available" | "targets" | "mine" | "dnd" | "gone" | "all";
@@ -129,7 +131,8 @@ const LINEUP = [
 
 function loadMarks(): Marks {
   try {
-    return JSON.parse(window.localStorage.getItem("fantasy-lab-live-draft-v1") || "{}") as Marks;
+    const saved = JSON.parse(window.localStorage.getItem("fantasy-lab-live-draft-v1") || "{}");
+    return saved && typeof saved === "object" && !Array.isArray(saved) ? saved as Marks : {};
   } catch {
     return {};
   }
@@ -184,39 +187,46 @@ function boardPriority(player: Player, mark: PlayerMark, intel: DraftIntel | und
 }
 
 function assignRoster(players: Player[]) {
-  const assigned = new Map<string, Player>();
-  const used = new Set<number>();
+  // Maximum bipartite matching: a position-flexible pick must not crowd out
+  // another pick whose only legal slot is PG, C, etc.
+  const bySlot: Array<Player | null> = Array(LINEUP.length).fill(null);
 
-  const ordered = [...players].sort(
-    (a, b) => eligiblePositions(a).length - eligiblePositions(b).length,
-  );
-
-  for (const player of ordered) {
+  function place(player: Player, visited: Set<number>): boolean {
     const positions = eligiblePositions(player);
     const primary = primaryPosition(player);
     const candidates = LINEUP
       .map((slot, index) => ({
-        slot,
         index,
-        score:
-          slot.label === primary
-            ? 0
-            : slot.label === "G" || slot.label === "F"
-              ? 1
-              : slot.label === "UTIL"
-                ? 2
-                : 3,
+        preference: slot.label === primary ? 0 : slot.label === "G" || slot.label === "F" ? 1 : 2,
+        accepts: slot.accepts.some((position) => positions.includes(position)),
       }))
-      .filter(({ slot, index }) => !assigned.has(slot.key) && slot.accepts.some((pos) => positions.includes(pos)))
-      .sort((a, b) => a.score - b.score || a.index - b.index);
+      .filter((candidate) => candidate.accepts)
+      .sort((a, b) => a.preference - b.preference || a.index - b.index);
 
-    const best = candidates[0];
-    if (best) {
-      assigned.set(best.slot.key, player);
-      if (player.id) used.add(player.id);
+    for (const { index } of candidates) {
+      if (visited.has(index)) continue;
+      visited.add(index);
+      const incumbent = bySlot[index];
+      if (!incumbent || place(incumbent, visited)) {
+        bySlot[index] = player;
+        return true;
+      }
     }
+    return false;
   }
 
+  // Earlier picks take priority; later picks can rearrange existing starters
+  // where needed to fill the greatest possible number of legal positions.
+  for (const player of players) place(player, new Set<number>());
+
+  const assigned = new Map<string, Player>();
+  const used = new Set<number>();
+  bySlot.forEach((player, index) => {
+    if (player) {
+      assigned.set(LINEUP[index].key, player);
+      if (player.id) used.add(player.id);
+    }
+  });
   const bench = players.filter((player) => player.id && !used.has(player.id));
   return { assigned, bench };
 }
@@ -234,6 +244,8 @@ export default function LiveDraftPage({ apiBase = "/api/fantasy" }: { apiBase?: 
   const [intel, setIntel] = useState<DraftIntel[]>([]);
   const [intelUpdates, setIntelUpdates] = useState<DraftIntelUpdate[]>([]);
   const [marks, setMarks] = useState<Marks>({});
+  const marksRef = useRef<Marks>({});
+  const [saveError, setSaveError] = useState(false);
   const [loading, setLoading] = useState(true);
   const [playerSyncAt, setPlayerSyncAt] = useState<string | null>(null);
   const [intelLoadError, setIntelLoadError] = useState(false);
@@ -282,8 +294,25 @@ export default function LiveDraftPage({ apiBase = "/api/fantasy" }: { apiBase?: 
   }
 
   useEffect(() => {
-    setMarks(loadMarks());
-    refresh();
+    const saved = loadMarks();
+    marksRef.current = saved;
+    setMarks(saved);
+
+    // The standalone /draft-room and /fantasy/draft/live share localStorage.
+    // Keep open browser tabs synchronized without making a server write.
+    function handleStorage(event: StorageEvent) {
+      if (event.key !== "fantasy-lab-live-draft-v1") return;
+      const updated = loadMarks();
+      marksRef.current = updated;
+      setMarks(updated);
+      setSaveError(false);
+    }
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
+  }, []);
+
+  useEffect(() => {
+    void refresh();
   }, [apiBase]);
 
   const teamById = useMemo(
@@ -317,8 +346,8 @@ export default function LiveDraftPage({ apiBase = "/api/fantasy" }: { apiBase?: 
     return Object.entries(marks)
       .filter(([, mark]) => mark.status === "mine")
       .sort((a, b) => (a[1].draftedAt ?? 0) - (b[1].draftedAt ?? 0))
-      .map(([id]) => playerById.get(Number(id)))
-      .filter((player): player is Player & { id: number } => Boolean(player));
+      .map(([id, mark]) => playerById.get(Number(id)) ?? mark.playerSnapshot)
+      .filter((player): player is Player & { id: number } => Boolean(player && player.id));
   }, [marks, playerById]);
 
   const draftedCount = useMemo(
@@ -399,31 +428,41 @@ export default function LiveDraftPage({ apiBase = "/api/fantasy" }: { apiBase?: 
   const selectedIntel = selected ? intelById.get(selected.id) : undefined;
   const selectedTeam = selected?.proTeamId ? teamById.get(selected.proTeamId) : undefined;
 
-  function patchMark(playerId: number, patch: Partial<PlayerMark>) {
-    setMarks((current) => {
-      const next = {
-        ...current,
-        [String(playerId)]: { ...(current[String(playerId)] ?? {}), ...patch },
-      };
+  function commitMarks(next: Marks) {
+    // Write synchronously on click, not from a deferred React state updater.
+    marksRef.current = next;
+    setMarks(next);
+    try {
       saveMarks(next);
-      return next;
+      setSaveError(false);
+    } catch {
+      setSaveError(true);
+    }
+  }
+
+  function patchMark(playerId: number, patch: Partial<PlayerMark>) {
+    const current = marksRef.current;
+    commitMarks({
+      ...current,
+      [String(playerId)]: { ...(current[String(playerId)] ?? {}), ...patch },
     });
   }
 
   function setStatus(playerId: number, status: DraftStatus) {
+    const previous = marksRef.current[String(playerId)] ?? {};
     patchMark(playerId, {
       status,
-      draftedAt: status === "mine" ? Date.now() : undefined,
+      draftedAt: status === "mine"
+        ? previous.status === "mine" && previous.draftedAt ? previous.draftedAt : Date.now()
+        : undefined,
+      playerSnapshot: playerById.get(playerId) ?? previous.playerSnapshot,
     });
   }
 
   function clearPlayer(playerId: number) {
-    setMarks((current) => {
-      const next = { ...current };
-      delete next[String(playerId)];
-      saveMarks(next);
-      return next;
-    });
+    const next = { ...marksRef.current };
+    delete next[String(playerId)];
+    commitMarks(next);
   }
 
   function undoMyPick(playerId: number | null) {
@@ -434,8 +473,7 @@ export default function LiveDraftPage({ apiBase = "/api/fantasy" }: { apiBase?: 
 
   function resetDraft() {
     if (!window.confirm("Reset every draft status, target, DND flag, boost and note?")) return;
-    setMarks({});
-    saveMarks({});
+    commitMarks({});
     setSelectedId(null);
   }
 
@@ -477,6 +515,11 @@ export default function LiveDraftPage({ apiBase = "/api/fantasy" }: { apiBase?: 
       </header>
 
       <div className="mx-auto max-w-[1500px] px-5 py-5 md:px-8">
+        {saveError ? (
+          <div role="alert" className="mb-5 rounded-[18px] border border-red-200 bg-red-50 px-5 py-4 text-sm font-semibold text-red-800">
+            Your picks changed on screen but this browser could not save them. Check that browser storage is enabled before drafting.
+          </div>
+        ) : null}
         {refreshError || intelLoadError || (pool && !pool.ok) || (outlook && !outlook.ok) ? (
           <div role="alert" className="mb-5 rounded-[18px] border border-amber-200 bg-amber-50 px-5 py-4 text-sm font-medium text-amber-900">
             {intelLoadError
