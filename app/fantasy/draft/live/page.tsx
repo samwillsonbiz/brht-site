@@ -259,6 +259,18 @@ export default function LiveDraftPage({ apiBase = "/api/fantasy" }: { apiBase?: 
   async function refresh() {
     setLoading(true);
     setRefreshError(false);
+
+    // Schedule is secondary: NEVER hold up available players or Mine/Gone
+    // controls while scanning six weeks of NBA games.
+    const schedulePromise: Promise<OutlookResponse> = fetch(
+      `${apiBase}/espn/schedule-outlook?weeks=6`,
+      { cache: "no-store" },
+    )
+      .then(async (response) => response.ok
+        ? (await response.json()) as OutlookResponse
+        : { ok: false })
+      .catch(() => ({ ok: false }));
+
     try {
       const poolPromise = fetch(`${apiBase}/sync/player-market`, {
         method: apiBase === "/api/fantasy" ? "POST" : "GET",
@@ -274,23 +286,34 @@ export default function LiveDraftPage({ apiBase = "/api/fantasy" }: { apiBase?: 
         return (await fallback.json()) as PlayerPoolResponse;
       });
 
-      const [poolBody, outlookRes, intelRes] = await Promise.all([
+      const [poolBody, intelRes] = await Promise.all([
         poolPromise,
-        fetch(`${apiBase}/espn/schedule-outlook?weeks=6`, { cache: "no-store" }),
         fetch(`${apiBase}/draft-intel`, { cache: "no-store" }),
       ]);
 
-      setPool(poolBody);
-      setPlayerSyncAt(poolBody.persistedAt ?? null);
-      setOutlook(await outlookRes.json());
+      if (poolBody.ok && (poolBody.players?.length ?? 0) > 0) {
+        setPool(poolBody);
+        setPlayerSyncAt(poolBody.persistedAt ?? null);
+      } else {
+        // Keep the last good player list rather than clearing the board
+        // if ESPN temporarily fails during the draft.
+        setRefreshError(true);
+      }
+
       const intelBody = (await intelRes.json()) as DraftIntelResponse;
-      setIntelLoadError(!intelRes.ok || !intelBody.ok);
-      setIntel(intelRes.ok && intelBody.ok ? intelBody.intel ?? [] : []);
+      const intelOk = intelRes.ok && intelBody.ok;
+      setIntelLoadError(!intelOk);
+      if (intelOk) setIntel(intelBody.intel ?? []);
     } catch {
       setRefreshError(true);
     } finally {
       setLoading(false);
     }
+
+    // Updating schedule in the background can't rearrange the ranked board.
+    void schedulePromise.then((schedule) => {
+      setOutlook(schedule);
+    });
   }
 
   useEffect(() => {
@@ -526,7 +549,7 @@ export default function LiveDraftPage({ apiBase = "/api/fantasy" }: { apiBase?: 
               ? "Fantasy Lab intelligence is unavailable. Current ordering cannot be trusted as the research-adjusted draft board; refresh to retry."
               : refreshError || (pool && !pool.ok)
                 ? "ESPN market/player data could not be fully refreshed. Do not rely on the board until refresh succeeds."
-                : "Six-week NBA schedule data is unavailable; schedule adjustments are not being applied. Refresh to retry."}
+                : "Six-week NBA schedule data is unavailable. Player rankings and Mine/Gone tracking are unaffected; refresh to retry."}
           </div>
         ) : null}
         <section className="mb-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
