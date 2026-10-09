@@ -242,6 +242,8 @@ export default function LiveDraftPage({ apiBase = "/api/fantasy" }: { apiBase?: 
   const [marks, setMarks] = useState<Marks>({});
   const [loading, setLoading] = useState(true);
   const [playerSyncAt, setPlayerSyncAt] = useState<string | null>(null);
+  const [intelLoadError, setIntelLoadError] = useState(false);
+  const [refreshError, setRefreshError] = useState(false);
   const [query, setQuery] = useState("");
   const [position, setPosition] = useState("ALL");
   const [view, setView] = useState<ViewKey>("available");
@@ -250,6 +252,7 @@ export default function LiveDraftPage({ apiBase = "/api/fantasy" }: { apiBase?: 
 
   async function refresh() {
     setLoading(true);
+    setRefreshError(false);
     try {
       const poolPromise = fetch(`${apiBase}/sync/player-market`, {
         method: apiBase === "/api/fantasy" ? "POST" : "GET",
@@ -275,7 +278,10 @@ export default function LiveDraftPage({ apiBase = "/api/fantasy" }: { apiBase?: 
       setPlayerSyncAt(poolBody.persistedAt ?? null);
       setOutlook(await outlookRes.json());
       const intelBody = (await intelRes.json()) as DraftIntelResponse;
-      setIntel(intelBody.intel ?? []);
+      setIntelLoadError(!intelRes.ok || !intelBody.ok);
+      setIntel(intelRes.ok && intelBody.ok ? intelBody.intel ?? [] : []);
+    } catch {
+      setRefreshError(true);
     } finally {
       setLoading(false);
     }
@@ -445,7 +451,7 @@ export default function LiveDraftPage({ apiBase = "/api/fantasy" }: { apiBase?: 
         <div className="mx-auto flex max-w-[1500px] items-center gap-3 px-5 py-3 md:px-8">
           <div className="min-w-0">
             <div className="text-sm font-semibold tracking-tight">Draft Room</div>
-            <div className="text-[11px] text-black/40">Pick #9 · 12-team snake</div>
+            <div className="text-[11px] text-black/40">Configured pick #9 · 12-team snake · manual draft marks</div>
           </div>
           <div className="ml-auto flex items-center gap-2">
             {lastMyPlayer ? (
@@ -477,6 +483,15 @@ export default function LiveDraftPage({ apiBase = "/api/fantasy" }: { apiBase?: 
       </header>
 
       <div className="mx-auto max-w-[1500px] px-5 py-5 md:px-8">
+        {refreshError || intelLoadError || (pool && !pool.ok) || (outlook && !outlook.ok) ? (
+          <div role="alert" className="mb-5 rounded-[18px] border border-amber-200 bg-amber-50 px-5 py-4 text-sm font-medium text-amber-900">
+            {intelLoadError
+              ? "Fantasy Lab intelligence is unavailable. Current ordering cannot be trusted as the research-adjusted draft board; refresh to retry."
+              : refreshError || (pool && !pool.ok)
+                ? "ESPN market/player data could not be fully refreshed. Do not rely on the board until refresh succeeds."
+                : "Six-week NBA schedule data is unavailable; schedule adjustments are not being applied. Refresh to retry."}
+          </div>
+        ) : null}
         <section className="mb-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
           <Metric label="Next pick" value={`#${nextMyPick}`} detail={`Round ${Math.min(myPlayers.length + 1, 13)}`} />
           <Metric label="Overall" value={`#${draftedCount + 1}`} detail="Marked picks" />
