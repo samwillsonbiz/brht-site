@@ -182,7 +182,7 @@ export default function FantasyDraftPage() {
           </div>
           <button onClick={refresh} disabled={loading} className="inline-flex items-center gap-2 rounded-full bg-[#1d1d1f] px-4 py-2 text-xs font-semibold text-white disabled:opacity-50">
             <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} />
-            Sync ESPN
+            Refresh ESPN
           </button>
         </div>
       </header>
@@ -192,14 +192,15 @@ export default function FantasyDraftPage() {
           <div className="grid gap-8 p-7 md:grid-cols-[1.3fr_.7fr] md:p-10">
             <div>
               <div className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-[#0071e3]">
-                <Sparkles className="h-4 w-4" /> Preseason Draft Room
+                <Sparkles className="h-4 w-4" /> ESPN Market &amp; Schedule
               </div>
               <h1 className="max-w-3xl text-4xl font-semibold tracking-[-0.045em] md:text-6xl">Draft for the season you are actually going to play.</h1>
               <p className="mt-5 max-w-2xl text-base leading-7 text-black/50 md:text-lg">
-                ESPN market data plus the real six-week NBA schedule. Use this alongside your player rankings to spot schedule premiums before draft night.
+                ESPN ADP and the real six-week NBA schedule. This page does not use Fantasy Lab's ingested player intelligence or custom draft adjustments; use the Live Draft Room for your actual ranked board.
               </p>
               <div className="mt-6 flex flex-wrap gap-2 text-xs">
-                <span className="rounded-full bg-emerald-50 px-3 py-1.5 font-medium text-emerald-700">ESPN authenticated</span>
+                <Link href="/fantasy/draft/live" className="rounded-full bg-[#0071e3] px-4 py-2 font-semibold text-white hover:bg-[#0062c8]">Open Live Draft Room →</Link>
+                <span className="rounded-full bg-[#f5f5f7] px-3 py-1.5 font-medium text-black/60">{league?.ok ? (league.authenticated ? "ESPN authenticated" : "ESPN connected") : loading ? "Connecting to ESPN" : "ESPN unavailable"}</span>
                 <span className="rounded-full bg-[#f5f5f7] px-3 py-1.5 font-medium text-black/60">{league?.league?.name ?? "Fantasy League One"}</span>
                 <span className="rounded-full bg-[#f5f5f7] px-3 py-1.5 font-medium text-black/60">{league?.draft?.drafted ? "Draft complete" : "Draft not started"}</span>
               </div>
@@ -207,11 +208,17 @@ export default function FantasyDraftPage() {
             <div className="grid grid-cols-2 gap-3 self-end">
               <HeroMetric label="Players indexed" value={String(pool?.count ?? "—")} />
               <HeroMetric label="Fantasy teams" value={String(league?.league?.teamCount ?? "—")} />
-              <HeroMetric label="Weeks scanned" value={String(outlook?.weeks?.length ?? 6)} />
+              <HeroMetric label="Weeks scanned" value={outlook?.ok ? String(outlook.weeks?.length ?? 0) : "—"} />
               <HeroMetric label="Watchlist" value={String(watchlist.size)} />
             </div>
           </div>
         </section>
+
+        {outlook && !outlook.ok ? (
+          <p role="alert" className="rounded-[18px] border border-amber-200 bg-amber-50 px-5 py-4 text-sm text-amber-900">
+            Six-week schedule data is unavailable right now. Do not interpret missing schedules as zero games.
+          </p>
+        ) : null}
 
         <section className="grid gap-4 lg:grid-cols-[1.3fr_.7fr]">
           <div className="rounded-[26px] border border-black/[0.05] bg-white p-6 shadow-[0_12px_40px_rgba(0,0,0,.04)]">
@@ -243,7 +250,7 @@ export default function FantasyDraftPage() {
               <div>
                 <div className="text-xs font-semibold uppercase tracking-[0.14em] text-black/40">Live player board</div>
                 <h2 className="mt-1 text-2xl font-semibold tracking-tight">Draft research</h2>
-                <p className="mt-1 text-sm text-black/50">Star players you want to revisit. The watchlist stays on this browser for now and can move into your database once admin writes are connected.</p>
+                <p className="mt-1 text-sm text-black/50">Star ESPN players to revisit. This browser-only watchlist is separate from your Live Draft Room targets and does not modify Fantasy Lab intelligence.</p>
               </div>
               <div className="flex flex-wrap gap-2">
                 <label className="flex min-w-[250px] items-center gap-2 rounded-full bg-[#f5f5f7] px-4 py-2.5 text-sm">
@@ -305,7 +312,9 @@ export default function FantasyDraftPage() {
               </tbody>
             </table>
           </div>
-          {!loading && players.length === 0 && <div className="p-10 text-center text-sm text-black/45">No players match these filters.</div>}
+          {!loading && !pool?.ok && <div role="alert" className="p-10 text-center text-sm text-amber-800">ESPN player data is unavailable. Refresh before relying on this board.</div>}
+          {!loading && pool?.ok && !outlook?.ok && <div role="alert" className="p-5 text-center text-sm text-amber-800">The player list needs valid schedule data to display. Refresh to retry.</div>}
+          {!loading && pool?.ok && outlook?.ok && players.length === 0 && <div className="p-10 text-center text-sm text-black/45">No players match these filters.</div>}
         </section>
 
         <section className="grid gap-4 md:grid-cols-3">
