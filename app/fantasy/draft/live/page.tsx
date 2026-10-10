@@ -623,7 +623,6 @@ export default function LiveDraftPage({ apiBase = "/api/fantasy" }: { apiBase?: 
                     {(outlook?.weeks ?? []).map((week) => (
                       <th key={week.index} className="px-2 py-3 text-center font-medium">W{week.index}</th>
                     ))}
-                    <th className="px-3 py-3 text-right font-medium">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -651,9 +650,9 @@ export default function LiveDraftPage({ apiBase = "/api/fantasy" }: { apiBase?: 
                         <td className="px-3 py-3 text-center font-semibold text-black/45">
                           {sort === "priority" && status === "available" && !isDnd ? index + 1 : "—"}
                         </td>
-                        <td className="px-3 py-3">
-                          <div className="flex items-center gap-2">
-                            <div className="font-semibold">{player.name}</div>
+                        <td className="w-[226px] min-w-[226px] max-w-[226px] px-3 py-3 sm:w-[264px] sm:min-w-[264px] sm:max-w-[264px]">
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            <div className="font-semibold leading-snug">{player.name}</div>
                             {isTarget ? <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" /> : null}
                             {isDnd ? <span className="rounded-full bg-red-50 px-2 py-0.5 text-[10px] font-semibold text-red-600">DND</span> : null}
                             {dbIntel?.recommendation === "priority" ? (
@@ -666,6 +665,42 @@ export default function LiveDraftPage({ apiBase = "/api/fantasy" }: { apiBase?: 
                           </div>
                           <div className="mt-0.5 text-[11px] text-black/35">
                             {team?.abbreviation ?? "—"} · {player.injuryStatus ?? "Active"}
+                          </div>
+                          <div className="mt-2 flex items-center gap-2" onClick={(event) => event.stopPropagation()}>
+                            {status === "available" ? (
+                              <>
+                                <button
+                                  type="button"
+                                  onClick={() => setStatus(player.id, "mine")}
+                                  aria-label={`Draft ${player.name} to my team`}
+                                  className="inline-flex h-10 min-w-[76px] items-center justify-center rounded-xl bg-[#1d1d1f] px-3 text-xs font-semibold text-white transition active:scale-[0.97] sm:h-9"
+                                >
+                                  Mine
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => setStatus(player.id, "gone")}
+                                  aria-label={`Mark ${player.name} as drafted by another team`}
+                                  className="inline-flex h-10 min-w-[76px] items-center justify-center rounded-xl bg-[#ededf0] px-3 text-xs font-semibold text-black/70 transition active:scale-[0.97] sm:h-9"
+                                >
+                                  Gone
+                                </button>
+                              </>
+                            ) : (
+                              <>
+                                <span className={`text-[11px] font-semibold ${status === "mine" ? "text-emerald-700" : "text-black/45"}`}>
+                                  {status === "mine" ? "My pick" : "Drafted"}
+                                </span>
+                                <button
+                                  type="button"
+                                  onClick={() => patchMark(player.id, { status: "available", draftedAt: undefined })}
+                                  aria-label={`Undo ${status === "mine" ? "my pick of" : "Gone for"} ${player.name}`}
+                                  className="inline-flex h-10 min-w-[76px] items-center justify-center rounded-xl bg-amber-50 px-3 text-xs font-semibold text-amber-800 transition active:scale-[0.97] sm:h-9"
+                                >
+                                  Undo
+                                </button>
+                              </>
+                            )}
                           </div>
                         </td>
                         <td className="px-3 py-3 text-center text-black/55">{primaryPosition(player)}</td>
@@ -699,33 +734,6 @@ export default function LiveDraftPage({ apiBase = "/api/fantasy" }: { apiBase?: 
                             </span>
                           </td>
                         ))}
-                        <td className="px-3 py-3" onClick={(event) => event.stopPropagation()}>
-                          <div className="flex justify-end gap-1.5">
-                            {status === "available" ? (
-                              <>
-                                <button
-                                  onClick={() => setStatus(player.id, "mine")}
-                                  className="rounded-full bg-[#1d1d1f] px-3 py-1.5 text-[11px] font-semibold text-white"
-                                >
-                                  Mine
-                                </button>
-                                <button
-                                  onClick={() => setStatus(player.id, "gone")}
-                                  className="rounded-full bg-[#f5f5f7] px-3 py-1.5 text-[11px] font-semibold text-black/55"
-                                >
-                                  Gone
-                                </button>
-                              </>
-                            ) : (
-                              <button
-                                onClick={() => patchMark(player.id, { status: "available", draftedAt: undefined })}
-                                className="rounded-full bg-[#f5f5f7] px-3 py-1.5 text-[11px] font-semibold text-black/55"
-                              >
-                                Undo
-                              </button>
-                            )}
-                          </div>
-                        </td>
                       </tr>
                     );
                   })}
