@@ -132,7 +132,7 @@ kbd{background:#e9eeea;border:1px solid #d9e1d9;border-radius:3px;padding:1px 4p
       <div class="ribbon-tools">
       <button class="ribbon-btn" id="undo" title="Undo (Ctrl+Z)"><strong>↶</strong><span>Undo</span></button>
       <button class="ribbon-btn" id="redo" title="Redo (Ctrl+Y)"><strong>↷</strong><span>Redo</span></button>
-      <button class="ribbon-btn" id="save" title="Save draft locally (Ctrl+S)"><strong>▣</strong><span>Save</span></button>
+      <button class="ribbon-btn" id="save" title="Save draft locally (Ctrl+S)"><strong>▣</strong><span>Save</span></button><button class="ribbon-btn" id="copyCell" title="Copy selected cell (Ctrl+C)"><strong>▤</strong><span>Copy</span></button><button class="ribbon-btn" id="pasteCell" title="Paste into selected cell (Ctrl+V)"><strong>▣</strong><span>Paste</span></button>
       </div><span class="ribbon-title">Clipboard</span>
     </div>
     <div class="ribbon-group">
@@ -142,7 +142,7 @@ kbd{background:#e9eeea;border:1px solid #d9e1d9;border-radius:3px;padding:1px 4p
       <div class="ribbon-tools"><button class="ribbon-btn" id="fillDown" title="Fill the selected formula down through month 8 (Ctrl+D)"><strong>↓</strong><span>Fill down</span></button><button class="ribbon-btn" id="check" title="Compare answers with the exercise solution"><strong>✓</strong><span>Check</span></button><button class="ribbon-btn" id="clear" title="Clear selected cell"><strong>⌫</strong><span>Clear</span></button></div><span class="ribbon-title">Editing</span>
     </div>
     <div class="ribbon-group">
-      <div class="ribbon-tools"><button class="ribbon-btn" id="howto"><strong>ƒx</strong><span>Formulas</span></button><button class="ribbon-btn" id="newWork"><strong>＋</strong><span>New sheet</span></button></div><span class="ribbon-title">Practice</span>
+      <div class="ribbon-tools"><button class="ribbon-btn" id="howto"><strong>ƒx</strong><span>Formulas</span></button><button class="ribbon-btn" id="showFormulas" title="Toggle showing formulas in worksheet"><strong>=</strong><span>Show formulas</span></button><button class="ribbon-btn" id="newWork"><strong>＋</strong><span>New sheet</span></button></div><span class="ribbon-title">Practice</span>
     </div>
   </div>
   <div class="identity">
@@ -213,7 +213,7 @@ const allCells=[];for(let row=1;row<=24;row++)for(const c of cols)allCells.push(
 const names={B6:'Total payment periods',B7:'Interest per payment period'};
 const namesCol={B:'Beginning balance',C:'Payment',D:'Interest',E:'Principal',F:'Remaining balance'};
 for(let r=10;r<=17;r++)for(const c of ['B','C','D','E','F'])names[c+r]=namesCol[c]+' — month '+(r-9);
-const state={name:'',studentId:'',entries:{},selected:'B6',check:false,showFormat:{},history:[],future:[],receipt:null};
+const state={name:'',studentId:'',entries:{},selected:'B6',check:false,showFormat:{},history:[],future:[],receipt:null,showFormulas:false,clip:null};
 const $=id=>document.getElementById(id);
 const money=n=>(n<0?'-$':'$')+Math.abs(n).toLocaleString('en-AU',{minimumFractionDigits:2,maximumFractionDigits:2});
 const number=n=>Number(n).toLocaleString('en-AU',{maximumFractionDigits:8});
@@ -264,6 +264,7 @@ function shown(a,r){
  if(labels[a]!==undefined&&!editable(a)&&!(a in fixed))return labels[a];
  if(a in fixed)return a==='B3'?'5.00%':a==='B2'?money(fixed[a]):number(fixed[a]);
  if(!editable(a)||!has(a))return '';
+ if(state.showFormulas&&raw(a).startsWith('='))return raw(a);
  const res=r[a];if(!res||res.error)return res?.error?.startsWith('Needs ')?'#REF!':'#VALUE!';
  const v=res.value,fmt=state.showFormat[a];
  if(fmt==='general')return number(v);
@@ -300,7 +301,7 @@ function rerender(){
    const out=td.querySelector('.value');
    const v=shown(a,r);
    if(!inCell||editingAddress!==a)out.textContent=v;
-   out.classList.toggle('text',a[0]==='A'||(a.endsWith('9'))||(a==='G9'));
+   out.classList.toggle('text',a[0]==='A'||(a.endsWith('9'))||(a==='G9')||(state.showFormulas&&editable(a)&&raw(a).startsWith('=')));
    out.classList.toggle('empty',editable(a)&&!has(a));
    td.classList.toggle('selected',state.selected===a);
    td.classList.toggle('correct',state.check&&correctness(a,r)==='correct');
@@ -386,7 +387,26 @@ function cancelEditor(){if(!inCell)return;inCell.remove();inCell=null;editingAdd
 function historyMove(undo=true){
  if(inCell)commitEditor();
  const src=undo?state.history:state.future,dst=undo?state.future:state.history;
- if(!src.length)return;dst.push(snapshot());state.entries=src.pop();state.check=false;save();rerender();toast(undo?'Undone':'Redone');
+ if(!src.length)return;dst.push(snapshot());state.entries=src.pop();state.check=false;save();rerender();$('formulaInput').value=editable(state.selected)?state.entries[state.selected]||'':'';toast(undo?'Undone':'Redone');
+}
+function copyCell(){
+ const a=state.selected,v=editable(a)?raw(a):(a in fixed?String(fixed[a]):labels[a]||'');
+ if(!v){toast('This cell is empty.');return;}
+ state.clip={address:a,value:v};
+ if(navigator.clipboard?.writeText)navigator.clipboard.writeText(v).catch(()=>{});
+ toast('Copied '+a+'.');
+}
+async function pasteCell(){
+ const a=state.selected;
+ if(!editable(a)){toast('Select a blue cell to paste.');return;}
+ let value=state.clip?.value||'';
+ try{if(navigator.clipboard?.readText){const fromSystem=await navigator.clipboard.readText();if(fromSystem)value=fromSystem;}}catch(e){}
+ if(!value){toast('Nothing to paste.');return;}
+ if(state.clip&&state.clip.value===value&&value.startsWith('=')){
+  const from=/^([A-G])(\d+)$/.exec(state.clip.address),to=/^([A-G])(\d+)$/.exec(a);
+  if(from&&to)value=shiftReferences(value,+to[2]-+from[2],cols.indexOf(to[1])-cols.indexOf(from[1]));
+ }
+ setCell(a,value);$('formulaInput').value=state.entries[a]||'';toast('Pasted into '+a+'.');
 }
 function setFormat(fmt){if(!editable(state.selected)){toast('Select a blue cell to change number formatting.');return;}state.showFormat[state.selected]=fmt;rerender();}
 function counts(){const done=editables.filter(has);return {completed:done.length,formulaCount:done.filter(a=>raw(a).startsWith('=')).length,total:editables.length};}
@@ -454,6 +474,8 @@ function initialize(){
      if(e.key.toLowerCase()==='y'){e.preventDefault();historyMove(false);}
      if(e.key.toLowerCase()==='s'){e.preventDefault();save();toast('Draft saved to this browser.');}
      if(e.key.toLowerCase()==='d'){e.preventDefault();fillDown();}
+     if(e.key.toLowerCase()==='c'){e.preventDefault();copyCell();}
+     if(e.key.toLowerCase()==='v'){e.preventDefault();pasteCell();}
      return;
    }
    if(inCell)return;
@@ -469,6 +491,8 @@ function initialize(){
  $('submitTop').addEventListener('click',startSubmission);$('confirmSubmit').addEventListener('click',sendSubmission);
  $('undo').addEventListener('click',()=>historyMove(true));$('redo').addEventListener('click',()=>historyMove(false));
  $('save').addEventListener('click',()=>{save();toast('Draft saved locally.');});
+ $('copyCell').addEventListener('click',copyCell);$('pasteCell').addEventListener('click',pasteCell);
+ $('showFormulas').addEventListener('click',()=>{state.showFormulas=!state.showFormulas;rerender();$('showFormulas').style.background=state.showFormulas?'#d3ebd8':'';toast(state.showFormulas?'Showing formulas instead of results.':'Showing calculated results.');});
  $('fillDown').addEventListener('click',fillDown);$('check').addEventListener('click',()=>{state.check=!state.check;rerender();toast(state.check?'Correct entries are green; entries needing work are red.':'Answer check hidden.');});
  $('clear').addEventListener('click',()=>setCell(state.selected,''));
  $('formatNumber').addEventListener('click',()=>setFormat('general'));
