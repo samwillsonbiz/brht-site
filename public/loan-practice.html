@@ -1,258 +1,229 @@
 <!DOCTYPE html>
 <html lang="en-AU">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="color-scheme" content="light">
-  <title>Loan Amortisation | Finance Practice</title>
-  <style>
-    :root { --ink:#14253f; --muted:#60708a; --line:#dde5f0; --blue:#2856e6; --blue-light:#ecf1ff; --bg:#f5f7fb; --white:#fff; --green:#0a8c65; --red:#c14545; --amber:#93661f; --shadow:0 18px 45px rgba(18,35,73,.075); }
-    * {box-sizing:border-box}
-    html{scroll-behavior:smooth}
-    body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:14px;line-height:1.5}
-    button,input{font:inherit}
-    button{cursor:pointer}
-    button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid #90adff;outline-offset:3px}
-    .topbar{background:#111f38;color:#fff;position:relative;z-index:2}
-    .top-inner{max-width:1230px;margin:0 auto;min-height:70px;padding:12px 28px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
-    .logo{display:flex;align-items:center;gap:11px;color:#fff;text-decoration:none}
-    .logo-mark{display:grid;place-items:center;width:37px;height:37px;border:1px solid #587ab8;border-radius:11px;background:linear-gradient(145deg,#416de2,#1c366c);font-size:17px;font-weight:800}
-    .logo strong{font-size:14px;letter-spacing:.02em}.logo small{display:block;color:#a9b9d2;font-size:11px;letter-spacing:.09em;text-transform:uppercase;margin-top:1px}
-    .top-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
-    .save-state{font-size:12px;color:#b7c6dc;margin-right:9px;display:flex;align-items:center;gap:7px}.save-dot{height:7px;width:7px;background:#5bd3a4;border-radius:50%}
-    .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:38px;padding:8px 14px;border-radius:10px;border:1px solid var(--line);background:white;color:var(--ink);font-weight:650;font-size:13px;white-space:nowrap;transition:background .15s,border-color .15s}
-    .btn:hover{background:#f0f4ff;border-color:#b9c9ed}
-    .btn.dark{color:white;background:transparent;border-color:#53627f}.btn.dark:hover{background:#233758}
-    .btn.primary{background:var(--blue);color:white;border-color:var(--blue);box-shadow:0 5px 14px rgba(40,86,230,.18)}
-    .btn.primary:hover{background:#1845d0}
-    .btn.subtle{background:#f2f5fc}.btn.tiny{min-height:30px;font-size:12px;padding:5px 10px}
-    .btn:disabled{opacity:.45;cursor:not-allowed}
-    .container{max-width:1230px;margin:0 auto;padding:31px 28px 80px}
-    .hero{display:flex;align-items:flex-end;justify-content:space-between;gap:30px;margin:0 0 25px}
-    .eyebrow{font-size:11px;font-weight:800;letter-spacing:.12em;color:#4d6bb8;text-transform:uppercase;display:flex;align-items:center;gap:9px;margin-bottom:10px}
-    .eyebrow:before{content:"";width:19px;height:2px;background:var(--blue)}
-    h1{font-size:clamp(26px,3.1vw,40px);line-height:1.14;letter-spacing:-.045em;margin:0 0 10px;font-weight:790}
-    .hero p{color:var(--muted);max-width:610px;font-size:14px;margin:0}
-    .assignment-pill{background:#fff;border:1px solid var(--line);padding:12px 15px;display:flex;align-items:center;gap:10px;border-radius:14px;color:#465b7b;font-size:12px;box-shadow:var(--shadow);white-space:nowrap}
-    .assignment-pill strong{display:block;font-size:18px;color:var(--ink);line-height:1.2}
-    .layout{display:grid;grid-template-columns:1.17fr .83fr;gap:17px;align-items:stretch;margin-bottom:18px}
-    .panel{background:#fff;border:1px solid var(--line);border-radius:17px;box-shadow:var(--shadow);overflow:hidden}
-    .panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:20px 22px 0}
-    .panel-head h2{font-size:15px;margin:0;letter-spacing:-.015em}
-    .section-tag{display:inline-flex;gap:6px;align-items:center;background:#f1f5fc;color:#627698;font-weight:700;border-radius:20px;padding:5px 9px;font-size:10px;letter-spacing:.03em;text-transform:uppercase}
-    .panel-body{padding:19px 22px 22px}
-    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
-    label.field-label{display:block;font-size:11px;color:#536581;font-weight:750;letter-spacing:.02em;margin-bottom:7px}
-    .form-input{height:45px;width:100%;border:1px solid #cfdbeb;border-radius:10px;background:#fff;padding:10px 13px;color:var(--ink);outline:0}
-    .form-input:focus{border-color:#547bea;box-shadow:0 0 0 3px #e9efff}
-    .form-input::placeholder{color:#9aaac0}
-    .helper{color:#8190a7;font-size:11px;margin-top:11px}
-    .progress-top{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:14px}
-    .progress-top strong{font-size:29px;letter-spacing:-.05em;line-height:1}
-    .progress-top small{font-size:12px;color:#647690}
-    .progress-line{height:9px;border-radius:10px;background:#ebf0f8;overflow:hidden}
-    .progress-fill{height:100%;width:0%;border-radius:10px;background:linear-gradient(90deg,#4376ff,#6c92ff);transition:width .25s}
-    .progress-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
-    .stat{background:#f6f8fd;border-radius:11px;padding:11px 13px}
-    .stat b{display:block;font-size:18px;font-weight:750}.stat span{font-size:11px;color:#7686a0}
-    .loan-panel{margin-bottom:18px}
-    .loan-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
-    .loan-fact{padding:14px 15px;border-radius:12px;background:#f6f8fc;border:1px solid #edf1f8;min-width:0}
-    .loan-fact span{display:block;color:#6c7d98;font-size:11px;margin-bottom:5px}
-    .loan-fact b{font-size:20px;letter-spacing:-.035em}
-    .practice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-    .practice-card{padding:12px 14px;border-radius:12px;border:1px solid #bfd0fc;background:#f8faff;text-align:left;display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:66px}
-    .practice-card:hover,.practice-card.selected{border-color:#4d78ea;box-shadow:0 0 0 2px #e4ebff}
-    .practice-card .toplabel{font-size:11px;color:#667a9f;font-weight:650}.practice-card strong{font-size:15px;display:block;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
-    .cell-chip{border:1px solid #cadafb;color:#3763b5;background:#edf3ff;border-radius:7px;padding:3px 6px;font-size:11px;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;flex:none}
-    .steps{display:flex;gap:8px;align-items:center;color:#657795;font-size:12px;padding:8px 0 17px;flex-wrap:wrap}
-    .steps b{border-radius:50%;width:19px;height:19px;display:inline-grid;place-items:center;background:#edf1fc;color:#3362c8;font-size:11px}
-    .steps .separate{height:13px;width:1px;background:#ccd6e5;margin:0 6px}
-    .table-panel{margin-top:18px}
-    .table-head{padding:23px 24px 16px;display:flex;justify-content:space-between;gap:14px;align-items:center;flex-wrap:wrap}
-    .table-head h2{font-size:17px;margin:0 0 2px;letter-spacing:-.02em}
-    .table-head p{font-size:12px;color:#7a89a0;margin:0}
-    .table-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-    .sheet-wrap{width:100%;overflow-x:auto;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-    .sheet{width:100%;border-collapse:separate;border-spacing:0;min-width:790px;table-layout:fixed}
-    .sheet th{font-size:11px;font-weight:750;color:#566c8e;background:#f0f4fb;padding:14px 12px;border-bottom:1px solid #dce5f3;border-right:1px solid #e3eaf4;text-align:right;line-height:1.25}
-    .sheet th:first-child{text-align:center;width:80px;position:sticky;left:0;z-index:1;background:#f0f4fb}
-    .sheet th:last-child{border-right:0}
-    .sheet td{padding:0;border-bottom:1px solid #edf1f6;border-right:1px solid #edf1f6;height:62px;text-align:right}
-    .sheet tr:last-child td{border-bottom:0}.sheet td:last-child{border-right:0}
-    .sheet td:first-child{position:sticky;left:0;z-index:1;text-align:center;background:#fff;color:#667994;font-weight:750}
-    .cell-btn{width:100%;height:100%;min-height:62px;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;text-align:right;padding:8px 12px;background:#fcfdff;border:0;border-radius:0;gap:3px;color:var(--ink);outline:0;position:relative}
-    .cell-btn:hover{background:#f1f5ff}
-    .cell-btn.selected{background:#eaf0ff;box-shadow:inset 0 0 0 2px #416ee5;z-index:0}
-    .cell-btn.correct{background:#f0fcf6}.cell-btn.incorrect{background:#fff2f1}.cell-btn.error{background:#fff6ee}
-    .cell-result{font-size:14px;font-weight:720;font-variant-numeric:tabular-nums}
-    .cell-formula{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:10px;color:#8999b2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
-    .cell-btn.empty .cell-result{font-size:12px;font-weight:520;color:#9aaaC0}
-    .cell-btn.empty .cell-formula{color:#b6c4d6}
-    .cell-btn.error .cell-result{color:#a96a29}
-    .sheet-foot{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;padding:13px 21px;color:#7283a0;font-size:11px}
-    .legend{display:flex;gap:15px;align-items:center;flex-wrap:wrap}
-    .legend span{display:flex;gap:6px;align-items:center}.swatch{height:10px;width:10px;border-radius:3px;background:#edf3ff;border:1px solid #a8bffa}.swatch.green{background:#e4faef;border-color:#8ddbb5}.swatch.red{background:#fff0ee;border-color:#edada8}
-    .editor{margin-top:18px;border:1px solid #c5d5f8;background:linear-gradient(95deg,#f9fbff,#f3f7ff);border-radius:15px;padding:17px;display:grid;grid-template-columns:170px minmax(0,1fr) 165px;gap:14px;align-items:end}
-    .editor .address{font-size:11px;color:#6278a0;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px}
-    .editor .what{font-weight:780;font-size:15px;line-height:1.2}.editor .which{font-size:11px;color:#7185a9;margin-top:3px}
-    .editor .entry{display:flex;gap:8px}
-    .fx{color:#436ae1;font-style:italic;font-size:16px;font-weight:850;margin:0 2px 0 0;align-self:center}
-    .editor-input{width:100%;min-width:0;height:43px;border:1px solid #bac9e2;border-radius:9px;background:#fff;padding:10px 12px;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;outline:none;font-size:13px}
-    .editor-input:focus{border-color:#5278ee;box-shadow:0 0 0 3px #dfebff}
-    .editor-preview{height:43px;background:white;border:1px solid #dce6f5;border-radius:9px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 11px;white-space:nowrap;overflow:hidden}
-    .editor-preview span{font-size:11px;color:#7f90aa}.editor-preview strong{font-size:14px;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
-    .editor-hint{grid-column:2 / 4;color:#687fa1;font-size:11px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
-    .editor-hint kbd{background:#fff;border:1px solid #dce5f6;padding:2px 5px;border-radius:4px;color:#5976b9;font-size:10px}
-    .below{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;flex-wrap:wrap;margin:22px 0;color:#7585a0;font-size:12px}
-    .below p{max-width:740px;margin:0}.below button{color:#3f64ca;text-decoration:underline;background:none;border:0;padding:0;font-weight:700}
-    .foot{font-size:11px;color:#91a0b6;margin-top:35px;border-top:1px solid #dce4ef;padding-top:17px;display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap}
-    .toast{position:fixed;bottom:23px;right:23px;z-index:30;background:#142b4b;color:#fff;border-radius:12px;padding:13px 17px;box-shadow:0 16px 38px #12223e40;font-size:13px;opacity:0;transform:translateY(8px);pointer-events:none;transition:opacity .2s,transform .2s;max-width:min(440px,90vw)}
-    .toast.show{opacity:1;transform:translateY(0)}
-    dialog{border:1px solid #dbe5f4;border-radius:18px;box-shadow:0 35px 90px #0b1c3980;padding:0;width:min(540px,calc(100vw - 28px));max-height:calc(100vh - 30px);overflow:auto;color:var(--ink)}
-    dialog::backdrop{background:#101d35a6;backdrop-filter:blur(3px)}
-    .modal-head{display:flex;justify-content:space-between;align-items:center;gap:18px;padding:23px 25px 0}
-    .modal-head h2{margin:0;font-size:22px;letter-spacing:-.035em}
-    .x-btn{width:31px;height:31px;display:grid;place-items:center;background:#f2f5fa;border:0;border-radius:8px;color:#61748e;font-size:21px;line-height:1}
-    .modal-body{padding:13px 25px 25px}
-    .modal-body p{font-size:13px;color:#64748b;margin:0 0 16px}
-    .receipt-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:18px}
-    .receipt-grid div{background:#f5f7fc;padding:10px 12px;border-radius:9px;min-width:0}
-    .receipt-grid small{font-size:10px;color:#7c8ba3;display:block}.receipt-grid b{font-size:13px;word-break:break-word}
-    .notice{padding:13px 15px;border:1px solid #e9d9ba;background:#fff9ed;border-radius:11px;color:#83622f;font-size:12px;margin-bottom:15px}
-    .notice.good{border-color:#a9e2ce;background:#eefaf5;color:#147555}
-    .modal-actions{display:flex;gap:9px;flex-wrap:wrap}.modal-actions .btn{flex:1}
-    .examples{font-size:12px;color:#5a6a82}.examples code{background:#f1f5fc;padding:2px 5px;border-radius:4px;font-size:12px;color:#214fbd}
-    .examples p{margin:0 0 12px}.examples h3{font-size:13px;margin:18px 0 8px;color:#253a58}
-    .check-summary{margin:10px 0 0;font-size:12px;color:#6b7e9b;font-weight:600}
-    @media(max-width:900px){.layout{grid-template-columns:1fr}.container{padding:23px 16px 54px}.top-inner{padding:12px 16px}.hero{align-items:flex-start}.assignment-pill{display:none}.editor{grid-template-columns:140px minmax(0,1fr)}.editor-preview{grid-column:2}.editor-hint{grid-column:1 / 3}.loan-summary{grid-template-columns:repeat(2,1fr)}}
-    @media(max-width:540px){.save-state{display:none}.top-actions{width:100%;justify-content:space-between}.top-actions .btn{flex:1}.form-grid,.practice-grid{grid-template-columns:1fr}.loan-summary{gap:7px}.loan-fact{padding:11px}.loan-fact b{font-size:17px}.panel-head{padding:18px 16px 0}.panel-body{padding:16px}.table-head{padding:19px 16px 14px}.editor{display:block;margin:14px}.editor .entry{margin-top:11px}.editor-preview{margin-top:10px}.editor-hint{margin-top:10px}.below{padding:0 4px}.sheet-foot{padding:12px 16px}}
-    @media print{body{background:white;font-size:11px}.topbar,.hero,.below,.foot,.table-actions,.sheet-foot,.editor,.progress-stats,.btn{display:none!important}.container{padding:8px}.panel{border:1px solid #ddd;box-shadow:none;break-inside:avoid}.layout{display:grid;grid-template-columns:1fr 1fr}.loan-panel{break-inside:avoid}.table-panel{break-inside:avoid}.sheet-wrap{overflow:visible}.sheet{min-width:0}.sheet th{font-size:9px;padding:7px 3px}.sheet td{height:45px}.cell-btn{min-height:45px;padding:4px}.cell-result{font-size:10px}.cell-formula{font-size:8px}.loan-fact b{font-size:14px}.hero{display:block}.print-only{display:block!important} }
-    .print-only{display:none}.mobile-swipe{display:none;color:#7c8da9;font-size:11px;margin-top:7px}@media(max-width:800px){.mobile-swipe{display:block}}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#107c41">
+<title>Loan Amortisation - Excel Practice | BRHT</title>
+<style>
+:root{--green:#107c41;--dark:#0d5c31;--line:#dce2e3;--selection:#217346;--highlight:#eaf5ed;--bg:#f3f5f5;--muted:#6b7177;--text:#24272c}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;font-family:Aptos,"Segoe UI",Arial,sans-serif;color:var(--text);font-size:13px;background:#fff}
+button,input{font:inherit}button{cursor:pointer}button:disabled{opacity:.45;cursor:default}button:focus-visible,input:focus-visible{outline:2px solid #40956a;outline-offset:1px}
+#app{display:flex;flex-direction:column;height:100dvh;min-height:560px}
+.titlebar{height:45px;flex:none;background:var(--green);display:flex;align-items:center;gap:13px;padding:0 16px;color:white}
+.excel-badge{width:26px;height:28px;border-radius:3px;background:#fff;color:var(--green);font-size:20px;font-weight:800;display:grid;place-items:center;box-shadow:3px 0 0 #68ad80}
+.file-meta{min-width:0;display:flex;align-items:center;gap:9px}.filename{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:650;font-size:14px}.cloud-status{font-size:11px;color:#bce9cb;white-space:nowrap}
+.titlebar-spacer{flex:1}
+.tbutton{background:#fff2;border:1px solid #ffffff60;color:#fff;border-radius:4px;padding:7px 10px;font-weight:600;white-space:nowrap}
+.tbutton:hover{background:#fff4}
+.submit-top{background:#fff;color:#106a3b;border:0;border-radius:4px;padding:8px 15px;font-weight:700;white-space:nowrap}
+.tabs{height:35px;flex:none;display:flex;align-items:stretch;background:#fff;border-bottom:1px solid #dbe2de;padding-left:13px;gap:2px}
+.tab{border:0;background:none;padding:0 17px;color:#3d4542;font-size:13px;font-weight:550;position:relative}
+.tab.active{color:var(--green);font-weight:700}.tab.active:after{content:"";height:3px;position:absolute;bottom:0;left:12px;right:12px;background:var(--green)}
+.tab:hover{background:#f1f6f3}
+.ribbon{height:80px;flex:none;display:flex;align-items:stretch;gap:11px;padding:8px 15px 9px;border-bottom:1px solid #d3ded6;background:#fcfdfc;overflow-x:auto}
+.ribbon-group{border-right:1px solid #d9e1dd;padding-right:11px;display:flex;gap:5px;align-items:center;flex:none;position:relative}
+.ribbon-group:last-child{border-right:0}
+.ribbon-tools{display:flex;align-items:center;gap:5px;flex-wrap:wrap;max-width:240px}
+.ribbon-btn{min-height:32px;min-width:33px;border:1px solid transparent;border-radius:4px;background:transparent;color:#38413c;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11px;padding:5px 9px}
+.ribbon-btn:hover{background:#e8f3eb;border-color:#b8cfbf}
+.ribbon-btn strong{font-size:15px;line-height:1.1;font-weight:500}
+.ribbon-btn.small{flex-direction:row;font-size:12px}
+.ribbon-title{position:absolute;bottom:-7px;left:0;right:12px;font-size:10px;text-align:center;color:#727b74;pointer-events:none}
+.font-sample{border:1px solid #dbe2dc;border-radius:3px;padding:7px 10px;background:white;min-width:115px}
+.identity{flex:none;border-bottom:1px solid #e1e6e2;padding:8px 16px;background:#f8faf8;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.identity .head{font-weight:700;white-space:nowrap;color:#365443;margin-right:5px}
+.identity label{display:flex;align-items:center;gap:8px;color:#4a5950;font-size:12px}
+.identity input{background:#fff;border:1px solid #cfd9d1;height:32px;border-radius:3px;padding:5px 9px;min-width:160px}
+.identity input:focus{outline:2px solid #a8d1b4;outline-offset:0}
+.progress-area{margin-left:auto;display:flex;align-items:center;gap:10px;min-width:215px}
+.progress-bar{width:90px;height:7px;background:#dce8de;border-radius:6px;overflow:hidden}.progress-bar>div{width:0%;height:100%;background:var(--green);transition:width .2s}
+.progress-number{font-size:12px;font-weight:700;color:#296a43;white-space:nowrap}
+.formula-bar{display:flex;align-items:center;gap:0;height:41px;flex:none;background:#fff;border-bottom:1px solid #cfd7d1;padding:4px 10px}
+.name-box{width:78px;height:29px;border:1px solid #d3d9d4;border-radius:2px;padding:4px 9px;text-align:left;color:#344039}
+.formula-fx{padding:0 12px;font-style:italic;font-family:Georgia,serif;color:#6c8172;font-size:17px;border-right:1px solid #dee5df;margin-right:8px}
+.formula-input{height:31px;flex:1;min-width:50px;border:1px solid transparent;padding:5px 10px;outline:0}
+.formula-input:focus{border-color:#80b796;background:#fff}
+.formula-hint{color:#75867b;font-size:11px;padding:0 9px;white-space:nowrap}
+.workbook{flex:1;min-height:180px;overflow:auto;background:#fff;position:relative;outline:0}
+.sheet{border-collapse:separate;border-spacing:0;table-layout:fixed;width:max-content;min-width:100%;font-size:13px}
+.sheet col.rowindex{width:45px}.sheet col.colA{width:238px}.sheet col.normal{width:160px}.sheet col.colG{width:185px}
+.sheet thead th{height:28px;background:#f4f5f4;border-right:1px solid #d2dad4;border-bottom:1px solid #ced8d0;font-size:12px;color:#545f58;text-align:center;font-weight:500;position:sticky;top:0;z-index:4;user-select:none}
+.sheet thead th.corner{position:sticky;left:0;z-index:6;background:#e8eeea}
+.sheet thead th.col-selected{background:#d7eadb;color:#166e3a}
+.sheet td,.sheet tbody th{height:29px;border-right:1px solid #e3e7e4;border-bottom:1px solid #e5e8e5;padding:0;white-space:nowrap;overflow:visible}
+.sheet tbody th{background:#f6f7f6;color:#6f7671;font-weight:400;text-align:center;position:sticky;left:0;z-index:2;border-right:1px solid #d2dad4;user-select:none}
+.sheet tbody th.row-selected{background:#d7eadb;color:#166e3a}
+.sheet td{position:relative;text-overflow:clip;background:#fff}
+.sheet td .value{width:100%;height:28px;line-height:28px;padding:0 9px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right;font-variant-numeric:tabular-nums}
+.sheet td .value.text{font-size:12px;text-align:left}
+.sheet td .value.empty{color:#94aa9c}
+.sheet td.editable{background:#f7fbff}
+.sheet td.editable .value{color:#155894}
+.sheet td.locked{background:#f7f7f3}.sheet td.fixed .value{font-weight:600}
+.sheet td.header-cell{background:#e3f0e8}.sheet td.header-cell .value{color:#175835;font-weight:700;font-size:12px;text-align:left}
+.sheet td.banner{background:#116d3d;color:#fff}.sheet td.banner .value{color:#fff;font-weight:700;letter-spacing:.01em;text-align:left}
+.sheet td.sub-banner{background:#e5f2e9}.sheet td.sub-banner .value{text-align:left;color:#267048;font-size:11px}
+.sheet td.selected{z-index:3;outline:2px solid #117742;outline-offset:-2px;box-shadow:inset 0 0 0 1px #117742}
+.sheet td.selected:after{content:"";position:absolute;width:7px;height:7px;right:-4px;bottom:-4px;background:#117742;border:1px solid white;z-index:6;pointer-events:none}
+.sheet td.correct{background:#ebf7ed}.sheet td.incorrect{background:#ffefed}.sheet td.formula-error .value{color:#bc3f32}
+.incell{position:absolute;top:0;left:0;width:100%;height:100%;z-index:9;border:2px solid #12834a;background:white;color:#1f2b23;padding:4px 8px;outline:0;text-align:left;min-width:130px;box-shadow:0 2px 7px #0002}
+.sheet-tip{padding:7px 15px;background:#f7faf8;border-top:1px solid #d9e4da;border-bottom:1px solid #d4ded6;color:#607267;font-size:11px;flex:none}
+.bottom{height:36px;background:#f5f7f5;display:flex;align-items:stretch;gap:7px;border-top:1px solid #d2dbd2;flex:none;padding:0 12px}
+.sheet-nav{border:0;background:#e3eee7;border-bottom:3px solid #107c41;padding:0 17px;font-weight:700;color:#176b3b}
+.add-sheet{border:0;background:transparent;font-size:20px;color:#777;padding:0 8px}
+.bottom-right{margin-left:auto;display:flex;align-items:center;gap:18px;font-size:11px;color:#607067}
+.status-pill{color:var(--green);font-weight:650}
+.footer-note{background:#e8eeeb;height:25px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 15px;font-size:11px;color:#46604e;flex:none}
+.toast{position:fixed;bottom:70px;left:50%;transform:translate(-50%,20px);background:#1f3830;color:white;border-radius:7px;padding:12px 18px;opacity:0;pointer-events:none;transition:.2s;z-index:50;box-shadow:0 14px 32px #0003;max-width:90vw;text-align:center}.toast.show{opacity:1;transform:translate(-50%,0)}
+dialog{border:0;border-radius:12px;padding:0;width:min(470px,calc(100vw - 28px));box-shadow:0 20px 70px #0005;color:var(--text);max-height:90vh;overflow:auto}
+dialog::backdrop{background:#071b10a9}
+.modal-head{background:#11743e;color:white;padding:18px 23px;display:flex;align-items:center;justify-content:space-between}
+.modal-head h2{font-size:18px;font-weight:650;margin:0}
+.modal-x{font-size:21px;background:none;border:0;color:white}
+.modal-body{padding:22px 24px;line-height:1.65}
+.modal-body p{margin:0 0 14px;color:#58645b}
+.modal-body label{display:block;font-weight:600;font-size:12px;margin:15px 0 5px}
+.modal-body input{width:100%;border:1px solid #bfcfc4;padding:11px;border-radius:5px}
+.modal-actions{display:flex;justify-content:flex-end;gap:9px;padding:15px 24px;background:#f6f9f6;border-top:1px solid #e2eae4}
+.btn{border:1px solid #cbd7ce;background:white;border-radius:5px;padding:10px 14px;font-weight:600;font-size:13px}
+.btn.primary{background:#107c41;border-color:#107c41;color:white}
+.btn.primary:hover,.submit-top:hover{filter:brightness(.95)}
+.important{background:#eef7ef;border:1px solid #cce8d1;border-radius:5px;padding:10px 12px;margin:13px 0}
+.sub-info{background:#f4f7f5;border:1px solid #e0e7e2;border-radius:5px;padding:12px}
+.sub-info div{display:flex;justify-content:space-between;gap:12px;margin:3px 0}.sub-info b{font-weight:650}
+.warning{color:#b34630!important}
+.receipt{font-family:ui-monospace,monospace;font-size:12px;overflow-wrap:anywhere}
+.helptext{font-size:12px;color:#66746b}
+kbd{background:#e9eeea;border:1px solid #d9e1d9;border-radius:3px;padding:1px 4px;font-size:11px}
+@media(max-width:720px){
+ .titlebar{padding:0 9px;gap:7px}.filename{font-size:12px}.cloud-status{display:none}.tbutton{display:none}
+ .identity{padding:9px;gap:7px}.identity .head{width:100%}.identity label{flex:1;min-width:150px}.identity input{width:100%;min-width:0}
+ .progress-area{min-width:100%;margin-left:0;justify-content:space-between}.ribbon{height:68px;padding:6px;gap:6px}.ribbon-title{display:none}
+ .ribbon-group{padding-right:7px;gap:1px}.ribbon-btn{font-size:10px;padding:3px 5px}.ribbon-btn strong{font-size:14px}
+ .formula-hint{display:none}.sheet-tip{font-size:10px}.footer-note{display:none}
+ .sheet col.colA{width:175px}.sheet col.normal{width:140px}.sheet col.colG{width:150px}
+}
+@media print{
+ #app{height:auto;min-height:0}.titlebar,.tabs,.ribbon,.formula-bar,.sheet-tip,.bottom,.footer-note,.toast{display:none!important}
+ .identity{padding:10px;border:1px solid #ccc}.workbook{overflow:visible}
+ .sheet{transform:scale(.72);transform-origin:top left}.sheet thead th{position:static}.sheet tbody th{position:static}
+}
+</style>
 </head>
 <body>
-  <header class="topbar">
-    <div class="top-inner">
-      <a class="logo" href="#top" aria-label="Finance Practice home"><span class="logo-mark">ƒx</span><span><strong>Finance Practice</strong><small>Interactive worksheet</small></span></a>
-      <div class="top-actions">
-        <span class="save-state" id="saveState"><i class="save-dot"></i> Saved on this device</span>
-        <button class="btn dark" type="button" id="resetBtn">Start over</button>
-        <button class="btn dark" type="button" id="saveBtn">Save draft</button>
-        <button class="btn primary" type="button" id="submitBtn">Submit worksheet &rarr;</button>
-      </div>
+<div id="app">
+  <div class="titlebar">
+    <div class="excel-badge" aria-hidden="true">X</div>
+    <div class="file-meta"><span class="filename">Loan Amortisation Practice</span><span class="cloud-status" id="saveState">● Saved locally</span></div>
+    <div class="titlebar-spacer"></div>
+    <button class="tbutton" id="helpTop">? &nbsp; Help</button>
+    <button class="submit-top" id="submitTop">↥ &nbsp; Submit assignment</button>
+  </div>
+  <div class="tabs" role="tablist" aria-label="Spreadsheet ribbon">
+    <button class="tab active" data-tab="Home">Home</button>
+    <button class="tab" data-tab="Formulas">Formulas</button>
+    <button class="tab" data-tab="View">View</button>
+    <button class="tab" data-tab="Help">Help</button>
+  </div>
+  <div class="ribbon" id="ribbonHome">
+    <div class="ribbon-group">
+      <div class="ribbon-tools">
+      <button class="ribbon-btn" id="undo" title="Undo (Ctrl+Z)"><strong>↶</strong><span>Undo</span></button>
+      <button class="ribbon-btn" id="redo" title="Redo (Ctrl+Y)"><strong>↷</strong><span>Redo</span></button>
+      <button class="ribbon-btn" id="save" title="Save draft locally (Ctrl+S)"><strong>▣</strong><span>Save</span></button>
+      </div><span class="ribbon-title">Clipboard</span>
     </div>
-  </header>
-  <main class="container" id="top">
-    <section class="hero">
-      <div>
-        <div class="eyebrow">Finance fundamentals <span> / </span> Exercise 01</div>
-        <h1>Loan amortisation worksheet</h1>
-        <p>Complete the repayment schedule directly in your browser. Select a highlighted cell and enter an answer or an Excel-style formula. Your calculations appear instantly.</p>
-      </div>
-      <div class="assignment-pill"><span style="font-size:21px">▦</span><span><strong>8 months</strong> Repayment schedule</span></div>
-    </section>
-
-    <section class="layout" aria-label="Student and progress">
-      <div class="panel">
-        <div class="panel-head"><h2>Student details</h2><span class="section-tag">Required</span></div>
-        <div class="panel-body">
-          <div class="form-grid">
-            <div><label class="field-label" for="studentName">Full name</label><input class="form-input" autocomplete="name" id="studentName" placeholder="e.g. Alex Morgan" maxlength="120"></div>
-            <div><label class="field-label" for="studentId">Student ID</label><input class="form-input" autocomplete="off" id="studentId" placeholder="Enter your student ID" maxlength="50"></div>
-          </div>
-          <div class="helper">Your details will be attached to your worksheet submission.</div>
-        </div>
-      </div>
-      <div class="panel">
-        <div class="panel-head"><h2>Your progress</h2><span class="section-tag" id="progressBadge">In progress</span></div>
-        <div class="panel-body">
-          <div class="progress-top"><div><strong id="progressNumber">0 / 42</strong> <small>fields completed</small></div><small id="progressPercent">0%</small></div>
-          <div class="progress-line"><div class="progress-fill" id="progressFill"></div></div>
-          <div class="progress-stats"><div class="stat"><b id="formulaCount">0</b><span>Formulas entered</span></div><div class="stat"><b id="answerCount">0</b><span>Answers entered</span></div></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="panel loan-panel" aria-labelledby="loanHeading">
-      <div class="panel-head"><h2 id="loanHeading">Loan information</h2><span class="section-tag">Given information</span></div>
-      <div class="panel-body">
-        <div class="loan-summary">
-          <div class="loan-fact"><span>Loan amount <code>B2</code></span><b>$10,000</b></div>
-          <div class="loan-fact"><span>Annual interest <code>B3</code></span><b>5.00%</b></div>
-          <div class="loan-fact"><span>Loan term <code>B4</code></span><b>3 years</b></div>
-          <div class="loan-fact"><span>Payments / year <code>B5</code></span><b>12</b></div>
-        </div>
-        <div class="practice-grid" id="derivedFields">
-          <button type="button" class="practice-card" data-select-cell="B6"><span><span class="toplabel">Number of periods · calculate</span><strong id="B6summary">Click to enter a formula</strong></span><span class="cell-chip">B6</span></button>
-          <button type="button" class="practice-card" data-select-cell="B7"><span><span class="toplabel">Interest rate per period · calculate</span><strong id="B7summary">Click to enter a formula</strong></span><span class="cell-chip">B7</span></button>
-        </div>
-      </div>
-    </section>
-
-    <div class="steps"><span><b>1</b> Select a blue-tinted cell</span><span class="separate"></span><span><b>2</b> Type a number or <code>=formula</code></span><span class="separate"></span><span><b>3</b> Check and submit your work</span></div>
-
-    <section class="panel table-panel" aria-labelledby="scheduleHeading">
-      <div class="table-head"><div><h2 id="scheduleHeading">Repayment schedule</h2><p>Complete each row for months 1–8. Click any cell to edit its formula.</p><p class="mobile-swipe">↔ Swipe the table sideways to see every column.</p></div><div class="table-actions"><button type="button" class="btn tiny" id="guideBtn">Formula guide</button><button type="button" class="btn tiny" id="checkBtn">Check answers</button></div></div>
-      <div class="sheet-wrap"><table class="sheet"><thead><tr><th scope="col">Month</th><th scope="col">Beginning<br>balance</th><th scope="col">Payment</th><th scope="col">Interest</th><th scope="col">Principal</th><th scope="col">Remaining<br>balance</th></tr></thead><tbody id="scheduleBody"></tbody></table></div>
-      <div class="sheet-foot"><div class="legend"><span><i class="swatch"></i> Editable cell</span><span id="checkLegend" hidden><i class="swatch green"></i> Correct <i class="swatch red" style="margin-left:8px"></i> Check formula</span></div><span id="checkText">All values are calculated from your entries.</span></div>
-      <div class="editor" id="editor">
-        <div><div class="address" id="selectedAddress">Selected cell · B6</div><div class="what" id="selectedTitle">Number of periods</div><div class="which" id="selectedHint">Enter your calculation below.</div></div>
-        <div><label for="formulaInput" class="field-label">Your answer or formula</label><div class="entry"><span class="fx">ƒx</span><input class="editor-input" id="formulaInput" spellcheck="false" autocomplete="off" aria-label="Answer or Excel-style formula" placeholder="Type a number or =formula"><button class="btn tiny subtle" type="button" id="fillDownBtn" title="Copy the selected formula to later months, adjusting relative cell references">Fill down ↓</button></div></div>
-        <div><label class="field-label">Calculated result</label><div class="editor-preview"><span>Result</span><strong id="editorResult">—</strong></div></div>
-        <div class="editor-hint"><span>Use <kbd>Fill down ↓</kbd> to copy a formula through later months. Supports cell references such as <kbd>B10</kbd> and <kbd>$B$7</kbd>, and functions such as <kbd>PMT()</kbd>.</span><span><kbd>Enter</kbd> next cell &nbsp; <kbd>Shift + Enter</kbd> previous</span></div>
-      </div>
-    </section>
-    <div class="below"><p><strong>Good to know:</strong> This page saves a draft in this browser automatically. Your submission includes both the formulas you typed and the resulting answers. Avoid using shared computers for personal student details.</p><button type="button" id="exportBtn">Export my work (JSON)</button></div>
-    <div class="print-only" id="printStudent"></div>
-    <footer class="foot"><span>Finance Practice · Loan amortisation · Adapted from the supplied Excel exercise</span><span>Designed for browser-based learning</span></footer>
-  </main>
-  <dialog id="guideDialog" aria-label="Formula guide">
-    <div class="modal-head"><h2>Formula quick guide</h2><button class="x-btn" type="button" data-close="guideDialog" aria-label="Close">×</button></div>
-    <div class="modal-body examples">
-      <p>Enter formulas in the editor using standard Excel notation. Press <strong>Enter</strong> to move to the next calculation cell.</p>
-      <h3>Basic arithmetic</h3>
-      <p><code>=A1+B1</code> addition &nbsp; <code>=A1-B1</code> subtraction<br><code>=A1*B1</code> multiplication &nbsp; <code>=A1/B1</code> division</p>
-      <h3>Cell references</h3><p><code>B10</code> changes when you fill down. <code>$B$7</code> is an absolute reference and stays fixed. You can also enter an answer as a plain number.</p>
-      <h3>Payment function</h3><p><code>=PMT(rate, nper, pv)</code> calculates a constant periodic payment. Negative loan present values give positive repayments.</p>
-      <h3>Other supported functions</h3><p><code>SUM()</code>, <code>ROUND()</code>, <code>ABS()</code>, <code>MIN()</code> and <code>MAX()</code> are available. Formulas recalculate when referenced cells change.</p>
-      <button type="button" class="btn primary" data-close="guideDialog" style="width:100%">Back to worksheet</button>
+    <div class="ribbon-group">
+      <div class="ribbon-tools"><span class="font-sample">Aptos 11 &nbsp;⌄</span><button class="ribbon-btn small" id="formatNumber" title="General number display">123</button><button class="ribbon-btn small" id="formatCurrency" title="Show currency">$</button><button class="ribbon-btn small" id="formatPercent" title="Show percent">%</button></div><span class="ribbon-title">Number</span>
     </div>
-  </dialog>
-  <dialog id="submitDialog" aria-label="Submit worksheet">
-    <div class="modal-head"><h2>Submit your worksheet</h2><button class="x-btn" type="button" data-close="submitDialog" aria-label="Close">×</button></div>
-    <div class="modal-body">
-      <p>Review your details and progress. Your entry is saved on this device, and the submission record includes each cell's answer and the formula you entered.</p>
-      <div class="receipt-grid"><div><small>Student name</small><b id="receiptName">—</b></div><div><small>Student ID</small><b id="receiptId">—</b></div><div><small>Fields completed</small><b id="receiptProgress">0 / 42</b></div><div><small>Formula entries</small><b id="receiptFormulas">0</b></div></div>
-      <div class="notice" id="submissionNotice">Submission collection is not connected in this preview. The instructor can enable direct Google Sheets submissions using the included setup instructions.</div>
-      <div class="modal-actions"><button class="btn" type="button" id="copyBtn">Copy submission</button><button class="btn" type="button" id="printBtn">Print / PDF</button><button class="btn primary" type="button" id="finalSubmitBtn">Submit to instructor</button></div>
+    <div class="ribbon-group">
+      <div class="ribbon-tools"><button class="ribbon-btn" id="fillDown" title="Fill the selected formula down through month 8 (Ctrl+D)"><strong>↓</strong><span>Fill down</span></button><button class="ribbon-btn" id="check" title="Compare answers with the exercise solution"><strong>✓</strong><span>Check</span></button><button class="ribbon-btn" id="clear" title="Clear selected cell"><strong>⌫</strong><span>Clear</span></button></div><span class="ribbon-title">Editing</span>
     </div>
-  </dialog>
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <form id="submissionForm" method="POST" target="_blank" style="display:none"><input type="hidden" name="payload" id="submissionPayload"></form>
+    <div class="ribbon-group">
+      <div class="ribbon-tools"><button class="ribbon-btn" id="howto"><strong>ƒx</strong><span>Formulas</span></button><button class="ribbon-btn" id="newWork"><strong>＋</strong><span>New sheet</span></button></div><span class="ribbon-title">Practice</span>
+    </div>
+  </div>
+  <div class="identity">
+    <span class="head">STUDENT DETAILS</span>
+    <label>Full name <input id="studentName" type="text" autocomplete="name" maxlength="100" placeholder="Enter student name"></label>
+    <label>Student ID <input id="studentId" type="text" autocomplete="off" maxlength="80" placeholder="Enter student ID"></label>
+    <div class="progress-area"><div class="progress-bar"><div id="progressFill"></div></div><span class="progress-number" id="progressNumber">0 / 42 cells</span><span id="submissionStatus" style="color:#68816e;font-size:11px">Not submitted</span></div>
+  </div>
+  <div class="formula-bar">
+    <input class="name-box" id="nameBox" aria-label="Cell reference" spellcheck="false" value="B6">
+    <span class="formula-fx">ƒx</span>
+    <input class="formula-input" id="formulaInput" spellcheck="false" autocomplete="off" aria-label="Enter answer or Excel formula" placeholder="Select a blue cell to enter a value or =formula">
+    <span class="formula-hint" id="cellHint">Type = to begin a formula</span>
+  </div>
+  <div class="workbook" id="workbook" tabindex="0" aria-label="Spreadsheet. Select a cell, then type to enter a formula.">
+    <table class="sheet" id="sheet" aria-label="Loan amortisation worksheet">
+    <colgroup><col class="rowindex"><col class="colA"><col class="normal"><col class="normal"><col class="normal"><col class="normal"><col class="normal"><col class="colG"></colgroup>
+    <thead><tr><th class="corner"></th><th data-head="A">A</th><th data-head="B">B</th><th data-head="C">C</th><th data-head="D">D</th><th data-head="E">E</th><th data-head="F">F</th><th data-head="G">G</th></tr></thead>
+    <tbody id="sheetBody"></tbody></table>
+  </div>
+  <div class="sheet-tip" id="sheetTip">Select a blue cell, then type in the formula bar or double-click the cell. Press Enter to move down, Tab to move right, or Ctrl+D to fill down. Figures update automatically.</div>
+  <div class="bottom"><button class="sheet-nav" id="sheetTab">▦ &nbsp; Loan schedule</button><button class="add-sheet" id="extraSheet" title="This exercise has one worksheet">+</button><div class="bottom-right"><span id="cellState">Ready</span><span>100% &nbsp; ▤</span></div></div>
+  <div class="footer-note"><span>BRHT • Finance practice worksheet</span><span>Drafts save in this browser · Submitted work is stored privately for instructor review</span></div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<dialog id="submitDialog">
+  <div class="modal-head"><h2>Submit your assignment</h2><button class="modal-x" data-close="submitDialog" aria-label="Close">×</button></div>
+  <div class="modal-body">
+    <p>Review your details before sending your answers and formulas to the instructor.</p>
+    <div class="sub-info">
+      <div><span>Student</span><b id="reviewName"></b></div>
+      <div><span>Student ID</span><b id="reviewId"></b></div>
+      <div><span>Fields completed</span><b id="reviewCount"></b></div>
+      <div><span>Formula entries</span><b id="reviewFormulas"></b></div>
+    </div>
+    <p id="submitWarn" class="helptext" style="margin-top:13px"></p>
+    <div class="important">Your submission is recorded online. You can continue editing your local draft after submitting, but new changes require another submission.</div>
+    <p class="warning" id="submitError" hidden></p>
+  </div>
+  <div class="modal-actions"><button class="btn" data-close="submitDialog">Cancel</button><button class="btn primary" id="confirmSubmit">Submit assignment</button></div>
+</dialog>
+<dialog id="receiptDialog">
+  <div class="modal-head"><h2>✓ Assignment received</h2><button class="modal-x" data-close="receiptDialog" aria-label="Close">×</button></div>
+  <div class="modal-body"><p>Your answers and formulas have been saved securely for instructor review.</p><div class="sub-info"><div><span>Student</span><b id="receiptName"></b></div><div><span>Submitted</span><b id="receiptTime"></b></div></div><p class="helptext" style="margin-top:13px">Submission reference:</p><p class="receipt" id="receiptId"></p><p class="helptext">Keep this reference as confirmation. The current worksheet is still available to you.</p></div>
+  <div class="modal-actions"><button class="btn primary" data-close="receiptDialog">Done</button></div>
+</dialog>
+<dialog id="helpDialog">
+  <div class="modal-head"><h2>Excel-style worksheet help</h2><button class="modal-x" data-close="helpDialog" aria-label="Close">×</button></div>
+  <div class="modal-body">
+    <p><b>Start at cell B6.</b> Blue cells are yours to complete; grey values are supplied by the assignment.</p>
+    <p><b>Formula examples</b><br><code>=B4*B5</code> &nbsp; total payments<br><code>=B3/B5</code> &nbsp; monthly interest rate<br><code>=PMT(B7,B6,-B2)</code> &nbsp; monthly payment<br><code>=B10*$B$7</code> &nbsp; interest on opening balance</p>
+    <p><b>Navigation</b><br><kbd>Enter</kbd> move down &nbsp; <kbd>Tab</kbd> move right &nbsp; <kbd>F2</kbd> edit cell<br><kbd>Ctrl</kbd> + <kbd>D</kbd> fill down &nbsp; <kbd>Ctrl</kbd> + <kbd>Z</kbd> undo<br><kbd>Delete</kbd> clear cell &nbsp; <kbd>Esc</kbd> cancel editing</p>
+    <p class="helptext">Supports PMT, SUM, ROUND, MIN, MAX, ABS, arithmetic, percentages and $-anchored cell references. This is a focused spreadsheet exercise, not the entire Excel application.</p>
+  </div><div class="modal-actions"><button class="btn primary" data-close="helpDialog">Got it</button></div>
+</dialog>
 <script>
-  'use strict';
-  // INSTRUCTOR SETUP: Paste the deployed Google Apps Script web-app URL between quotes.
-  // Example: const SUBMISSION_ENDPOINT = 'https://script.google.com/macros/s/...../exec';
-  const SUBMISSION_ENDPOINT = '';
-
-  const STORE_KEY = 'finance-practice-loan-v1';
-  const labels = {B6:'Number of periods', B7:'Interest rate per period'};
-  const titles = {B:'Beginning balance', C:'Payment', D:'Interest', E:'Principal', F:'Remaining balance'};
-  const fixed = { B2:10000, B3:.05, B4:3, B5:12 };
-  const addresses = ['B6','B7'];
-  for(let r=10;r<=17;r++) for(const col of ['B','C','D','E','F']) { const a=col+r; addresses.push(a);labels[a]=titles[col]+' · month '+(r-9); }
-  const state = {name:'',studentId:'',entries:{},selected:'B6',check:false};
-  const byId = id => document.getElementById(id);
-  const money = n => (n<0?'-$':'$')+new Intl.NumberFormat('en-AU',{minimumFractionDigits:2,maximumFractionDigits:2}).format(Math.abs(n));
-  const num = n => new Intl.NumberFormat('en-AU',{maximumFractionDigits:8}).format(n);
-  let toastTimer;
-  function toast(message){const el=byId('toast');el.textContent=message;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),3300);}
-  function closeDialog(id){const dlg=byId(id);if(dlg.open)dlg.close()}
-  function load(){try{const d=JSON.parse(localStorage.getItem(STORE_KEY)||'null');if(d&&typeof d==='object'){state.name=String(d.name||'');state.studentId=String(d.studentId||'');if(d.entries&&typeof d.entries==='object') for(const a of addresses) if(typeof d.entries[a]==='string')state.entries[a]=d.entries[a].slice(0,220);state.selected=addresses.includes(d.selected)?d.selected:'B6';}}catch(e){/* Storage may be disabled. */}}
-  function save(){try{localStorage.setItem(STORE_KEY,JSON.stringify({name:state.name,studentId:state.studentId,entries:state.entries,selected:state.selected,updatedAt:new Date().toISOString()}));byId('saveState').innerHTML='<i class="save-dot"></i> Saved on this device';}catch(e){byId('saveState').textContent='Local saving unavailable';}}
-  function raw(address){return String(state.entries[address]??'').trim()}
-  function entered(address){return raw(address)!==''}
+'use strict';
+const API_URL = 'https://zqwdooykgwkfhwyayucg.supabase.co/rest/v1/education_loan_submissions';
+const API_KEY = 'sb_publishable_wnOaPIGn-Nbv80MLv3qLFg_mH3l34ug';
+const STORAGE_KEY = 'finance-practice-loan-v1';
+const cols=['A','B','C','D','E','F','G'];
+const fixed={B2:10000,B3:.05,B4:3,B5:12};
+const labels={A1:'LOAN AMORTISATION • FINANCE PRACTICE',A2:'Loan amount',A3:'Annual interest rate',A4:'Loan term (years)',A5:'Payments per year',A6:'Total payment periods',A7:'Interest per payment period',A8:'CALCULATE THE FIRST 8 MONTHS • ENTER YOUR WORK IN BLUE CELLS',A9:'Month',B9:'Beginning balance',C9:'Payment',D9:'Interest',E9:'Principal',F9:'Remaining balance',G9:'Notes',A19:'WORKSHEET TIPS',A20:'Blue cells accept numbers or formulas. Double-click a cell or use the formula bar.',A21:'Use the Fill down control to copy formulas with relative references.'};
+for(let row=10;row<=17;row++)labels['A'+row]=String(row-9);
+const editables=['B6','B7'];
+for(let row=10;row<=17;row++)for(const c of ['B','C','D','E','F'])editables.push(c+row);
+const allCells=[];for(let row=1;row<=24;row++)for(const c of cols)allCells.push(c+row);
+const names={B6:'Total payment periods',B7:'Interest per payment period'};
+const namesCol={B:'Beginning balance',C:'Payment',D:'Interest',E:'Principal',F:'Remaining balance'};
+for(let r=10;r<=17;r++)for(const c of ['B','C','D','E','F'])names[c+r]=namesCol[c]+' — month '+(r-9);
+const state={name:'',studentId:'',entries:{},selected:'B6',check:false,showFormat:{},history:[],future:[],receipt:null};
+const $=id=>document.getElementById(id);
+const money=n=>(n<0?'-$':'$')+Math.abs(n).toLocaleString('en-AU',{minimumFractionDigits:2,maximumFractionDigits:2});
+const number=n=>Number(n).toLocaleString('en-AU',{maximumFractionDigits:8});
+const raw=a=>String(state.entries[a]||'').trim();
+const has=a=>raw(a).length>0;
+const editable=a=>editables.includes(a);
+let toastHandle=null;let inCell=null;let editingAddress=null;let editingOriginal='';
+function toast(s){$('toast').textContent=s;$('toast').classList.add('show');clearTimeout(toastHandle);toastHandle=setTimeout(()=>$('toast').classList.remove('show'),3200);}
+function load(){try{const old=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null');if(!old)return;state.name=String(old.name||'');state.studentId=String(old.studentId||'');state.entries={};for(const a of editables)if(typeof old.entries?.[a]==='string')state.entries[a]=old.entries[a].slice(0,220);state.selected=allCells.includes(old.selected)?old.selected:'B6';state.receipt=old.receipt||null;}catch(e){}}
+function save(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify({name:state.name,studentId:state.studentId,entries:state.entries,selected:state.selected,receipt:state.receipt,updatedAt:new Date().toISOString()}));$('saveState').textContent='● Saved locally';}catch(e){$('saveState').textContent='Local save unavailable';}}
   function parsePlain(rawValue){const clean=rawValue.replace(/[,$\s]/g,'').replace(/^\$/,'');const p=clean.endsWith('%');const number=Number(p?clean.slice(0,-1):clean);if(!clean||!Number.isFinite(number))throw Error('Invalid number');return p?number/100:number;}
   function tokens(expr){let pos=0,out=[];while(pos<expr.length){const text=expr.slice(pos);if(/^\s/.test(text)){pos++;continue;}let m;if((m=/^\$?[A-Za-z]{1,3}\$?\d+/.exec(text))){out.push({type:'ref',value:m[0].toUpperCase()});pos+=m[0].length;continue;}if((m=/^(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?%?/.exec(text))){out.push({type:'number',value:m[0]});pos+=m[0].length;continue;}if((m=/^[A-Za-z_][A-Za-z_0-9]*/.exec(text))){out.push({type:'word',value:m[0].toUpperCase()});pos+=m[0].length;continue;}const ch=text[0];if('+-*/^(),'.includes(ch)){out.push({type:ch,value:ch});pos++;continue;}throw Error('Invalid symbol: '+ch);}out.push({type:'end'});return out;}
   function evaluateFormula(formula,resolve){const ts=tokens(formula.slice(1));let i=0;const peek=()=>ts[i].type;const consume=(type)=>{if(peek()!==type)throw Error('Expected '+type);return ts[i++];};
@@ -269,43 +240,249 @@
       if(name==='SUM')return args.reduce((a,b)=>a+b,0);if(name==='ROUND'){if(args.length<1||args.length>2)throw Error('ROUND expects 1 or 2 values');const scale=10**(args[1]||0);return Math.round((args[0]+Number.EPSILON)*scale)/scale;}if(name==='ABS')return Math.abs(args[0]);if(name==='MIN')return Math.min(...args);if(name==='MAX')return Math.max(...args);throw Error('Unsupported function: '+name);}
     const result=expression();if(peek()!=='end')throw Error('Unexpected text');if(!Number.isFinite(result))throw Error('Result is not finite');return result;
   }
-  function calculate(){const cache=new Map(), visiting=new Set();function evalCell(a){if(cache.has(a))return cache.get(a);if(visiting.has(a))throw Error('Circular reference');if(a in fixed)return fixed[a];const month=/^A(1[0-7])$/.exec(a);if(month)return Number(month[1])-9;if(!addresses.includes(a))throw Error('Unknown cell '+a);const text=raw(a);if(!text)throw Error('Needs '+a);visiting.add(a);try{const v=text.startsWith('=')?evaluateFormula(text,evalCell):parsePlain(text);if(!Number.isFinite(v))throw Error('Invalid calculation');cache.set(a,v);return v;}finally{visiting.delete(a);}}
-    const results={};for(const a of addresses){try{results[a]={value:evalCell(a),error:null};}catch(e){results[a]={value:null,error:e.message||'Invalid formula'};}}return results;}
-  function display(a,result){if(!result||result.error)return result?.error?.startsWith('Needs ')?'—':'Check formula';if(a==='B6')return num(result.value);if(a==='B7')return (result.value*100).toFixed(4)+'%';return money(result.value)}
-  function referenceAnswers(){const result={B6:36,B7:0.05/12};const rate=result.B7,n=36,pv=10000;const pmt=rate*pv/(1-Math.pow(1+rate,-n));let balance=pv;for(let r=10;r<=17;r++){const interest=balance*rate;const principal=pmt-interest;const remaining=balance-principal;result['B'+r]=balance;result['C'+r]=pmt;result['D'+r]=interest;result['E'+r]=principal;result['F'+r]=remaining;balance=remaining;}return result;}
-  const expected=referenceAnswers();
-  function correctness(a,results){if(!entered(a)||results[a]?.error)return 'ungraded';const tolerance=a==='B7'?1e-7:a==='B6'?0.00001:0.021;return Math.abs(results[a].value-expected[a])<=tolerance?'correct':'incorrect';}
-  function counts(){const done=addresses.filter(entered);return {done:done.length,formulas:done.filter(a=>raw(a).startsWith('=')).length,numbers:done.filter(a=>!raw(a).startsWith('=')).length};}
-  function table(){const body=byId('scheduleBody');for(let r=10;r<=17;r++){const tr=document.createElement('tr'),month=document.createElement('td');month.textContent=r-9;tr.appendChild(month);for(const col of ['B','C','D','E','F']){const addr=col+r,td=document.createElement('td'),btn=document.createElement('button');btn.type='button';btn.className='cell-btn empty';btn.setAttribute('data-select-cell',addr);btn.setAttribute('aria-label',labels[addr]+', editable');btn.innerHTML='<span class="cell-result">+ Add answer</span><span class="cell-formula">&nbsp;</span>';td.appendChild(btn);tr.appendChild(td);}body.appendChild(tr);}}
-  function renderResults(){const results=calculate();for(const a of addresses){const val=results[a],txt=raw(a);if(a==='B6'||a==='B7'){byId(a+'summary').textContent=!txt?'Click to enter a formula':display(a,val);continue;}const el=document.querySelector('[data-select-cell="'+a+'"]');if(!el)continue;el.classList.toggle('empty',!txt);el.classList.toggle('error',!!txt&&!!val.error);el.classList.toggle('selected',state.selected===a);el.classList.toggle('correct',state.check&&correctness(a,results)==='correct');el.classList.toggle('incorrect',state.check&&correctness(a,results)==='incorrect');el.querySelector('.cell-result').textContent=txt?display(a,val):'+ Add answer';el.querySelector('.cell-formula').textContent=txt.startsWith('=')?txt:txt?'Entered answer':'\u00a0';el.title=txt?(val.error?val.error:txt):'Select to enter answer or formula';}
-    document.querySelectorAll('.practice-card').forEach(el=>{el.classList.toggle('selected',state.selected===el.dataset.selectCell);});
-    const c=counts(),pct=Math.round(c.done/addresses.length*100);byId('progressNumber').textContent=c.done+' / '+addresses.length;byId('progressPercent').textContent=pct+'%';byId('progressFill').style.width=pct+'%';byId('formulaCount').textContent=c.formulas;byId('answerCount').textContent=c.numbers;byId('progressBadge').textContent=c.done===addresses.length?'Completed':'In progress';
-    byId('editorResult').textContent=display(state.selected,results[state.selected]);if(results[state.selected].error&&entered(state.selected)){byId('editorResult').title=results[state.selected].error;}else byId('editorResult').removeAttribute('title');
-    byId('checkLegend').hidden=!state.check;byId('checkBtn').textContent=state.check?'Hide checks':'Check answers';if(state.check){let right=0,wrong=0;for(const a of addresses){const status=correctness(a,results);if(status==='correct')right++;if(status==='incorrect')wrong++;}byId('checkText').textContent=`${right} correct · ${wrong} to revisit · ${addresses.length-right-wrong} not yet checked / incomplete`;}
-    else byId('checkText').textContent='All values are calculated from your entries.';
-  }
-  function selectCell(a,focus=true){if(!addresses.includes(a))return;state.selected=a;byId('selectedAddress').textContent='Selected cell · '+a;byId('selectedTitle').textContent=labels[a];byId('selectedHint').textContent=a==='B7'?'Result displayed as a percentage.':a==='B6'?'Calculate the total number of payments.':'Month '+(parseInt(a.slice(1))-9)+' · '+titles[a[0]];byId('formulaInput').value=state.entries[a]||'';byId('fillDownBtn').disabled=!/^[B-F]1[0-6]$/.test(a);renderResults();save();if(focus){byId('editor').scrollIntoView({behavior:'smooth',block:'nearest'});byId('formulaInput').focus();byId('formulaInput').select();}}
-  function updateSelected(rawValue){state.entries[state.selected]=rawValue.slice(0,220);state.check=false;renderResults();save();}
-  function fillDown(){const addr=state.selected,match=/^([B-F])(1[0-6])$/.exec(addr);if(!match){toast('Select a calculation in months 1–7.');return;}const text=raw(addr);if(!text){toast('Enter a formula or answer first.');return;}const col=match[1],row=Number(match[2]);const existing=[];for(let r=row+1;r<=17;r++)if(entered(col+r))existing.push(col+r);if(existing.length&&!confirm('This will replace '+existing.length+' existing answer(s) below '+addr+'. Continue?'))return;for(let r=row+1;r<=17;r++){const change=r-row;state.entries[col+r]=text.startsWith('=')?text.replace(/(?<![A-Za-z0-9_.])(\$?)([A-Z]{1,3})(\$?)(\d+)\b/gi, (all,absoluteCol,letter,absoluteRow,refRow)=>absoluteCol+letter+absoluteRow+(absoluteRow?refRow:Number(refRow)+change)):text;}state.check=false;renderResults();save();toast('Filled '+(17-row)+' later month'+(17-row===1?'':'s')+' with adjusted references.');}
-  function moveSelected(direction){const index=addresses.indexOf(state.selected);selectCell(addresses[Math.max(0,Math.min(addresses.length-1,index+direction))]);}
-  function exportRecord(){const results=calculate(),c=counts();return {exercise:'Loan amortisation – months 1–8',version:1,submittedAt:new Date().toISOString(),studentName:state.name.trim(),studentId:state.studentId.trim(),inputs:{loanAmount:10000,annualInterestRate:.05,termYears:3,paymentsPerYear:12},completed:c.done,total:addresses.length,formulaCount:c.formulas,entries:Object.fromEntries(addresses.map(a=>[a,{entered:raw(a),formula:raw(a).startsWith('=')?raw(a):null,answer:results[a].error?null:results[a].value,error:results[a].error}]))};}
-  function downloadJson(){const blob=new Blob([JSON.stringify(exportRecord(),null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='loan-worksheet-'+(state.studentId.trim().replace(/[^a-z0-9_-]/gi,'_')||'draft')+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1500);toast('Your worksheet JSON has been downloaded.');}
-  function showSubmit(){state.name=byId('studentName').value;state.studentId=byId('studentId').value;save();if(!state.name.trim()||!state.studentId.trim()){toast('Please enter your full name and student ID first.');(!state.name.trim()?byId('studentName'):byId('studentId')).focus();return;}const c=counts();byId('receiptName').textContent=state.name.trim();byId('receiptId').textContent=state.studentId.trim();byId('receiptProgress').textContent=c.done+' / '+addresses.length;byId('receiptFormulas').textContent=String(c.formulas);const notice=byId('submissionNotice');if(SUBMISSION_ENDPOINT){notice.className='notice good';notice.textContent='Your instructor has connected online submissions. Selecting Submit opens a confirmation page in a new tab; please check it to ensure your submission was received.';byId('finalSubmitBtn').disabled=false;}
-    else{notice.className='notice';notice.textContent='Online submission collection is not connected yet. Your work is saved on this device. Your instructor can enable Google Sheets submissions using the setup instructions.';byId('finalSubmitBtn').disabled=true;}
-    if(c.done<addresses.length){notice.textContent+=' Note: '+(addresses.length-c.done)+' calculation fields are unanswered.';}byId('submitDialog').showModal();}
-  function handleSubmit(){if(!SUBMISSION_ENDPOINT)return;const form=byId('submissionForm');form.action=SUBMISSION_ENDPOINT;byId('submissionPayload').value=JSON.stringify(exportRecord());try{form.submit();toast('Submission page opened — verify the receipt in the new tab.');}catch(e){toast('Unable to submit. Try again or ask your instructor.')}}
-  async function copyRecord(){const value=JSON.stringify(exportRecord(),null,2);try{await navigator.clipboard.writeText(value);toast('Submission copied to your clipboard.');}catch(e){const ta=document.createElement('textarea');ta.value=value;document.body.appendChild(ta);ta.select();const success=document.execCommand('copy');ta.remove();toast(success?'Submission copied.':'Copy unavailable; use Export my work.');}}
-  function printWork(){byId('printStudent').textContent='Student: '+state.name+' · Student ID: '+state.studentId;window.print();}
-  function reset(){if(!confirm('Start a new worksheet? This will erase the current student name, ID and all answers saved on this device.'))return;state.name='';state.studentId='';state.entries={};state.check=false;byId('studentName').value='';byId('studentId').value='';selectCell('B6',false);save();toast('New blank worksheet ready.');}
-  function init(){load();table();byId('studentName').value=state.name;byId('studentId').value=state.studentId;selectCell(state.selected,false);
-    document.body.addEventListener('click',e=>{const cell=e.target.closest('[data-select-cell]');if(cell){selectCell(cell.dataset.selectCell);return;}const closer=e.target.closest('[data-close]');if(closer)closeDialog(closer.dataset.close);});
-    byId('formulaInput').addEventListener('input',e=>updateSelected(e.target.value));byId('formulaInput').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();moveSelected(e.shiftKey?-1:1);}});
-    byId('studentName').addEventListener('input',e=>{state.name=e.target.value;save();});byId('studentId').addEventListener('input',e=>{state.studentId=e.target.value;save();});
-    byId('guideBtn').addEventListener('click',()=>byId('guideDialog').showModal());byId('checkBtn').addEventListener('click',()=>{state.check=!state.check;renderResults();if(state.check){const c=counts();toast(c.done?'Calculated answers checked. Unfilled or dependent cells remain pending.':'Enter some answers first, then check them.');}});
-    byId('fillDownBtn').addEventListener('click',fillDown);byId('saveBtn').addEventListener('click',()=>{save();toast('Your draft is saved in this browser.');});byId('resetBtn').addEventListener('click',reset);byId('submitBtn').addEventListener('click',showSubmit);byId('finalSubmitBtn').addEventListener('click',handleSubmit);byId('copyBtn').addEventListener('click',copyRecord);byId('printBtn').addEventListener('click',printWork);byId('exportBtn').addEventListener('click',downloadJson);
-    document.querySelectorAll('dialog').forEach(d=>d.addEventListener('click',e=>{if(e.target===d)d.close();}));
-  }
-  init();
+
+function calculate(){
+ const cache=new Map(),visiting=new Set();
+ function value(a){
+  if(cache.has(a))return cache.get(a);
+  if(visiting.has(a))throw Error('Circular reference');
+  if(Object.prototype.hasOwnProperty.call(fixed,a))return fixed[a];
+  const m=/^A(1[0-7])$/.exec(a);if(m)return +m[1]-9;
+  if(!editable(a))throw Error('Unknown cell '+a);
+  const txt=raw(a);if(!txt)throw Error('Needs '+a);
+  visiting.add(a);
+  try{const x=txt.startsWith('=')?evaluateFormula(txt,value):parsePlain(txt);if(!Number.isFinite(x))throw Error('Invalid calculation');cache.set(a,x);return x;}finally{visiting.delete(a);}
+ }
+ const result={};for(const a of editables){try{result[a]={value:value(a),error:null};}catch(e){result[a]={value:null,error:String(e.message||e)};}}return result;
+}
+const resultsReference=(()=>{
+ const o={B6:36,B7:.05/12},rate=o.B7,pmt=10000*rate/(1-Math.pow(1+rate,-36));let bal=10000;
+ for(let r=10;r<=17;r++){const interest=bal*rate,principal=pmt-interest;Object.assign(o,{['B'+r]:bal,['C'+r]:pmt,['D'+r]:interest,['E'+r]:principal,['F'+r]:bal-principal});bal-=principal;}return o;
+})();
+function correctness(a,r){if(!has(a)||r[a]?.error)return 'none';return Math.abs(r[a].value-resultsReference[a])<=(a==='B7'?1e-7:a==='B6'?1e-5:.021)?'correct':'incorrect';}
+function shown(a,r){
+ if(labels[a]!==undefined&&!editable(a)&&!(a in fixed))return labels[a];
+ if(a in fixed)return a==='B3'?'5.00%':a==='B2'?money(fixed[a]):number(fixed[a]);
+ if(!editable(a)||!has(a))return '';
+ const res=r[a];if(!res||res.error)return res?.error?.startsWith('Needs ')?'#REF!':'#VALUE!';
+ const v=res.value,fmt=state.showFormat[a];
+ if(fmt==='general')return number(v);
+ if(fmt==='percent'||a==='B7'&&fmt!=='currency')return (v*100).toFixed(4)+'%';
+ return money(v);
+}
+function staticClass(a){
+ if(a==='A1')return 'banner';
+ if(a==='A8')return 'sub-banner';
+ if(a==='A9'||['B9','C9','D9','E9','F9','G9'].includes(a))return 'header-cell';
+ if(a in fixed)return 'locked fixed';
+ if(labels[a]!==undefined)return 'locked';
+ if(editable(a))return 'editable';
+ return '';
+}
+function createGrid(){
+ const fragment=document.createDocumentFragment();
+ for(let row=1;row<=24;row++){
+   const tr=document.createElement('tr');const header=document.createElement('th');header.textContent=String(row);header.dataset.row=String(row);tr.appendChild(header);
+   for(const col of cols){
+     const a=col+row,td=document.createElement('td');
+     td.dataset.cell=a;td.className=staticClass(a);td.tabIndex=-1;
+     td.setAttribute('aria-label',a+' '+(names[a]||labels[a]||''));
+     const div=document.createElement('div');div.className='value';td.appendChild(div);tr.appendChild(td);
+   }
+   fragment.appendChild(tr);
+ }
+ $('sheetBody').appendChild(fragment);
+}
+function rerender(){
+ const r=calculate();
+ for(const a of allCells){
+   const td=document.querySelector('[data-cell="'+a+'"]');if(!td)continue;
+   const out=td.querySelector('.value');
+   const v=shown(a,r);
+   if(!inCell||editingAddress!==a)out.textContent=v;
+   out.classList.toggle('text',a[0]==='A'||(a.endsWith('9'))||(a==='G9'));
+   out.classList.toggle('empty',editable(a)&&!has(a));
+   td.classList.toggle('selected',state.selected===a);
+   td.classList.toggle('correct',state.check&&correctness(a,r)==='correct');
+   td.classList.toggle('incorrect',state.check&&correctness(a,r)==='incorrect');
+   td.classList.toggle('formula-error',editable(a)&&has(a)&&!!r[a]?.error);
+ }
+ const parts=/^([A-G])(\d+)$/.exec(state.selected);
+ document.querySelectorAll('[data-head]').forEach(x=>x.classList.toggle('col-selected',x.dataset.head===parts?.[1]));
+ document.querySelectorAll('[data-row]').forEach(x=>x.classList.toggle('row-selected',x.dataset.row===parts?.[2]));
+ const done=editables.filter(has),count=done.length,pct=Math.round(100*count/editables.length);
+ $('progressNumber').textContent=count+' / '+editables.length+' cells';$('progressFill').style.width=pct+'%';
+ $('nameBox').value=state.selected;
+ $('cellState').textContent=names[state.selected]||labels[state.selected]||'Ready';
+ $('submissionStatus').textContent=state.receipt?'Last submitted '+new Date(state.receipt.at).toLocaleDateString('en-AU'):'Not submitted';
+ $('cellHint').textContent=editable(state.selected)?'Enter an answer or =formula':'Read-only cell';
+ if(document.activeElement!==$('formulaInput'))$('formulaInput').value=editable(state.selected)?state.entries[state.selected]||'':(state.selected in fixed ? String(fixed[state.selected]) : labels[state.selected]||'');
+ $('undo').disabled=!state.history.length;$('redo').disabled=!state.future.length;
+ $('fillDown').disabled=!/^([B-F])(1[0-6])$/.test(state.selected)||!has(state.selected);
+ $('clear').disabled=!editable(state.selected)||!has(state.selected);
+ $('check').style.background=state.check?'#d3ebd8':'';
+}
+function select(a,focus=true){
+ if(!allCells.includes(a))return;
+ if(inCell)commitEditor();
+ state.selected=a;rerender();save();
+ const td=document.querySelector('[data-cell="'+a+'"]');
+ if(td)td.scrollIntoView({block:'nearest',inline:'nearest'});
+ if(focus)$('workbook').focus({preventScroll:true});
+}
+function snapshot(){return {...state.entries};}
+function recordHistory(){state.history.push(snapshot());if(state.history.length>80)state.history.shift();state.future=[];}
+function setCell(a,value,{track=true}={}){
+ if(!editable(a))return;
+ const v=String(value).slice(0,220);
+ if((state.entries[a]||'')===v)return;
+ if(track)recordHistory();
+ if(v)state.entries[a]=v;else delete state.entries[a];
+ state.check=false;
+ save();rerender();
+}
+function shiftReferences(txt,dRow,dCol=0){
+ if(!txt.startsWith('='))return txt;
+ return txt.replace(/(?<![A-Za-z0-9_.])(\$?)([A-Z]{1,3})(\$?)(\d+)\b/gi,function(full,absCol,col,absRow,row){
+   const idx=cols.indexOf(col.toUpperCase());const next=absCol?idx:idx+dCol;
+   return (absCol?'$':'')+(cols[next]||col.toUpperCase())+(absRow?'$':'')+(absRow?row:Number(row)+dRow);
+ });
+}
+function fillDown(){
+ const m=/^([B-F])(1[0-6])$/.exec(state.selected);if(!m||!has(state.selected)){toast('Select a filled formula in months 1–7.');return;}
+ const col=m[1],start=Number(m[2]),txt=raw(state.selected),numExisting=[];
+ for(let r=start+1;r<=17;r++)if(has(col+r))numExisting.push(col+r);
+ if(numExisting.length&&!confirm('Fill down will replace '+numExisting.length+' existing entries. Continue?'))return;
+ recordHistory();for(let r=start+1;r<=17;r++)state.entries[col+r]=shiftReferences(txt,r-start);
+ state.check=false;save();rerender();toast('Filled '+(17-start)+' cells with adjusted references.');
+}
+function navigate(dx,dy){
+ const m=/^([A-G])(\d+)$/.exec(state.selected);
+ const i=cols.indexOf(m[1]),row=+m[2],newCol=cols[Math.max(0,Math.min(6,i+dx))],newRow=Math.max(1,Math.min(24,row+dy));
+ select(newCol+newRow);
+}
+function beginEdit(initial=null){
+ const a=state.selected;if(!editable(a)){toast('This cell is part of the assignment and cannot be edited.');return;}
+ if(inCell)return;
+ const td=document.querySelector('[data-cell="'+a+'"]');if(!td)return;
+ editingAddress=a;editingOriginal=state.entries[a]||'';
+ inCell=document.createElement('input');inCell.className='incell';inCell.setAttribute('aria-label','Editing '+a);
+ inCell.value=initial===null?editingOriginal:initial;
+ td.appendChild(inCell);
+ inCell.focus();if(initial===null)inCell.select();
+ $('formulaInput').value=inCell.value;
+ inCell.addEventListener('input',()=>{$('formulaInput').value=inCell.value;});
+ inCell.addEventListener('keydown',e=>{
+  if(e.key==='Enter'){e.preventDefault();commitEditor();navigate(0,e.shiftKey?-1:1);}
+  else if(e.key==='Tab'){e.preventDefault();commitEditor();navigate(e.shiftKey?-1:1,0);}
+  else if(e.key==='Escape'){e.preventDefault();cancelEditor();}
+  e.stopPropagation();
+ });
+}
+function commitEditor(){
+ if(!inCell)return;const v=inCell.value,a=editingAddress;inCell.remove();inCell=null;editingAddress=null;setCell(a,v);
+}
+function cancelEditor(){if(!inCell)return;inCell.remove();inCell=null;editingAddress=null;$('formulaInput').value=editingOriginal;$('workbook').focus();}
+function historyMove(undo=true){
+ if(inCell)commitEditor();
+ const src=undo?state.history:state.future,dst=undo?state.future:state.history;
+ if(!src.length)return;dst.push(snapshot());state.entries=src.pop();state.check=false;save();rerender();toast(undo?'Undone':'Redone');
+}
+function setFormat(fmt){if(!editable(state.selected)){toast('Select a blue cell to change number formatting.');return;}state.showFormat[state.selected]=fmt;rerender();}
+function counts(){const done=editables.filter(has);return {completed:done.length,formulaCount:done.filter(a=>raw(a).startsWith('=')).length,total:editables.length};}
+function makePayload(){
+ const r=calculate(),c=counts(),entries={};
+ for(const a of editables)entries[a]={entered:raw(a),formula:raw(a).startsWith('=')?raw(a):null,answer:r[a].error?null:r[a].value,error:r[a].error};
+ return {exercise:'loan-amortisation-months-1-8',student_name:state.name.trim(),student_id:state.studentId.trim(),entries:entries,formula_count:c.formulaCount,completed:c.completed,total:c.total,client_version:'excel-2'};
+}
+function startSubmission(){
+ if(inCell)commitEditor();
+ state.name=$('studentName').value.trim();state.studentId=$('studentId').value.trim();save();
+ if(state.name.length<2){toast('Enter your full name to submit.');$('studentName').focus();return;}
+ if(state.studentId.length<2){toast('Enter your student ID to submit.');$('studentId').focus();return;}
+ const c=counts();if(!c.completed){toast('Enter at least one answer or formula before submitting.');select('B6');return;}
+ $('reviewName').textContent=state.name;$('reviewId').textContent=state.studentId;
+ $('reviewCount').textContent=c.completed+' / '+c.total;
+ $('reviewFormulas').textContent=String(c.formulaCount);
+ $('submitWarn').textContent=c.completed<c.total?'Note: '+(c.total-c.completed)+' calculation cells are still blank. You can submit a partial worksheet.':'All calculation cells have an entry.';
+ $('submitError').hidden=true;
+ $('submitDialog').showModal();
+}
+async function sendSubmission(){
+ const btn=$('confirmSubmit');if(btn.disabled)return;
+ btn.disabled=true;btn.textContent='Submitting…';$('submitError').hidden=true;
+ const id=crypto.randomUUID();
+ try{
+   const response=await fetch(API_URL,{method:'POST',headers:{'apikey':API_KEY,'Authorization':'Bearer '+API_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify({...makePayload(),id})});
+   if(!response.ok){const details=await response.json().catch(()=>null);throw Error(details?.message||('Server error '+response.status));}
+   state.receipt={id:id,at:new Date().toISOString(),name:state.name};save();rerender();
+   $('submitDialog').close();$('receiptName').textContent=state.name;
+   $('receiptTime').textContent=new Date(state.receipt.at).toLocaleString('en-AU');
+   $('receiptId').textContent=id;$('receiptDialog').showModal();toast('Assignment submitted successfully.');
+ }catch(e){$('submitError').textContent='Submission failed. Your work is still saved locally. Please retry. ('+String(e.message||e).slice(0,150)+')';$('submitError').hidden=false;}
+ finally{btn.disabled=false;btn.textContent='Submit assignment';}
+}
+function reset(){
+ if(!confirm('Start a new worksheet? Your locally saved answers and student details will be cleared. Already submitted work stays with the instructor.'))return;
+ state.name='';state.studentId='';state.entries={};state.check=false;state.history=[];state.future=[];state.receipt=null;state.showFormat={};
+ $('studentName').value='';$('studentId').value='';select('B6');save();toast('Fresh worksheet created.');
+}
+function activateTab(t){
+ document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===t));
+ if(t==='Help'){ $('helpDialog').showModal();return;}
+ if(t==='Formulas'){toast('Select any blue cell and type a formula beginning with =. Example: =PMT(B7,B6,-B2)');}
+ if(t==='View'){toast('Showing the Loan schedule worksheet at 100% zoom.');}
+}
+function initialize(){
+ load();createGrid();$('studentName').value=state.name;$('studentId').value=state.studentId;
+ rerender();save();
+ $('sheetBody').addEventListener('click',e=>{
+  const td=e.target.closest('[data-cell]');if(!td)return;
+  if(inCell && td.dataset.cell===editingAddress)return;
+  select(td.dataset.cell);
+ });
+ $('sheetBody').addEventListener('dblclick',e=>{const td=e.target.closest('[data-cell]');if(td){select(td.dataset.cell);beginEdit();}});
+ $('formulaInput').addEventListener('input',e=>{if(editable(state.selected)){if(inCell){inCell.value=e.target.value;}else setCell(state.selected,e.target.value);}else {e.target.value=(state.selected in fixed?String(fixed[state.selected]):labels[state.selected]||'');}});
+ $('formulaInput').addEventListener('keydown',e=>{
+  if(e.key==='Enter'){e.preventDefault();if(inCell)commitEditor();navigate(0,e.shiftKey?-1:1);}
+  if(e.key==='Escape'){e.preventDefault();rerender();$('workbook').focus();}
+ });
+ $('nameBox').addEventListener('keydown',e=>{if(e.key==='Enter'){const address=e.target.value.trim().toUpperCase();if(allCells.includes(address)){select(address);$('workbook').focus();}else{toast('Cell address must be A1 through G24.');$('nameBox').value=state.selected;}}});
+ $('workbook').addEventListener('keydown',e=>{
+   if(e.ctrlKey||e.metaKey){
+     if(e.key.toLowerCase()==='z'){e.preventDefault();historyMove(true);}
+     if(e.key.toLowerCase()==='y'){e.preventDefault();historyMove(false);}
+     if(e.key.toLowerCase()==='s'){e.preventDefault();save();toast('Draft saved to this browser.');}
+     if(e.key.toLowerCase()==='d'){e.preventDefault();fillDown();}
+     return;
+   }
+   if(inCell)return;
+   if(e.key==='ArrowDown'||e.key==='Enter'){e.preventDefault();navigate(0,e.shiftKey?-1:1);}
+   else if(e.key==='ArrowUp'){e.preventDefault();navigate(0,-1);}
+   else if(e.key==='ArrowRight'||e.key==='Tab'){e.preventDefault();navigate(e.shiftKey?-1:1,0);}
+   else if(e.key==='ArrowLeft'){e.preventDefault();navigate(-1,0);}
+   else if(e.key==='F2'){e.preventDefault();beginEdit();}
+   else if(e.key==='Delete'||e.key==='Backspace'){e.preventDefault();setCell(state.selected,'');}
+   else if(e.key.length===1&&!e.altKey&&!e.ctrlKey&&!e.metaKey){e.preventDefault();beginEdit(e.key);}
+ });
+ for(const id of ['studentName','studentId'])$(id).addEventListener('input',e=>{state[id==='studentName'?'name':'studentId']=e.target.value;save();});
+ $('submitTop').addEventListener('click',startSubmission);$('confirmSubmit').addEventListener('click',sendSubmission);
+ $('undo').addEventListener('click',()=>historyMove(true));$('redo').addEventListener('click',()=>historyMove(false));
+ $('save').addEventListener('click',()=>{save();toast('Draft saved locally.');});
+ $('fillDown').addEventListener('click',fillDown);$('check').addEventListener('click',()=>{state.check=!state.check;rerender();toast(state.check?'Correct entries are green; entries needing work are red.':'Answer check hidden.');});
+ $('clear').addEventListener('click',()=>setCell(state.selected,''));
+ $('formatNumber').addEventListener('click',()=>setFormat('general'));
+ $('formatCurrency').addEventListener('click',()=>setFormat('currency'));
+ $('formatPercent').addEventListener('click',()=>setFormat('percent'));
+ $('newWork').addEventListener('click',reset);
+ $('howto').addEventListener('click',()=>$('helpDialog').showModal());
+ $('helpTop').addEventListener('click',()=>$('helpDialog').showModal());
+ $('extraSheet').addEventListener('click',()=>toast('This practice workbook contains one sheet.'));
+ document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>$(b.dataset.close).close()));
+ document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>activateTab(b.dataset.tab)));
+ document.querySelectorAll('dialog').forEach(d=>d.addEventListener('click',e=>{if(e.target===d)d.close();}));
+}
+initialize();
 </script>
 </body>
 </html>
