@@ -325,7 +325,7 @@ function rerender(){
 function select(a,focus=true){
  if(!allCells.includes(a))return;
  if(inCell)commitEditor();
- state.selected=a;rerender();save();
+ state.selected=a;rerender();$('formulaInput').value=editable(a)?state.entries[a]||'':(a in fixed?String(fixed[a]):labels[a]||'');save();
  const td=document.querySelector('[data-cell="'+a+'"]');
  if(td)td.scrollIntoView({block:'nearest',inline:'nearest'});
  if(focus)$('workbook').focus({preventScroll:true});
@@ -413,7 +413,7 @@ async function sendSubmission(){
  btn.disabled=true;btn.textContent='Submitting…';$('submitError').hidden=true;
  const id=crypto.randomUUID();
  try{
-   const response=await fetch(API_URL,{method:'POST',headers:{'apikey':API_KEY,'Authorization':'Bearer '+API_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify({...makePayload(),id})});
+   const response=await fetch(API_URL,{method:'POST',headers:{'apikey':API_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify({...makePayload(),id})});
    if(!response.ok){const details=await response.json().catch(()=>null);throw Error(details?.message||('Server error '+response.status));}
    state.receipt={id:id,at:new Date().toISOString(),name:state.name};save();rerender();
    $('submitDialog').close();$('receiptName').textContent=state.name;
