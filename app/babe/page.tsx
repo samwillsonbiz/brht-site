@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import {
-  ArrowDown, ArrowRight, ArrowUpRight, Headphones, Heart, Instagram,
+  ArrowDown, ArrowRight, ArrowUpRight, Headphones, Heart, Camera,
   Mail, Menu, MessageCircle, Mic2, Play, Radio, Sparkles, X,
 } from "lucide-react";
 
@@ -175,7 +175,7 @@ export default function BabePage() {
           <div className="mx-auto max-w-[1220px]">
             <div className="mx-auto max-w-[770px] text-center"><div className="flex justify-center"><Kicker>03 / Your turn to talk</Kicker></div><h2 className="mt-6 text-5xl font-black leading-[1.05] tracking-[-.065em] sm:text-7xl">Don&apos;t just listen.<br/><em className="font-normal text-[#e36d59]" style={{fontFamily:"Georgia,serif"}}>Get in on it.</em></h2><p className="mx-auto mt-6 max-w-[570px] text-lg leading-8 text-[#6b625d]">Have a hot take? An idea for an episode? A question for us? This is your invitation to be part of the conversation.</p></div>
             <div className="mt-14 grid gap-4 md:grid-cols-3">
-              <a className="group flex min-h-[295px] flex-col justify-between rounded-[27px] bg-[#f4c7b8] p-8 transition hover:-translate-y-1" href={links.instagram} target="_blank" rel="noopener noreferrer"><div className="flex justify-between"><Instagram size={29}/><ArrowUpRight size={21} className="transition group-hover:translate-x-1 group-hover:-translate-y-1"/></div><div><h3 className="text-2xl font-black tracking-[-.04em]">Join the conversation</h3><p className="mt-3 text-sm leading-6 text-[#67524b]">Follow the podcast for discussions, questions, polls and a chance to weigh in.</p><p className="mt-5 text-xs font-extrabold">@babe_what_do_you_know</p></div></a>
+              <a className="group flex min-h-[295px] flex-col justify-between rounded-[27px] bg-[#f4c7b8] p-8 transition hover:-translate-y-1" href={links.instagram} target="_blank" rel="noopener noreferrer"><div className="flex justify-between"><Camera size={29}/><ArrowUpRight size={21} className="transition group-hover:translate-x-1 group-hover:-translate-y-1"/></div><div><h3 className="text-2xl font-black tracking-[-.04em]">Join the conversation</h3><p className="mt-3 text-sm leading-6 text-[#67524b]">Follow the podcast for discussions, questions, polls and a chance to weigh in.</p><p className="mt-5 text-xs font-extrabold">@babe_what_do_you_know</p></div></a>
               <a className="group flex min-h-[295px] flex-col justify-between rounded-[27px] bg-[#e5e7d0] p-8 transition hover:-translate-y-1" href={links.taylaTikTok} target="_blank" rel="noopener noreferrer"><div className="flex justify-between"><Radio size={29}/><ArrowUpRight size={21} className="transition group-hover:translate-x-1 group-hover:-translate-y-1"/></div><div><h3 className="text-2xl font-black tracking-[-.04em]">More Tayla, less filter</h3><p className="mt-3 text-sm leading-6 text-[#5b5c4c]">Keep up with Tayla&apos;s takes, everyday moments and short-form stories.</p><p className="mt-5 text-xs font-extrabold">@tattletayla on TikTok</p></div></a>
               <a className="group flex min-h-[295px] flex-col justify-between rounded-[27px] bg-[#ded9ee] p-8 transition hover:-translate-y-1" href={links.contact}><div className="flex justify-between"><Mail size={29}/><ArrowUpRight size={21} className="transition group-hover:translate-x-1 group-hover:-translate-y-1"/></div><div><h3 className="text-2xl font-black tracking-[-.04em]">Pitch us a topic</h3><p className="mt-3 text-sm leading-6 text-[#5c566b]">Got a question, a ridiculous hypothetical, or something we should unpack? Send it our way.</p><p className="mt-5 text-xs font-extrabold">OUR INBOX IS OPEN</p></div></a>
             </div>
@@ -204,7 +204,7 @@ export default function BabePage() {
           <div className="flex flex-wrap items-center gap-5 text-xs font-bold text-[#615a54]">
             <a href={links.spotify} target="_blank" rel="noopener noreferrer" className="hover:text-[#df624e]">Spotify</a>
             <a href={links.apple} target="_blank" rel="noopener noreferrer" className="hover:text-[#df624e]">Apple Podcasts</a>
-            <a href={links.instagram} target="_blank" rel="noopener noreferrer" className="hover:text-[#df624e]">Instagram</a>
+            <a href={links.instagram} target="_blank" rel="noopener noreferrer" className="hover:text-[#df624e]">Camera</a>
             <a href={links.taylaTikTok} target="_blank" rel="noopener noreferrer" className="hover:text-[#df624e]">TikTok</a>
             <a href={links.contact} className="hover:text-[#df624e]">Contact</a>
           </div>
