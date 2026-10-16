@@ -204,7 +204,7 @@ export default function BabePage() {
           <div className="flex flex-wrap items-center gap-5 text-xs font-bold text-[#615a54]">
             <a href={links.spotify} target="_blank" rel="noopener noreferrer" className="hover:text-[#df624e]">Spotify</a>
             <a href={links.apple} target="_blank" rel="noopener noreferrer" className="hover:text-[#df624e]">Apple Podcasts</a>
-            <a href={links.instagram} target="_blank" rel="noopener noreferrer" className="hover:text-[#df624e]">Camera</a>
+            <a href={links.instagram} target="_blank" rel="noopener noreferrer" className="hover:text-[#df624e]">Instagram</a>
             <a href={links.taylaTikTok} target="_blank" rel="noopener noreferrer" className="hover:text-[#df624e]">TikTok</a>
             <a href={links.contact} className="hover:text-[#df624e]">Contact</a>
           </div>
