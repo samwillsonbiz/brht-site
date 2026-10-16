@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import {
-  ArrowDown, ArrowRight, ArrowUpRight, Headphones, Heart, Camera,
+  ArrowDown, ArrowRight, ArrowUpRight, Heart, Camera,
   Mail, Menu, MessageCircle, Mic2, Play, Radio, Sparkles, X,
 } from "lucide-react";
 
@@ -29,6 +29,26 @@ function PillLink({ href, children, dark = false, external = false }: { href: st
     {children}<ArrowUpRight size={16} strokeWidth={2.5}/></a>;
 }
 
+function SpotifyMark() {
+  return <svg role="img" aria-label="Spotify" viewBox="0 0 32 32" width="34" height="34">
+    <circle cx="16" cy="16" r="16" fill="#1DB954"/>
+    <path d="M7 12c6-2 13-1.2 18 2" fill="none" stroke="#12351e" strokeWidth="2.5" strokeLinecap="round"/>
+    <path d="M8.4 17c5.3-1.6 11-1 15 1.6" fill="none" stroke="#12351e" strokeWidth="2.2" strokeLinecap="round"/>
+    <path d="M10 21.5c4.2-1.2 8.5-.5 12 1.4" fill="none" stroke="#12351e" strokeWidth="2" strokeLinecap="round"/>
+  </svg>;
+}
+function ApplePodcastMark() {
+  return <svg role="img" aria-label="Apple Podcasts" viewBox="0 0 32 32" width="34" height="34">
+    <circle cx="16" cy="16" r="16" fill="#A449E8"/>
+    <g fill="none" stroke="white" strokeWidth="1.7" strokeLinecap="round">
+      <path d="M11 21a9 9 0 1 1 10 0"/>
+      <path d="M12.7 18.4a5.5 5.5 0 1 1 6.6 0"/>
+    </g>
+    <circle cx="16" cy="16" r="2.3" fill="white"/>
+    <path d="M14.1 20.2c-.7 0-1.1.6-.9 1.4l1 5.2c.1.5.5.8 1 .8h1.6c.5 0 .9-.3 1-.8l1-5.2c.2-.8-.2-1.4-.9-1.4z" fill="white"/>
+  </svg>;
+}
+
 function Kicker({children}:{children:React.ReactNode}) {
   return <div className="flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-[0.2em] text-[#895d5b]"><span className="h-1.5 w-1.5 rounded-full bg-[#f57760]"/>{children}</div>;
 }
@@ -46,9 +66,6 @@ export default function BabePage() {
   const close = () => setMenuOpen(false);
   return (
     <div className="min-h-screen overflow-hidden bg-[#fcf9f3] font-sans text-[#211d1d] selection:bg-[#ffb8a8]">
-      <div className="bg-[#282222] px-4 py-2.5 text-center text-[10px] font-bold uppercase tracking-[0.16em] text-[#f7e7dd] sm:text-xs">
-        The podcast, the people, and everything in between <span className="mx-1.5 text-[#fb937b]">✳</span> Welcome to our corner
-      </div>
       <header className="sticky top-0 z-40 border-b border-[#221c1b]/10 bg-[#fcf9f3]/95 backdrop-blur-xl">
         <nav className="mx-auto flex h-[76px] max-w-[1220px] items-center justify-between gap-5 px-5 sm:px-8" aria-label="Main navigation">
           <a href="#top" onClick={close} className="flex items-center gap-3 text-left" aria-label="Babe What Do You Know About home">
@@ -56,41 +73,36 @@ export default function BabePage() {
             <span className="text-[15px] font-black leading-[1.05] tracking-[-0.055em]">babe,<br/>what do you know about?</span>
           </a>
           <div className="hidden items-center gap-9 text-sm font-semibold text-[#514b46] md:flex">
-            <a className="transition hover:text-[#df624e]" href="#listen">Listen</a>
+            <a className="transition hover:text-[#df624e]" href="#listen">Listen &amp; follow</a>
+            <a className="transition hover:text-[#df624e]" href="/babe/archive">Episodes</a>
             <a className="transition hover:text-[#df624e]" href="#about">About us</a>
             <a className="transition hover:text-[#df624e]" href="#community">Community</a>
             <a className="transition hover:text-[#df624e]" href="#work-with-us">Work with us</a>
           </div>
           <div className="flex items-center gap-2">
-            <a href="#community" className="hidden min-h-10 items-center gap-2 rounded-full bg-[#211d1d] px-5 text-xs font-bold text-white transition hover:bg-[#48403d] sm:inline-flex">Come hang out <ArrowUpRight size={15}/></a>
+            <a href="/babe/archive" className="hidden min-h-10 items-center gap-2 rounded-full bg-[#211d1d] px-5 text-xs font-bold text-white transition hover:bg-[#48403d] sm:inline-flex">Find an episode <ArrowUpRight size={15}/></a>
             <button type="button" aria-label={menuOpen ? "Close menu" : "Open menu"} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}
               className="flex h-11 w-11 items-center justify-center rounded-xl border border-[#211d1d]/10 md:hidden">{menuOpen ? <X size={21}/> : <Menu size={21}/>}</button>
           </div>
         </nav>
         {menuOpen && <div className="flex flex-col gap-1 border-t border-black/10 bg-[#fcf9f3] px-5 py-3 font-semibold md:hidden">
-          {[["Listen","#listen"],["About us","#about"],["Community","#community"],["Work with us","#work-with-us"]].map(([name,href]) =>
+          {[["Listen & follow","#listen"],["All episodes","/babe/archive"],["About us","#about"],["Community","#community"],["Work with us","#work-with-us"]].map(([name,href]) =>
             <a key={href} href={href} onClick={close} className="rounded-xl px-3 py-3 hover:bg-[#f6eee7]">{name}</a>
           )}
         </div>}
       </header>
 
       <main id="top">
-        <section className="relative mx-auto grid max-w-[1220px] items-center gap-10 px-5 pb-20 pt-14 sm:px-8 lg:grid-cols-[1.06fr_0.94fr] lg:gap-14 lg:pb-28 lg:pt-20">
+        <section className="relative mx-auto grid max-w-[1220px] items-center gap-10 px-5 pb-16 pt-12 sm:px-8 lg:grid-cols-[1.06fr_0.94fr] lg:gap-12 lg:pb-20 lg:pt-16">
           <div className="relative z-10">
-            <Kicker>The Sam &amp; Tayla podcast</Kicker>
-            <h1 className="mt-7 max-w-[740px] text-[clamp(3.7rem,7.6vw,7.45rem)] font-black leading-[0.93] tracking-[-0.075em]">
+            <h1 className="mt-0 max-w-[740px] text-[clamp(3.7rem,7.6vw,7.45rem)] font-black leading-[0.93] tracking-[-0.075em]">
               Life is<br/>better with<br/><span className="font-normal italic text-[#e36d59]" style={{fontFamily:"Georgia, 'Times New Roman', serif"}}>a little</span><br/>debate.
             </h1>
             <p className="mt-8 max-w-[505px] text-lg leading-[1.75] text-[#6b625d] sm:text-xl">
-              Two married people. A lot of opinions. Honest conversations about life, culture, big ideas, and all the stuff we probably should have Googled first.
+              Two married people. A lot of opinions. Real conversations about life, culture, and the things we probably should have Googled first.
             </p>
-            <div className="mt-9 flex flex-wrap gap-3">
-              <PillLink href="#listen">Listen to the podcast</PillLink>
-              <PillLink href="#community" dark>Join the conversation</PillLink>
-            </div>
-            <div className="mt-10 flex items-center gap-3 text-xs font-semibold text-[#897e78]">
-              <div className="flex -space-x-2"><span className="grid h-9 w-9 place-items-center rounded-full border-2 border-[#fcf9f3] bg-[#d5c9ea] text-sm font-bold text-[#352a49]">S</span><span className="grid h-9 w-9 place-items-center rounded-full border-2 border-[#fcf9f3] bg-[#f9c9a4] text-sm font-bold text-[#583227]">T</span></div>
-              Real conversations. Real life. Real different takes.
+            <div className="mt-9">
+              <PillLink href="#listen">Listen &amp; follow</PillLink>
             </div>
           </div>
 
@@ -98,7 +110,7 @@ export default function BabePage() {
             <div className="absolute -left-8 top-14 h-40 w-40 rounded-full bg-[#c0d5d2]/70 blur-[2px] sm:-left-14"/>
             <div className="absolute -right-6 -bottom-8 h-36 w-36 rounded-full bg-[#edb8c4] sm:-right-12"/>
             <div className="relative rotate-[2.5deg] overflow-hidden rounded-[35px] border-[10px] border-[#211d1d] bg-[#f6b8a4] shadow-[18px_20px_0px_#e7e2d9] sm:rounded-[45px]">
-              <div className="relative flex min-h-[500px] flex-col p-7 sm:min-h-[585px] sm:p-11">
+              <div className="relative flex min-h-[445px] flex-col p-7 sm:min-h-[520px] sm:p-10">
                 <div className="flex items-start justify-between">
                   <div className="rounded-full border-2 border-[#211d1d] px-4 py-2 text-[10px] font-black uppercase tracking-[0.14em]">A podcast &amp; a community</div>
                   <Mic2 size={29} strokeWidth={1.7}/>
@@ -125,31 +137,43 @@ export default function BabePage() {
           </div>
         </div>
 
-        <section id="listen" className="scroll-mt-28 bg-[#fffdf9] px-5 py-24 sm:px-8 lg:py-32">
+        <section id="listen" className="scroll-mt-28 bg-[#fffdf9] px-5 py-16 sm:px-8 lg:py-20">
           <div className="mx-auto max-w-[1220px]">
             <div className="flex flex-wrap items-end justify-between gap-8">
               <div><Kicker>01 / Listen in</Kicker><h2 className="mt-5 max-w-[780px] text-5xl font-black leading-[1.02] tracking-[-0.06em] sm:text-7xl">A good place<br/><em className="font-normal text-[#e36d59]" style={{fontFamily:"Georgia,serif"}}>to start.</em></h2></div>
-              <a target="_blank" rel="noopener noreferrer" href={links.archive} className="inline-flex items-center gap-2 border-b-2 border-[#211d1d] pb-2 text-sm font-bold">Explore all 73 episodes <ArrowUpRight size={17}/></a>
+              <a href="/babe/archive" className="inline-flex items-center gap-2 border-b-2 border-[#211d1d] pb-2 text-sm font-bold">Search all 73 episodes <ArrowUpRight size={17}/></a>
             </div>
-            <div className="mt-12 grid gap-5 md:grid-cols-3">
-              {episodes.map((ep,i)=><a target="_blank" rel="noopener noreferrer" href={ep.href} key={ep.number}
+            <p className="mt-6 text-base text-[#766d67]">Pick your favourite listening app, then tap <strong className="text-[#211d1d]">Follow</strong> there to hear what comes next.</p>
+            <div className="mt-7 grid gap-3 sm:grid-cols-3">
+              <a href={links.spotify} target="_blank" rel="noopener noreferrer" className="group flex min-h-24 items-center gap-4 rounded-2xl border border-[#211d1d]/10 bg-[#f4f0ea] px-6 py-5 transition hover:-translate-y-1 hover:bg-[#eae4dd]">
+                <SpotifyMark/>
+                <span className="min-w-0 flex-1"><strong className="block text-lg font-black tracking-[-.04em]">Spotify</strong><span className="text-xs font-medium text-[#786e66]">Open &amp; follow</span></span>
+                <ArrowUpRight size={18} className="transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5"/>
+              </a>
+              <a href={links.apple} target="_blank" rel="noopener noreferrer" className="group flex min-h-24 items-center gap-4 rounded-2xl border border-[#211d1d]/10 bg-[#f4f0ea] px-6 py-5 transition hover:-translate-y-1 hover:bg-[#eae4dd]">
+                <ApplePodcastMark/>
+                <span className="min-w-0 flex-1"><strong className="block text-lg font-black tracking-[-.04em]">Apple Podcasts</strong><span className="text-xs font-medium text-[#786e66]">Open &amp; follow</span></span>
+                <ArrowUpRight size={18} className="transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5"/>
+              </a>
+              <a href={links.archive} target="_blank" rel="noopener noreferrer" className="group flex min-h-24 items-center gap-4 rounded-2xl border border-[#211d1d]/10 bg-[#f4f0ea] px-6 py-5 transition hover:-translate-y-1 hover:bg-[#eae4dd]">
+                <span className="grid h-[34px] w-[34px] place-items-center rounded-full bg-[#211d1d] text-xs font-black text-white">•••</span>
+                <span className="min-w-0 flex-1"><strong className="block text-lg font-black tracking-[-.04em]">Other apps</strong><span className="text-xs font-medium text-[#786e66]">See all platforms</span></span>
+                <ArrowUpRight size={18} className="transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5"/>
+              </a>
+            </div>
+            <div className="mt-10 flex flex-wrap items-center justify-between gap-3">
+              <h3 className="text-xl font-black tracking-[-.04em]">A few conversations to try</h3>
+              <a href="/babe/archive" className="inline-flex items-center gap-2 text-sm font-bold underline underline-offset-4">Browse the archive <ArrowRight size={16}/></a>
+            </div>
+            <div className="mt-5 grid gap-5 md:grid-cols-3">
+              {episodes.map((ep)=><a target="_blank" rel="noopener noreferrer" href={ep.href} key={ep.number}
                 className="group overflow-hidden rounded-[26px] border border-[#211d1d]/10 bg-[#fffdf9] transition duration-200 hover:-translate-y-1 hover:shadow-[8px_9px_0_#e4d9d0]">
-                <div className={"relative flex h-[225px] flex-col justify-between p-7 " + ep.color}>
+                <div className={"relative flex h-[183px] flex-col justify-between p-6 " + ep.color}>
                   <div className="flex justify-between text-[10px] font-extrabold uppercase tracking-[.15em]"><span>EP {ep.number}</span><span>{ep.type}</span></div>
                   <div className="flex items-end justify-between gap-4"><div className="text-[36px] font-black leading-[.98] tracking-[-.06em]">{ep.title}</div><span className="grid h-12 w-12 flex-none place-items-center rounded-full bg-[#211d1d] text-white transition group-hover:scale-110"><Play size={19} fill="currentColor"/></span></div>
                 </div>
                 <div className="p-6"><div className="flex justify-between text-xs font-bold text-[#a19892]"><span>{ep.date}</span><span>{ep.length}</span></div><p className="mt-4 text-sm leading-6 text-[#6b625d]">{ep.detail}</p></div>
               </a>)}
-            </div>
-            <div className="mt-12 grid gap-8 rounded-[30px] bg-[#f3f0e9] p-6 md:grid-cols-[0.65fr_1fr] md:items-center md:p-9">
-              <div><div className="flex items-center gap-2 text-sm font-black"><Headphones className="h-5 w-5"/> Press play</div><h3 className="mt-3 text-2xl font-black tracking-[-.04em]">Listen wherever you are.</h3><p className="mt-3 text-sm leading-6 text-[#736b66]">Catch up on the archive while we work on what comes next.</p>
-                <div className="mt-6 flex flex-wrap gap-3">
-                  <a className="inline-flex items-center gap-1 text-sm font-bold underline underline-offset-4" target="_blank" rel="noopener noreferrer" href={links.spotify}>Spotify <ArrowUpRight size={14}/></a>
-                  <a className="inline-flex items-center gap-1 text-sm font-bold underline underline-offset-4" target="_blank" rel="noopener noreferrer" href={links.apple}>Apple Podcasts <ArrowUpRight size={14}/></a>
-                  <a className="inline-flex items-center gap-1 text-sm font-bold underline underline-offset-4" target="_blank" rel="noopener noreferrer" href={links.archive}>More platforms <ArrowUpRight size={14}/></a>
-                </div>
-              </div>
-              <iframe title="Babe, What Do You Know About? on Spotify" src="https://open.spotify.com/embed/show/0pobL9iyx43mYTYgacAUvw?utm_source=generator" width="100%" height="232" loading="lazy" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" className="w-full rounded-2xl" />
             </div>
           </div>
         </section>
