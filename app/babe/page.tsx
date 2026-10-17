@@ -99,7 +99,7 @@ export default function BabePage() {
 
       <section id="community" className="babe-section babe-community" style={{scrollMarginTop:90}}>
         <div className="babe-container babe-community-grid">
-          <div><div className="babe-eyebrow">Your turn</div><h2 className="babe-title">You&apos;ve heard us.<br/><span className="babe-script" style={{color:"#C2473C"}}Now you.</span></h2><p className="babe-body">What should we argue about next? Bring your questions, your hot takes and the topics you want us to unpack.</p></div>
+          <div><div className="babe-eyebrow">Your turn</div><h2 className="babe-title">You&apos;ve heard us.<br/><span className="babe-script" style={{color:"#C2473C"}}>Now you.</span></h2><p className="babe-body">What should we argue about next? Bring your questions, your hot takes and the topics you want us to unpack.</p></div>
           <div className="babe-community-actions">
             <a href={links.instagram} target="_blank" rel="noopener noreferrer" className="babe-action-card"><div><strong>Join the conversation</strong><span>Find us on Instagram</span></div><MessageCircle size={24}/></a>
             <a href={links.contact} className="babe-action-card"><div><strong>Suggest a topic</strong><span>Send a question for a future episode</span></div><ArrowUpRight size={24}/></a>
