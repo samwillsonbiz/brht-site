@@ -1,11 +1,13 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { fetchNbaSchedule } from "@/lib/espnNba";
 import { selectRows } from "@/lib/supabaseRest";
 
 export const dynamic = "force-dynamic";
 
-const FIRST = "2026-10-19";
-const LAST = "2026-11-29";
+const OPENING = "2026-10-19";
+function plusDays(date: string, days: number) {
+  return new Date(Date.parse(date + "T12:00:00Z") + days * 86400000).toISOString().slice(0, 10);
+}
 type CachedGame = {
   espn_event_id: string;
   game_date_et: string;
@@ -13,7 +15,10 @@ type CachedGame = {
   away_team_espn_id: number;
 };
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const startWeek = Math.max(1, Math.min(22, Math.floor(Number(request.nextUrl.searchParams.get("startWeek")) || 1)));
+  const FIRST = plusDays(OPENING, (startWeek - 1) * 7);
+  const LAST = plusDays(FIRST, 41);
   try {
     const cached = await selectRows("nba_games", {
       select: "espn_event_id,game_date_et,home_team_espn_id,away_team_espn_id",
@@ -46,7 +51,7 @@ export async function GET() {
     const games = Array.from(byId.values()).sort((a, b) => a.gameDateEt.localeCompare(b.gameDateEt));
     if (games.length < 220) throw new Error("Incomplete six-week NBA schedule");
     return NextResponse.json({
-      ok: true, from: FIRST, to: LAST, games, gameCount: games.length,
+      ok: true, from: FIRST, to: LAST, startWeek, games, gameCount: games.length,
       cachedGames: cached.filter((g) => g.game_date_et <= LAST).length,
       updatedThrough: LAST,
     }, { headers: { "Cache-Control": "no-store" } });
