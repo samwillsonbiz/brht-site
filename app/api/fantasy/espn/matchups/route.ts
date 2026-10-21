@@ -24,14 +24,19 @@ export async function GET() {
     const extra = league as typeof league & ExtendedLeague;
     const names = new Map((league.teams ?? []).map((team) => [team.id, teamDisplayName(team)]));
     const all = extra.schedule ?? [];
-    const matchups = all.filter((m) => Number(m.matchupPeriodId) >= 1 && Number(m.matchupPeriodId) <= 6);
+    const firstWeek = Math.max(1, Math.min(17, Number(league.status?.currentMatchupPeriod ?? 1) || 1));
+    const matchups = all.filter((m) => Number(m.matchupPeriodId) >= firstWeek && Number(m.matchupPeriodId) < firstWeek + 6);
     return NextResponse.json({
       ok: true,
       leagueId: Number(config.leagueId),
       myTeamId: Number(config.teamId),
+      firstWeek,
       scheduleRows: all.length,
       matchupPeriods: extra.settings?.scheduleSettings?.matchupPeriods ?? null,
-      teams: (league.teams ?? []).map((t) => ({ id: t.id, name: teamDisplayName(t), players: t.roster?.entries?.length ?? 0 })),
+      teams: (league.teams ?? []).map((t) => ({
+        id: t.id, name: teamDisplayName(t), players: t.roster?.entries?.length ?? 0,
+        roster: (t.roster?.entries ?? []).map((e) => ({ id: e.playerId ?? e.playerPoolEntry?.player?.id ?? null, slot: e.lineupSlotId ?? null })).filter((e) => e.id != null),
+      })),
       matchups: matchups.map((m) => ({
         id: m.id ?? null,
         week: m.matchupPeriodId,
