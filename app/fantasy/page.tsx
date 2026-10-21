@@ -4,16 +4,16 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { ArrowDown, ArrowUp, CalendarDays, ChevronRight, RefreshCw, ShieldAlert, Target, Users, Zap } from "lucide-react";
 
-type Stats = { id: string | null; statSourceId: number | null; statSplitTypeId: number | null; appliedAverage: number | null };
+type Stats = { id: string | null; statSourceId: number | null; statSplitTypeId: number | null; appliedAverage: number | null; appliedTotal: number | null; scoringPeriodId: number | null };
 type EspnPlayer = { id: number; name: string; fantasyTeamId: number; rosterSlotId?: number | null; proTeamId: number | null; eligibleSlots: number[]; defaultPositionId: number | null; injuryStatus: string | null; stats: Stats[] };
 type Matchup = { id: number | null; week: number; homeId: number | null; awayId: number | null; home: string | null; away: string | null; homeActual?: number | null; awayActual?: number | null };
 type EspnTeams = { ok: boolean; leagueId: number; myTeamId: number; firstWeek: number; teams: { id: number; name: string; players: number; roster: { id: number; slot: number | null }[] }[]; matchups: Matchup[] };
-type Game = { id: string; gameDateEt: string; home: { id: number }; away: { id: number } };
+type Game = { id: string; gameDateEt: string; home: { id: number }; away: { id: number }; status: string | null; completed: boolean };
 type Feed = { league: EspnTeams; players: EspnPlayer[]; games: Game[]; updated: string; cachedGames: number };
-type PlannedPlayer = { player: EspnPlayer; ppg: number; source: "ESPN 2027" | "2026 actual" | "missing"; days: boolean[] };
+type PlannedPlayer = { player: EspnPlayer; ppg: number; source: "ESPN 2027" | "2026 actual" | "missing"; days: boolean[]; nbaScheduled: number; nbaPlayed: number; seasonActual: number | null; seasonGames: number; actualByDay: Record<string, number> };
 type Start = { player: PlannedPlayer; slot: string };
-type DayPlan = { date: string; starters: Start[]; benchGames: PlannedPlayer[]; scheduled: number; projected: number };
-type TeamPlan = { teamId: number; players: PlannedPlayer[]; days: DayPlan[]; projected: number; starts: number; scheduled: number; lost: number; missing: number; flagged: number };
+type DayPlan = { date: string; starters: Start[]; benchGames: PlannedPlayer[]; scheduled: number; projected: number; nbaActual: number; completedPlayerGames: number };
+type TeamPlan = { teamId: number; players: PlannedPlayer[]; days: DayPlan[]; projected: number; starts: number; scheduled: number; lost: number; missing: number; flagged: number; nbaActual: number };
 type WeekPlan = { week: number; start: string; end: string; opponentId: number | null; opponentName: string; mine: TeamPlan; opponent: TeamPlan; validMatchup: boolean; actualMine: number | null; actualOpponent: number | null };
 
 const OPENING_MONDAY = "2026-10-19";
@@ -29,11 +29,20 @@ function formatDate(iso: string) {
 }
 function fmt(n: number) { return Math.round(n).toLocaleString("en-US"); }
 function ppgFor(player: EspnPlayer) {
+  const season = (player.stats ?? []).find((s) => s.id === "002027" && s.statSourceId === 0 && s.statSplitTypeId === 0);
+  const gameStats = (player.stats ?? []).filter((s) => s.statSourceId === 0 && s.statSplitTypeId === 5 && s.id?.startsWith("05") && s.appliedTotal != null);
+  const seasonGames = gameStats.length;
+  const seasonActual = seasonGames > 0 && season?.appliedAverage != null ? Number(season.appliedAverage) : null;
   const annual = (player.stats ?? []).find((s) => s.id === "102027" && s.statSourceId === 1 && s.statSplitTypeId === 0 && Number(s.appliedAverage) > 0);
-  if (annual) return { ppg: Number(annual.appliedAverage), source: "ESPN 2027" as const };
-  const actual = (player.stats ?? []).find((s) => s.id === "002026" && s.statSourceId === 0 && Number(s.appliedAverage) > 0);
-  if (actual) return { ppg: Number(actual.appliedAverage), source: "2026 actual" as const };
-  return { ppg: 0, source: "missing" as const };
+  const previous = (player.stats ?? []).find((s) => s.id === "002026" && s.statSourceId === 0 && Number(s.appliedAverage) > 0);
+  const baseline = annual ? Number(annual.appliedAverage) : previous ? Number(previous.appliedAverage) : seasonActual ?? 0;
+  // Show raw current-season average immediately, but wait for a useful sample
+  // before allowing it to overwhelm ESPN's preseason forward projection.
+  const weight = seasonActual != null && seasonGames >= 2
+    ? Math.min(0.75, (seasonGames - 1) / (seasonGames + 5)) : 0;
+  const ppg = baseline * (1 - weight) + (seasonActual ?? baseline) * weight;
+  const source = annual ? "ESPN 2027" as const : previous ? "2026 actual" as const : seasonActual != null ? "ESPN 2027" as const : "missing" as const;
+  return { ppg, source, seasonActual, seasonGames };
 }
 function eligible(p: PlannedPlayer, slot: string) {
   const ppos = (p.player.eligibleSlots ?? []).filter((id) => id >= 0 && id <= 4).map((id) => POSITION[id]);
@@ -44,7 +53,7 @@ function eligible(p: PlannedPlayer, slot: string) {
   return ppos.includes(slot);
 }
 function optimizeDay(date: string, team: PlannedPlayer[], index: number): DayPlan {
-  const playing = team.filter((p) => p.days[index] && (p.player.rosterSlotId == null || p.player.rosterSlotId < 13) && !["OUT", "INJURY_RESERVE", "IR", "SUSPENSION"].includes((p.player.injuryStatus ?? "").toUpperCase()));
+  const playing = team.filter((p) => p.days[index] && p.player.rosterSlotId !== 13 && !["OUT", "INJURY_RESERVE", "IR", "SUSPENSION"].includes((p.player.injuryStatus ?? "").toUpperCase()));
   type State = { score: number; starters: Start[] };
   let states = new Map<number, State>([[0, { score: 0, starters: [] }]]);
   for (const player of playing) {
@@ -65,23 +74,37 @@ function optimizeDay(date: string, team: PlannedPlayer[], index: number): DayPla
   let best: State = { score: 0, starters: [] };
   for (const state of states.values()) if (state.score > best.score) best = state;
   const used = new Set(best.starters.map((s) => s.player.player.id));
-  return { date, starters: best.starters, benchGames: playing.filter((p) => !used.has(p.player.id)), scheduled: playing.length, projected: best.score };
+  return { date, starters: best.starters, benchGames: playing.filter((p) => !used.has(p.player.id)), scheduled: playing.length, projected: best.score,
+    nbaActual: team.reduce((sum, p) => sum + (p.actualByDay[date] ?? 0), 0),
+    completedPlayerGames: team.filter((p) => p.actualByDay[date] !== undefined).length };
 }
 function teamPlan(teamId: number, weekStart: string, players: EspnPlayer[], games: Game[]): TeamPlan {
-  const schedule = new Map<number, Set<string>>();
+  const schedule = new Map<number, Game[]>();
   for (const game of games) {
     if (game.gameDateEt < weekStart || game.gameDateEt > datePlus(weekStart, 6)) continue;
     for (const team of [game.home.id, game.away.id]) {
       if (!team) continue;
-      const dates = schedule.get(team) ?? new Set<string>();
-      dates.add(game.gameDateEt);
-      schedule.set(team, dates);
+      const events = schedule.get(team) ?? [];
+      events.push(game);
+      schedule.set(team, events);
     }
   }
   const owned = players.filter((p) => p.fantasyTeamId === teamId);
   const mapped: PlannedPlayer[] = owned.map((p) => {
     const projection = ppgFor(p);
-    return { player: p, ppg: projection.ppg, source: projection.source, days: Array.from({ length: 7 }, (_, d) => schedule.get(p.proTeamId ?? -1)?.has(datePlus(weekStart, d)) ?? false) };
+    const nbaGames = schedule.get(p.proTeamId ?? -1) ?? [];
+    const remaining = nbaGames.filter((g) => !g.completed && !g.status?.includes("IN_PROGRESS") && !g.status?.includes("HALFTIME") && g.status !== "STATUS_END_PERIOD");
+    const actualByDay: Record<string, number> = {};
+    for (const game of nbaGames) {
+      const stat = (p.stats ?? []).find((s) => s.id === "05" + game.id && s.statSourceId === 0 && s.statSplitTypeId === 5);
+      if (stat && stat.appliedTotal != null) actualByDay[game.gameDateEt] = Number(stat.appliedTotal);
+    }
+    return {
+      player: p, ppg: projection.ppg, source: projection.source,
+      seasonActual: projection.seasonActual, seasonGames: projection.seasonGames,
+      nbaScheduled: nbaGames.length, nbaPlayed: Object.keys(actualByDay).length,
+      actualByDay, days: Array.from({ length: 7 }, (_, d) => remaining.some((g) => g.gameDateEt === datePlus(weekStart, d))),
+    };
   });
   const days = Array.from({ length: 7 }, (_, d) => optimizeDay(datePlus(weekStart, d), mapped, d));
   return {
@@ -90,10 +113,12 @@ function teamPlan(teamId: number, weekStart: string, players: EspnPlayer[], game
     starts: days.reduce((sum, d) => sum + d.starters.length, 0),
     scheduled: days.reduce((sum, d) => sum + d.scheduled, 0),
     lost: days.reduce((sum, d) => sum + d.benchGames.length, 0),
-    missing: mapped.filter((p) => p.source !== "ESPN 2027").length,
+    missing: mapped.filter((p) => p.source === "missing").length,
     flagged: mapped.filter((p) => p.player.injuryStatus && !["ACTIVE", "NORMAL"].includes(p.player.injuryStatus.toUpperCase())).length,
+    nbaActual: days.reduce((sum, d) => sum + d.nbaActual, 0),
   };
 }
+
 function makeWeeks(feed: Feed): WeekPlan[] {
   const names = new Map(feed.league.teams.map((t) => [t.id, t.name.trim()]));
   const me = feed.league.myTeamId;
@@ -121,6 +146,12 @@ export default function FantasyPage() {
   const [selectedWeek, setSelectedWeek] = useState(0);
   const [selectedDay, setSelectedDay] = useState(1);
   const [rosterTab, setRosterTab] = useState<"mine" | "opp">("mine");
+
+  // Once games begin, update the live scoreboard while the tab is open.
+  useEffect(() => {
+    const interval = window.setInterval(() => setRefreshId((current) => current + 1), 120_000);
+    return () => window.clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
