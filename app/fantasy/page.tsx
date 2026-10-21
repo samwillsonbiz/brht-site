@@ -293,7 +293,7 @@ export default function FantasyPage() {
                   return <button type="button" key={d.date} onClick={() => setSelectedDay(i)} className={"rounded-[16px] border px-3 py-3 text-left " + (selectedDay === i ? "border-[#0071e3] bg-[#eef6ff]" : "border-black/[0.06] bg-[#fafafa]")}>
                     <div className="flex justify-between gap-1 text-xs font-semibold">{DAY_NAMES[i]}<span className="font-normal text-black/35">{formatDate(d.date)}</span></div>
                     <div className="mt-2 text-base font-semibold text-[#0071e3]">{fmt(d.projected)}</div><div className="text-xs font-medium text-[#f05b52]">{fmt(their.projected)}</div>
-                    {(d.completedPlayerGames + their.completedPlayerGames > 0) && <p className="mt-1 text-[10px] font-medium text-black/45">{d.completedPlayerGames + their.completedPlayerGames} NBA player results posted</p>
+                    {(d.completedPlayerGames + their.completedPlayerGames > 0) && <p className="mt-1 text-[10px] font-medium text-black/45">{d.completedPlayerGames + their.completedPlayerGames} NBA player results posted</p>}
                     <div className={"mt-2 text-[11px] font-semibold " + (diff >= 0 ? "text-emerald-700" : "text-red-600")}>{diff >= 0 ? "+" : ""}{fmt(diff)} edge</div>
                     <div className="mt-1 text-[10px] text-black/40">{d.starters.length} vs {their.starters.length} starts</div>
                   </button>;
