@@ -93,7 +93,7 @@ function teamPlan(teamId: number, weekStart: string, players: EspnPlayer[], game
   const mapped: PlannedPlayer[] = owned.map((p) => {
     const projection = ppgFor(p);
     const nbaGames = schedule.get(p.proTeamId ?? -1) ?? [];
-    const remaining = nbaGames.filter((g) => !g.completed && !g.status?.includes("IN_PROGRESS") && !g.status?.includes("HALFTIME") && g.status !== "STATUS_END_PERIOD");
+    const remaining = nbaGames.filter((g) => !g.completed && (!g.status || g.status === "STATUS_SCHEDULED" || g.status === "STATUS_PRE"));
     const actualByDay: Record<string, number> = {};
     for (const game of nbaGames) {
       const stat = (p.stats ?? []).find((s) => s.id === "05" + game.id && s.statSourceId === 0 && s.statSplitTypeId === 5);
