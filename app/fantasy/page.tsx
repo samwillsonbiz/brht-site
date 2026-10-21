@@ -151,7 +151,7 @@ export default function FantasyPage() {
           if (fallbackRes.ok) {
             const fallback = await fallbackRes.json();
             if (fallback.ok && Array.isArray(fallback.players)) {
-              currentPlayers = [...new Map([...currentPlayers, ...fallback.players].map((p: EspnPlayer) => [p.id, p])).values()];
+              currentPlayers = [...new Map([...currentPlayers, ...fallback.players].map((p: EspnPlayer): [number, EspnPlayer] => [p.id, p])).values()];
               covered = currentPlayers.filter((p) => roster.has(p.id)).length;
             }
           }
