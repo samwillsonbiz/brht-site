@@ -135,8 +135,8 @@ export default function FantasyPage() {
         const [league, pool, schedule] = await Promise.all([matchRes.json(), poolRes.json(), scheduleRes.json()]);
         if (!league.ok || !pool.ok || !schedule.ok) throw new Error("One of the ESPN data sources reported an error.");
         const owned: EspnPlayer[] = pool.players.filter((p: EspnPlayer) => p.fantasyTeamId > 0);
-        if (league.teams.length !== 12 || owned.length !== 156 || owned.filter((p) => p.fantasyTeamId === league.myTeamId).length !== 13)
-          throw new Error("ESPN did not return the complete 12-team draft. Projections are withheld rather than using sample rosters.");
+        if (league.teams.length !== 12 || new Set(owned.map((p) => p.fantasyTeamId)).size !== 12 || owned.filter((p) => p.fantasyTeamId === league.myTeamId).length < 10)
+          throw new Error("ESPN has not returned enough current roster data for all 12 teams.");
         if (!schedule.games.length || league.matchups.filter((m: Matchup) => m.week <= 6).length !== 36)
           throw new Error("The first six weeks of matchups or games are incomplete.");
         if (!cancelled) setFeed({ league, players: pool.players, games: schedule.games, updated: new Date().toISOString(), cachedGames: schedule.cachedGames });
@@ -178,7 +178,7 @@ export default function FantasyPage() {
       <div className="mx-auto max-w-7xl space-y-6 px-5 py-7 md:px-8">
         <section className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
           <div><div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-[#0071e3]"><Target className="h-4 w-4" /> 2026–27 season</div><h1 className="mt-2 text-3xl font-semibold tracking-tight md:text-5xl">Your next six matchups.</h1><p className="mt-3 max-w-3xl text-sm leading-6 text-black/55">Your real ESPN opponents, drafted rosters, NBA game dates, and projected fantasy points with ten-slot daily lineup optimization.</p></div>
-          <div className="flex flex-wrap gap-2 text-xs font-semibold"><span className="rounded-full bg-white px-3 py-2 text-black/60"><Users className="mr-1 inline h-3.5 w-3.5" /> {feed?.league.teams.length ?? "—"} teams</span><span className="rounded-full bg-white px-3 py-2 text-black/60"><CalendarDays className="mr-1 inline h-3.5 w-3.5" /> {feed?.games.length ?? "—"} NBA games</span><span className="rounded-full bg-white px-3 py-2 text-black/60">{feed ? "156 drafted players" : "Awaiting ESPN"}</span></div>
+          <div className="flex flex-wrap gap-2 text-xs font-semibold"><span className="rounded-full bg-white px-3 py-2 text-black/60"><Users className="mr-1 inline h-3.5 w-3.5" /> {feed?.league.teams.length ?? "—"} teams</span><span className="rounded-full bg-white px-3 py-2 text-black/60"><CalendarDays className="mr-1 inline h-3.5 w-3.5" /> {feed?.games.length ?? "—"} NBA games</span><span className="rounded-full bg-white px-3 py-2 text-black/60">{feed ? "Current rosters loaded" : "Awaiting ESPN"}</span></div>
         </section>
         {pending && !feed && <div className="rounded-2xl bg-white p-7 text-sm text-black/55"><RefreshCw className="mr-2 inline h-4 w-4 animate-spin" />Loading ESPN opponents, drafted rosters and game schedule…</div>}
         {error && <div role="alert" className="rounded-2xl border border-amber-200 bg-amber-50 p-5 text-sm font-semibold text-amber-900"><ShieldAlert className="mr-2 inline h-4 w-4" />{error}{feed ? " Last synced data remains displayed." : " No fictional roster data is substituted."}</div>}
