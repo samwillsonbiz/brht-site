@@ -5,16 +5,16 @@ import Link from "next/link";
 import { ArrowDown, ArrowUp, CalendarDays, ChevronRight, RefreshCw, ShieldAlert, Target, Users, Zap } from "lucide-react";
 
 type Stats = { id: string | null; statSourceId: number | null; statSplitTypeId: number | null; appliedAverage: number | null };
-type EspnPlayer = { id: number; name: string; fantasyTeamId: number; proTeamId: number | null; eligibleSlots: number[]; defaultPositionId: number | null; injuryStatus: string | null; stats: Stats[] };
-type Matchup = { id: number | null; week: number; homeId: number | null; awayId: number | null; home: string | null; away: string | null };
-type EspnTeams = { ok: boolean; leagueId: number; myTeamId: number; teams: { id: number; name: string; players: number }[]; matchups: Matchup[] };
+type EspnPlayer = { id: number; name: string; fantasyTeamId: number; rosterSlotId?: number | null; proTeamId: number | null; eligibleSlots: number[]; defaultPositionId: number | null; injuryStatus: string | null; stats: Stats[] };
+type Matchup = { id: number | null; week: number; homeId: number | null; awayId: number | null; home: string | null; away: string | null; homeActual?: number | null; awayActual?: number | null };
+type EspnTeams = { ok: boolean; leagueId: number; myTeamId: number; firstWeek: number; teams: { id: number; name: string; players: number; roster: { id: number; slot: number | null }[] }[]; matchups: Matchup[] };
 type Game = { id: string; gameDateEt: string; home: { id: number }; away: { id: number } };
 type Feed = { league: EspnTeams; players: EspnPlayer[]; games: Game[]; updated: string; cachedGames: number };
 type PlannedPlayer = { player: EspnPlayer; ppg: number; source: "ESPN 2027" | "2026 actual" | "missing"; days: boolean[] };
 type Start = { player: PlannedPlayer; slot: string };
 type DayPlan = { date: string; starters: Start[]; benchGames: PlannedPlayer[]; scheduled: number; projected: number };
 type TeamPlan = { teamId: number; players: PlannedPlayer[]; days: DayPlan[]; projected: number; starts: number; scheduled: number; lost: number; missing: number; flagged: number };
-type WeekPlan = { week: number; start: string; end: string; opponentId: number | null; opponentName: string; mine: TeamPlan; opponent: TeamPlan; validMatchup: boolean };
+type WeekPlan = { week: number; start: string; end: string; opponentId: number | null; opponentName: string; mine: TeamPlan; opponent: TeamPlan; validMatchup: boolean; actualMine: number | null; actualOpponent: number | null };
 
 const OPENING_MONDAY = "2026-10-19";
 const SLOTS = ["PG", "SG", "SF", "PF", "C", "G", "F", "UTIL", "UTIL", "UTIL"];
@@ -44,7 +44,7 @@ function eligible(p: PlannedPlayer, slot: string) {
   return ppos.includes(slot);
 }
 function optimizeDay(date: string, team: PlannedPlayer[], index: number): DayPlan {
-  const playing = team.filter((p) => p.days[index] && !["OUT", "INJURY_RESERVE", "IR", "SUSPENSION"].includes((p.player.injuryStatus ?? "").toUpperCase()));
+  const playing = team.filter((p) => p.days[index] && (p.player.rosterSlotId == null || p.player.rosterSlotId < 13) && !["OUT", "INJURY_RESERVE", "IR", "SUSPENSION"].includes((p.player.injuryStatus ?? "").toUpperCase()));
   type State = { score: number; starters: Start[] };
   let states = new Map<number, State>([[0, { score: 0, starters: [] }]]);
   for (const player of playing) {
@@ -98,7 +98,7 @@ function makeWeeks(feed: Feed): WeekPlan[] {
   const names = new Map(feed.league.teams.map((t) => [t.id, t.name.trim()]));
   const me = feed.league.myTeamId;
   return Array.from({ length: 6 }, (_, idx) => {
-    const week = idx + 1, start = datePlus(OPENING_MONDAY, idx * 7);
+    const week = feed.league.firstWeek + idx, start = datePlus(OPENING_MONDAY, (week - 1) * 7);
     const matchup = feed.league.matchups.find((m) => m.week === week && (m.homeId === me || m.awayId === me));
     const opponentId = matchup ? (matchup.homeId === me ? matchup.awayId : matchup.homeId) : null;
     return {
@@ -107,6 +107,8 @@ function makeWeeks(feed: Feed): WeekPlan[] {
       mine: teamPlan(me, start, feed.players, feed.games),
       opponent: teamPlan(opponentId ?? -1, start, feed.players, feed.games),
       validMatchup: opponentId !== null,
+      actualMine: matchup ? (matchup.homeId === me ? matchup.homeActual ?? null : matchup.awayActual ?? null) : null,
+      actualOpponent: matchup ? (matchup.homeId === me ? matchup.awayActual ?? null : matchup.homeActual ?? null) : null,
     };
   });
 }
@@ -126,20 +128,43 @@ export default function FantasyPage() {
       setPending(true);
       setError(null);
       try {
-        const [matchRes, poolRes, scheduleRes] = await Promise.all([
+        const [matchRes, poolRes] = await Promise.all([
           fetch("/api/fantasy/espn/matchups", { cache: "no-store" }),
-          fetch("/api/fantasy/espn/players?limit=500", { cache: "no-store" }),
-          fetch("/api/fantasy/forecast/schedule", { cache: "no-store" }),
+          fetch("/api/fantasy/espn/players?limit=500&status=ONTEAM", { cache: "no-store" }),
         ]);
-        if (!matchRes.ok || !poolRes.ok || !scheduleRes.ok) throw new Error("The ESPN matchups, player projections, or six-week NBA schedule could not be loaded.");
-        const [league, pool, schedule] = await Promise.all([matchRes.json(), poolRes.json(), scheduleRes.json()]);
+        if (!matchRes.ok || !poolRes.ok) throw new Error("The ESPN matchups or current roster projections could not be loaded.");
+        const [league, pool] = await Promise.all([matchRes.json(), poolRes.json()]);
+        const scheduleRes = await fetch(`/api/fantasy/forecast/schedule?startWeek=${league.firstWeek ?? 1}`, { cache: "no-store" });
+        if (!scheduleRes.ok) throw new Error("The six-week NBA schedule could not be loaded.");
+        const schedule = await scheduleRes.json();
         if (!league.ok || !pool.ok || !schedule.ok) throw new Error("One of the ESPN data sources reported an error.");
-        const owned: EspnPlayer[] = pool.players.filter((p: EspnPlayer) => p.fantasyTeamId > 0);
-        if (league.teams.length !== 12 || new Set(owned.map((p) => p.fantasyTeamId)).size !== 12 || owned.filter((p) => p.fantasyTeamId === league.myTeamId).length < 10)
-          throw new Error("ESPN has not returned enough current roster data for all 12 teams.");
-        if (!schedule.games.length || league.matchups.filter((m: Matchup) => m.week <= 6).length !== 36)
+        const roster = new Map<number, { owner: number; slot: number | null }>();
+        for (const team of league.teams as EspnTeams["teams"]) {
+          for (const entry of team.roster ?? []) {
+            if (entry.id) roster.set(entry.id, { owner: team.id, slot: entry.slot });
+          }
+        }
+        let currentPlayers: EspnPlayer[] = pool.players;
+        let covered = currentPlayers.filter((p) => roster.has(p.id)).length;
+        if (covered < roster.size) {
+          const fallbackRes = await fetch("/api/fantasy/espn/players?limit=1000", { cache: "no-store" });
+          if (fallbackRes.ok) {
+            const fallback = await fallbackRes.json();
+            if (fallback.ok && Array.isArray(fallback.players)) {
+              currentPlayers = [...new Map([...currentPlayers, ...fallback.players].map((p: EspnPlayer) => [p.id, p])).values()];
+              covered = currentPlayers.filter((p) => roster.has(p.id)).length;
+            }
+          }
+        }
+        const currentRoster: EspnPlayer[] = currentPlayers.filter((p) => roster.has(p.id)).map((p) => ({
+          ...p, fantasyTeamId: roster.get(p.id)!.owner, rosterSlotId: roster.get(p.id)!.slot,
+        }));
+        const teamIds = new Set(currentRoster.map((p) => p.fantasyTeamId));
+        if (league.teams.length !== 12 || teamIds.size !== league.teams.length || currentRoster.filter((p) => p.fantasyTeamId === league.myTeamId).length < 10)
+          throw new Error(`ESPN roster feed is incomplete: ${covered}/${roster.size} roster slots loaded across ${teamIds.size}/12 teams. Refresh ESPN to retry.`);
+        if (!schedule.games.length || league.matchups.filter((m: Matchup) => m.week >= league.firstWeek && m.week < league.firstWeek + 6).length !== 36)
           throw new Error("The first six weeks of matchups or games are incomplete.");
-        if (!cancelled) setFeed({ league, players: pool.players, games: schedule.games, updated: new Date().toISOString(), cachedGames: schedule.cachedGames });
+        if (!cancelled) setFeed({ league, players: currentRoster, games: schedule.games, updated: new Date().toISOString(), cachedGames: schedule.cachedGames });
       } catch (e) {
         if (!cancelled) setError(e instanceof Error ? e.message : "Fantasy data unavailable.");
       } finally {
@@ -177,8 +202,8 @@ export default function FantasyPage() {
       </header>
       <div className="mx-auto max-w-7xl space-y-6 px-5 py-7 md:px-8">
         <section className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
-          <div><div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-[#0071e3]"><Target className="h-4 w-4" /> 2026–27 season</div><h1 className="mt-2 text-3xl font-semibold tracking-tight md:text-5xl">Your next six matchups.</h1><p className="mt-3 max-w-3xl text-sm leading-6 text-black/55">Your real ESPN opponents, drafted rosters, NBA game dates, and projected fantasy points with ten-slot daily lineup optimization.</p></div>
-          <div className="flex flex-wrap gap-2 text-xs font-semibold"><span className="rounded-full bg-white px-3 py-2 text-black/60"><Users className="mr-1 inline h-3.5 w-3.5" /> {feed?.league.teams.length ?? "—"} teams</span><span className="rounded-full bg-white px-3 py-2 text-black/60"><CalendarDays className="mr-1 inline h-3.5 w-3.5" /> {feed?.games.length ?? "—"} NBA games</span><span className="rounded-full bg-white px-3 py-2 text-black/60">{feed ? "Current rosters loaded" : "Awaiting ESPN"}</span></div>
+          <div><div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-[#0071e3]"><Target className="h-4 w-4" /> 2026–27 season</div><h1 className="mt-2 text-3xl font-semibold tracking-tight md:text-5xl">Your next six matchups.</h1><p className="mt-3 max-w-3xl text-sm leading-6 text-black/55">Your real ESPN opponents, current rosters, NBA game dates, and projected fantasy points with ten-slot daily lineup optimization.</p></div>
+          <div className="flex flex-wrap gap-2 text-xs font-semibold"><span className="rounded-full bg-white px-3 py-2 text-black/60"><Users className="mr-1 inline h-3.5 w-3.5" /> {feed?.league.teams.length ?? "—"} teams</span><span className="rounded-full bg-white px-3 py-2 text-black/60"><CalendarDays className="mr-1 inline h-3.5 w-3.5" /> {feed?.games.length ?? "—"} NBA games</span><span className="rounded-full bg-white px-3 py-2 text-black/60">{feed ? `${feed.players.length} currently rostered` : "Awaiting ESPN"}</span></div>
         </section>
         {pending && !feed && <div className="rounded-2xl bg-white p-7 text-sm text-black/55"><RefreshCw className="mr-2 inline h-4 w-4 animate-spin" />Loading ESPN opponents, drafted rosters and game schedule…</div>}
         {error && <div role="alert" className="rounded-2xl border border-amber-200 bg-amber-50 p-5 text-sm font-semibold text-amber-900"><ShieldAlert className="mr-2 inline h-4 w-4" />{error}{feed ? " Last synced data remains displayed." : " No fictional roster data is substituted."}</div>}
@@ -205,12 +230,13 @@ export default function FantasyPage() {
                 <div className="text-right"><p className="truncate text-xs font-medium text-black/45">{otherName}</p><p className="mt-1 text-3xl font-semibold tracking-tight text-[#f05b52] md:text-4xl">{fmt(week.opponent.projected)}</p><p className="mt-1 text-xs text-black/45">{week.opponent.starts} optimized starts · {week.opponent.scheduled} scheduled</p></div>
               </div>
               <div className="mt-4 flex flex-wrap gap-2 text-xs">
+                {(week.actualMine !== null && week.actualOpponent !== null && (week.actualMine > 0 || week.actualOpponent > 0)) && <span className="rounded-full bg-[#eef6ff] px-3 py-1.5 font-semibold text-[#0066cc]">ESPN score so far: {fmt(week.actualMine)} – {fmt(week.actualOpponent)}</span>}
                 <span className="rounded-full bg-[#f5f5f7] px-3 py-1.5 text-black/65">My bench conflicts: {week.mine.lost} games</span>
                 <span className="rounded-full bg-[#f5f5f7] px-3 py-1.5 text-black/65">Opponent bench conflicts: {week.opponent.lost}</span>
                 <span className="rounded-full bg-amber-50 px-3 py-1.5 text-amber-800">Injury flags: {week.mine.flagged} mine · {week.opponent.flagged} opponent</span>
                 {(week.mine.missing + week.opponent.missing > 0) && <span className="rounded-full bg-amber-50 px-3 py-1.5 text-amber-800">{week.mine.missing + week.opponent.missing} players use prior-season fallback / have no projection</span>}
               </div>
-              <p className="mt-3 text-xs leading-5 text-black/45">Projected scores, not guarantees. ESPN 2026–27 per-game forecasts are used in your league’s scoring system. All non-OUT/day-to-day players are assumed available; actual absences, minutes limits and lineup decisions may materially change results. Missing ESPN projections use last season’s actual average when available. No season results are being treated as actuals yet.</p>
+              <p className="mt-3 text-xs leading-5 text-black/45">Projected scores, not guarantees. ESPN 2026–27 per-game forecasts are used in your league’s scoring system. All non-OUT/day-to-day players are assumed available; actual absences, minutes limits and lineup decisions may materially change results. Missing ESPN projections use last season’s actual average when available. ESPN score-to-date, when available, is shown separately from the full-week projection.</p>
             </div>
             <div className="rounded-[24px] bg-white p-5 shadow-sm md:p-7">
               <h3 className="text-lg font-semibold">Day-by-day game plan</h3>
