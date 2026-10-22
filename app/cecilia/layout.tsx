@@ -11,6 +11,15 @@ export const metadata: Metadata = {
   },
 };
 
+import {StoreProvider} from "./commerce";
+import {StoreHeader,StoreFooter,CartDrawer} from "./commerce-ui";
+import s from "./commerce.module.css";
+
 export default function CeciliaLayout({ children }: Readonly<{children: React.ReactNode}>) {
-  return children;
+  return <StoreProvider><div className={s.store}>
+    <StoreHeader/>
+    {children}
+    <StoreFooter/>
+    <CartDrawer/>
+  </div></StoreProvider>;
 }
