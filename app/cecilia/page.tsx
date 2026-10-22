@@ -1,298 +1,271 @@
 
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
-  ArrowRight, ArrowUpRight, Droplets, Heart, Leaf,
-  Menu, Sparkles, X
+  ArrowRight, ArrowUpRight, Droplets, Heart, Leaf, Menu, Search, Sun, X
 } from "lucide-react";
 import s from "./cecilia.module.css";
 
-type Need = "dry" | "simple" | "body";
 const STORE = "https://ceciliasproducts.com";
-const needs: Array<{
-  id: Need;
-  number: string;
-  title: string;
-  description: string;
-  icon: typeof Droplets;
-}> = [
+const SCENES = {
+  hero: "https://unsplash.com/photos/a-woman-is-putting-a-lotion-on-her-face-zoYLGk2oULA/download?force=true&w=1400",
+  softness: "https://unsplash.com/photos/a-woman-putting-cream-on-her-face-NdcuSGxKbwE/download?force=true&w=950",
+  serum: "https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?w=950&q=85&fit=crop",
+  body: "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=950&q=85&fit=crop",
+  ritual: "https://unsplash.com/photos/woman-applying-cream-to-her-face-in-mirror-Vpcy3ytvQVw/download?force=true&w=1200"
+};
+
+const products = [
   {
-    id: "dry",
-    number: "01",
-    title: "My skin feels dry.",
-    description: "I want my face to feel comfortable, soft, and nourished again.",
-    icon: Droplets
+    key:"moisturizer",
+    name:"Cecilia's Day & Night Moisturizer",
+    benefit:"For everyday softness",
+    price:"$29.00",
+    tag:"Signature favorite",
+    href:STORE + "/products/prod12",
+    tone:"tone1"
   },
   {
-    id: "simple",
-    number: "02",
-    title: "I need a simpler routine.",
-    description: "I want good everyday care without a complicated regimen.",
-    icon: Sparkles
+    key:"blu",
+    name:"Blu Jade Serum",
+    benefit:"For a nourished-looking glow",
+    price:"$20.00",
+    tag:"",
+    href:STORE + "/products/prod6",
+    tone:"tone2"
   },
   {
-    id: "body",
-    number: "03",
-    title: "My body needs care.",
-    description: "I want to give dry-feeling hands and body a little attention.",
-    icon: Heart
+    key:"emerald",
+    name:"Emerald Jade Serum",
+    benefit:"For a botanical finishing touch",
+    price:"$20.00",
+    tag:"Plant-based serum",
+    href:STORE + "/products/prod19",
+    tone:"tone3"
+  },
+  {
+    key:"lotion",
+    name:"Hand and Body Lotions",
+    benefit:"For soft, comfortable body care",
+    price:"$22.00",
+    tag:"",
+    href:STORE + "/products/prod30",
+    tone:"tone4"
   }
 ];
 
-const recommendations: Record<Need, {
-  headline: string;
-  intro: string;
-  product: string;
-  summary: string;
-  price: string;
-  url: string;
-  artLabel: string;
-  artSubline: string;
-  additional: string;
-  additionalName: string;
-  additionalUrl: string;
-}> = {
-  dry: {
-    headline: "Comfort for thirsty skin.",
-    intro: "When your face feels dry, start with a thoughtfully formulated moisturizer. A little care, morning and night, can be a beautiful thing.",
-    product: "Cecilia’s Day & Night Moisturizer",
-    summary: "Cecilia’s signature moisturizer since 1990, made with aloe vera, nourishing plant oils, and a botanical essential-oil blend.",
-    price: "$29.00 USD",
-    url: STORE + "/products/prod12",
-    artLabel: "Everyday moisture",
-    artSubline: "A simple place to start",
-    additional: "Looking for a finishing step?",
-    additionalName: "Explore Emerald Jade Serum",
-    additionalUrl: STORE + "/products/prod19"
-  },
-  simple: {
-    headline: "Less to do. More care.",
-    intro: "The best routine is often one you enjoy enough to keep. Start with cleansing and an everyday moisturizer; add steps only when they feel useful.",
-    product: "Cecilia’s Day & Night Moisturizer",
-    summary: "One uncomplicated daily essential designed for morning and evening use. Cecilia calls it her bestselling formulation since 1990.",
-    price: "$29.00 USD",
-    url: STORE + "/products/prod12",
-    artLabel: "The daily essential",
-    artSubline: "Keep what works",
-    additional: "Want an optional finishing step?",
-    additionalName: "Explore Emerald Jade Serum",
-    additionalUrl: STORE + "/products/prod19"
-  },
-  body: {
-    headline: "A little comfort, every day.",
-    intro: "If your hands and body feel dry, a lotion that fits easily into daily life is a good starting point. Small habits make room for everyday softness.",
-    product: "Cecilia’s Hand and Body Lotions",
-    summary: "Aloe vera and plant oils in a daily lotion, with several scent choices including a fragrance-free option.",
-    price: "$22.00 USD",
-    url: STORE + "/products/prod30",
-    artLabel: "Care beyond the face",
-    artSubline: "Everyday body care",
-    additional: "Prefer to explore first?",
-    additionalName: "See the full body care collection",
-    additionalUrl: STORE + "/collections/all"
-  }
-};
-
-function BotanicalIllustration() {
+function EditorialImage({
+  src, alt, className, fallback, loading = "lazy"
+}: {
+  src:string; alt:string; className?:string; fallback:string; loading?:"lazy"|"eager"
+}) {
+  const [activeSrc, setActiveSrc] = useState(src);
   return (
-    <svg className={s.leafSvg} viewBox="0 0 420 560" fill="none" role="img" aria-label="Decorative botanical illustration">
-      <path d="M207 544C201 484 200 445 213 399C236 324 201 260 195 203C189 141 200 86 217 26"
-        stroke="#476e4e" strokeWidth="4" strokeLinecap="round" />
-      <path d="M211 422C166 382 125 374 66 365M220 372C274 334 305 293 340 251M202 296C147 275 112 235 89 202M198 217C256 186 275 153 297 113M197 158C165 135 149 109 142 84"
-        stroke="#5a805b" strokeWidth="3" strokeLinecap="round" />
-      <g fill="#6f9471" fillOpacity=".91" stroke="#4a7554" strokeWidth="1">
-        <ellipse cx="138" cy="386" rx="29" ry="75" transform="rotate(-55 138 386)" />
-        <ellipse cx="77" cy="357" rx="24" ry="61" transform="rotate(-82 77 357)" />
-        <ellipse cx="281" cy="330" rx="29" ry="73" transform="rotate(43 281 330)" />
-        <ellipse cx="340" cy="251" rx="23" ry="64" transform="rotate(57 340 251)" />
-        <ellipse cx="147" cy="262" rx="24" ry="62" transform="rotate(-53 147 262)" />
-        <ellipse cx="91" cy="195" rx="23" ry="61" transform="rotate(-27 91 195)" />
-        <ellipse cx="248" cy="190" rx="24" ry="65" transform="rotate(42 248 190)" />
-        <ellipse cx="292" cy="119" rx="24" ry="64" transform="rotate(29 292 119)" />
-        <ellipse cx="155" cy="123" rx="20" ry="51" transform="rotate(-38 155 123)" />
-        <ellipse cx="227" cy="51" rx="23" ry="62" transform="rotate(20 227 51)" />
-      </g>
-      <g stroke="#c4d8ba" strokeOpacity=".52">
-        <path d="M214 423 134 371M220 367 291 319M197 289 138 253M201 208 271 173M198 154 152 113" />
-      </g>
-    </svg>
+    <img
+      alt={alt}
+      src={activeSrc}
+      loading={loading}
+      className={className}
+      onError={() => { if (activeSrc !== fallback) setActiveSrc(fallback); }}
+    />
   );
 }
 
-export default function CeciliaNeedFirst() {
-  const [need, setNeed] = useState<Need>("dry");
-  const [menuOpen, setMenuOpen] = useState(false);
-  const selection = recommendations[need];
-
-  const choose = (nextNeed: Need) => {
-    setNeed(nextNeed);
-    document.getElementById("recommendation")?.scrollIntoView({
-      behavior: "smooth",
-      block: "start"
-    });
-  };
+export default function CeciliaStorefront() {
+  const [menuOpen,setMenuOpen] = useState(false);
+  const [images,setImages] = useState<Record<string,string>>({});
+  useEffect(() => {
+    let live = true;
+    fetch("/cecilia/api/products")
+      .then(r => {
+        if (!r.ok) throw new Error("Product images unavailable");
+        return r.json();
+      })
+      .then((data: {products?:Array<{key:string;image:string|null}>}) => {
+        if (!live) return;
+        const next:Record<string,string> = {};
+        for (const item of data.products || []) {
+          if (item.image && /^https?:\/\//.test(item.image)) next[item.key]=item.image;
+        }
+        setImages(next);
+      }).catch(() => {});
+    return () => { live = false; };
+  }, []);
 
   return (
     <main className={s.site}>
-      <div className={s.topline}>Cecilia&apos;s Products · Thoughtfully formulated since 1990</div>
-
+      <div className={s.announcement}>Thoughtful botanical care since 1990 · Complimentary US shipping on orders over $100 at the live store</div>
       <header className={s.nav}>
-        <a href="#top" className={s.brand} aria-label="Cecilia's Products home">
-          Cecilia&apos;s
-          <span>Natural health &amp; beauty</span>
+        <a href="#top" className={s.logo} aria-label="Cecilia's home" onClick={() => setMenuOpen(false)}>
+          Cecilia&apos;s <small>Natural health &amp; beauty</small>
         </a>
-        <nav className={s.navLinks} aria-label="Primary navigation">
-          <a href="#find">Find what you need</a>
-          <a href="#recommendation">Cecilia&apos;s edit</a>
-          <a href="#founder">Meet Cecilia</a>
+        <nav className={s.navLinks} aria-label="Main navigation">
+          <a href="#shop">Shop favorites</a>
+          <a href="#benefits">Discover your care</a>
+          <a href="#ritual">The ritual</a>
+          <a href="#founder">Our founder</a>
         </nav>
-        <a className={s.navShop} href={STORE + "/collections/all"} target="_blank" rel="noopener noreferrer">
-          Browse the full shop <ArrowUpRight size={15} strokeWidth={1.6}/>
-        </a>
-        <button className={s.menuToggle} aria-label={menuOpen ? "Close navigation" : "Open navigation"} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>
-          {menuOpen ? <X size={21}/> : <Menu size={21}/>}
-        </button>
-        {menuOpen && <nav className={s.mobileNav} aria-label="Mobile navigation">
-          <a href="#find" onClick={() => setMenuOpen(false)}>Find what you need</a>
-          <a href="#recommendation" onClick={() => setMenuOpen(false)}>Cecilia&apos;s edit</a>
-          <a href="#founder" onClick={() => setMenuOpen(false)}>Meet Cecilia</a>
-          <a href={STORE + "/collections/all"} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Browse the full shop ↗</a>
+        <div className={s.navEnd}>
+          <a className={s.iconLink} href={STORE + "/search"} aria-label="Search the live store" target="_blank" rel="noopener noreferrer"><Search size={18} strokeWidth={1.6}/></a>
+          <a className={s.navCta} href={STORE + "/collections/all"} target="_blank" rel="noopener noreferrer">Shop the collection <ArrowUpRight size={15}/></a>
+          <button className={[s.iconLink,s.mobileMenuButton].join(" ")} onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu" aria-expanded={menuOpen}>
+            {menuOpen?<X size={18}/>:<Menu size={19}/>}
+          </button>
+        </div>
+        {menuOpen && <nav className={s.mobileNav} aria-label="Mobile menu">
+          <a href="#shop" onClick={() => setMenuOpen(false)}>Shop favorites</a>
+          <a href="#benefits" onClick={() => setMenuOpen(false)}>Discover your care</a>
+          <a href="#ritual" onClick={() => setMenuOpen(false)}>The ritual</a>
+          <a href="#founder" onClick={() => setMenuOpen(false)}>Our founder</a>
+          <a href={STORE + "/collections/all"} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Browse everything ↗</a>
         </nav>}
       </header>
 
-      <section className={s.hero} id="top" aria-labelledby="hero-title">
-        <div className={s.heroLeft}>
-          <span className={s.eyebrow}>Above pure. Beyond natural.</span>
-          <h1 id="hero-title" className={s.serif}>What does your skin <em>need today?</em></h1>
-          <p>Skincare doesn&apos;t have to be complicated. Let Cecilia&apos;s decades of formulation experience help you discover a simpler, more thoughtful place to begin.</p>
-          <a href="#find" className={s.primary}>Find my skincare starting point <ArrowRight size={16}/></a>
-          <div className={s.heroBelow}>
-            <span>Three simple ways to start</span>
-            <a href="#founder" className={s.subtleLink}>Meet the woman behind it <ArrowUpRight size={14}/></a>
+      <section className={s.hero} id="top">
+        <div className={s.heroContent}>
+          <span className={s.eyebrow}>Above pure · Beyond natural</span>
+          <h1 className={s.serif}>Feel wonderful <em>in your skin.</em></h1>
+          <p>That soft, nourished, just-took-a-moment-for-yourself feeling. Discover botanical skincare and everyday rituals thoughtfully formulated by Cecilia since 1990.</p>
+          <div className={s.heroButtons}>
+            <a className={s.darkButton} href="#shop">Shop everyday favorites <ArrowRight size={17}/></a>
+            <a className={s.simpleLink} href="#benefits">Explore what your skin needs <ArrowUpRight size={15}/></a>
           </div>
         </div>
         <div className={s.heroVisual}>
-          <span className={s.heroCircle} aria-hidden="true"/>
-          <BotanicalIllustration/>
-          <span className={s.heroYear} aria-hidden="true">1990</span>
-          <span className={s.heroVisualNote}>Nature first. Always.</span>
+          <EditorialImage
+            src={SCENES.hero}
+            fallback="https://images.unsplash.com/photo-1611930022073-b7a4ba5fcccd?w=1350&q=85&fit=crop"
+            alt="Natural skincare ritual in a warm, softly lit setting"
+            loading="eager"
+          />
+          <div className={s.heroCaption}>The beauty of feeling good.</div>
         </div>
       </section>
 
-      <section className={s.section} id="find" aria-labelledby="find-title">
-        <div className={s.shell}>
-          <div className={s.sectionIntro}>
-            <span className={s.eyebrow}>Start with you, not a product shelf</span>
-            <h2 id="find-title" className={s.serif}>Tell us what <em>feels familiar.</em></h2>
-            <p>Choose what sounds most like you. We&apos;ll show you a simple place to start — without asking you to learn an entire skincare range first.</p>
+      <div className={s.heartline}>
+        <span><Leaf size={19} strokeWidth={1.25}/> Botanically inspired</span>
+        <span><Heart size={19} strokeWidth={1.25}/> Made with intention</span>
+        <span><Sun size={19} strokeWidth={1.25}/> Everyday feel-good rituals</span>
+      </div>
+
+      <section className={s.section} id="benefits">
+        <div className={s.sectionHead}>
+          <div>
+            <span className={s.eyebrow}>Natural care that fits your life</span>
+            <h2 className={s.serif}>The feeling you want.<br/><em>The care you need.</em></h2>
           </div>
-          <div className={s.needGrid}>
-            {needs.map((item) => {
-              const Icon = item.icon;
-              return (
-                <button
-                  type="button"
-                  key={item.id}
-                  className={[s.needCard, need === item.id ? s.needCardSelected : ""].filter(Boolean).join(" ")}
-                  onClick={() => choose(item.id)}
-                  aria-pressed={need === item.id}
-                >
-                  <div className={s.needTop}>
-                    <span className={s.needNum}>{item.number}</span>
-                    <span className={s.needIcon}><Icon size={21} strokeWidth={1.35}/></span>
-                  </div>
-                  <strong className={s.needTitle}>{item.title}</strong>
-                  <span className={s.needDescription}>{item.description}</span>
-                  <span className={s.needAction}>See Cecilia&apos;s suggestion <ArrowRight size={16}/></span>
-                </button>
-              );
-            })}
-          </div>
+          <p>Start with what matters to you. Find a little extra softness, a dewy-looking finish, or a body-care ritual worth looking forward to.</p>
+        </div>
+
+        <div className={s.categories}>
+          <article className={s.catCard}>
+            <a className={s.catMedia} href={STORE + "/products/prod12"} target="_blank" rel="noopener noreferrer" aria-label="Explore everyday face moisturizer">
+              <EditorialImage src={SCENES.softness} fallback="https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=900&q=85&fit=crop" alt="Enjoying a gentle facial skincare ritual" />
+              <span className={s.catMediaLabel}><b>Feel deeply<br/>nourished.</b><i><ArrowUpRight size={20}/></i></span>
+            </a>
+            <p className={s.catSub}>For skin that feels dry or in need of a little softness. Discover everyday facial moisture.</p>
+          </article>
+          <article className={s.catCard}>
+            <a className={s.catMedia} href={STORE + "/products/prod19"} target="_blank" rel="noopener noreferrer" aria-label="Explore botanical facial serums">
+              <EditorialImage src={SCENES.serum} fallback="https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?w=950&q=85&fit=crop" alt="Serum and botanical beauty essentials arranged in soft light"/>
+              <span className={s.catMediaLabel}><b>Love your<br/>natural glow.</b><i><ArrowUpRight size={20}/></i></span>
+            </a>
+            <p className={s.catSub}>For a luminous-looking finish and the pleasure of a beautiful last step in your face-care routine.</p>
+          </article>
+          <article className={s.catCard}>
+            <a className={s.catMedia} href={STORE + "/products/prod30"} target="_blank" rel="noopener noreferrer" aria-label="Explore hand and body care">
+              <EditorialImage src={SCENES.body} fallback="https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=950&q=85&fit=crop" alt="Natural skincare products in a calm daily self-care setting" />
+              <span className={s.catMediaLabel}><b>Make every day<br/>feel softer.</b><i><ArrowUpRight size={20}/></i></span>
+            </a>
+            <p className={s.catSub}>For hands and body that deserve daily attention. Explore comforting botanical lotions.</p>
+          </article>
         </div>
       </section>
 
-      <section className={s.recommendation} id="recommendation" aria-label="Your suggested starting point">
-        <div className={s.shell}>
-          <div className={s.recGrid}>
-            <div className={s.recCopy} aria-live="polite">
-              <span className={s.eyebrow}>One considered place to start</span>
-              <h2 className={s.serif}>{selection.headline}</h2>
-              <p>{selection.intro}</p>
-              <h3 className={s.recProduct}>{selection.product}</h3>
-              <div className={s.recMeta}>{selection.summary}<br/><strong className={s.recPrice}>{selection.price}</strong></div>
-              <div className={s.recActions}>
-                <a className={s.primary} href={selection.url} target="_blank" rel="noopener noreferrer">
-                  View this on Cecilia&apos;s store <ArrowUpRight size={16}/>
-                </a>
-              </div>
-              <div className={s.recSecondary}>
-                {selection.additional}{" "}
-                <a href={selection.additionalUrl} target="_blank" rel="noopener noreferrer">
-                  {selection.additionalName} ↗
-                </a>
-              </div>
+      <section className={s.productsSection} id="shop">
+        <div className={s.productsInner}>
+          <div className={s.sectionHead}>
+            <div>
+              <span className={s.eyebrow}>The Cecilia&apos;s edit</span>
+              <h2 className={s.serif}>A few very <em>good things.</em></h2>
             </div>
-            <div className={s.recVisual} aria-label="Botanical product editorial design placeholder">
-              <div className={s.recDecor}>
-                <div className={s.recDecorInner}>
-                  <Leaf size={47} strokeWidth={1.1}/>
-                  <strong>{selection.artLabel}</strong>
-                  <span>{selection.artSubline}</span>
+            <a href={STORE + "/collections/all"} target="_blank" rel="noopener noreferrer" className={s.simpleLink}>Explore the full collection <ArrowUpRight size={16}/></a>
+          </div>
+          <div className={s.productGrid}>
+            {products.map((p) => <article className={s.productItem} key={p.key}>
+              <a className={[s.productImage,s[p.tone]].join(" ")} href={p.href} target="_blank" rel="noopener noreferrer">
+                {images[p.key] ?
+                  <img src={images[p.key]} alt={p.name} loading="lazy" onError={e => {e.currentTarget.style.display="none";}}/>:
+                  <div className={s.productPlaceholder}>{p.name}</div>}
+                {p.tag && <span className={s.productPill}>{p.tag}</span>}
+              </a>
+              <div className={s.productBody}>
+                <span className={s.productBenefit}>{p.benefit}</span>
+                <h3><a href={p.href} target="_blank" rel="noopener noreferrer">{p.name}</a></h3>
+                <div className={s.productPrice}>
+                  <span>{p.price} USD</span>
+                  <a href={p.href} target="_blank" rel="noopener noreferrer">View product <ArrowUpRight size={14}/></a>
                 </div>
               </div>
-              <span className={s.recVisualCorner}>A more considered kind of care</span>
-            </div>
+            </article>)}
           </div>
+          <p className={s.productNote}>The images above load from Cecilia&apos;s current Shopify catalog when available. Pricing and product selection reflect the public store and may change.</p>
         </div>
       </section>
 
-      <section className={s.founder} id="founder" aria-labelledby="founder-title">
-        <div className={[s.shell,s.founderInner].join(" ")}>
-          <div className={s.founderLeft}>
-            <span className={s.eyebrow}>Behind every formulation</span>
-            <h2 id="founder-title" className={s.serif}>Experience you can <em>feel good about.</em></h2>
-          </div>
-          <div className={s.founderRight}>
-            <p>Meet Cecilia Salvesen — founder, formulator, aromatherapy educator, and author. She established her first natural health and beauty clinic in South Africa in 1990. Her approach is rooted in thoughtful ingredients and decades of practical experience.</p>
-            <div className={s.founderDetails}>
-              <div><strong>Since 1990</strong><span>Creating natural beauty products</span></div>
-              <div><strong>Author &amp; educator</strong><span>Sharing botanical knowledge</span></div>
-            </div>
-            <a className={s.subtleLink} href={STORE + "/pages/about-cecilia"} target="_blank" rel="noopener noreferrer">
-              Get to know Cecilia <ArrowUpRight size={16}/>
-            </a>
-          </div>
+      <section className={s.editorial} id="ritual">
+        <div className={s.editorialImage}>
+          <EditorialImage src={SCENES.ritual}
+            fallback="https://images.unsplash.com/photo-1611930022073-b7a4ba5fcccd?w=1150&q=85&fit=crop"
+            alt="Woman taking a quiet moment for her morning skincare routine" />
+        </div>
+        <div className={s.editorialCopy}>
+          <span className={s.eyebrow}>A little moment, just for you</span>
+          <h2 className={s.serif}>A beautiful routine.<br/><em>A beautiful feeling.</em></h2>
+          <p>It&apos;s the few minutes before a busy day, or the gentle pause when the day is done. Cecilia&apos;s philosophy is about making skincare something to enjoy—not another thing on your list.</p>
+          <a className={s.darkButton} href={STORE + "/products/prod12"} target="_blank" rel="noopener noreferrer">Meet the daily moisturizer <ArrowUpRight size={16}/></a>
+        </div>
+      </section>
+
+      <section className={s.story} id="founder">
+        <div>
+          <span className={s.eyebrow}>The woman behind the formulations</span>
+          <h2 className={s.serif}>Nature&apos;s wisdom.<br/><em>Cecilia&apos;s touch.</em></h2>
+        </div>
+        <div>
+          <p>Cecilia Salvesen has spent decades studying, teaching and formulating with botanical ingredients. From her first natural health and beauty clinic in South Africa in 1990 to the products she creates today, her belief has remained simple: every ingredient should have a purpose.</p>
+          <a className={s.simpleLink} href={STORE + "/pages/about-cecilia"} target="_blank" rel="noopener noreferrer">Meet Cecilia <ArrowUpRight size={16}/></a>
+          <div className={s.storyStamp}><strong>1990</strong><span>Where the story began</span></div>
         </div>
       </section>
 
       <footer className={s.footer}>
-        <div className={[s.shell,s.footerInner].join(" ")}>
+        <div className={s.footerGrid}>
           <div>
-            <div className={s.footerBrand}>Cecilia&apos;s<small>Natural health &amp; beauty</small></div>
-            <p>Good skincare starts with understanding what your skin needs. Discover natural beauty from a founder who has spent decades making it her craft.</p>
+            <div className={s.footerLogo}>Cecilia&apos;s<span>Natural health &amp; beauty</span></div>
+            <p>Thoughtful botanical care for everyday softness, a little radiance, and the simple pleasure of feeling good in your own skin.</p>
           </div>
-          <div className={s.footerCol}>
-            <h3>Explore</h3>
-            <a href="#find">Find your starting point</a>
-            <a href="#recommendation">Cecilia&apos;s suggestion</a>
-            <a href={STORE + "/collections/all"} target="_blank" rel="noopener noreferrer">Shop all products ↗</a>
+          <div>
+            <h4>Discover</h4>
+            <a href="#benefits">Shop by what you love</a>
+            <a href="#shop">Featured products</a>
+            <a href={STORE + "/collections/all"} target="_blank" rel="noopener noreferrer">Full Shopify collection ↗</a>
           </div>
-          <div className={s.footerCol}>
-            <h3>About Cecilia</h3>
-            <a href="#founder">Our founder</a>
-            <a href={STORE + "/pages/about-cecilia"} target="_blank" rel="noopener noreferrer">Her story ↗</a>
+          <div>
+            <h4>Our world</h4>
+            <a href="#founder">About Cecilia</a>
             <a href={STORE + "/pages/cecilias-formulation-philosophy"} target="_blank" rel="noopener noreferrer">Formulation philosophy ↗</a>
+            <a href={STORE} target="_blank" rel="noopener noreferrer">Visit current store ↗</a>
           </div>
         </div>
-        <div className={s.shell}>
-          <div className={s.footline}>
-            <span>© 2026 Cecilia&apos;s Products · Concept storefront presentation</span>
-            <span>Preview only. Recommendations are general, not medical advice. Purchases take place on Cecilia&apos;s Shopify store.</span>
-          </div>
+        <div className={s.footerBottom}>
+          <span>© 2026 Cecilia&apos;s Products · Website design concept</span>
+          <span>Temporary editorial lifestyle imagery is for design demonstration, not evidence of product results. Purchases take place on the existing store.</span>
         </div>
       </footer>
-      <div className={s.demoNote}>Storefront concept · Preview only</div>
+
+      <div className={s.previewNote}>BRHT concept storefront · Preview only</div>
     </main>
   );
 }
