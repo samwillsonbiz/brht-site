@@ -61,7 +61,7 @@ export function normalizeProduct(raw: any, format: "ajax" | "json"): StoreProduc
       id: String(v.id || ""),
       title: String(v.public_title || v.title || "Default"),
       price: Number.isFinite(price) ? Math.max(0,price) : 0,
-      available: v.available !== false && v.inventory_quantity !== 0,
+      available: v.available !== false,
       options: Array.isArray(v.options) ? v.options.map(String) : [v.option1,v.option2,v.option3].filter(Boolean).map(String),
       image: maybeImage || rootImage,
       sku: typeof v.sku === "string" ? v.sku : undefined,
@@ -76,7 +76,7 @@ export function normalizeProduct(raw: any, format: "ajax" | "json"): StoreProduc
     description: plainText(raw.description || raw.body_html),
     vendor: String(raw.vendor || "Cecilia's Products"),
     type: String(raw.product_type || raw.type || "Botanical care"),
-    tags: Array.isArray(raw.tags) ? raw.tags.map(String) : typeof raw.tags === "string" ? raw.tags.split(",").map(x=>x.trim()) : [],
+    tags: Array.isArray(raw.tags) ? raw.tags.map(String) : typeof raw.tags === "string" ? raw.tags.split(",").map((x:string)=>x.trim()) : [],
     image: rootImage, images: imageList.length ? imageList : rootImage ? [rootImage] : [],
     options: Array.isArray(raw.options) ? raw.options.map((o:any)=>typeof o==="string"?o:String(o.name||"Option")) : [],
     variants,
@@ -111,7 +111,8 @@ export async function getCatalog(): Promise<StoreProduct[]> {
   const pages = await Promise.allSettled([1,2].map(async page=>{
     const data=await getJson(SHOP+"/collections/all/products.json?limit=100&page="+page);
     const entries=Array.isArray(data.products)?data.products:[];
-    return entries.map((p:any)=>normalizeProduct(p,"json")).filter((p:StoreProduct|null):p is StoreProduct=>!!p);
+    const normalized:StoreProduct[]=entries.map((p:any)=>normalizeProduct(p,"json")).filter((p:StoreProduct|null):p is StoreProduct=>!!p);
+    return normalized;
   }));
   const map=new Map<string,StoreProduct>();
   pages.forEach(result=>{
