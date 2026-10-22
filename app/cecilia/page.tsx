@@ -8,13 +8,16 @@ import {
   Plus, RefreshCcw, Search, ShoppingBag, Sparkles, Sun, X
 } from "lucide-react";
 import s from "./cecilia.module.css";
+import {useRouter} from "next/navigation";
+import {useCeciliaStore} from "./commerce";
 
 const STORE = "https://ceciliasproducts.com";
+const handles:Record<ProductId,string>={moisturizer:"prod12",emerald:"prod19",blu:"prod6",lotion:"prod30"};
 const productData = [
-  {id:"moisturizer",name:"Day & Night Moisturizer",price:29,benefit:"Daily moisture & softness",small:"Cecilia's signature since 1990",url:STORE+"/products/prod12",tag:"Cecilia's signature"},
-  {id:"emerald",name:"Emerald Jade Serum",price:20,benefit:"A botanical finishing touch",small:"With raspberry seed oil",url:STORE+"/products/prod19",tag:"Plant-based favorite"},
-  {id:"blu",name:"Blu Jade Serum",price:20,benefit:"A nourished-looking glow",small:"With emu oil and essential oils",url:STORE+"/products/prod6",tag:""},
-  {id:"lotion",name:"Hand & Body Lotions",price:22,benefit:"Everyday body softness",small:"Multiple scents & fragrance-free",url:STORE+"/products/prod30",tag:""}
+  {id:"moisturizer",name:"Day & Night Moisturizer",price:29,benefit:"Daily moisture & softness",small:"Cecilia's signature since 1990",url:"/cecilia/products/prod12",tag:"Cecilia's signature"},
+  {id:"emerald",name:"Emerald Jade Serum",price:20,benefit:"A botanical finishing touch",small:"With raspberry seed oil",url:"/cecilia/products/prod19",tag:"Plant-based favorite"},
+  {id:"blu",name:"Blu Jade Serum",price:20,benefit:"A nourished-looking glow",small:"With emu oil and essential oils",url:"/cecilia/products/prod6",tag:""},
+  {id:"lotion",name:"Hand & Body Lotions",price:22,benefit:"Everyday body softness",small:"Multiple scents & fragrance-free",url:"/cecilia/products/prod30",tag:""}
 ] as const;
 
 type ProductId = typeof productData[number]["id"];
@@ -53,25 +56,20 @@ function ProductVisual({id,images}:{id:ProductId;images:Record<string,string>}) 
 }
 
 export default function CeciliaHome() {
-  const [mobile,setMobile]=useState(false);
-  const [search,setSearch]=useState(false);
-  const [searchTerm,setSearchTerm]=useState("");
+  const router=useRouter();
+  const {catalog,findProduct,addItem}=useCeciliaStore();
   const [need,setNeed]=useState<NeedKey>("dry");
   const [images,setImages]=useState<Record<string,string>>({});
   const [clubTab,setClubTab]=useState<"refill"|"box">("refill");
   const [frequency,setFrequency]=useState<"monthly"|"bimonthly"|"seasonal">("bimonthly");
   const [clubOpen,setClubOpen]=useState(false);
-  const [bagOpen,setBagOpen]=useState(false);
-  const [bag,setBag]=useState<Record<string,number>>({});
   const [routineSerum,setRoutineSerum]=useState<ProductId>("emerald");
   const [routineExpanded,setRoutineExpanded]=useState(false);
   const selection=needs.find(x=>x.id===need)!;
   const selectedProduct=productData.find(x=>x.id===selection.product)!;
-  const bagCount=Object.values(bag).reduce((x,y)=>x+y,0);
-  const bagTotal=productData.reduce((sum,p)=>sum+(bag[p.id]||0)*p.price,0);
-  const filtered=productData.filter(p=>(p.name+" "+p.benefit+" "+p.small).toLowerCase().includes(searchTerm.toLowerCase()));
   const routineProducts=useMemo(()=>[productData[0],productData.find(p=>p.id===routineSerum)!],[routineSerum]);
-  const routineTotal=routineProducts.reduce((sum,p)=>sum+p.price,0);
+  const livePrice=(id:ProductId)=>catalog.find(p=>p.handle===handles[id])?.price??productData.find(p=>p.id===id)!.price;
+  const routineTotal=routineProducts.reduce((sum,p)=>sum+livePrice(p.id),0);
 
   useEffect(()=>{
     let active=true;
@@ -88,58 +86,28 @@ export default function CeciliaHome() {
     return ()=>{active=false;};
   },[]);
   useEffect(()=>{
-    if(!search&&!bagOpen&&!clubOpen)return;
-    const onKey=(e:KeyboardEvent)=>{if(e.key==="Escape"){setSearch(false);setBagOpen(false);setClubOpen(false);}};
+    if(!clubOpen)return;
+    const onKey=(e:KeyboardEvent)=>{if(e.key==="Escape")setClubOpen(false);};
     document.addEventListener("keydown",onKey);
     return ()=>document.removeEventListener("keydown",onKey);
-  },[search,bagOpen,clubOpen]);
+  },[clubOpen]);
 
-  const add=(ids:ProductId[])=>{
-    setBag(cur=>{
-      const next={...cur};
-      ids.forEach(id=>next[id]=(next[id]||0)+1);
-      return next;
-    });
-    setBagOpen(true);
-  };
-  const change=(id:string,delta:number)=>{
-    setBag(cur=>{
-      const next={...cur};
-      next[id]=Math.max(0,(next[id]||0)+delta);
-      if(!next[id])delete next[id];
-      return next;
-    });
+  const add=async(ids:ProductId[])=>{
+    const selected=[];
+    for(const id of ids){
+      const product=await findProduct(handles[id]);
+      if(!product){router.push("/cecilia/products/"+handles[id]);return;}
+      const variants=product.variants.filter(v=>v.available);
+      if(variants.length!==1){router.push("/cecilia/products/"+handles[id]);return;}
+      selected.push({product,variant:variants[0]});
+    }
+    selected.forEach(({product,variant})=>addItem(product,variant));
   };
   const jump=(hash:string)=>{
-    setMobile(false);
     document.querySelector(hash)?.scrollIntoView({behavior:"smooth",block:"start"});
   };
 
   return <main className={s.site} id="top">
-    <div className={s.promo}>ABOVE PURE. BEYOND NATURAL. <span/> BOTANICAL BEAUTY SINCE 1990 <span/> FREE US SHIPPING OVER $100 AT THE LIVE STORE</div>
-    <header className={s.header}>
-      <a className={s.wordmark} href="#top" onClick={()=>setMobile(false)} aria-label="Cecilia's Products home">Cecilia&apos;s <small>NATURAL HEALTH &amp; BEAUTY</small></a>
-      <nav className={s.desktopNav} aria-label="Primary">
-        <a href="#shop">Shop favorites</a>
-        <a href="#needs">Shop by need</a>
-        <a href="#ritual">Routines &amp; sets</a>
-        <a href="#club">The Ritual Club</a>
-        <a href="#story">Our story</a>
-      </nav>
-      <div className={s.headerTools}>
-        <button type="button" className={s.iconButton} aria-label="Search featured products" onClick={()=>setSearch(true)}><Search size={20} strokeWidth={1.5}/></button>
-        <button type="button" className={s.iconButton} aria-label={"Open demo bag with "+bagCount+" items"} onClick={()=>setBagOpen(true)}>
-          <ShoppingBag size={20} strokeWidth={1.5}/>{bagCount>0&&<span className={s.count}>{bagCount}</span>}
-        </button>
-        <button type="button" className={[s.iconButton,s.mobileToggle].join(" ")} aria-label="Toggle navigation" aria-expanded={mobile} onClick={()=>setMobile(!mobile)}>{mobile?<X size={21}/>:<Menu size={21}/>}</button>
-      </div>
-      {mobile&&<nav className={s.mobileNav} aria-label="Mobile navigation">
-        {[
-          ["Shop favorites","#shop"],["Shop by need","#needs"],["Routines & sets","#ritual"],["The Ritual Club","#club"],["Our story","#story"]
-        ].map(([label,to])=><a key={to} href={to} onClick={()=>setMobile(false)}>{label}</a>)}
-        <a href={STORE+"/collections/all"} target="_blank" rel="noopener noreferrer">Visit the live store ↗</a>
-      </nav>}
-    </header>
     <section className={s.hero} aria-labelledby="hero-heading">
       <div className={s.heroCopy}>
         <span className={s.eyebrow}>FOUNDER-FORMULATED BOTANICAL SKINCARE</span>
@@ -186,7 +154,7 @@ export default function CeciliaHome() {
             <span className={s.tinyEyebrow}>CECILIA&apos;S PICK FOR YOU</span>
             <h3 className={s.serif}>{selectedProduct.name}</h3>
             <p>{selection.details}</p>
-            <div className={s.featureMeta}><span>{USD(selectedProduct.price)} USD</span><span>{selectedProduct.small}</span></div>
+            <div className={s.featureMeta}><span>{USD(livePrice(selectedProduct.id))} USD</span><span>{selectedProduct.small}</span></div>
             <a className={s.textLink} href={selectedProduct.url} target="_blank" rel="noopener noreferrer">See product details <ArrowUpRight size={15}/></a>
           </div>
         </div>
@@ -196,7 +164,7 @@ export default function CeciliaHome() {
     <section className={s.shopSection} id="shop">
       <div className={s.sectionIntro}>
         <div><span className={s.eyebrow}>A FEW VERY GOOD THINGS</span><h2 className={s.serif}>Cecilia&apos;s <em>favorites.</em></h2></div>
-        <a className={s.textLink} href={STORE+"/collections/all"} target="_blank" rel="noopener noreferrer">Shop the full collection <ArrowUpRight size={15}/></a>
+        <a className={s.textLink} href="/cecilia/shop" target="_blank" rel="noopener noreferrer">Shop the full collection <ArrowUpRight size={15}/></a>
       </div>
       <div className={s.productGrid}>
         {productData.map(p=><article className={s.productCard} key={p.id}>
@@ -209,7 +177,7 @@ export default function CeciliaHome() {
           <div className={s.productContent}>
             <span>{p.benefit}</span>
             <a className={s.productName} href={p.url} target="_blank" rel="noopener noreferrer">{p.name}</a>
-            <div className={s.productFooter}><strong>{USD(p.price)} USD</strong><button type="button" onClick={()=>add([p.id])} aria-label={"Add "+p.name+" to concept bag"}><Plus size={17}/></button></div>
+            <div className={s.productFooter}><strong>{USD(livePrice(p.id))} USD</strong><button type="button" onClick={()=>add([p.id])} aria-label={"Add "+p.name+" to concept bag"}><Plus size={17}/></button></div>
           </div>
         </article>)}
       </div>
@@ -290,44 +258,10 @@ export default function CeciliaHome() {
     <section className={s.lastCall}>
       <span className={s.eyebrow}>ABOVE PURE. BEYOND NATURAL.</span>
       <h2 className={s.serif}>Find your everyday <em>feel-good.</em></h2>
-      <a href={STORE+"/collections/all"} className={s.primary} target="_blank" rel="noopener noreferrer">Explore the collection <ArrowUpRight size={16}/></a>
+      <a href="/cecilia/shop" className={s.primary} target="_blank" rel="noopener noreferrer">Explore the collection <ArrowUpRight size={16}/></a>
     </section>
 
-    <footer className={s.footer}>
-      <div className={s.footerColumns}>
-        <div><div className={s.footerLogo}>Cecilia&apos;s <small>NATURAL HEALTH &amp; BEAUTY</small></div><p>Botanical formulations, a founder&apos;s experience, and the simple pleasure of feeling good in your skin.</p></div>
-        <div><h4>SHOP</h4><a href="#shop">Customer favorites</a><a href="#needs">Shop by need</a><a href="#ritual">The daily ritual</a><a href={STORE+"/collections/all"} target="_blank" rel="noopener noreferrer">All products ↗</a></div>
-        <div><h4>DISCOVER</h4><a href="#club">The Ritual Club concept</a><a href="#story">Meet Cecilia</a><a href={STORE+"/pages/cecilias-formulation-philosophy"} target="_blank" rel="noopener noreferrer">Our philosophy ↗</a></div>
-        <div><h4>SHOP WITH CONFIDENCE</h4><p>Purchases are handled by Cecilia&apos;s original Shopify store. Please review ingredients and use instructions on each product listing.</p></div>
-      </div>
-      <div className={s.footerBottom}><span>© 2026 Cecilia&apos;s Products · Brand & storefront concept by BRHT</span><span>Preview only · Product recommendations are general · No subscription service is active</span></div>
-    </footer>
-
     <div className={s.demoPill}>✦ Cecilia&apos;s · Interactive design preview</div>
-
-    {search&&<div className={s.searchOverlay} role="dialog" aria-modal="true" aria-label="Search featured products">
-      <div className={s.searchContent}>
-        <button aria-label="Close search" className={s.close} onClick={()=>{setSearch(false);setSearchTerm("");}}><X size={21}/></button>
-        <span className={s.eyebrow}>FIND SOMETHING WONDERFUL</span><h2 className={s.serif}>What can we help you find?</h2>
-        <div className={s.searchInput}><Search size={22}/><input autoFocus value={searchTerm} onChange={e=>setSearchTerm(e.target.value)} placeholder="Try moisturizer, serum, body care…" aria-label="Search Cecilia's featured products"/></div>
-        <div className={s.searchResults}>{filtered.map(p=><a key={p.id} href={p.url} target="_blank" rel="noopener noreferrer"><span>{p.name}<small>{p.benefit}</small></span><ArrowUpRight size={17}/></a>)}
-        {!filtered.length&&<div className={s.noResults}>No featured products match. <a href={STORE+"/search?q="+encodeURIComponent(searchTerm)} target="_blank" rel="noopener noreferrer">Search the full Shopify store ↗</a></div>}</div>
-      </div>
-    </div>}
-
-    {bagOpen&&<div className={s.drawerOverlay} onMouseDown={()=>setBagOpen(false)}>
-      <aside className={s.drawer} role="dialog" aria-modal="true" aria-label="Concept shopping bag" onMouseDown={e=>e.stopPropagation()}>
-        <div className={s.drawerHead}><h2 className={s.serif}>Your little bag <small>({bagCount})</small></h2><button className={s.close} aria-label="Close bag" onClick={()=>setBagOpen(false)}><X size={22}/></button></div>
-        {!bagCount?<div className={s.bagEmpty}><ShoppingBag size={43} strokeWidth={1.1}/><h3 className={s.serif}>Something lovely belongs here.</h3><p>Explore Cecilia&apos;s botanical favorites and build your ritual.</p><button className={s.primary} onClick={()=>{setBagOpen(false);jump("#shop");}}>Explore products <ArrowRight size={16}/></button></div>:<>
-          {productData.filter(p=>bag[p.id]).map(p=><div className={s.bagItem} key={p.id}>
-            <div className={s.bagThumb}><ProductVisual id={p.id} images={images}/></div>
-            <div className={s.bagItemBody}><h3>{p.name}</h3><small>{USD(p.price)} USD</small><div className={s.quantity}><button onClick={()=>change(p.id,-1)} aria-label={"Decrease "+p.name}><Minus size={14}/></button><span>{bag[p.id]}</span><button onClick={()=>change(p.id,1)} aria-label={"Increase "+p.name}><Plus size={14}/></button></div></div>
-            <b>{USD(p.price*(bag[p.id]||0))}</b>
-          </div>)}
-          <div className={s.bagSummary}><p>{bagTotal>=100?"Your items meet the current $100 US free-shipping threshold.":USD(Math.max(0,100-bagTotal))+" away from the live store's $100 US free-shipping threshold."}</p><div className={s.progress}><span style={{width:Math.min(bagTotal,100)+"%"}}/></div><div className={s.total}><span>Demo subtotal</span><strong>{USD(bagTotal)} USD</strong></div><p>These selections are for the concept only. Open each product on Cecilia&apos;s live store to make a purchase.</p><div className={s.bagLinks}>{productData.filter(p=>bag[p.id]).map(p=><a href={p.url} target="_blank" rel="noopener noreferrer" key={p.id}>{p.name}<ArrowUpRight size={14}/></a>)}</div><a className={s.primary} href={STORE+"/collections/all"} target="_blank" rel="noopener noreferrer">Continue on the live store <ArrowUpRight size={16}/></a></div>
-        </>}
-      </aside>
-    </div>}
 
     {clubOpen&&<div className={s.modalBackdrop} onMouseDown={()=>setClubOpen(false)}>
       <div className={s.modal} role="dialog" aria-modal="true" aria-label="Ritual Club preview" onMouseDown={e=>e.stopPropagation()}>
