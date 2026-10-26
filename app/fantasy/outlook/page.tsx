@@ -158,10 +158,10 @@ export default function FantasyOutlookPage() {
                 <Sparkles className="h-4 w-4" /> Season Planning
               </div>
               <h1 className="max-w-3xl text-4xl font-semibold tracking-[-0.04em] md:text-6xl">
-                See the schedule advantage before everyone else does.
+                Plan around the next six weeks of NBA games.
               </h1>
               <p className="mt-5 max-w-2xl text-base leading-7 text-black/50 md:text-lg">
-                ESPN now supplies the NBA schedule automatically. This view looks six weeks ahead so trades, draft choices and future streams can be judged by usable opportunity—not just player average.
+                See future NBA game volume by team, search players, and check who owns them. Combine this with the matchup explorer to spot streaming and lineup advantages before your opponent does.
               </p>
               <div className="mt-6 flex flex-wrap gap-2 text-xs">
                 <span className="rounded-full bg-emerald-50 px-3 py-1.5 font-medium text-emerald-700">ESPN connected</span>
@@ -243,8 +243,8 @@ export default function FantasyOutlookPage() {
           <div className="flex flex-col gap-4 border-b border-black/[0.06] p-6 md:flex-row md:items-end md:justify-between">
             <div>
               <div className="text-xs font-semibold uppercase tracking-[0.14em] text-black/40">Player schedule fit</div>
-              <h2 className="mt-1 text-2xl font-semibold tracking-tight">Look up any player</h2>
-              <p className="mt-1 max-w-2xl text-sm text-black/50">Before the draft this is a schedule research tool. After the draft, the same table will also know who owns each player.</p>
+              <h2 className="mt-1 text-2xl font-semibold tracking-tight">Research any player’s next six weeks</h2>
+              <p className="mt-1 max-w-2xl text-sm text-black/50">The table uses current ESPN team ownership and the upcoming NBA schedule so you can scout possible waiver pickups and trade targets.</p>
             </div>
             <label className="flex min-w-[290px] items-center gap-2 rounded-full bg-[#f5f5f7] px-4 py-2.5 text-sm">
               <Search className="h-4 w-4 text-black/35" />
