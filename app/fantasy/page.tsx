@@ -343,6 +343,21 @@ export default function FantasyPage() {
         {pending && !feed && <div className="rounded-2xl bg-white p-7 text-sm text-black/55"><RefreshCw className="mr-2 inline h-4 w-4 animate-spin" />Loading ESPN opponents, drafted rosters and game schedule…</div>}
         {error && <div role="alert" className="rounded-2xl border border-amber-200 bg-amber-50 p-5 text-sm font-semibold text-amber-900"><ShieldAlert className="mr-2 inline h-4 w-4" />{error}{feed ? " Last synced data remains displayed." : " No fictional roster data is substituted."}</div>}
         {!!weeks.length && <>
+
+          <section className="flex flex-col gap-3 rounded-[22px] border border-black/[0.06] bg-white p-3 sm:flex-row sm:items-center sm:justify-between sm:p-4">
+            <div className="flex flex-wrap gap-2">
+              {([
+                {id:"overview",label:"6-week overview"},
+                {id:"explorer",label:"Explore matchups"},
+                {id:"planner",label:"Substitution planner"},
+              ] as const).map((t)=><button type="button" key={t.id} onClick={()=>setPanel(t.id)}
+                className={"rounded-full px-4 py-2.5 text-xs font-semibold transition "+(panel===t.id?"bg-[#1d1d1f] text-white":"bg-[#f3f3f5] text-black/60")}>
+                  {t.label}
+                </button>)}
+            </div>
+            {feed && <span className="text-[11px] text-black/40">Updated {new Date(feed.updated).toLocaleTimeString()} · ESPN live + estimates</span>}
+          </section>
+          {panel === "overview" && <SixWeekForecastChart rows={sixWeekRows}/>}
           <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
             {weeks.map((w, i) => {
               const delta = (w.actualMine ?? 0) + w.mine.projected - (w.actualOpponent ?? 0) - w.opponent.projected;
@@ -357,6 +372,155 @@ export default function FantasyPage() {
               </button>;
             })}
           </section>
+          
+          {(panel === "explorer" || panel === "planner") && feed && baseline && (
+            <section className="space-y-4">
+              <div className="rounded-[22px] border border-black/[0.06] bg-white p-4 sm:p-6">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div><div className="text-xs font-bold uppercase tracking-wider text-[#0071e3]">Team comparison</div><h2 className="mt-1 text-lg font-semibold">Choose any two teams in your league</h2></div>
+                  <div className="flex flex-wrap gap-2">
+                    <button type="button" onClick={()=>{setManualCompare(false);setScenarioOn(false);}} className="rounded-full bg-[#f2f2f7] px-4 py-2 text-xs font-semibold text-black/60">My official matchup</button>
+                    <button type="button" onClick={()=>setRenameOpen((v)=>!v)} className="rounded-full border border-black/10 px-4 py-2 text-xs font-semibold text-black/60">{renameOpen?"Done renaming":"Change displayed names"}</button>
+                  </div>
+                </div>
+                <div className="mt-4 grid gap-3 md:grid-cols-2">
+                  <label className="text-xs font-semibold text-black/50">Team A
+                    <select aria-label="Team A" value={activeLeft} onChange={(e)=>{setLeftTeam(Number(e.target.value));setRightTeam(activeRight);setManualCompare(true);setScenarioOn(false);}}
+                      className="mt-1.5 block w-full rounded-xl border border-black/10 bg-[#f8f8fa] px-3 py-3 text-sm font-semibold text-black">
+                      {feed.league.teams.map((t)=><option key={t.id} value={t.id}>{teamLabel(t.id)}</option>)}
+                    </select>
+                  </label>
+                  <label className="text-xs font-semibold text-black/50">Team B
+                    <select aria-label="Team B" value={activeRight} onChange={(e)=>{setRightTeam(Number(e.target.value));setLeftTeam(activeLeft);setManualCompare(true);setScenarioOn(false);}}
+                      className="mt-1.5 block w-full rounded-xl border border-black/10 bg-[#f8f8fa] px-3 py-3 text-sm font-semibold text-black">
+                      {feed.league.teams.map((t)=><option key={t.id} value={t.id}>{teamLabel(t.id)}</option>)}
+                    </select>
+                  </label>
+                </div>
+                {activeLeft===activeRight && <p className="mt-3 text-xs font-semibold text-amber-800">Choose two different teams to compare a matchup.</p>}
+                {renameOpen && (
+                  <div className="mt-4 grid gap-3 rounded-xl bg-[#f8f8fa] p-4 sm:grid-cols-2">
+                    {[activeLeft,activeRight].map((id,i)=><label key={i} className="text-xs font-semibold text-black/50">{i===0?"Team A display name":"Team B display name"}
+                      <input value={teamAliases[String(id)] ?? ""} onChange={(e)=>updateAlias(id,e.target.value)}
+                        placeholder={feed.league.teams.find((t)=>t.id===id)?.name.trim() ?? "Team name"}
+                        className="mt-1.5 block w-full rounded-xl border border-black/10 bg-white px-3 py-2.5 text-sm text-black"/>
+                    </label>)}
+                    <p className="text-[11px] text-black/45 sm:col-span-2">Aliases only change the labels in this browser. ESPN team names and other users are not changed.</p>
+                  </div>
+                )}
+                <p className="mt-3 text-xs leading-5 text-black/45">
+                  {selectedPairMatchesESPN ? "These teams play each other this week. Official ESPN score-to-date is included." : "Hypothetical head-to-head: these teams are not scheduled to play each other this week. Comparison uses remaining-game forecasts only, with no invented live score."}
+                </p>
+              </div>
+            </section>
+          )}
+          {panel === "explorer" && week && feed && baseline && (
+            <section className="space-y-4">
+              <CumulativeForecastChart leftDays={week.mine.days} rightDays={week.opponent.days}
+                leftActual={week.actualMine??0} rightActual={week.actualOpponent??0} leftName={mineName} rightName={otherName}/>
+              <div className="grid gap-4 lg:grid-cols-2">
+                <ContributionsChart rows={contributionRows}/>
+                <section className="rounded-[22px] border border-black/[0.06] bg-white p-5 sm:p-6">
+                  <div className="text-xs font-bold uppercase tracking-wider text-[#0071e3]">Daily opportunities</div>
+                  <h3 className="mt-1 text-lg font-semibold">Starts and bench congestion</h3>
+                  <div className="mt-5 space-y-3">
+                    {week.mine.days.map((day,i)=><button type="button" key={day.date} onClick={()=>setSelectedDay(i)}
+                      className={"flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left "+(selectedDay===i?"bg-[#eef6ff]":"bg-[#fafafa]")}>
+                      <span className="w-10 text-xs font-bold text-black/55">{DAY_NAMES[i]}</span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block h-2 rounded-full bg-[#e8e8ec]">
+                          <span className="block h-2 rounded-full bg-[#0071e3]" style={{width:String(day.scheduled?Math.min(100,day.starters.length/day.scheduled*100):0)+"%"}}/>
+                        </span>
+                      </span>
+                      <span className="text-xs font-semibold">{day.starters.length} starts</span>
+                      {day.benchGames.length>0 && <span className="rounded-md bg-amber-50 px-2 py-1 text-[10px] font-semibold text-amber-800">{day.benchGames.length} benched</span>}
+                    </button>)}
+                  </div>
+                  <p className="mt-3 text-xs text-black/45">Tap a day to inspect both detailed lineups below.</p>
+                </section>
+              </div>
+              <section className="rounded-[22px] border border-black/[0.06] bg-white p-5 sm:p-6">
+                <div className="text-xs font-bold uppercase tracking-wider text-[#0071e3]">League scoreboard</div>
+                <h3 className="mt-1 text-lg font-semibold">All six matchups · Week {baseline.week}</h3>
+                <p className="mt-1 text-xs text-black/45">Tap any matchup to switch the comparison above. Actual scores are shown only for real ESPN pairings.</p>
+                <div className="mt-4 grid gap-2 md:grid-cols-2">
+                  {leagueGamesThisWeek.map((m)=><button type="button" key={m.id ?? (String(m.homeId)+"-"+String(m.awayId))}
+                    onClick={()=>inspectPair(m.homeId??-1,m.awayId??-1)}
+                    className={"rounded-xl border p-3 text-left transition hover:bg-[#f8fbff] "+(m.homeId===activeLeft&&m.awayId===activeRight?"border-[#0071e3]/45 bg-[#eef6ff]":"border-black/[0.07]")}>
+                    <div className="flex items-center justify-between gap-3 text-xs font-semibold"><span className="min-w-0 flex-1 truncate">{teamLabel(m.homeId??-1)}</span><span className="font-bold text-[#0071e3]">{fmt((m.homeActual??0)+(m.homePlan?.projected??0))}</span></div>
+                    <div className="mt-1 flex items-center justify-between gap-3 text-xs font-semibold"><span className="min-w-0 flex-1 truncate">{teamLabel(m.awayId??-1)}</span><span className="font-bold text-[#f05b52]">{fmt((m.awayActual??0)+(m.awayPlan?.projected??0))}</span></div>
+                    {(m.homeActual!=null && m.awayActual!=null && (m.homeActual>0||m.awayActual>0)) && <p className="mt-1 text-[10px] text-black/50">ESPN live: {fmt(m.homeActual)} – {fmt(m.awayActual)}</p>}
+                  </button>)}
+                </div>
+              </section>
+            </section>
+          )}
+          {panel === "planner" && week && feed && (
+            <section className="space-y-4">
+              <div className="rounded-[22px] border border-black/[0.06] bg-white p-5 sm:p-6">
+                <div className="text-xs font-bold uppercase tracking-wider text-[#0071e3]">What-if tools · planning only</div>
+                <h2 className="mt-1 text-xl font-semibold">Try a waiver pickup or substitution</h2>
+                <p className="mt-2 text-xs leading-5 text-black/50">Simulate dropping a player from Team A and adding a real ESPN free agent from a chosen day. Re-optimizes every remaining daily lineup; never changes your ESPN roster or spends a waiver move.</p>
+                <div className="mt-5 grid gap-4 sm:grid-cols-2">
+                  <label className="text-xs font-semibold text-black/55">Player to drop
+                    <select value={dropId??""} onChange={(e)=>{setDropId(Number(e.target.value));setScenarioOn(false);}}
+                      className="mt-1.5 w-full rounded-xl border border-black/10 bg-[#f7f7f9] px-3 py-3 text-sm font-medium text-black">
+                      <option value="">Select player</option>
+                      {week.mine.players.map((p)=><option key={p.player.id} value={p.player.id}>{p.player.name} · {p.ppg.toFixed(1)} PPG</option>)}
+                    </select>
+                  </label>
+                  <label className="text-xs font-semibold text-black/55">Find a real ESPN free agent
+                    <input value={faSearch} onChange={(e)=>{setFaSearch(e.target.value);setCandidateId(null);setScenarioOn(false);}}
+                      placeholder="Search available players" className="mt-1.5 w-full rounded-xl border border-black/10 bg-[#f7f7f9] px-3 py-3 text-sm font-medium text-black"/>
+                  </label>
+                  <label className="text-xs font-semibold text-black/55">Player to add
+                    <select value={candidateId??""} onChange={(e)=>{setCandidateId(e.target.value?Number(e.target.value):null);setScenarioOn(false);}}
+                      className="mt-1.5 w-full rounded-xl border border-black/10 bg-[#f7f7f9] px-3 py-3 text-sm font-medium text-black" disabled={faLoading}>
+                      <option value="">{faLoading?"Loading ESPN available players…":"Choose available player"}</option>
+                      {filteredFreeAgents.map((p)=><option key={p.id} value={p.id}>{p.name} · {ppgFor(p).ppg.toFixed(1)} PPG</option>)}
+                    </select>
+                  </label>
+                  <label className="text-xs font-semibold text-black/55">Effective date
+                    <select value={scenarioStart} onChange={(e)=>setScenarioStart(Number(e.target.value))}
+                      className="mt-1.5 w-full rounded-xl border border-black/10 bg-[#f7f7f9] px-3 py-3 text-sm font-medium text-black">
+                      {DAY_NAMES.map((day,i)=><option key={day} value={i}>{day} {formatDate(datePlus(week.start,i))}</option>)}
+                    </select>
+                  </label>
+                </div>
+                {faError && <p className="mt-3 text-sm text-amber-800">{faError} <button type="button" className="font-bold underline" onClick={()=>setFaError(null)}>Retry</button></p>}
+                {selectedCandidate && <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+                  <div className="text-xs font-semibold">Assumed production: {scenarioPct}% of ESPN forecast ({(ppgFor(selectedCandidate).ppg*scenarioPct/100).toFixed(1)} PPG)</div>
+                  <input type="range" min={70} max={130} step={5} value={scenarioPct} onChange={(e)=>setScenarioPct(Number(e.target.value))} aria-label="Hypothetical PPG percentage" className="w-full accent-[#0071e3] sm:w-48"/>
+                </div>}
+                <div className="mt-5 flex flex-wrap items-center gap-3">
+                  <button type="button" onClick={()=>setScenarioOn(true)} disabled={!dropId||!candidateId}
+                    className="rounded-full bg-[#0071e3] px-5 py-3 text-sm font-bold text-white disabled:opacity-40">Run what-if simulation</button>
+                  <button type="button" onClick={()=>{setScenarioOn(false);setDropId(null);setCandidateId(null);setScenarioPct(100);}}
+                    className="rounded-full bg-[#f2f2f7] px-5 py-3 text-sm font-semibold text-black/60">Reset scenario</button>
+                </div>
+                {scenarioPlan ? <div className="mt-5 grid gap-3 sm:grid-cols-3">
+                  <div className="rounded-xl bg-[#f5f5f7] p-4"><p className="text-xs text-black/50">Current future points</p><p className="mt-1 text-2xl font-bold">{fmt(week.mine.projected)}</p></div>
+                  <div className="rounded-xl bg-[#eef6ff] p-4"><p className="text-xs text-black/50">After swap</p><p className="mt-1 text-2xl font-bold text-[#0071e3]">{fmt(scenarioPlan.projected)}</p></div>
+                  <div className={"rounded-xl p-4 "+(scenarioPlan.projected-week.mine.projected>=0?"bg-emerald-50":"bg-red-50")}><p className="text-xs text-black/50">Net weekly improvement</p>
+                    <p className={"mt-1 text-2xl font-bold "+(scenarioPlan.projected-week.mine.projected>=0?"text-emerald-700":"text-red-600")}>
+                      {scenarioPlan.projected-week.mine.projected>=0?"+":""}{fmt(scenarioPlan.projected-week.mine.projected)}</p></div>
+                </div> : <p className="mt-4 text-xs text-black/40">Choose a drop, pickup and start date to calculate the net effect on usable starts and weekly fantasy points.</p>}
+              </div>
+              {scenarioPlan && <CumulativeForecastChart leftDays={scenarioPlan.days} rightDays={week.opponent.days}
+                leftActual={week.actualMine??0} rightActual={week.actualOpponent??0}
+                leftName={mineName+" · with substitution"} rightName={otherName}/>}
+              {scenarioPlan && <div className="rounded-[22px] border border-black/[0.06] bg-white p-5">
+                <h3 className="text-lg font-semibold">Daily change from this substitution</h3>
+                <div className="mt-3 grid gap-2 sm:grid-cols-7">{scenarioPlan.days.map((d,i)=>{
+                  const delta=d.projected-week.mine.days[i].projected;
+                  return <div key={d.date} className="rounded-xl bg-[#f7f7f9] p-3 text-center">
+                    <p className="text-xs text-black/50">{DAY_NAMES[i]}</p><p className={"mt-1 text-lg font-bold "+(delta>=0?"text-emerald-700":"text-red-600")}>{delta>=0?"+":""}{fmt(delta)}</p>
+                    <p className="text-[10px] text-black/40">{d.starters.length} starters</p>
+                  </div>;
+                })}</div>
+              </div>}
+            </section>
+          )}
           {week && <section className="space-y-5">
             <div className="rounded-[24px] bg-white p-5 shadow-sm md:p-7">
               <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
