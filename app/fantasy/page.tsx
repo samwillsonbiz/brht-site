@@ -306,14 +306,14 @@ export default function FantasyPage() {
     }).sort((a,b)=>b.weekly-a.weekly);
   },[displayPlan]);
   const leagueGamesThisWeek = useMemo(() => {
-    if (!feed || !baseline) return [];
+    if (!feed || !baseline || panel !== "explorer") return [];
     const plans = new Map(feed.league.teams.map((t)=>[t.id,teamPlan(t.id,baseline.start,feed.players,feed.games)] as const));
     return feed.league.matchups.filter((m)=>m.week===baseline.week).map((m) => ({
       ...m,
       homePlan:plans.get(m.homeId ?? -1),
       awayPlan:plans.get(m.awayId ?? -1),
     }));
-  },[feed,baseline]);
+  },[feed,baseline,panel]);
   const sixWeekRows=weeks.map((w)=>({
     week:w.week,start:w.start,left:(w.actualMine??0)+w.mine.projected,
     right:(w.actualOpponent??0)+w.opponent.projected,opponent:feed?teamLabel(w.opponentId??-1):"Opponent",
