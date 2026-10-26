@@ -2,10 +2,11 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { CumulativeForecastChart, SixWeekForecastChart, ContributionsChart } from "./ForecastCharts";
 import { ArrowDown, ArrowUp, CalendarDays, ChevronRight, RefreshCw, ShieldAlert, Target, Users, Zap } from "lucide-react";
 
 type Stats = { id: string | null; statSourceId: number | null; statSplitTypeId: number | null; appliedAverage: number | null; appliedTotal: number | null; scoringPeriodId: number | null };
-type EspnPlayer = { id: number; name: string; fantasyTeamId: number; rosterSlotId?: number | null; proTeamId: number | null; eligibleSlots: number[]; defaultPositionId: number | null; injuryStatus: string | null; stats: Stats[] };
+type EspnPlayer = { id: number; name: string; fantasyTeamId: number; rosterSlotId?: number | null; simulatedFrom?: number; simulatedUntil?: number; simulationPpg?: number; proTeamId: number | null; eligibleSlots: number[]; defaultPositionId: number | null; injuryStatus: string | null; stats: Stats[] };
 type Matchup = { id: number | null; week: number; homeId: number | null; awayId: number | null; home: string | null; away: string | null; homeActual?: number | null; awayActual?: number | null };
 type EspnTeams = { ok: boolean; leagueId: number; myTeamId: number; firstWeek: number; teams: { id: number; name: string; players: number; roster: { id: number; slot: number | null }[] }[]; matchups: Matchup[] };
 type Game = { id: string; gameDateEt: string; home: { id: number }; away: { id: number }; status: string | null; completed: boolean };
@@ -40,7 +41,7 @@ function ppgFor(player: EspnPlayer) {
   // before allowing it to overwhelm ESPN's preseason forward projection.
   const weight = seasonActual != null && seasonGames >= 2
     ? Math.min(0.75, (seasonGames - 1) / (seasonGames + 5)) : 0;
-  const ppg = baseline * (1 - weight) + (seasonActual ?? baseline) * weight;
+  const ppg = player.simulationPpg ?? (baseline * (1 - weight) + (seasonActual ?? baseline) * weight);
   const source = annual ? "ESPN 2027" as const : previous ? "2026 actual" as const : seasonActual != null ? "ESPN 2027" as const : "missing" as const;
   return { ppg, source, seasonActual, seasonGames };
 }
@@ -103,7 +104,10 @@ function teamPlan(teamId: number, weekStart: string, players: EspnPlayer[], game
       player: p, ppg: projection.ppg, source: projection.source,
       seasonActual: projection.seasonActual, seasonGames: projection.seasonGames,
       nbaScheduled: nbaGames.length, nbaPlayed: Object.keys(actualByDay).length,
-      actualByDay, days: Array.from({ length: 7 }, (_, d) => remaining.some((g) => g.gameDateEt === datePlus(weekStart, d))),
+      actualByDay, days: Array.from({ length: 7 }, (_, d) =>
+        remaining.some((g) => g.gameDateEt === datePlus(weekStart, d)) &&
+        (p.simulatedFrom === undefined || d >= p.simulatedFrom) &&
+        (p.simulatedUntil === undefined || d < p.simulatedUntil)),
     };
   });
   const days = Array.from({ length: 7 }, (_, d) => optimizeDay(datePlus(weekStart, d), mapped, d));
@@ -146,6 +150,45 @@ export default function FantasyPage() {
   const [selectedWeek, setSelectedWeek] = useState(0);
   const [selectedDay, setSelectedDay] = useState(1);
   const [rosterTab, setRosterTab] = useState<"mine" | "opp">("mine");
+  const [panel, setPanel] = useState<"overview" | "explorer" | "planner">("overview");
+  const [manualCompare, setManualCompare] = useState(false);
+  const [leftTeam, setLeftTeam] = useState<number | null>(null);
+  const [rightTeam, setRightTeam] = useState<number | null>(null);
+  const [renameOpen, setRenameOpen] = useState(false);
+  const [teamAliases, setTeamAliases] = useState<Record<string, string>>({});
+  const [freeAgents, setFreeAgents] = useState<EspnPlayer[]>([]);
+  const [faLoading, setFaLoading] = useState(false);
+  const [faError, setFaError] = useState<string | null>(null);
+  const [faSearch, setFaSearch] = useState("");
+  const [candidateId, setCandidateId] = useState<number | null>(null);
+  const [dropId, setDropId] = useState<number | null>(null);
+  const [scenarioOn, setScenarioOn] = useState(false);
+  const [scenarioStart, setScenarioStart] = useState(0);
+  const [scenarioPct, setScenarioPct] = useState(100);
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem("fantasy-lab-team-aliases-v1");
+      if (saved) setTeamAliases(JSON.parse(saved) as Record<string, string>);
+    } catch { /* Optional local display aliases only */ }
+  }, []);
+  function updateAlias(id: number, text: string) {
+    setTeamAliases((current) => {
+      const next = { ...current, [String(id)]: text.slice(0, 50) };
+      try { window.localStorage.setItem("fantasy-lab-team-aliases-v1", JSON.stringify(next)); } catch { /* Nothing sensitive is stored */ }
+      return next;
+    });
+  }
+  useEffect(() => {
+    if (panel !== "planner" || freeAgents.length || faLoading || faError) return;
+    let cancelled = false;
+    setFaLoading(true);
+    fetch("/api/fantasy/espn/players?limit=500&status=FREEAGENT,WAIVERS", {cache:"no-store"})
+      .then(async (res) => { if (!res.ok) throw new Error("Free-agent feed unavailable"); return res.json(); })
+      .then((data) => { if (!cancelled) { if (!data.ok || !Array.isArray(data.players)) throw new Error("ESPN did not return free agents"); setFreeAgents(data.players.filter((p: EspnPlayer) => p.id && p.proTeamId).sort((a: EspnPlayer,b: EspnPlayer)=>ppgFor(b).ppg-ppgFor(a).ppg)); } })
+      .catch((error) => { if (!cancelled) setFaError(error instanceof Error?error.message:"Unable to load free agents"); })
+      .finally(() => { if (!cancelled) setFaLoading(false); });
+    return () => { cancelled=true; };
+  }, [panel, freeAgents.length, faLoading, faError]);
 
   // Once games begin, update the live scoreboard while the tab is open.
   useEffect(() => {
@@ -207,25 +250,83 @@ export default function FantasyPage() {
   }, [refreshId]);
 
   const weeks = useMemo(() => feed ? makeWeeks(feed) : [], [feed]);
-  const week = weeks[selectedWeek] ?? null;
-  const mineName = feed?.league.teams.find((t) => t.id === feed.league.myTeamId)?.name.trim() ?? "My Team";
-  const otherName = week?.opponentName ?? "Opponent";
+  const baseline = weeks[selectedWeek] ?? null;
+  const teamLabel = (id: number): string => teamAliases[String(id)]?.trim() || feed?.league.teams.find((t)=>t.id===id)?.name.trim() || "Team " + id;
+  const activeLeft = manualCompare && leftTeam !== null ? leftTeam : feed?.league.myTeamId ?? -1;
+  const activeRight = manualCompare && rightTeam !== null ? rightTeam : baseline?.opponentId ?? -1;
+  const matchup = useMemo(() => feed && baseline ? feed.league.matchups.find((m) => m.week===baseline.week &&
+    ((m.homeId===activeLeft && m.awayId===activeRight)||(m.homeId===activeRight && m.awayId===activeLeft))) : null,
+    [feed,baseline,activeLeft,activeRight]);
+  const comparison = useMemo(() => {
+    if (!feed || !baseline) return null;
+    if (!manualCompare) return baseline;
+    const actualLeft = matchup ? (matchup.homeId===activeLeft ? matchup.homeActual : matchup.awayActual) ?? null : null;
+    const actualRight = matchup ? (matchup.homeId===activeRight ? matchup.homeActual : matchup.awayActual) ?? null : null;
+    return {
+      ...baseline,
+      mine: teamPlan(activeLeft,baseline.start,feed.players,feed.games),
+      opponent: teamPlan(activeRight,baseline.start,feed.players,feed.games),
+      opponentId: activeRight,
+      opponentName: teamLabel(activeRight),
+      validMatchup: Boolean(matchup),
+      actualMine:actualLeft, actualOpponent:actualRight,
+    };
+    // Aliases only change labels; numerical projections are unaffected.
+  }, [feed,baseline,manualCompare,activeLeft,activeRight,matchup]);
+  const week = comparison;
+  const mineName = feed ? teamLabel(activeLeft) : "My team";
+  const otherName = feed ? teamLabel(activeRight) : "Opponent";
+  const selectedPairMatchesESPN = Boolean(week?.validMatchup);
   const displayPlan = rosterTab === "mine" ? week?.mine : week?.opponent;
-
+  const ownPlayerIds = new Set((week?.mine.players ?? []).map((p)=>p.player.id));
+  const filteredFreeAgents = useMemo(() => freeAgents.filter((p) =>
+    !ownPlayerIds.has(p.id) && (!faSearch.trim() || p.name.toLowerCase().includes(faSearch.trim().toLowerCase()))
+  ).slice(0,60), [freeAgents,faSearch,week]);
+  const selectedCandidate = freeAgents.find((p)=>p.id===candidateId) ?? null;
+  const scenarioPlan = useMemo(() => {
+    if (!scenarioOn || !feed || !week || !selectedCandidate || !dropId || !week.mine.players.some((p)=>p.player.id===dropId)) return null;
+    const clone = feed.players.map((p) => p.id===dropId && p.fantasyTeamId===activeLeft ? {...p,simulatedUntil:scenarioStart} : p);
+    const newcomer:EspnPlayer = {
+      ...selectedCandidate,fantasyTeamId:activeLeft,rosterSlotId:12,simulatedFrom:scenarioStart,
+      simulationPpg:ppgFor(selectedCandidate).ppg*scenarioPct/100,
+    };
+    return teamPlan(activeLeft,week.start,[...clone,newcomer],feed.games);
+  },[scenarioOn,feed,week,selectedCandidate,dropId,scenarioStart,scenarioPct,activeLeft]);
+  const projectedLeft = scenarioPlan ?? week?.mine;
+  const finalMine = week ? (week.actualMine ?? 0) + (projectedLeft?.projected ?? 0) : 0;
+  const finalOpp = week ? (week.actualOpponent ?? 0) + week.opponent.projected : 0;
+  const edge = finalMine - finalOpp;
   const rankedPlayerRows = useMemo(() => {
     if (!displayPlan) return [];
     return displayPlan.players.map((p) => {
-      const scheduled = p.days.filter(Boolean).length;
-      const starts = displayPlan.days.filter((d) => d.starters.some((s) => s.player.player.id === p.player.id)).length;
-      return { ...p, scheduled, starts, weekly: displayPlan.days.reduce((sum, d) => sum + d.starters.filter((s) => s.player.player.id === p.player.id).reduce((tot, s) => tot + s.player.ppg, 0), 0) };
-    }).sort((a, b) => b.weekly - a.weekly);
-  }, [displayPlan]);
+      const scheduled=p.days.filter(Boolean).length;
+      const starts=displayPlan.days.filter((d)=>d.starters.some((s)=>s.player.player.id===p.player.id)).length;
+      const weekly=displayPlan.days.reduce((sum,d)=>sum+d.starters.reduce((sub,s)=>sub+(s.player.player.id===p.player.id?s.player.ppg:0),0),0);
+      return { ...p,scheduled,starts,weekly };
+    }).sort((a,b)=>b.weekly-a.weekly);
+  },[displayPlan]);
+  const leagueGamesThisWeek = useMemo(() => {
+    if (!feed || !baseline) return [];
+    const plans = new Map(feed.league.teams.map((t)=>[t.id,teamPlan(t.id,baseline.start,feed.players,feed.games)] as const));
+    return feed.league.matchups.filter((m)=>m.week===baseline.week).map((m) => ({
+      ...m,
+      homePlan:plans.get(m.homeId ?? -1),
+      awayPlan:plans.get(m.awayId ?? -1),
+    }));
+  },[feed,baseline]);
+  const sixWeekRows=weeks.map((w)=>({
+    week:w.week,start:w.start,left:(w.actualMine??0)+w.mine.projected,
+    right:(w.actualOpponent??0)+w.opponent.projected,opponent:feed?teamLabel(w.opponentId??-1):"Opponent",
+  }));
+  const contributionRows=(week?.mine.players??[]).map((p)=>({
+    name:p.player.name,games:p.days.filter(Boolean).length,
+    future:(week?.mine.days??[]).reduce((sum,d)=>sum+d.starters.reduce((n,s)=>n+(s.player.player.id===p.player.id?s.player.ppg:0),0),0),
+  }));
+  function inspectPair(homeId:number,awayId:number) {
+    setManualCompare(true);setLeftTeam(homeId);setRightTeam(awayId);
+    setScenarioOn(false);setPanel("explorer");setSelectedDay(1);setRosterTab("mine");
+  }
 
-  // Official ESPN scores are authoritative for completed and in-progress games.
-  // Add only not-yet-started games for the forward-looking final forecast.
-  const finalMine = week ? (week.actualMine ?? 0) + week.mine.projected : 0;
-  const finalOpp = week ? (week.actualOpponent ?? 0) + week.opponent.projected : 0;
-  const edge = finalMine - finalOpp;
   return (
     <main className="min-h-screen bg-[#f5f5f7] pb-14 text-[#1d1d1f]">
       <header className="sticky top-0 z-40 border-b border-black/[0.06] bg-white/85 backdrop-blur-xl">
