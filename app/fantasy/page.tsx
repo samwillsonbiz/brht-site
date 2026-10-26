@@ -188,7 +188,7 @@ export default function FantasyPage() {
       .catch((error) => { if (!cancelled) setFaError(error instanceof Error?error.message:"Unable to load free agents"); })
       .finally(() => { if (!cancelled) setFaLoading(false); });
     return () => { cancelled=true; };
-  }, [panel, freeAgents.length, faLoading, faError]);
+  }, [panel, faError]);
 
   // Once games begin, update the live scoreboard while the tab is open.
   useEffect(() => {
@@ -350,7 +350,7 @@ export default function FantasyPage() {
                 {id:"overview",label:"6-week overview"},
                 {id:"explorer",label:"Explore matchups"},
                 {id:"planner",label:"Substitution planner"},
-              ] as const).map((t)=><button type="button" key={t.id} onClick={()=>setPanel(t.id)}
+              ] as const).map((t)=><button type="button" key={t.id} onClick={()=>{setPanel(t.id);if(t.id!=="planner")setScenarioOn(false);}}
                 className={"rounded-full px-4 py-2.5 text-xs font-semibold transition "+(panel===t.id?"bg-[#1d1d1f] text-white":"bg-[#f3f3f5] text-black/60")}>
                   {t.label}
                 </button>)}
