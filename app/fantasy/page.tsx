@@ -324,7 +324,7 @@ export default function FantasyPage() {
   }));
   function inspectPair(homeId:number,awayId:number) {
     setManualCompare(true);setLeftTeam(homeId);setRightTeam(awayId);
-    setScenarioOn(false);setPanel("explorer");setSelectedDay(1);setRosterTab("mine");
+    setScenarioOn(false);setDropId(null);setCandidateId(null);setPanel("explorer");setSelectedDay(1);setRosterTab("mine");
   }
 
   return (
@@ -379,19 +379,19 @@ export default function FantasyPage() {
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div><div className="text-xs font-bold uppercase tracking-wider text-[#0071e3]">Team comparison</div><h2 className="mt-1 text-lg font-semibold">Choose any two teams in your league</h2></div>
                   <div className="flex flex-wrap gap-2">
-                    <button type="button" onClick={()=>{setManualCompare(false);setScenarioOn(false);}} className="rounded-full bg-[#f2f2f7] px-4 py-2 text-xs font-semibold text-black/60">My official matchup</button>
+                    <button type="button" onClick={()=>{setManualCompare(false);setScenarioOn(false);setDropId(null);setCandidateId(null);}} className="rounded-full bg-[#f2f2f7] px-4 py-2 text-xs font-semibold text-black/60">My official matchup</button>
                     <button type="button" onClick={()=>setRenameOpen((v)=>!v)} className="rounded-full border border-black/10 px-4 py-2 text-xs font-semibold text-black/60">{renameOpen?"Done renaming":"Change displayed names"}</button>
                   </div>
                 </div>
                 <div className="mt-4 grid gap-3 md:grid-cols-2">
                   <label className="text-xs font-semibold text-black/50">Team A
-                    <select aria-label="Team A" value={activeLeft} onChange={(e)=>{setLeftTeam(Number(e.target.value));setRightTeam(activeRight);setManualCompare(true);setScenarioOn(false);}}
+                    <select aria-label="Team A" value={activeLeft} onChange={(e)=>{setLeftTeam(Number(e.target.value));setRightTeam(activeRight);setManualCompare(true);setScenarioOn(false);setDropId(null);setCandidateId(null);}}
                       className="mt-1.5 block w-full rounded-xl border border-black/10 bg-[#f8f8fa] px-3 py-3 text-sm font-semibold text-black">
                       {feed.league.teams.map((t)=><option key={t.id} value={t.id}>{teamLabel(t.id)}</option>)}
                     </select>
                   </label>
                   <label className="text-xs font-semibold text-black/50">Team B
-                    <select aria-label="Team B" value={activeRight} onChange={(e)=>{setRightTeam(Number(e.target.value));setLeftTeam(activeLeft);setManualCompare(true);setScenarioOn(false);}}
+                    <select aria-label="Team B" value={activeRight} onChange={(e)=>{setRightTeam(Number(e.target.value));setLeftTeam(activeLeft);setManualCompare(true);setScenarioOn(false);setDropId(null);setCandidateId(null);}}
                       className="mt-1.5 block w-full rounded-xl border border-black/10 bg-[#f8f8fa] px-3 py-3 text-sm font-semibold text-black">
                       {feed.league.teams.map((t)=><option key={t.id} value={t.id}>{teamLabel(t.id)}</option>)}
                     </select>
@@ -528,12 +528,13 @@ export default function FantasyPage() {
                 <span className={"rounded-full px-3 py-2 text-xs font-semibold " + (edge >= 0 ? "bg-emerald-50 text-emerald-700" : "bg-red-50 text-red-700")}>{edge >= 0 ? <ArrowUp className="mr-1 inline h-3 w-3" /> : <ArrowDown className="mr-1 inline h-3 w-3" />}{edge >= 0 ? "+" : ""}{fmt(edge)} final forecast edge</span>
               </div>
               <div className="rounded-2xl border border-[#0071e3]/15 bg-[#f3f9ff] p-4">
-                <div className="flex flex-wrap items-center justify-between gap-2"><span className="text-xs font-bold uppercase tracking-wider text-[#0066cc]">Official ESPN score so far</span><span className="text-[10px] font-medium text-black/45">Auto-refreshes every 2 minutes</span></div>
-                <div className="mt-2 flex items-center justify-between gap-3 text-center">
+                <div className="flex flex-wrap items-center justify-between gap-2"><span className="text-xs font-bold uppercase tracking-wider text-[#0066cc]">{selectedPairMatchesESPN ? "Official ESPN score so far" : "Hypothetical comparison · no official score"}</span><span className="text-[10px] font-medium text-black/45">Auto-refreshes every 2 minutes</span></div>
+                {selectedPairMatchesESPN && <div className="mt-2 flex items-center justify-between gap-3 text-center">
                   <div className="min-w-0 flex-1"><p className="truncate text-xs text-black/55">{mineName}</p><p className="text-3xl font-bold text-[#0071e3]">{fmt(week.actualMine ?? 0)}</p></div>
                   <span className="text-base font-medium text-black/25">–</span>
                   <div className="min-w-0 flex-1"><p className="truncate text-xs text-black/55">{otherName}</p><p className="text-3xl font-bold text-[#f05b52]">{fmt(week.actualOpponent ?? 0)}</p></div>
-                </div>
+                </div>}
+                {!selectedPairMatchesESPN && <p className="mt-2 text-xs leading-5 text-[#0066cc]">This is a what-if forecast between two selected teams, not an actual ESPN head-to-head matchup.</p>}
               </div>
               <div className="mt-4 grid grid-cols-2 gap-4 border-y border-black/[0.06] py-5">
                 <div><p className="truncate text-xs font-medium text-black/45">Estimated final · {mineName}</p><p className="mt-1 text-3xl font-semibold tracking-tight text-[#0071e3] md:text-4xl">{fmt(finalMine)}</p><p className="mt-1 text-xs text-black/45">+{fmt(week.mine.projected)} future pts · {week.mine.starts} starts left</p></div>
