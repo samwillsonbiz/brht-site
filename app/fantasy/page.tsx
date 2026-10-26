@@ -32,8 +32,18 @@ function fmt(n: number) { return Math.round(n).toLocaleString("en-US"); }
 function ppgFor(player: EspnPlayer) {
   const season = (player.stats ?? []).find((s) => s.id === "002027" && s.statSourceId === 0 && s.statSplitTypeId === 0);
   const gameStats = (player.stats ?? []).filter((s) => s.statSourceId === 0 && s.statSplitTypeId === 5 && s.id?.startsWith("05") && s.appliedTotal != null);
-  const seasonGames = gameStats.length;
-  const seasonActual = seasonGames > 0 && season?.appliedAverage != null ? Number(season.appliedAverage) : null;
+  // ESPN's kona_player_info feed only supplies individual game records for some
+  // dates. Its season aggregate is authoritative for games played and actual PPG.
+  // For example a season total of 64 and average of 32 means two games, even
+  // when there are zero split-5 records in this response.
+  const seasonAvg = season?.appliedAverage == null ? null : Number(season.appliedAverage);
+  const seasonTotal = season?.appliedTotal == null ? null : Number(season.appliedTotal);
+  const derivedGames = seasonAvg !== null && Number.isFinite(seasonAvg) && seasonAvg > 0
+    && seasonTotal !== null && Number.isFinite(seasonTotal) && seasonTotal >= 0
+    ? Math.max(0, Math.round(seasonTotal / seasonAvg)) : 0;
+  const seasonGames = Math.max(derivedGames, gameStats.length);
+  const seasonActual = seasonGames > 0 && seasonAvg !== null && Number.isFinite(seasonAvg)
+    ? seasonAvg : null;
   const annual = (player.stats ?? []).find((s) => s.id === "102027" && s.statSourceId === 1 && s.statSplitTypeId === 0 && Number(s.appliedAverage) > 0);
   const previous = (player.stats ?? []).find((s) => s.id === "002026" && s.statSourceId === 0 && Number(s.appliedAverage) > 0);
   const baseline = annual ? Number(annual.appliedAverage) : previous ? Number(previous.appliedAverage) : seasonActual ?? 0;
@@ -582,13 +592,13 @@ export default function FantasyPage() {
             </div>
             <div className="rounded-[24px] bg-white p-5 shadow-sm md:p-7">
               <div className="flex flex-wrap items-center justify-between gap-3">
-                <div><h3 className="text-lg font-semibold">2026–27 actuals and remaining games</h3><p className="mt-1 text-xs text-black/45">Current-season averages update directly from ESPN. NBA game box scores can include benched players; only the official matchup score above counts points toward your fantasy matchup.</p></div>
+                <div><h3 className="text-lg font-semibold">2026–27 actuals and remaining games</h3><p className="mt-1 text-xs text-black/45">Current-season averages and games played come from ESPN season totals. "Team games final / left" is for the selected week, not the player’s total appearances. Individual game points only appear when ESPN supplies a matching box score; the official matchup score above remains authoritative.</p></div>
                 <div className="flex gap-2">{(["mine","opp"] as const).map((side) => <button key={side} type="button" onClick={() => setRosterTab(side)} className={"rounded-full px-4 py-2 text-xs font-semibold " + (rosterTab === side ? "bg-[#1d1d1f] text-white" : "bg-[#f5f5f7] text-black/60")}>{side === "mine" ? "My roster" : "Opponent"}</button>)}</div>
               </div>
               <div className="mt-4 overflow-x-auto">
                 <table className="w-full min-w-[650px] text-left text-sm">
-                  <thead className="border-b border-black/[0.07] bg-[#fbfbfd] text-xs uppercase text-black/40"><tr><th className="px-3 py-3">Player</th><th className="px-3 py-3 text-right">2027 actual AVG</th><th className="px-3 py-3 text-right">Forecast AVG</th><th className="px-3 py-3 text-center">NBA games played / left</th><th className="px-3 py-3 text-center">Future starts</th><th className="px-3 py-3 text-right">NBA actual pts</th><th className="px-3 py-3 text-right">Future pts</th></tr></thead>
-                  <tbody>{rankedPlayerRows.map((p) => <tr key={p.player.id} className="border-b border-black/[0.05] last:border-0"><td className="px-3 py-3"><div className="font-semibold">{p.player.name}</div><div className="mt-0.5 text-xs text-black/40">{p.player.injuryStatus ?? "ACTIVE"} · {p.seasonGames} season game{p.seasonGames === 1 ? "" : "s"}{p.source !== "ESPN 2027" ? " · " + p.source + " fallback" : ""}</div></td><td className="px-3 py-3 text-right font-semibold text-[#0071e3]">{p.seasonActual == null ? "—" : p.seasonActual.toFixed(1)}</td><td className="px-3 py-3 text-right font-medium">{p.ppg ? p.ppg.toFixed(1) : "—"}</td><td className="px-3 py-3 text-center">{p.nbaPlayed} / {p.scheduled}</td><td className="px-3 py-3 text-center">{p.starts}</td><td className="px-3 py-3 text-right">{fmt(Object.values(p.actualByDay).reduce((sum, v) => sum + v, 0))}</td><td className="px-3 py-3 text-right font-semibold">{fmt(p.weekly)}</td></tr>)}</tbody>
+                  <thead className="border-b border-black/[0.07] bg-[#fbfbfd] text-xs uppercase text-black/40"><tr><th className="px-3 py-3">Player</th><th className="px-3 py-3 text-right">2027 actual AVG</th><th className="px-3 py-3 text-right">Forecast AVG</th><th className="px-3 py-3 text-center">Week: team games final / left</th><th className="px-3 py-3 text-center">Future starts</th><th className="px-3 py-3 text-right">NBA actual pts</th><th className="px-3 py-3 text-right">Future pts</th></tr></thead>
+                  <tbody>{rankedPlayerRows.map((p) => <tr key={p.player.id} className="border-b border-black/[0.05] last:border-0"><td className="px-3 py-3"><div className="font-semibold">{p.player.name}</div><div className="mt-0.5 text-xs text-black/40">{p.player.injuryStatus ?? "ACTIVE"} · {p.seasonGames} season game{p.seasonGames === 1 ? "" : "s"}{p.source !== "ESPN 2027" ? " · " + p.source + " fallback" : ""}</div></td><td className="px-3 py-3 text-right font-semibold text-[#0071e3]">{p.seasonActual == null ? "—" : p.seasonActual.toFixed(1)}</td><td className="px-3 py-3 text-right font-medium">{p.ppg ? p.ppg.toFixed(1) : "—"}</td><td className="px-3 py-3 text-center">{p.player.proTeamId && feed ? feed.games.filter((g) => g.completed && g.gameDateEt >= week!.start && g.gameDateEt <= week!.end && (g.home.id === p.player.proTeamId || g.away.id === p.player.proTeamId)).length : 0} / {p.scheduled}</td><td className="px-3 py-3 text-center">{p.starts}</td><td className="px-3 py-3 text-right">{Object.keys(p.actualByDay).length ? fmt(Object.values(p.actualByDay).reduce((sum, v) => sum + v, 0)) : "—"}</td><td className="px-3 py-3 text-right font-semibold">{fmt(p.weekly)}</td></tr>)}</tbody>
                 </table>
               </div>
             </div>
