@@ -106,7 +106,7 @@
 
   const choices = {
     fun: { title: 'All the fun.\nNone of the ads.', description: 'Play free, ad-free, just because it feels good. You don’t owe anyone more than that.', symbol: '♡', tag: 'NO ADS. NO CHARGE. YOUR CHOICE.' },
-    cause: { title: 'Make the ads\nwork for women.', description: 'Planned: optional ads whose profits support women’s causes. The game is ad-free today.', symbol: '↗', tag: 'COMING LATER. ALWAYS OPTIONAL.' },
+    cause: { title: 'Make the ads\nwork for women.', description: 'Choose optional ads and help put their profits toward women’s causes. Your choice. A bigger purpose.', symbol: '↗', tag: 'ALWAYS FREE. ALWAYS YOUR CHOICE.' },
   };
   document.querySelectorAll('[data-choice]').forEach(button => button.addEventListener('click',() => {
     const key = button.dataset.choice;
