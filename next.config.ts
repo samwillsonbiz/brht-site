@@ -6,12 +6,12 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/beat",
-        destination: "https://play.brht.ai/",
+        destination: "https://beat-the-patriarchy-game.vercel.app/",
         permanent: false,
       },
       {
         source: "/beat/:path*",
-        destination: "https://play.brht.ai/:path*",
+        destination: "https://beat-the-patriarchy-game.vercel.app/:path*",
         permanent: false,
       },
     ];
