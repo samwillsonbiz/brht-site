@@ -1,8 +1,22 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  skipTrailingSlashRedirect: true,
+  async redirects() {
+    return [
+      {
+        source: "/beat",
+        destination: "/beat/",
+        permanent: false,
+      },
+    ];
+  },
   async rewrites() {
     return [
+      {
+        source: "/beat/:path*",
+        destination: "https://play.brht.ai/:path*",
+      },
       {
         source: "/beat-the-patriarchy",
         destination: "/beat-the-patriarchy/index.html",
