@@ -6,17 +6,18 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/beat",
-        destination: "/beat/",
+        destination: "https://play.brht.ai/",
+        permanent: false,
+      },
+      {
+        source: "/beat/:path*",
+        destination: "https://play.brht.ai/:path*",
         permanent: false,
       },
     ];
   },
   async rewrites() {
     return [
-      {
-        source: "/beat/:path*",
-        destination: "https://play.brht.ai/:path*",
-      },
       {
         source: "/beat-the-patriarchy",
         destination: "/beat-the-patriarchy/index.html",
