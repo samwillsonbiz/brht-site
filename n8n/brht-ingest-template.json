@@ -1,0 +1,61 @@
+{
+  "name": "BRHT — Normalize and ingest source data",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "01-brht-manual-trigger",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [-520, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Replace this example with source data from Shopify, Meta, Google, a database query, etc.\n// Keep the output contract unchanged.\nconst now = new Date().toISOString();\nconst date = now.slice(0, 10);\nreturn [{\n  json: {\n    source: {\n      key: 'replace_source_key',\n      type: 'custom',\n      displayName: 'Replace Source Name'\n    },\n    run: {\n      key: `replace_source_key-${date}`,\n      status: 'success',\n      startedAt: now,\n      finishedAt: now\n    },\n    metrics: [],\n    products: [],\n    inventory: [],\n    records: []\n  }\n}];"
+      },
+      "id": "02-brht-normalize",
+      "name": "Normalize to BRHT contract",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-250, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://brht.ai/api/brht/ingest/replace-organization-slug",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify($json) }}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "id": "03-brht-ingest",
+      "name": "Send to BRHT",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [40, 0]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [[{ "node": "Normalize to BRHT contract", "type": "main", "index": 0 }]]
+    },
+    "Normalize to BRHT contract": {
+      "main": [[{ "node": "Send to BRHT", "type": "main", "index": 0 }]]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "active": false,
+  "versionId": "00000000-0000-4000-8000-000000000001",
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

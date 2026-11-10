@@ -1,0 +1,292 @@
+{
+  "name": "BRHT \u2014 Fable Fury PostgreSQL live sync",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 1
+            }
+          ]
+        }
+      },
+      "id": "live-trigger",
+      "name": "Every hour",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -760,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT date::text AS date,\n       lower(trim(channel)) AS channel,\n       COALESCE(orders, 0)::numeric AS orders,\n       COALESCE(revenue, 0)::numeric AS revenue,\n       COALESCE(spend, 0)::numeric AS spend,\n       COALESCE(conversions, 0)::numeric AS conversions,\n       updated_at\nFROM daily_channel_metrics\nWHERE date >= CURRENT_DATE - INTERVAL '30 days'\nORDER BY date ASC, channel ASC;",
+        "options": {}
+      },
+      "id": "live-read-channels",
+      "name": "Read channel metrics",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -500,
+        -220
+      ],
+      "notesInFlow": true,
+      "notes": "Select the existing n8n PostgreSQL credential named \u201cPostgres account\u201d."
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT date::text AS date,\n       product_id::text AS product_id,\n       product_name,\n       COALESCE(units_sold, 0)::numeric AS units_sold,\n       updated_at\nFROM shopify_product_daily\nWHERE date >= CURRENT_DATE - INTERVAL '30 days'\nORDER BY date ASC, product_id::text ASC;",
+        "options": {}
+      },
+      "id": "live-read-products",
+      "name": "Read product daily",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -500,
+        0
+      ],
+      "notesInFlow": true,
+      "notes": "Select the existing n8n PostgreSQL credential named \u201cPostgres account\u201d."
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT DISTINCT ON (product_id::text)\n       product_id::text AS product_id,\n       product_name,\n       available_quantity,\n       snapshot_at\nFROM inventory_snapshots\nORDER BY product_id::text, snapshot_at DESC;",
+        "options": {}
+      },
+      "id": "live-read-inventory",
+      "name": "Read latest inventory",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -500,
+        220
+      ],
+      "notesInFlow": true,
+      "notes": "Select the existing n8n PostgreSQL credential named \u201cPostgres account\u201d."
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const rows = $input.all().map((item) => item.json);\nconst commerce = new Set(['shopify', 'amazon', 'backerkit', 'kickstarter', 'retail', 'wholesale', 'direct']);\nconst paid = new Set(['meta', 'meta_ads', 'facebook', 'instagram', 'google', 'google_ads', 'tiktok', 'pinterest', 'bing', 'microsoft_ads']);\nconst aliases = {\n  meta: { key: 'meta_ads', label: 'Meta Ads' },\n  facebook: { key: 'meta_ads', label: 'Meta Ads' },\n  instagram: { key: 'meta_ads', label: 'Meta Ads' },\n  google: { key: 'google_ads', label: 'Google Ads' },\n  google_ads: { key: 'google_ads', label: 'Google Ads' },\n  microsoft_ads: { key: 'microsoft_ads', label: 'Microsoft Ads' },\n};\nconst normalize = (value) => String(value ?? 'unknown').trim().toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '') || 'unknown';\nconst toDate = (value) => String(value).slice(0, 10);\nconst groupedRows = new Map();\nfor (const row of rows) {\n  const normalized = normalize(row.channel);\n  const alias = aliases[normalized] ?? {\n    key: normalized,\n    label: normalized.split('_').map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(' '),\n  };\n  const group = groupedRows.get(alias.key) ?? {\n    key: alias.key,\n    label: alias.label,\n    normalized,\n    rows: [],\n  };\n  group.rows.push(row);\n  groupedRows.set(alias.key, group);\n}\nconst output = [];\nconst chunkSize = 3500;\nconst finishedAt = new Date().toISOString();\nfor (const group of groupedRows.values()) {\n  const hasSpend = group.rows.some((row) => Number(row.spend ?? 0) !== 0);\n  const type = paid.has(group.normalized) || hasSpend\n    ? 'paid_media'\n    : commerce.has(group.normalized)\n      ? 'commerce'\n      : 'custom';\n  const metrics = [];\n  let minDate = null;\n  let maxDate = null;\n  for (const row of group.rows) {\n    const date = toDate(row.date);\n    minDate = !minDate || date < minDate ? date : minDate;\n    maxDate = !maxDate || date > maxDate ? date : maxDate;\n    const sourceUpdatedAt = row.updated_at ?? null;\n    if (type === 'paid_media') {\n      metrics.push({ date, metric: 'ad_spend', value: Number(row.spend ?? 0), unit: 'USD', sourceUpdatedAt });\n      metrics.push({ date, metric: 'attributed_revenue', value: Number(row.revenue ?? 0), unit: 'USD', sourceUpdatedAt });\n      metrics.push({ date, metric: 'conversions', value: Number(row.conversions ?? 0), unit: 'count', sourceUpdatedAt });\n    } else {\n      metrics.push({ date, metric: 'sales_revenue', value: Number(row.revenue ?? 0), unit: 'USD', sourceUpdatedAt });\n      metrics.push({ date, metric: 'orders', value: Number(row.orders ?? 0), unit: 'count', sourceUpdatedAt });\n    }\n  }\n  for (let start = 0; start < metrics.length; start += chunkSize) {\n    const batch = metrics.slice(start, start + chunkSize);\n    const batchNumber = Math.floor(start / chunkSize) + 1;\n    output.push({ json: {\n      source: { key: group.key, type, displayName: group.label },\n      run: {\n        key: `${group.key}-live-${minDate}-${maxDate}-batch-${batchNumber}`,\n        status: 'success',\n        startedAt: finishedAt,\n        finishedAt,\n        rowsRead: batch.length,\n        rowsWritten: batch.length,\n        rowsFailed: 0,\n      },\n      metrics: batch,\n      products: [],\n      inventory: [],\n      records: [],\n    }});\n  }\n}\nreturn output;"
+      },
+      "id": "live-normalize-channels",
+      "name": "Normalize channel metrics",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -220,
+        -220
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const rows = $input.all().map((item) => item.json);\nconst chunkSize = 1000;\nconst output = [];\nconst finishedAt = new Date().toISOString();\nfor (let start = 0; start < rows.length; start += chunkSize) {\n  const batchRows = rows.slice(start, start + chunkSize);\n  const products = batchRows.map((row) => ({\n    date: String(row.date).slice(0, 10),\n    productKey: String(row.product_id),\n    productName: String(row.product_name ?? row.product_id),\n    unitsSold: Number(row.units_sold ?? 0),\n    grossRevenue: 0,\n    netRevenue: 0,\n    refunds: 0,\n    currency: 'USD',\n    sourceUpdatedAt: row.updated_at ?? null\n  }));\n  const dates = products.map((row) => row.date).sort();\n  output.push({ json: {\n    source: { key: 'shopify', type: 'commerce', displayName: 'Shopify' },\n    run: {\n      key: `shopify-products-live-${dates[0] ?? 'empty'}-${dates.at(-1) ?? 'empty'}-batch-${Math.floor(start / chunkSize) + 1}`,\n      status: 'success',\n      startedAt: finishedAt,\n      finishedAt,\n      rowsRead: products.length,\n      rowsWritten: products.length,\n      rowsFailed: 0\n    },\n    metrics: [],\n    products,\n    inventory: [],\n    records: []\n  }});\n}\nreturn output;"
+      },
+      "id": "live-normalize-products",
+      "name": "Normalize products",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -220,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const rows = $input.all().map((item) => item.json);\nconst chunkSize = 1000;\nconst output = [];\nconst finishedAt = new Date().toISOString();\nfor (let start = 0; start < rows.length; start += chunkSize) {\n  const inventory = rows.slice(start, start + chunkSize).map((row) => ({\n    productKey: String(row.product_id),\n    productName: String(row.product_name ?? row.product_id),\n    capturedAt: row.snapshot_at ?? finishedAt,\n    available: row.available_quantity === null || row.available_quantity === undefined ? null : Number(row.available_quantity)\n  }));\n  output.push({ json: {\n    source: { key: 'shopify', type: 'commerce', displayName: 'Shopify' },\n    run: {\n      key: `shopify-inventory-live-${finishedAt.slice(0, 13)}-batch-${Math.floor(start / chunkSize) + 1}`,\n      status: 'success',\n      startedAt: finishedAt,\n      finishedAt,\n      rowsRead: inventory.length,\n      rowsWritten: inventory.length,\n      rowsFailed: 0\n    },\n    metrics: [],\n    products: [],\n    inventory,\n    records: []\n  }});\n}\nreturn output;"
+      },
+      "id": "live-normalize-inventory",
+      "name": "Normalize inventory",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -220,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://brht.ai/api/brht/ingest/fable-fury",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify($json) }}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "id": "live-ingest-channels",
+      "name": "Ingest channel metrics",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        80,
+        -220
+      ],
+      "notesInFlow": true,
+      "notes": "Select the n8n Header Auth credential \u201cBRHT \u2014 Fable Fury Ingest\u201d with header x-brht-ingest-key."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://brht.ai/api/brht/ingest/fable-fury",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify($json) }}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "id": "live-ingest-products",
+      "name": "Ingest products",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        80,
+        0
+      ],
+      "notesInFlow": true,
+      "notes": "Select the n8n Header Auth credential \u201cBRHT \u2014 Fable Fury Ingest\u201d with header x-brht-ingest-key."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://brht.ai/api/brht/ingest/fable-fury",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify($json) }}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "id": "live-ingest-inventory",
+      "name": "Ingest inventory",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        80,
+        220
+      ],
+      "notesInFlow": true,
+      "notes": "Select the n8n Header Auth credential \u201cBRHT \u2014 Fable Fury Ingest\u201d with header x-brht-ingest-key."
+    }
+  ],
+  "connections": {
+    "Every hour": {
+      "main": [
+        [
+          {
+            "node": "Read channel metrics",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Read product daily",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Read latest inventory",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read channel metrics": {
+      "main": [
+        [
+          {
+            "node": "Normalize channel metrics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read product daily": {
+      "main": [
+        [
+          {
+            "node": "Normalize products",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read latest inventory": {
+      "main": [
+        [
+          {
+            "node": "Normalize inventory",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize channel metrics": {
+      "main": [
+        [
+          {
+            "node": "Ingest channel metrics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize products": {
+      "main": [
+        [
+          {
+            "node": "Ingest products",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize inventory": {
+      "main": [
+        [
+          {
+            "node": "Ingest inventory",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "active": false,
+  "versionId": "00000000-0000-4000-8000-000000000010",
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}
