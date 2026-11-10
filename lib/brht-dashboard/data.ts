@@ -1,4 +1,4 @@
-import { Pool, type PoolClient, type PoolConfig } from "pg";
+import { isSupabaseConfigured, rpc, selectRows } from "@/lib/supabaseRest";
 import {
   emptyDashboardData,
   rangeToDays,
@@ -8,7 +8,6 @@ import {
   type DataSourceHealth,
   type DailyPerformancePoint,
   type ProductPerformanceRow,
-  type TableCapability,
 } from "./types";
 import {
   dateOnly,
@@ -20,137 +19,129 @@ import {
   safeDivide,
 } from "./math";
 
-const CAPABILITIES = [
-  { name: "daily_channel_metrics", required: true },
-  { name: "shopify_product_daily", required: false },
-  { name: "inventory_snapshots", required: false },
-  { name: "products", required: false },
-  { name: "sync_runs", required: false },
-  { name: "dashboard_daily_summary", required: false },
-] as const;
-
-const COMMERCE_CHANNELS = new Set([
-  "shopify",
-  "amazon",
-  "backerkit",
-  "kickstarter",
-  "retail",
-  "wholesale",
-  "direct",
-]);
-
-const PAID_MEDIA_CHANNELS = new Set([
-  "meta",
-  "facebook",
-  "instagram",
-  "google",
-  "google ads",
-  "google_ads",
-  "tiktok",
-  "pinterest",
-  "bing",
-  "microsoft ads",
-  "microsoft_ads",
-]);
-
-type ChannelMetricRow = {
-  date: unknown;
-  channel: unknown;
-  orders: unknown;
-  revenue: unknown;
-  spend: unknown;
-  conversions: unknown;
-  updated_at: unknown;
+type OrganizationRow = {
+  id: string;
+  slug: string;
+  name: string;
+  timezone: string;
+  currency: string;
+  status: string;
 };
 
-type PeriodBoundsRow = {
-  start_date: unknown;
-  end_date: unknown;
-  previous_start: unknown;
-  previous_end: unknown;
-};
-
-type ProductDailyRow = {
-  date: unknown;
-  product_id: unknown;
-  product_name: unknown;
-  units_sold: unknown;
-};
-
-type InventoryRow = {
-  product_id: unknown;
-  product_name: unknown;
-  available_quantity: unknown;
-  snapshot_at: unknown;
-};
-
-type SyncRunRow = {
-  source: unknown;
-  status: unknown;
-  message: unknown;
-  started_at: unknown;
-  finished_at: unknown;
-};
-
-type LatestChannelRow = {
-  source: unknown;
-  latest_metric_date: unknown;
-  latest_metric_at: unknown;
-};
-
-declare global {
-  var __brhtDashboardPool: Pool | undefined;
-}
-
-function databaseConfig(): PoolConfig | null {
-  const connectionString = process.env.BRHT_DATABASE_URL?.trim();
-  if (!connectionString) return null;
-
-  const sslMode = process.env.BRHT_DATABASE_SSL?.trim().toLowerCase();
-  const ssl =
-    sslMode === "require"
-      ? { rejectUnauthorized: false }
-      : sslMode === "verify-full"
-        ? {
-            rejectUnauthorized: true,
-            ...(process.env.BRHT_DATABASE_CA
-              ? { ca: process.env.BRHT_DATABASE_CA.replace(/\\n/g, "\n") }
-              : {}),
-          }
-        : false;
-
-  return {
-    connectionString,
-    ssl,
-    max: 3,
-    idleTimeoutMillis: 20_000,
-    connectionTimeoutMillis: 8_000,
-    statement_timeout: 12_000,
-    application_name: "brht-ai-dashboard",
+type DashboardBundle = {
+  organization: OrganizationRow;
+  dashboard?: {
+    dashboard_key?: string;
+    title?: string;
+    description?: string | null;
   };
+  metrics?: RawMetric[];
+  products?: RawProduct[];
+  inventory?: RawInventory[];
+  sources?: RawSource[];
+  period?: DashboardData["period"];
+};
+
+type RawMetric = {
+  metric_date: string;
+  source_key: string;
+  metric_key: string;
+  dimension_key: string;
+  dimensions: Record<string, unknown> | null;
+  value: number | string;
+  unit: string | null;
+  source_updated_at: string | null;
+  updated_at: string | null;
+};
+
+type RawProduct = {
+  metric_date: string;
+  source_key: string;
+  product_key: string;
+  product_name: string;
+  sku: string | null;
+  units_sold: number | string;
+  gross_revenue: number | string;
+  net_revenue: number | string;
+  refunds: number | string;
+  cogs: number | string | null;
+  currency: string | null;
+  source_updated_at: string | null;
+  updated_at: string | null;
+};
+
+type RawInventory = {
+  source_key: string;
+  product_key: string;
+  product_name: string;
+  sku: string | null;
+  captured_at: string;
+  on_hand: number | string | null;
+  available: number | string | null;
+  committed: number | string | null;
+  incoming: number | string | null;
+};
+
+type RawSource = {
+  source_key: string;
+  source_type: string;
+  display_name: string;
+  configured_status: string;
+  last_synced_at: string | null;
+  latest_run_status: string | null;
+  latest_run_started_at: string | null;
+  latest_run_finished_at: string | null;
+  rows_read: number | string | null;
+  rows_written: number | string | null;
+  rows_failed: number | string | null;
+  error_message: string | null;
+};
+
+type ChannelAccumulator = Omit<
+  ChannelPerformanceRow,
+  "channel" | "kind" | "roas" | "changePercent"
+> & {
+  sourceKey: string;
+  sourceType: string;
+  attributedRevenue: number;
+  previousAttributedRevenue: number;
+};
+
+const REVENUE_METRICS = new Set(["sales_revenue", "net_revenue"]);
+const ATTRIBUTED_REVENUE_METRICS = new Set(["attributed_revenue"]);
+const SPEND_METRICS = new Set(["ad_spend"]);
+const ORDER_METRICS = new Set(["orders"]);
+const CONVERSION_METRICS = new Set(["conversions", "purchases"]);
+const UNIT_METRICS = new Set(["units_sold"]);
+
+function formatDateInTimezone(date: Date, timezone: string): string {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: timezone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(date);
+  const map = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+  return `${map.year}-${map.month}-${map.day}`;
 }
 
-function pool(): Pool | null {
-  const config = databaseConfig();
-  if (!config) return null;
-  if (!globalThis.__brhtDashboardPool) {
-    globalThis.__brhtDashboardPool = new Pool(config);
-  }
-  return globalThis.__brhtDashboardPool;
+function addDays(date: string, amount: number): string {
+  const value = new Date(`${date}T00:00:00.000Z`);
+  value.setUTCDate(value.getUTCDate() + amount);
+  return value.toISOString().slice(0, 10);
 }
 
-function classifyChannel(
-  channel: string,
-  values: { revenue: number; spend: number; orders: number },
-): ChannelPerformanceRow["kind"] {
-  const normalized = channel.toLowerCase().trim();
-  if (COMMERCE_CHANNELS.has(normalized) && values.spend > 0) return "mixed";
-  if (COMMERCE_CHANNELS.has(normalized)) return "commerce";
-  if (PAID_MEDIA_CHANNELS.has(normalized)) return "paid-media";
-  if (values.revenue > 0 && values.spend > 0) return "mixed";
-  if (values.revenue > 0 || values.orders > 0) return "commerce";
-  if (values.spend > 0) return "paid-media";
-  return "other";
+function periodFor(range: DashboardRange, timezone: string): DashboardData["period"] {
+  const days = rangeToDays(range);
+  const end = formatDateInTimezone(new Date(), timezone);
+  const start = addDays(end, -(days - 1));
+  const previousEnd = addDays(start, -1);
+  const previousStart = addDays(previousEnd, -(days - 1));
+  return { start, end, previousStart, previousEnd };
+}
+
+function inPeriod(date: string, start: string, end: string): boolean {
+  return date >= start && date <= end;
 }
 
 function titleCase(value: string): string {
@@ -162,12 +153,32 @@ function titleCase(value: string): string {
     .join(" ");
 }
 
-function isCurrentPeriod(date: string, bounds: DashboardData["period"]): boolean {
-  return date >= bounds.start && date <= bounds.end;
+function sourceTypeToKind(sourceType: string): ChannelPerformanceRow["kind"] {
+  if (sourceType === "commerce") return "commerce";
+  if (sourceType === "paid_media") return "paid-media";
+  if (sourceType === "finance") return "finance";
+  if (sourceType === "operations") return "operations";
+  if (sourceType === "mixed") return "mixed";
+  return "other";
 }
 
-function isPreviousPeriod(date: string, bounds: DashboardData["period"]): boolean {
-  return date >= bounds.previousStart && date <= bounds.previousEnd;
+function metricChannel(
+  row: RawMetric,
+  source: RawSource | undefined,
+): { key: string; label: string } {
+  const dimensions = row.dimensions ?? {};
+  const raw =
+    dimensions.channel ??
+    dimensions.platform ??
+    dimensions.store ??
+    dimensions.account ??
+    row.source_key;
+  const key = String(raw).trim().toLowerCase().replace(/\s+/g, "_") || row.source_key;
+  const label =
+    typeof dimensions.channel_label === "string"
+      ? dimensions.channel_label
+      : source?.display_name ?? titleCase(String(raw));
+  return { key, label };
 }
 
 function inventoryStatus(
@@ -183,491 +194,407 @@ function inventoryStatus(
   return "healthy";
 }
 
-async function discoverCapabilities(client: PoolClient): Promise<TableCapability[]> {
-  const names = CAPABILITIES.map((capability) => capability.name);
-  const result = await client.query<{ name: string; available: boolean }>(
-    `
-      SELECT requested.name,
-             to_regclass('public.' || requested.name) IS NOT NULL AS available
-      FROM unnest($1::text[]) AS requested(name)
-    `,
-    [names],
-  );
-  const availability = new Map(result.rows.map((row) => [row.name, row.available]));
-  return CAPABILITIES.map((capability) => ({
-    ...capability,
-    available: availability.get(capability.name) ?? false,
-  }));
+function emptyChannel(sourceKey: string, sourceType: string): ChannelAccumulator {
+  return {
+    sourceKey,
+    sourceType,
+    revenue: 0,
+    previousRevenue: 0,
+    spend: 0,
+    previousSpend: 0,
+    orders: 0,
+    previousOrders: 0,
+    conversions: 0,
+    previousConversions: 0,
+    attributedRevenue: 0,
+    previousAttributedRevenue: 0,
+    latestMetricAt: null,
+  };
 }
 
-async function loadFromPostgres(range: DashboardRange): Promise<DashboardData> {
-  const activePool = pool();
-  if (!activePool) return emptyDashboardData(range);
+function addMetric(
+  target: ChannelAccumulator,
+  metricKey: string,
+  value: number,
+  current: boolean,
+) {
+  if (REVENUE_METRICS.has(metricKey)) {
+    if (current) target.revenue += value;
+    else target.previousRevenue += value;
+  } else if (ATTRIBUTED_REVENUE_METRICS.has(metricKey)) {
+    if (current) target.attributedRevenue += value;
+    else target.previousAttributedRevenue += value;
+  } else if (SPEND_METRICS.has(metricKey)) {
+    if (current) target.spend += value;
+    else target.previousSpend += value;
+  } else if (ORDER_METRICS.has(metricKey)) {
+    if (current) target.orders += value;
+    else target.previousOrders += value;
+  } else if (CONVERSION_METRICS.has(metricKey)) {
+    if (current) target.conversions += value;
+    else target.previousConversions += value;
+  }
+}
+
+function toHealth(source: RawSource): DataSourceHealth {
+  const now = Date.now();
+  const reference =
+    isoDate(source.latest_run_finished_at) ??
+    isoDate(source.last_synced_at) ??
+    isoDate(source.latest_run_started_at);
+  const lagHours = reference
+    ? Math.max(0, (now - new Date(reference).getTime()) / 3_600_000)
+    : null;
+  const configured = String(source.configured_status ?? "").toLowerCase();
+  const latest = String(source.latest_run_status ?? "").toLowerCase();
+  const status: DataSourceHealth["status"] =
+    configured === "paused"
+      ? "paused"
+      : configured === "error" || latest === "failed"
+        ? "failed"
+        : lagHours === null
+          ? "unknown"
+          : lagHours > 30
+            ? "delayed"
+            : "healthy";
+
+  return {
+    source: source.display_name,
+    sourceKey: source.source_key,
+    sourceType: source.source_type,
+    status,
+    message: source.error_message,
+    lastStartedAt: isoDate(source.latest_run_started_at),
+    lastFinishedAt: isoDate(source.latest_run_finished_at),
+    latestMetricDate: dateOnly(source.last_synced_at),
+    latestMetricAt: isoDate(source.last_synced_at),
+    lagHours,
+  };
+}
+
+function buildDashboard(
+  organization: OrganizationRow,
+  bundle: DashboardBundle,
+  range: DashboardRange,
+  period: DashboardData["period"],
+): DashboardData {
+  const metricRows = Array.isArray(bundle.metrics) ? bundle.metrics : [];
+  const productRows = Array.isArray(bundle.products) ? bundle.products : [];
+  const inventoryRows = Array.isArray(bundle.inventory) ? bundle.inventory : [];
+  const sourceRows = Array.isArray(bundle.sources) ? bundle.sources : [];
+  const sourceMap = new Map(sourceRows.map((source) => [source.source_key, source]));
+  const channelMap = new Map<string, { label: string; values: ChannelAccumulator }>();
+  const dailyMap = new Map<string, DailyPerformancePoint>();
+
+  const ensureDaily = (date: string) => {
+    const current = dailyMap.get(date);
+    if (current) return current;
+    const point: DailyPerformancePoint = {
+      date,
+      revenue: 0,
+      adSpend: 0,
+      orders: 0,
+      unitsSold: 0,
+    };
+    dailyMap.set(date, point);
+    return point;
+  };
+
+  for (const row of metricRows) {
+    const date = dateOnly(row.metric_date);
+    if (!date) continue;
+    const current = inPeriod(date, period.start, period.end);
+    const previous = inPeriod(date, period.previousStart, period.previousEnd);
+    if (!current && !previous) continue;
+
+    const source = sourceMap.get(row.source_key);
+    const channel = metricChannel(row, source);
+    const existing = channelMap.get(channel.key) ?? {
+      label: channel.label,
+      values: emptyChannel(row.source_key, source?.source_type ?? "other"),
+    };
+    const value = finiteNumber(row.value);
+    addMetric(existing.values, row.metric_key, value, current);
+    existing.values.latestMetricAt =
+      isoDate(row.source_updated_at) ?? isoDate(row.updated_at) ?? existing.values.latestMetricAt;
+    channelMap.set(channel.key, existing);
+
+    if (current) {
+      const daily = ensureDaily(date);
+      if (
+        REVENUE_METRICS.has(row.metric_key) &&
+        source?.source_type !== "paid_media"
+      ) {
+        daily.revenue += value;
+      }
+      if (SPEND_METRICS.has(row.metric_key)) daily.adSpend += value;
+      if (ORDER_METRICS.has(row.metric_key)) daily.orders += value;
+      if (UNIT_METRICS.has(row.metric_key)) daily.unitsSold += value;
+    }
+  }
+
+  const channels: ChannelPerformanceRow[] = Array.from(channelMap.values())
+    .map(({ label, values }) => {
+      const kind = sourceTypeToKind(values.sourceType);
+      const displayedRevenue =
+        kind === "paid-media" && values.revenue === 0
+          ? values.attributedRevenue
+          : values.revenue;
+      const previousDisplayedRevenue =
+        kind === "paid-media" && values.previousRevenue === 0
+          ? values.previousAttributedRevenue
+          : values.previousRevenue;
+      const comparisonCurrent = kind === "paid-media" ? values.spend : displayedRevenue;
+      const comparisonPrevious =
+        kind === "paid-media" ? values.previousSpend : previousDisplayedRevenue;
+      return {
+        channel: label,
+        kind,
+        revenue: displayedRevenue,
+        previousRevenue: previousDisplayedRevenue,
+        spend: values.spend,
+        previousSpend: values.previousSpend,
+        orders: values.orders,
+        previousOrders: values.previousOrders,
+        conversions: values.conversions,
+        previousConversions: values.previousConversions,
+        roas: safeDivide(
+          values.attributedRevenue || displayedRevenue,
+          values.spend,
+        ),
+        changePercent: percentChange(comparisonCurrent, comparisonPrevious),
+        latestMetricAt: values.latestMetricAt,
+      };
+    })
+    .filter((row) =>
+      [
+        row.revenue,
+        row.previousRevenue,
+        row.spend,
+        row.previousSpend,
+        row.orders,
+        row.conversions,
+      ].some((value) => value !== 0),
+    )
+    .sort((a, b) => b.revenue + b.spend - (a.revenue + a.spend));
+
+  const revenueChannels = channels.filter(
+    (channel) => channel.kind !== "paid-media",
+  );
+  const paidChannels = channels.filter(
+    (channel) => channel.kind === "paid-media" || channel.kind === "mixed",
+  );
+  const sum = <K extends keyof ChannelPerformanceRow>(
+    rows: ChannelPerformanceRow[],
+    key: K,
+  ) => rows.reduce((total, row) => total + finiteNumber(row[key]), 0);
+
+  const currentRevenue = sum(revenueChannels, "revenue");
+  const previousRevenue = sum(revenueChannels, "previousRevenue");
+  const currentOrders = sum(revenueChannels, "orders");
+  const previousOrders = sum(revenueChannels, "previousOrders");
+  const currentSpend = sum(paidChannels, "spend");
+  const previousSpend = sum(paidChannels, "previousSpend");
+
+  const inventoryMap = new Map(
+    inventoryRows.map((row) => [`${row.source_key}:${row.product_key}`, row]),
+  );
+  const productMap = new Map<
+    string,
+    {
+      name: string;
+      sourceKey: string;
+      current: number;
+      previous: number;
+    }
+  >();
+
+  for (const row of productRows) {
+    const date = dateOnly(row.metric_date);
+    if (!date) continue;
+    const key = `${row.source_key}:${row.product_key}`;
+    const existing = productMap.get(key) ?? {
+      name: row.product_name || row.product_key,
+      sourceKey: row.source_key,
+      current: 0,
+      previous: 0,
+    };
+    if (inPeriod(date, period.start, period.end)) {
+      existing.current += finiteNumber(row.units_sold);
+      ensureDaily(date).unitsSold += finiteNumber(row.units_sold);
+    } else if (inPeriod(date, period.previousStart, period.previousEnd)) {
+      existing.previous += finiteNumber(row.units_sold);
+    }
+    productMap.set(key, existing);
+  }
 
   const days = rangeToDays(range);
-  let client: PoolClient | null = null;
-  try {
-    client = await activePool.connect();
-    await client.query("BEGIN READ ONLY");
-    await client.query("SET LOCAL statement_timeout = '12000ms'");
-
-    const capabilities = await discoverCapabilities(client);
-    const available = new Set(
-      capabilities.filter((capability) => capability.available).map((capability) => capability.name),
-    );
-
-    if (!available.has("daily_channel_metrics")) {
-      await client.query("COMMIT");
+  const products: ProductPerformanceRow[] = Array.from(productMap.entries())
+    .map(([key, values]) => {
+      const inventory = inventoryMap.get(key);
+      const availableQuantity = nullableFiniteNumber(inventory?.available);
+      const averageDailyUnits = values.current > 0 ? values.current / days : 0;
+      const daysOfCover = safeDivide(availableQuantity, averageDailyUnits);
       return {
-        ...emptyDashboardData(range, {
-          source: "postgres",
-          connection: "incomplete",
-          error: "The database is reachable, but daily_channel_metrics is not available.",
-        }),
-        capabilities,
-      };
-    }
-
-    const boundsResult = await client.query<PeriodBoundsRow>(
-      `
-        SELECT
-          (CURRENT_DATE - ($1::int - 1))::text AS start_date,
-          CURRENT_DATE::text AS end_date,
-          (CURRENT_DATE - (($1::int * 2) - 1))::text AS previous_start,
-          (CURRENT_DATE - $1::int)::text AS previous_end
-      `,
-      [days],
-    );
-    const boundsRow = boundsResult.rows[0];
-    const period: DashboardData["period"] = {
-      start: String(boundsRow.start_date),
-      end: String(boundsRow.end_date),
-      previousStart: String(boundsRow.previous_start),
-      previousEnd: String(boundsRow.previous_end),
-    };
-
-    const channelResult = await client.query<ChannelMetricRow>(
-      `
-        SELECT
-          date::text AS date,
-          lower(trim(channel)) AS channel,
-          COALESCE(SUM(orders), 0)::numeric AS orders,
-          COALESCE(SUM(revenue), 0)::numeric AS revenue,
-          COALESCE(SUM(spend), 0)::numeric AS spend,
-          COALESCE(SUM(conversions), 0)::numeric AS conversions,
-          MAX(updated_at) AS updated_at
-        FROM daily_channel_metrics
-        WHERE date BETWEEN $1::date AND $2::date
-        GROUP BY date, lower(trim(channel))
-        ORDER BY date ASC, channel ASC
-      `,
-      [period.previousStart, period.end],
-    );
-
-    const channelMap = new Map<
-      string,
-      Omit<ChannelPerformanceRow, "channel" | "kind" | "roas" | "changePercent">
-    >();
-    const dailyMap = new Map<string, DailyPerformancePoint>();
-
-    const ensureDaily = (date: string) => {
-      const existing = dailyMap.get(date);
-      if (existing) return existing;
-      const point: DailyPerformancePoint = {
-        date,
-        revenue: 0,
-        adSpend: 0,
-        orders: 0,
-        unitsSold: 0,
-      };
-      dailyMap.set(date, point);
-      return point;
-    };
-
-    for (const raw of channelResult.rows) {
-      const date = dateOnly(raw.date);
-      const channel = String(raw.channel ?? "unknown").trim() || "unknown";
-      if (!date) continue;
-      const values = {
-        revenue: finiteNumber(raw.revenue),
-        spend: finiteNumber(raw.spend),
-        orders: finiteNumber(raw.orders),
-        conversions: finiteNumber(raw.conversions),
-      };
-      const kind = classifyChannel(channel, values);
-      const aggregate = channelMap.get(channel) ?? {
-        revenue: 0,
-        previousRevenue: 0,
-        spend: 0,
-        previousSpend: 0,
-        orders: 0,
-        previousOrders: 0,
-        conversions: 0,
-        previousConversions: 0,
-        latestMetricAt: null,
-      };
-
-      if (isCurrentPeriod(date, period)) {
-        aggregate.revenue += values.revenue;
-        aggregate.spend += values.spend;
-        aggregate.orders += values.orders;
-        aggregate.conversions += values.conversions;
-        aggregate.latestMetricAt = isoDate(raw.updated_at) ?? aggregate.latestMetricAt;
-
-        const daily = ensureDaily(date);
-        if (kind === "commerce" || kind === "mixed") {
-          daily.revenue += values.revenue;
-          daily.orders += values.orders;
-        }
-        if (kind === "paid-media" || kind === "mixed") {
-          daily.adSpend += values.spend;
-        }
-      } else if (isPreviousPeriod(date, period)) {
-        aggregate.previousRevenue += values.revenue;
-        aggregate.previousSpend += values.spend;
-        aggregate.previousOrders += values.orders;
-        aggregate.previousConversions += values.conversions;
-      }
-      channelMap.set(channel, aggregate);
-    }
-
-    const channels: ChannelPerformanceRow[] = Array.from(channelMap.entries())
-      .map(([channel, values]) => {
-        const kind = classifyChannel(channel, values);
-        return {
-          channel: titleCase(channel),
-          kind,
-          ...values,
-          roas: safeDivide(values.revenue, values.spend),
-          changePercent: percentChange(
-            kind === "paid-media" ? values.spend : values.revenue,
-            kind === "paid-media" ? values.previousSpend : values.previousRevenue,
-          ),
-        };
-      })
-      .filter((row) =>
-        [row.revenue, row.spend, row.orders, row.conversions, row.previousRevenue, row.previousSpend].some(
-          (value) => value !== 0,
+        productId: key,
+        productName: inventory?.product_name ?? values.name,
+        unitsSold: values.current,
+        previousUnitsSold: values.previous,
+        changePercent: percentChange(values.current, values.previous),
+        availableQuantity,
+        inventorySnapshotAt: isoDate(inventory?.captured_at),
+        averageDailyUnits,
+        daysOfCover,
+        inventoryStatus: inventoryStatus(
+          availableQuantity,
+          daysOfCover,
+          averageDailyUnits,
         ),
-      )
-      .sort((a, b) => b.revenue + b.spend - (a.revenue + a.spend));
+      };
+    })
+    .sort((a, b) => b.unitsSold - a.unitsSold);
 
-    const salesChannels = channels.filter(
-      (channel) => channel.kind === "commerce" || channel.kind === "mixed",
-    );
-    const paidChannels = channels.filter(
-      (channel) => channel.kind === "paid-media" || channel.kind === "mixed",
-    );
-
-    const sum = <K extends keyof ChannelPerformanceRow>(rows: ChannelPerformanceRow[], key: K) =>
-      rows.reduce((total, row) => total + finiteNumber(row[key]), 0);
-
-    const currentRevenue = sum(salesChannels, "revenue");
-    const previousRevenue = sum(salesChannels, "previousRevenue");
-    const currentOrders = sum(salesChannels, "orders");
-    const previousOrders = sum(salesChannels, "previousOrders");
-    const currentSpend = sum(paidChannels, "spend");
-    const previousSpend = sum(paidChannels, "previousSpend");
-
-    const runtimeWarnings: string[] = [];
-    let products: ProductPerformanceRow[] = [];
-    if (available.has("shopify_product_daily")) {
-      try {
-        const productResult = await client.query<ProductDailyRow>(
-          `
-            SELECT
-              date::text AS date,
-              product_id::text AS product_id,
-              MAX(NULLIF(trim(product_name), '')) AS product_name,
-              COALESCE(SUM(units_sold), 0)::numeric AS units_sold
-            FROM shopify_product_daily
-            WHERE date BETWEEN $1::date AND $2::date
-            GROUP BY date, product_id::text
-            ORDER BY date ASC
-          `,
-          [period.previousStart, period.end],
-        );
-
-        const inventoryByProduct = new Map<string, InventoryRow>();
-        if (available.has("inventory_snapshots")) {
-          const inventoryResult = await client.query<InventoryRow>(
-            `
-              SELECT DISTINCT ON (product_id::text)
-                product_id::text AS product_id,
-                NULLIF(trim(product_name), '') AS product_name,
-                available_quantity,
-                snapshot_at
-              FROM inventory_snapshots
-              ORDER BY product_id::text, snapshot_at DESC
-            `,
-          );
-          for (const row of inventoryResult.rows) {
-            inventoryByProduct.set(String(row.product_id), row);
-          }
-        }
-
-        const productMap = new Map<
-          string,
-          { name: string; current: number; previous: number }
-        >();
-        for (const row of productResult.rows) {
-          const productId = String(row.product_id);
-          const date = dateOnly(row.date);
-          if (!date) continue;
-          const existing = productMap.get(productId) ?? {
-            name: String(row.product_name ?? productId),
-            current: 0,
-            previous: 0,
-          };
-          if (row.product_name) existing.name = String(row.product_name);
-          if (isCurrentPeriod(date, period)) {
-            existing.current += finiteNumber(row.units_sold);
-            ensureDaily(date).unitsSold += finiteNumber(row.units_sold);
-          } else if (isPreviousPeriod(date, period)) {
-            existing.previous += finiteNumber(row.units_sold);
-          }
-          productMap.set(productId, existing);
-        }
-
-        products = Array.from(productMap.entries())
-          .map(([productId, values]) => {
-            const inventory = inventoryByProduct.get(productId);
-            const availableQuantity = nullableFiniteNumber(inventory?.available_quantity);
-            const averageDailyUnits = values.current > 0 ? values.current / days : 0;
-            const daysOfCover = safeDivide(availableQuantity, averageDailyUnits);
-            return {
-              productId,
-              productName:
-                String(inventory?.product_name ?? values.name ?? productId).trim() || productId,
-              unitsSold: values.current,
-              previousUnitsSold: values.previous,
-              changePercent: percentChange(values.current, values.previous),
-              availableQuantity,
-              inventorySnapshotAt: isoDate(inventory?.snapshot_at),
-              averageDailyUnits,
-              daysOfCover,
-              inventoryStatus: inventoryStatus(
-                availableQuantity,
-                daysOfCover,
-                averageDailyUnits,
-              ),
-            } satisfies ProductPerformanceRow;
-          })
-          .sort((a, b) => b.unitsSold - a.unitsSold);
-      } catch (error) {
-        console.error("BRHT dashboard product query failed", error);
-        runtimeWarnings.push("Product or inventory rows could not be read from the current schema.");
-      }
-    }
-
-    const latestChannelsResult = await client.query<LatestChannelRow>(
-      `
-        SELECT
-          lower(trim(channel)) AS source,
-          MAX(date)::text AS latest_metric_date,
-          MAX(updated_at) AS latest_metric_at
-        FROM daily_channel_metrics
-        GROUP BY lower(trim(channel))
-      `,
-    );
-
-    const syncBySource = new Map<string, SyncRunRow>();
-    if (available.has("sync_runs")) {
-      try {
-        const syncResult = await client.query<SyncRunRow>(
-          `
-            SELECT DISTINCT ON (lower(trim(source)))
-              lower(trim(source)) AS source,
-              status,
-              message,
-              started_at,
-              finished_at
-            FROM sync_runs
-            ORDER BY lower(trim(source)), COALESCE(finished_at, started_at) DESC NULLS LAST
-          `,
-        );
-        for (const row of syncResult.rows) {
-          syncBySource.set(String(row.source), row);
-        }
-      } catch (error) {
-        console.error("BRHT dashboard sync query failed", error);
-        runtimeWarnings.push("Ingestion history could not be read from sync_runs.");
-      }
-    }
-
-    const healthSources = new Set<string>([
-      ...latestChannelsResult.rows.map((row) => String(row.source)),
-      ...syncBySource.keys(),
-    ]);
-    const latestBySource = new Map(
-      latestChannelsResult.rows.map((row) => [String(row.source), row]),
-    );
-    const now = Date.now();
-    const dataHealth: DataSourceHealth[] = Array.from(healthSources)
-      .map((source) => {
-        const latest = latestBySource.get(source);
-        const sync = syncBySource.get(source);
-        const latestMetricAt = isoDate(latest?.latest_metric_at);
-        const finishedAt = isoDate(sync?.finished_at);
-        const reference = latestMetricAt ?? finishedAt;
-        const lagHours = reference
-          ? Math.max(0, (now - new Date(reference).getTime()) / 3_600_000)
-          : null;
-        const rawStatus = String(sync?.status ?? "").toLowerCase();
-        const failed = ["failed", "error", "failure"].some((status) =>
-          rawStatus.includes(status),
-        );
-        const status: DataSourceHealth["status"] = failed
-          ? "failed"
-          : lagHours === null
-            ? "unknown"
-            : lagHours > 30
-              ? "delayed"
-              : "healthy";
-        return {
-          source: titleCase(source),
-          status,
-          message: sync?.message ? String(sync.message) : null,
-          lastStartedAt: isoDate(sync?.started_at),
-          lastFinishedAt: finishedAt,
-          latestMetricDate: dateOnly(latest?.latest_metric_date),
-          latestMetricAt,
-          lagHours,
-        };
-      })
-      .sort((a, b) => a.source.localeCompare(b.source));
-
-    const currentUnits = products.reduce((total, product) => total + product.unitsSold, 0);
-    const previousUnits = products.reduce(
-      (total, product) => total + product.previousUnitsSold,
-      0,
-    );
-
-    const warnings: string[] = [...runtimeWarnings];
-    if (!available.has("shopify_product_daily")) {
-      warnings.push("Product sales are unavailable because shopify_product_daily is missing.");
-    }
-    if (!available.has("inventory_snapshots")) {
-      warnings.push("Inventory cover is unavailable because inventory_snapshots is missing.");
-    }
-    if (!available.has("sync_runs")) {
-      warnings.push("Ingestion run history is unavailable because sync_runs is missing.");
-    }
-
-    await client.query("COMMIT");
-
-    return {
-      source: "postgres",
-      connection: "connected",
-      generatedAt: new Date().toISOString(),
-      range,
-      rangeDays: days,
-      period,
-      summary: {
-        revenue: metric(currentRevenue, previousRevenue),
-        orders: metric(currentOrders, previousOrders),
-        adSpend: metric(currentSpend, previousSpend),
-        blendedRoas: metric(
-          safeDivide(currentRevenue, currentSpend),
-          safeDivide(previousRevenue, previousSpend),
-        ),
-        averageOrderValue: metric(
-          safeDivide(currentRevenue, currentOrders),
-          safeDivide(previousRevenue, previousOrders),
-        ),
-        unitsSold: metric(currentUnits, previousUnits),
-      },
-      trend: Array.from(dailyMap.values())
-        .filter((point) => isCurrentPeriod(point.date, period))
-        .sort((a, b) => a.date.localeCompare(b.date)),
-      channels,
-      products,
-      dataHealth,
-      capabilities,
-      warnings,
-      error: null,
-    };
-  } catch (error) {
-    try {
-      if (client) await client.query("ROLLBACK");
-    } catch {
-      // Ignore rollback failures; the original error is the useful one.
-    }
-    console.error("BRHT dashboard database load failed", error);
-    return emptyDashboardData(range, {
-      source: "postgres",
-      connection: "unreachable",
-      error: "The dashboard could not reach the PostgreSQL reporting database.",
-    });
-  } finally {
-    client?.release();
-  }
-}
-
-function isDashboardData(value: unknown): value is DashboardData {
-  if (!value || typeof value !== "object") return false;
-  const candidate = value as Partial<DashboardData>;
-  return (
-    typeof candidate.generatedAt === "string" &&
-    Array.isArray(candidate.trend) &&
-    Array.isArray(candidate.channels) &&
-    Array.isArray(candidate.products) &&
-    Array.isArray(candidate.dataHealth) &&
-    Array.isArray(candidate.capabilities) &&
-    Boolean(candidate.summary) &&
-    Boolean(candidate.period)
+  const metricUnits = metricRows
+    .filter(
+      (row) =>
+        UNIT_METRICS.has(row.metric_key) &&
+        inPeriod(String(row.metric_date), period.start, period.end),
+    )
+    .reduce((total, row) => total + finiteNumber(row.value), 0);
+  const previousMetricUnits = metricRows
+    .filter(
+      (row) =>
+        UNIT_METRICS.has(row.metric_key) &&
+        inPeriod(String(row.metric_date), period.previousStart, period.previousEnd),
+    )
+    .reduce((total, row) => total + finiteNumber(row.value), 0);
+  const productUnits = products.reduce((total, product) => total + product.unitsSold, 0);
+  const previousProductUnits = products.reduce(
+    (total, product) => total + product.previousUnitsSold,
+    0,
   );
+  const currentUnits = metricUnits || productUnits;
+  const previousUnits = previousMetricUnits || previousProductUnits;
+
+  const warnings: string[] = [];
+  if (metricRows.length === 0) {
+    warnings.push(
+      "The BRHT database is connected, but no normalized daily metrics have been ingested yet.",
+    );
+  }
+  if (sourceRows.length === 0) {
+    warnings.push("No data sources are configured for this organization.");
+  }
+
+  return {
+    source: "supabase",
+    connection: "connected",
+    generatedAt: new Date().toISOString(),
+    range,
+    rangeDays: days,
+    organization: {
+      slug: organization.slug,
+      name: organization.name,
+      timezone: organization.timezone,
+      currency: organization.currency,
+    },
+    dashboard: {
+      key: bundle.dashboard?.dashboard_key ?? "executive",
+      title: bundle.dashboard?.title ?? `${organization.name} Business Dashboard`,
+      description: bundle.dashboard?.description ?? null,
+    },
+    period,
+    summary: {
+      revenue: metric(currentRevenue, previousRevenue),
+      orders: metric(currentOrders, previousOrders),
+      adSpend: metric(currentSpend, previousSpend),
+      blendedRoas: metric(
+        safeDivide(currentRevenue, currentSpend),
+        safeDivide(previousRevenue, previousSpend),
+      ),
+      averageOrderValue: metric(
+        safeDivide(currentRevenue, currentOrders),
+        safeDivide(previousRevenue, previousOrders),
+      ),
+      unitsSold: metric(currentUnits, previousUnits),
+    },
+    trend: Array.from(dailyMap.values()).sort((a, b) => a.date.localeCompare(b.date)),
+    channels,
+    products,
+    dataHealth: sourceRows.map(toHealth),
+    capabilities: [
+      { name: "Supabase database", available: true, required: true },
+      { name: "Secure ingest API", available: true, required: true },
+      { name: "Daily metrics", available: true, required: true },
+      { name: "Products & inventory", available: true, required: false },
+      { name: "Source health", available: true, required: false },
+    ],
+    warnings,
+    error: null,
+  };
 }
 
-async function loadFromApi(range: DashboardRange): Promise<DashboardData> {
-  const baseUrl = process.env.BRHT_ANALYTICS_API_URL?.trim().replace(/\/$/, "");
-  if (!baseUrl) return emptyDashboardData(range);
+export async function getOrganizationDashboardData(
+  organizationSlug: string,
+  range: DashboardRange,
+): Promise<DashboardData> {
+  if (!isSupabaseConfigured()) {
+    return emptyDashboardData(organizationSlug, range, {
+      source: "unconfigured",
+      connection: "unconfigured",
+      error: "Supabase is not configured for this deployment.",
+    });
+  }
 
   try {
-    const response = await fetch(
-      `${baseUrl}/v1/fable-fury/dashboard?range=${encodeURIComponent(range)}`,
-      {
-        headers: {
-          Accept: "application/json",
-          ...(process.env.BRHT_ANALYTICS_API_TOKEN
-            ? { Authorization: `Bearer ${process.env.BRHT_ANALYTICS_API_TOKEN}` }
-            : {}),
-        },
-        cache: "no-store",
-        signal: AbortSignal.timeout(12_000),
-      },
-    );
-    if (!response.ok) throw new Error(`Analytics API returned ${response.status}`);
-    const payload: unknown = await response.json();
-    if (!isDashboardData(payload)) throw new Error("Analytics API contract mismatch");
-    return { ...payload, source: "api", range };
+    const organizations = (await selectRows("brht_organizations", {
+      select: "id,slug,name,timezone,currency,status",
+      slug: `eq.${organizationSlug}`,
+      status: "neq.archived",
+      limit: "1",
+    })) as OrganizationRow[];
+    const organization = organizations[0];
+    if (!organization) {
+      return emptyDashboardData(organizationSlug, range, {
+        source: "supabase",
+        connection: "not-found",
+        error: `No BRHT organization exists for “${organizationSlug}”.`,
+      });
+    }
+
+    const period = periodFor(range, organization.timezone || "UTC");
+    const bundle = await rpc<DashboardBundle | null>("brht_dashboard_bundle", {
+      p_organization_slug: organizationSlug,
+      p_start_date: period.start,
+      p_end_date: period.end,
+      p_previous_start_date: period.previousStart,
+      p_previous_end_date: period.previousEnd,
+    });
+
+    if (!bundle) {
+      return emptyDashboardData(organizationSlug, range, {
+        source: "supabase",
+        connection: "not-found",
+        error: `No dashboard bundle exists for “${organizationSlug}”.`,
+      });
+    }
+
+    return buildDashboard(organization, bundle, range, period);
   } catch (error) {
-    console.error("BRHT dashboard API load failed", error);
-    return emptyDashboardData(range, {
-      source: "api",
+    console.error("BRHT Supabase dashboard load failed", error);
+    return emptyDashboardData(organizationSlug, range, {
+      source: "supabase",
       connection: "unreachable",
-      error: "The dashboard could not reach the analytics API.",
+      error:
+        error instanceof Error
+          ? error.message
+          : "The BRHT data platform could not be reached.",
     });
   }
-}
-
-export function dashboardSource(): "postgres" | "api" | "unconfigured" {
-  if (process.env.BRHT_DATABASE_URL?.trim()) return "postgres";
-  if (process.env.BRHT_ANALYTICS_API_URL?.trim()) return "api";
-  return "unconfigured";
 }
 
 export async function getFableFuryDashboardData(
   range: DashboardRange,
 ): Promise<DashboardData> {
-  const source = dashboardSource();
-  if (source === "postgres") return loadFromPostgres(range);
-  if (source === "api") return loadFromApi(range);
-  return emptyDashboardData(range, {
-    source: "unconfigured",
-    connection: "unconfigured",
-    warnings: [
-      "Add BRHT_DATABASE_URL or BRHT_ANALYTICS_API_URL to connect the existing reporting warehouse.",
-    ],
-  });
+  return getOrganizationDashboardData("fable-fury", range);
 }

@@ -1,12 +1,12 @@
 export const DASHBOARD_RANGES = ["7d", "14d", "30d", "90d"] as const;
 
 export type DashboardRange = (typeof DASHBOARD_RANGES)[number];
-export type DashboardSource = "postgres" | "api" | "unconfigured";
+export type DashboardSource = "supabase" | "unconfigured";
 export type DashboardConnectionState =
   | "connected"
   | "unconfigured"
   | "unreachable"
-  | "incomplete";
+  | "not-found";
 
 export type MetricValue = {
   value: number | null;
@@ -33,7 +33,7 @@ export type DailyPerformancePoint = {
 
 export type ChannelPerformanceRow = {
   channel: string;
-  kind: "commerce" | "paid-media" | "mixed" | "other";
+  kind: "commerce" | "paid-media" | "mixed" | "finance" | "operations" | "other";
   revenue: number;
   previousRevenue: number;
   spend: number;
@@ -68,7 +68,9 @@ export type ProductPerformanceRow = {
 
 export type DataSourceHealth = {
   source: string;
-  status: "healthy" | "delayed" | "failed" | "unknown";
+  sourceKey: string;
+  sourceType: string;
+  status: "healthy" | "delayed" | "failed" | "unknown" | "paused";
   message: string | null;
   lastStartedAt: string | null;
   lastFinishedAt: string | null;
@@ -89,6 +91,17 @@ export type DashboardData = {
   generatedAt: string;
   range: DashboardRange;
   rangeDays: number;
+  organization: {
+    slug: string;
+    name: string;
+    timezone: string;
+    currency: string;
+  };
+  dashboard: {
+    key: string;
+    title: string;
+    description: string | null;
+  };
   period: {
     start: string;
     end: string;
@@ -110,7 +123,7 @@ export function rangeToDays(range: DashboardRange): number {
 }
 
 export function normalizeDashboardRange(
-  value: string | string[] | undefined,
+  value: string | string[] | null | undefined,
 ): DashboardRange {
   const candidate = Array.isArray(value) ? value[0] : value;
   return DASHBOARD_RANGES.includes(candidate as DashboardRange)
@@ -134,6 +147,7 @@ export function emptySummary(): DashboardSummary {
 }
 
 export function emptyDashboardData(
+  organizationSlug: string,
   range: DashboardRange,
   options: {
     source?: DashboardSource;
@@ -151,6 +165,10 @@ export function emptyDashboardData(
   const previousStart = new Date(previousEnd);
   previousStart.setUTCDate(previousStart.getUTCDate() - days + 1);
   const date = (value: Date) => value.toISOString().slice(0, 10);
+  const displayName = organizationSlug
+    .split("-")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
 
   return {
     source: options.source ?? "unconfigured",
@@ -158,6 +176,17 @@ export function emptyDashboardData(
     generatedAt: new Date().toISOString(),
     range,
     rangeDays: days,
+    organization: {
+      slug: organizationSlug,
+      name: displayName,
+      timezone: "UTC",
+      currency: "USD",
+    },
+    dashboard: {
+      key: "executive",
+      title: `${displayName} Business Dashboard`,
+      description: null,
+    },
     period: {
       start: date(start),
       end: date(end),
@@ -170,12 +199,11 @@ export function emptyDashboardData(
     products: [],
     dataHealth: [],
     capabilities: [
-      { name: "daily_channel_metrics", available: false, required: true },
-      { name: "shopify_product_daily", available: false, required: false },
-      { name: "inventory_snapshots", available: false, required: false },
-      { name: "products", available: false, required: false },
-      { name: "sync_runs", available: false, required: false },
-      { name: "dashboard_daily_summary", available: false, required: false },
+      { name: "Supabase database", available: false, required: true },
+      { name: "Secure ingest API", available: false, required: true },
+      { name: "Daily metrics", available: false, required: true },
+      { name: "Products & inventory", available: false, required: false },
+      { name: "Source health", available: false, required: false },
     ],
     warnings: options.warnings ?? [],
     error: options.error ?? null,

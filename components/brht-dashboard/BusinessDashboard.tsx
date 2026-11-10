@@ -28,25 +28,31 @@ import {
   type ProductPerformanceRow,
 } from "@/lib/brht-dashboard/types";
 
-const money = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
-  maximumFractionDigits: 0,
-});
-const preciseMoney = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
-  maximumFractionDigits: 2,
-});
 const number = new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 });
+const currencyFormatters = new Map<string, Intl.NumberFormat>();
+
+function formatCurrency(value: number, currency: string, precise = false) {
+  const key = `${currency}:${precise ? "precise" : "whole"}`;
+  let formatter = currencyFormatters.get(key);
+  if (!formatter) {
+    formatter = new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency,
+      maximumFractionDigits: precise ? 2 : 0,
+    });
+    currencyFormatters.set(key, formatter);
+  }
+  return formatter.format(value);
+}
 
 function formatMetric(
   value: number | null,
   format: "money" | "precise-money" | "number" | "multiple",
+  currency: string,
 ) {
   if (value === null) return "—";
-  if (format === "money") return money.format(value);
-  if (format === "precise-money") return preciseMoney.format(value);
+  if (format === "money") return formatCurrency(value, currency);
+  if (format === "precise-money") return formatCurrency(value, currency, true);
   if (format === "multiple") return `${value.toFixed(2)}x`;
   return number.format(value);
 }
@@ -79,12 +85,14 @@ function KpiCard({
   format,
   icon: Icon,
   note,
+  currency,
 }: {
   label: string;
   metric: MetricValue;
   format: "money" | "precise-money" | "number" | "multiple";
   icon: typeof CircleDollarSign;
   note: string;
+  currency: string;
 }) {
   return (
     <article className="rounded-[22px] border border-black/[0.06] bg-white p-5 shadow-[0_8px_30px_rgba(0,0,0,.045)]">
@@ -97,7 +105,7 @@ function KpiCard({
         </span>
       </div>
       <div className="mt-5 text-[30px] font-semibold tracking-[-0.045em] text-[#1d1d1f] tabular-nums">
-        {formatMetric(metric.value, format)}
+        {formatMetric(metric.value, format, currency)}
       </div>
       <div className="mt-3">
         <ChangeBadge metric={metric} />
@@ -121,14 +129,12 @@ function SourceBadge({ data }: { data: DashboardData }) {
         className={`h-1.5 w-1.5 rounded-full ${connected ? "bg-[#22a35a]" : "bg-[#f59e0b]"}`}
       />
       {connected
-        ? data.source === "postgres"
-          ? "Live PostgreSQL"
-          : "Live analytics API"
-        : data.connection === "incomplete"
-          ? "Schema incomplete"
+        ? "Live BRHT database"
+        : data.connection === "not-found"
+          ? "Organization not configured"
           : data.connection === "unreachable"
-            ? "Connection unavailable"
-            : "Database not connected"}
+            ? "Platform unavailable"
+            : "Platform not configured"}
     </span>
   );
 }
@@ -160,13 +166,13 @@ function ConnectionPanel({ data }: { data: DashboardData }) {
             <div>
               <h2 className="text-xl font-semibold tracking-[-0.03em] text-[#1d1d1f]">
                 {data.connection === "unreachable"
-                  ? "The dashboard is built, but the warehouse is not reachable"
-                  : data.connection === "incomplete"
-                    ? "PostgreSQL is reachable, but the reporting schema is incomplete"
-                    : "Connect the existing Fable Fury PostgreSQL warehouse"}
+                  ? "The BRHT data platform is not reachable"
+                  : data.connection === "not-found"
+                    ? "This organization is not configured in the BRHT data platform"
+                    : "Connect this deployment to the BRHT data platform"}
               </h2>
               <p className="mt-1 text-sm leading-6 text-[#6e6e73]">
-                No sample business numbers are being shown. Once the existing read-only connection is supplied, this same interface renders live data from the warehouse that currently feeds Metabase.
+                No sample business numbers are being shown. Once Supabase is available to this deployment, the dashboard reads the organization’s live normalized data through the BRHT server layer.
               </p>
             </div>
           </div>
@@ -183,11 +189,11 @@ function ConnectionPanel({ data }: { data: DashboardData }) {
           <div className="mt-3 space-y-2 text-sm text-[#3a3a3c]">
             <div className="flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4 text-[#22a35a]" />
-              Read-only PostgreSQL URL
+              Supabase server credentials
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4 text-[#22a35a]" />
-              Secure analytics API fallback
+              Organization-specific ingest key
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4 text-[#22a35a]" />
@@ -233,7 +239,7 @@ function formatCover(product: ProductPerformanceRow) {
   return `${Math.round(product.daysOfCover)} days cover`;
 }
 
-export function FableFuryDashboard({ data }: { data: DashboardData }) {
+export function BusinessDashboard({ data }: { data: DashboardData }) {
   const generated = new Intl.DateTimeFormat("en-AU", {
     dateStyle: "medium",
     timeStyle: "short",
@@ -261,13 +267,13 @@ export function FableFuryDashboard({ data }: { data: DashboardData }) {
             </Link>
             <div>
               <div className="text-sm font-semibold tracking-[-0.01em]">BRHT Dashboards</div>
-              <div className="text-[11px] text-[#86868b]">Fable Fury operating data</div>
+              <div className="text-[11px] text-[#86868b]">{data.organization.name} operating data</div>
             </div>
           </div>
           <div className="flex items-center gap-3">
             <SourceBadge data={data} />
             <Link
-              href="/api/dashboards/fable-fury?range=14d"
+              href={`/api/dashboards/${data.organization.slug}?range=${data.range}`}
               className="hidden h-9 items-center gap-2 rounded-full border border-black/[0.08] bg-white px-4 text-xs font-semibold text-[#3a3a3c] transition hover:border-black/20 sm:inline-flex"
             >
               JSON
@@ -281,7 +287,7 @@ export function FableFuryDashboard({ data }: { data: DashboardData }) {
         <aside className="hidden lg:block">
           <div className="sticky top-24 space-y-1">
             <div className="mb-4 px-3 text-[10px] font-bold uppercase tracking-[0.14em] text-[#86868b]">
-              Fable Fury
+              {data.organization.name}
             </div>
             {[
               [BarChart3, "Overview", "#overview"],
@@ -319,19 +325,20 @@ export function FableFuryDashboard({ data }: { data: DashboardData }) {
           <section id="overview" className="scroll-mt-24">
             <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <div className="text-xs font-semibold text-[#0071e3]">Fable Fury Studios</div>
+                <div className="text-xs font-semibold text-[#0071e3]">{data.organization.name}</div>
                 <h1 className="mt-2 text-4xl font-semibold tracking-[-0.055em] sm:text-5xl">
-                  Business dashboard
+                  {data.dashboard.title}
                 </h1>
                 <p className="mt-3 max-w-3xl text-sm leading-6 text-[#6e6e73]">
-                  One operating view across commerce, paid media, product velocity, inventory and ingestion reliability.
+                  {data.dashboard.description ??
+                    "One operating view across commerce, paid media, product velocity, inventory and ingestion reliability."}
                 </p>
               </div>
               <div className="flex flex-wrap gap-2">
                 {DASHBOARD_RANGES.map((range) => (
                   <Link
                     key={range}
-                    href={`/dashboards/fable-fury?range=${range}`}
+                    href={`/dashboards/${data.organization.slug}?range=${range}`}
                     scroll={false}
                     className={`rounded-full px-4 py-2 text-xs font-semibold transition ${
                       data.range === range
@@ -363,20 +370,23 @@ export function FableFuryDashboard({ data }: { data: DashboardData }) {
                 label="Sales revenue"
                 metric={data.summary.revenue}
                 format="money"
+                currency={data.organization.currency}
                 icon={CircleDollarSign}
-                note="Commerce revenue only; paid-media attribution is not double-counted."
+                note="Operational revenue from non-advertising sources; paid-media attribution is not double-counted."
               />
               <KpiCard
                 label="Orders"
                 metric={data.summary.orders}
                 format="number"
+                currency={data.organization.currency}
                 icon={ShoppingBag}
-                note="Orders from commerce channels in the selected period."
+                note="Orders or transactions from non-advertising sources in the selected period."
               />
               <KpiCard
                 label="Ad spend"
                 metric={data.summary.adSpend}
                 format="money"
+                currency={data.organization.currency}
                 icon={TrendingUp}
                 note="Spend from connected paid-media channels."
               />
@@ -384,6 +394,7 @@ export function FableFuryDashboard({ data }: { data: DashboardData }) {
                 label="Blended ROAS"
                 metric={data.summary.blendedRoas}
                 format="multiple"
+                currency={data.organization.currency}
                 icon={Gauge}
                 note="Sales revenue divided by total paid-media spend."
               />
@@ -391,15 +402,17 @@ export function FableFuryDashboard({ data }: { data: DashboardData }) {
                 label="Average order"
                 metric={data.summary.averageOrderValue}
                 format="precise-money"
+                currency={data.organization.currency}
                 icon={Layers3}
-                note="Commerce revenue divided by commerce orders."
+                note="Operational revenue divided by reported orders or transactions."
               />
               <KpiCard
                 label="Units sold"
                 metric={data.summary.unitsSold}
                 format="number"
+                currency={data.organization.currency}
                 icon={Boxes}
-                note="Shopify product units from shopify_product_daily."
+                note="Product units from connected commerce sources."
               />
             </div>
 
@@ -420,7 +433,7 @@ export function FableFuryDashboard({ data }: { data: DashboardData }) {
                   </div>
                 </div>
                 <div className="mt-5">
-                  <PerformanceChart points={data.trend} />
+                  <PerformanceChart points={data.trend} currency={data.organization.currency} />
                 </div>
               </article>
 
@@ -486,8 +499,8 @@ export function FableFuryDashboard({ data }: { data: DashboardData }) {
                             />
                           </div>
                           <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-[#86868b]">
-                            <span>{money.format(channel.revenue)} revenue</span>
-                            <span>{money.format(channel.spend)} spend</span>
+                            <span>{formatCurrency(channel.revenue, data.organization.currency)} revenue</span>
+                            <span>{formatCurrency(channel.spend, data.organization.currency)} spend</span>
                           </div>
                         </div>
                         <div className="lg:text-right">

@@ -38,9 +38,7 @@ export function safeDivide(
   numerator: number | null,
   denominator: number | null,
 ): number | null {
-  if (numerator === null || denominator === null || denominator === 0) {
-    return null;
-  }
+  if (numerator === null || denominator === null || denominator === 0) return null;
   const result = numerator / denominator;
   return Number.isFinite(result) ? result : null;
 }

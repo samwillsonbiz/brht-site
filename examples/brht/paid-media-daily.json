@@ -1,0 +1,18 @@
+{
+  "source": {
+    "key": "meta_ads",
+    "type": "paid_media",
+    "displayName": "Meta Ads"
+  },
+  "run": {
+    "key": "meta-example-daily",
+    "status": "success",
+    "startedAt": "2026-11-10T08:00:00Z",
+    "finishedAt": "2026-11-10T08:00:20Z"
+  },
+  "metrics": [
+    { "date": "2026-11-10", "metric": "ad_spend", "value": 3912.44, "unit": "USD" },
+    { "date": "2026-11-10", "metric": "attributed_revenue", "value": 14892.11, "unit": "USD" },
+    { "date": "2026-11-10", "metric": "purchases", "value": 119, "unit": "count" }
+  ]
+}

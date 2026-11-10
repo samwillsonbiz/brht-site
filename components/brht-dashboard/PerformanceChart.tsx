@@ -1,12 +1,5 @@
 import type { DailyPerformancePoint } from "@/lib/brht-dashboard/types";
 
-const compactCurrency = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
-  notation: "compact",
-  maximumFractionDigits: 1,
-});
-
 function chartGeometry(points: DailyPerformancePoint[]) {
   const width = 900;
   const height = 310;
@@ -34,20 +27,32 @@ function chartGeometry(points: DailyPerformancePoint[]) {
   return { width, height, left, right, top, bottom, paddedMax, x, y, line, area };
 }
 
-export function PerformanceChart({ points }: { points: DailyPerformancePoint[] }) {
+export function PerformanceChart({
+  points,
+  currency,
+}: {
+  points: DailyPerformancePoint[];
+  currency: string;
+}) {
   if (points.length === 0) {
     return (
       <div className="grid h-[310px] place-items-center rounded-2xl border border-dashed border-black/10 bg-[#fafafa] text-center">
         <div>
           <div className="text-sm font-semibold text-[#1d1d1f]">No live time-series data yet</div>
           <div className="mt-1 text-xs text-[#6e6e73]">
-            The chart will populate from daily_channel_metrics after the database is connected.
+            The chart will populate when normalized daily metrics arrive from connected sources.
           </div>
         </div>
       </div>
     );
   }
 
+  const compactCurrency = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency,
+    notation: "compact",
+    maximumFractionDigits: 1,
+  });
   const chart = chartGeometry(points);
   const ticks = [0, 0.25, 0.5, 0.75, 1];
   const labelStep = Math.max(1, Math.ceil(points.length / 6));
