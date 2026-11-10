@@ -1,0 +1,49 @@
+name: Apply BRHT dashboard hub
+
+on:
+  push:
+    branches:
+      - feat/brht-dashboard-hub
+
+permissions:
+  contents: write
+
+jobs:
+  apply-dashboard:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out dashboard branch
+        uses: actions/checkout@v4
+        with:
+          ref: feat/brht-dashboard-hub
+          fetch-depth: 0
+
+      - name: Reconstruct and verify implementation
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat .brht-dashboard-update/part* | base64 --decode > /tmp/brht-dashboard-code.tar.xz
+          echo "47c81ad8fb87703a81357ef400dcef6a0942c922f7ac34f017b73baeb528e9d4  /tmp/brht-dashboard-code.tar.xz" | sha256sum --check --strict
+          tar -xJf /tmp/brht-dashboard-code.tar.xz
+          npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+
+      - name: Remove one-time staging files
+        shell: bash
+        run: |
+          rm -rf .brht-dashboard-update
+          rm -f .github/workflows/apply-brht-dashboard-hub.yml
+
+      - name: Commit dashboard implementation
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git commit -m "Add private BRHT Fable Fury dashboard hub"
+          git push origin HEAD:feat/brht-dashboard-hub
