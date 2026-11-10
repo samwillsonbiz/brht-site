@@ -457,7 +457,7 @@ export function BusinessDashboard({ data }: { data: DashboardData }) {
                   </div>
                   <div className="flex items-start gap-3 rounded-2xl border border-black/[0.06] p-4 text-xs leading-5 text-[#6e6e73]">
                     <Settings2 className="mt-0.5 h-4 w-4 shrink-0 text-[#0071e3]" />
-                    Financial logic stays in the reporting database. The website presents the results rather than recreating spreadsheet formulas in the browser.
+                    Financial logic stays in the BRHT reporting model. The website presents the results rather than recreating spreadsheet formulas in the browser.
                   </div>
                 </div>
               </article>
@@ -475,7 +475,7 @@ export function BusinessDashboard({ data }: { data: DashboardData }) {
                   <div>
                     <BarChart3 className="mx-auto h-7 w-7 text-[#86868b]" />
                     <div className="mt-3 text-sm font-semibold">No channel rows available</div>
-                    <div className="mt-1 text-xs text-[#86868b]">Waiting for daily_channel_metrics.</div>
+                    <div className="mt-1 text-xs text-[#86868b]">Waiting for normalized daily metrics from connected sources.</div>
                   </div>
                 </div>
               ) : (
@@ -552,7 +552,7 @@ export function BusinessDashboard({ data }: { data: DashboardData }) {
                       <div>
                         <PackageSearch className="mx-auto h-7 w-7 text-[#86868b]" />
                         <div className="mt-3 text-sm font-semibold">No product rows available</div>
-                        <div className="mt-1 text-xs text-[#86868b]">Waiting for shopify_product_daily.</div>
+                        <div className="mt-1 text-xs text-[#86868b]">Waiting for normalized product performance from connected sources.</div>
                       </div>
                     </div>
                   ) : (
@@ -636,7 +636,7 @@ export function BusinessDashboard({ data }: { data: DashboardData }) {
                       <div>
                         <Clock3 className="mx-auto h-7 w-7 text-[#86868b]" />
                         <div className="mt-3 text-sm font-semibold">No source health rows yet</div>
-                        <div className="mt-1 text-xs text-[#86868b]">Waiting for sync_runs and channel timestamps.</div>
+                        <div className="mt-1 text-xs text-[#86868b]">Waiting for source sync history and freshness timestamps.</div>
                       </div>
                     </div>
                   ) : (
