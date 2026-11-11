@@ -1,4 +1,4 @@
-export const DASHBOARD_RANGES = ["7d", "14d", "30d", "90d"] as const;
+export const DASHBOARD_RANGES = ["7d", "14d", "30d", "90d", "180d", "365d", "max"] as const;
 
 export type DashboardRange = (typeof DASHBOARD_RANGES)[number];
 export type DashboardSource = "supabase" | "unconfigured";
@@ -157,6 +157,7 @@ export type DashboardData = {
 };
 
 export function rangeToDays(range: DashboardRange): number {
+  if (range === "max") return 36500;
   return Number.parseInt(range.replace("d", ""), 10);
 }
 
