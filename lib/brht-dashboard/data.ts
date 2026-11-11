@@ -164,7 +164,7 @@ function periodFor(
       previousEnd: "1999-12-31",
     };
   }
-  const days = daysInclusive(period.start, period.end);
+  const days = rangeToDays(range);
   const start = addDays(end, -(days - 1));
   const previousEnd = addDays(start, -1);
   const previousStart = addDays(previousEnd, -(days - 1));
