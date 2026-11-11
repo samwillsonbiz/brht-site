@@ -1,0 +1,159 @@
+{
+  "name": "BRHT — Fable Fury inventory reality check — IMPORT READY",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "trigger",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -760,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT 'inventory_counts' AS table_name, COUNT(*)::int AS rows, MAX(count_date)::text AS latest_date FROM inventory_counts\nUNION ALL\nSELECT 'inventory_status', COUNT(*)::int, MAX(inventory_date)::text FROM inventory_status\nUNION ALL\nSELECT 'inventory_forecast', COUNT(*)::int, MAX(count_date)::text FROM inventory_forecast\nUNION ALL\nSELECT 'shopify_product_inventory_counts', COUNT(*)::int, MAX(count_date)::text FROM shopify_product_inventory_counts\nUNION ALL\nSELECT 'shopify_product_inventory_daily', COUNT(*)::int, MAX(date)::text FROM shopify_product_inventory_daily\nUNION ALL\nSELECT 'amazon_product_daily', COUNT(*)::int, MAX(date)::text FROM amazon_product_daily\nORDER BY table_name;",
+        "options": {}
+      },
+      "credentials": {
+        "postgres": {
+          "id": "Fvu3UbRaZ9S3hpH3",
+          "name": "Postgres account"
+        }
+      },
+      "id": "counts",
+      "name": "Check inventory table freshness",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -450,
+        -180
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  ic.product_id::text AS product_id,\n  COALESCE(p.product_name, pl.product_name, ic.product_id::text) AS product_name,\n  ic.inventory_count,\n  ic.count_date,\n  ic.lead_time_days,\n  ic.msrp,\n  ic.unit_cost,\n  ic.updated_at\nFROM inventory_counts ic\nLEFT JOIN products p ON p.product_id::text = ic.product_id::text\nLEFT JOIN product_lookup pl ON pl.product_id::text = ic.product_id::text\nORDER BY ic.count_date DESC, product_name\nLIMIT 50;",
+        "options": {}
+      },
+      "credentials": {
+        "postgres": {
+          "id": "Fvu3UbRaZ9S3hpH3",
+          "name": "Postgres account"
+        }
+      },
+      "id": "inventory-counts",
+      "name": "Sample inventory counts",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -450,
+        -60
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  product_name,\n  current_inventory,\n  days_til_0,\n  estimated_stockout_date,\n  reorder_by,\n  weighted_daily_sales,\n  inventory_date,\n  cost_value,\n  retail_value\nFROM inventory_status\nORDER BY product_name\nLIMIT 50;",
+        "options": {}
+      },
+      "credentials": {
+        "postgres": {
+          "id": "Fvu3UbRaZ9S3hpH3",
+          "name": "Postgres account"
+        }
+      },
+      "id": "status",
+      "name": "Sample inventory status",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -450,
+        60
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  product_id::text AS product_id,\n  product_name,\n  inventory_count,\n  estimated_current_inventory,\n  count_date,\n  days_since_count,\n  weighted_blend,\n  estimated_stockout_date,\n  lead_time_days,\n  retail_value_now,\n  cost_value_now,\n  wholesale_value_now\nFROM inventory_forecast\nORDER BY product_name\nLIMIT 50;",
+        "options": {}
+      },
+      "credentials": {
+        "postgres": {
+          "id": "Fvu3UbRaZ9S3hpH3",
+          "name": "Postgres account"
+        }
+      },
+      "id": "forecast",
+      "name": "Sample inventory forecast",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -450,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH latest AS (\n  SELECT DISTINCT ON (product_id)\n    product_id::text AS product_id,\n    inventory_count,\n    count_date,\n    updated_at\n  FROM shopify_product_inventory_counts\n  ORDER BY product_id, count_date DESC, updated_at DESC\n)\nSELECT\n  l.product_id,\n  COALESCE(p.product_name, sp.product_name, l.product_id) AS product_name,\n  l.inventory_count,\n  l.count_date,\n  l.updated_at\nFROM latest l\nLEFT JOIN products p ON p.product_id::text = l.product_id\nLEFT JOIN shopify_products sp ON sp.product_id::text = l.product_id\nORDER BY product_name;",
+        "options": {}
+      },
+      "credentials": {
+        "postgres": {
+          "id": "Fvu3UbRaZ9S3hpH3",
+          "name": "Postgres account"
+        }
+      },
+      "id": "shopify-latest",
+      "name": "Latest Shopify inventory",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -450,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Check inventory table freshness",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Sample inventory counts",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Sample inventory status",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Sample inventory forecast",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Latest Shopify inventory",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": []
+}
