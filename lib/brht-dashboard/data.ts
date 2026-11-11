@@ -8,6 +8,7 @@ import {
   type DataSourceHealth,
   type DailyPerformancePoint,
   type ProductPerformanceRow,
+  type KickstarterData,
 } from "./types";
 import {
   dateOnly,
@@ -40,6 +41,7 @@ type DashboardBundle = {
   inventory?: RawInventory[];
   sources?: RawSource[];
   period?: DashboardData["period"];
+  kickstarterMetrics?: RawMetric[];
 };
 
 type RawMetric = {
@@ -272,6 +274,98 @@ function toHealth(source: RawSource): DataSourceHealth {
   };
 }
 
+function buildKickstarterData(rows: RawMetric[]): KickstarterData {
+  const snapshots = new Map<string, {
+    campaignKey: string;
+    campaignName: string;
+    status: string;
+    startDate: string | null;
+    endDate: string | null;
+    byDate: Map<string, {
+      date: string;
+      pledged: number;
+      backers: number;
+      goal: number;
+      daysRemaining: number | null;
+    }>;
+  }>();
+
+  for (const row of rows) {
+    const dimensions = row.dimensions ?? {};
+    const campaignKey = String(dimensions.campaign ?? row.dimension_key ?? "campaign");
+    const campaignName = String(dimensions.campaign_label ?? titleCase(campaignKey));
+    const status = String(dimensions.campaign_status ?? "unknown");
+    const startDate = typeof dimensions.campaign_start === "string" ? dimensions.campaign_start : null;
+    const endDate = typeof dimensions.campaign_end === "string" ? dimensions.campaign_end : null;
+    const date = dateOnly(row.metric_date);
+    if (!date) continue;
+
+    const campaign = snapshots.get(campaignKey) ?? {
+      campaignKey,
+      campaignName,
+      status,
+      startDate,
+      endDate,
+      byDate: new Map(),
+    };
+    const point = campaign.byDate.get(date) ?? {
+      date,
+      pledged: 0,
+      backers: 0,
+      goal: 0,
+      daysRemaining: null,
+    };
+    const value = finiteNumber(row.value);
+    if (row.metric_key === "campaign_pledged") point.pledged = value;
+    if (row.metric_key === "campaign_backers") point.backers = value;
+    if (row.metric_key === "campaign_goal") point.goal = value;
+    if (row.metric_key === "campaign_days_remaining") point.daysRemaining = value;
+    campaign.byDate.set(date, point);
+    snapshots.set(campaignKey, campaign);
+  }
+
+  const trend: KickstarterData["trend"] = [];
+  const campaigns: KickstarterData["campaigns"] = [];
+
+  for (const campaign of snapshots.values()) {
+    const points = Array.from(campaign.byDate.values()).sort((a, b) => a.date.localeCompare(b.date));
+    let previousPledged: number | null = null;
+    let previousBackers: number | null = null;
+    for (const point of points) {
+      trend.push({
+        date: point.date,
+        campaignKey: campaign.campaignKey,
+        campaignName: campaign.campaignName,
+        pledged: point.pledged,
+        backers: point.backers,
+        dailyPledged: previousPledged === null ? null : Math.max(0, point.pledged - previousPledged),
+        dailyBackers: previousBackers === null ? null : Math.max(0, point.backers - previousBackers),
+      });
+      previousPledged = point.pledged;
+      previousBackers = point.backers;
+    }
+    const latest = points.at(-1);
+    if (!latest) continue;
+    campaigns.push({
+      campaignKey: campaign.campaignKey,
+      name: campaign.campaignName,
+      status: campaign.status,
+      startDate: campaign.startDate,
+      endDate: campaign.endDate,
+      pledged: latest.pledged,
+      backers: latest.backers,
+      goal: latest.goal,
+      averagePledge: safeDivide(latest.pledged, latest.backers) ?? 0,
+      daysRemaining: latest.daysRemaining,
+      latestDate: latest.date,
+    });
+  }
+
+  campaigns.sort((a, b) => b.latestDate.localeCompare(a.latestDate));
+  trend.sort((a, b) => a.date.localeCompare(b.date));
+  return { campaigns, trend };
+}
+
 function buildDashboard(
   organization: OrganizationRow,
   bundle: DashboardBundle,
@@ -282,6 +376,8 @@ function buildDashboard(
   const productRows = Array.isArray(bundle.products) ? bundle.products : [];
   const inventoryRows = Array.isArray(bundle.inventory) ? bundle.inventory : [];
   const sourceRows = Array.isArray(bundle.sources) ? bundle.sources : [];
+  const kickstarterRows = Array.isArray(bundle.kickstarterMetrics) ? bundle.kickstarterMetrics : [];
+  const kickstarter = buildKickstarterData(kickstarterRows);
   const sourceMap = new Map(sourceRows.map((source) => [source.source_key, source]));
   const channelMap = new Map<string, { label: string; values: ChannelAccumulator }>();
   const dailyMap = new Map<string, DailyPerformancePoint>();
@@ -521,6 +617,7 @@ function buildDashboard(
     trend: Array.from(dailyMap.values()).sort((a, b) => a.date.localeCompare(b.date)),
     channels,
     products,
+    kickstarter,
     dataHealth: sourceRows.map(toHealth),
     capabilities: [
       { name: "Supabase database", available: true, required: true },
@@ -578,6 +675,15 @@ export async function getOrganizationDashboardData(
         error: `No dashboard bundle exists for “${organizationSlug}”.`,
       });
     }
+
+    const kickstarterMetrics = (await selectRows("brht_metric_daily", {
+      select: "metric_date,source_key,metric_key,dimension_key,dimensions,value,unit,source_updated_at,updated_at",
+      organization_id: `eq.${organization.id}`,
+      source_key: "eq.kickstarter",
+      order: "metric_date.asc",
+      limit: "5000",
+    })) as RawMetric[];
+    bundle.kickstarterMetrics = kickstarterMetrics;
 
     return buildDashboard(organization, bundle, range, period);
   } catch (error) {
