@@ -134,8 +134,28 @@ function addDays(date: string, amount: number): string {
   return value.toISOString().slice(0, 10);
 }
 
-function periodFor(range: DashboardRange, timezone: string): DashboardData["period"] {
-  const end = formatDateInTimezone(new Date(), timezone);
+function daysInclusive(start: string, end: string): number {
+  const startMs = new Date(`${start}T00:00:00.000Z`).getTime();
+  const endMs = new Date(`${end}T00:00:00.000Z`).getTime();
+  return Math.max(1, Math.round((endMs - startMs) / 86_400_000) + 1);
+}
+
+function periodFor(
+  range: DashboardRange,
+  timezone: string,
+  customStart?: string | null,
+  customEnd?: string | null,
+): DashboardData["period"] {
+  const today = formatDateInTimezone(new Date(), timezone);
+  if (range === "custom" && customStart && customEnd) {
+    const start = customStart <= customEnd ? customStart : customEnd;
+    const end = customStart <= customEnd ? customEnd : customStart;
+    const days = daysInclusive(start, end);
+    const previousEnd = addDays(start, -1);
+    const previousStart = addDays(previousEnd, -(days - 1));
+    return { start, end, previousStart, previousEnd };
+  }
+  const end = today;
   if (range === "max") {
     return {
       start: "2000-01-01",
@@ -144,7 +164,7 @@ function periodFor(range: DashboardRange, timezone: string): DashboardData["peri
       previousEnd: "1999-12-31",
     };
   }
-  const days = rangeToDays(range);
+  const days = daysInclusive(period.start, period.end);
   const start = addDays(end, -(days - 1));
   const previousEnd = addDays(start, -1);
   const previousStart = addDays(previousEnd, -(days - 1));
@@ -436,6 +456,32 @@ function buildDashboard(
     dailyMap.set(date, point);
     return point;
   };
+
+  const aggregateOnlyKickstarterCampaigns = kickstarter.campaigns.filter((campaign) => {
+    const points = kickstarter.trend.filter((point) => point.campaignKey === campaign.campaignKey);
+    return points.length === 1 && campaign.status === "finished";
+  });
+
+  for (const campaign of aggregateOnlyKickstarterCampaigns) {
+    const finalDate = campaign.latestDate;
+    const current = inPeriod(finalDate, period.start, period.end);
+    const previous = inPeriod(finalDate, period.previousStart, period.previousEnd);
+    if (!current && !previous) continue;
+
+    const existing = channelMap.get("kickstarter") ?? {
+      label: "Kickstarter",
+      values: emptyChannel("kickstarter", "crowdfunding"),
+    };
+    if (current) {
+      existing.values.revenue += campaign.pledged;
+      existing.values.orders += campaign.backers;
+    }
+    if (previous) {
+      existing.values.previousRevenue += campaign.pledged;
+      existing.values.previousOrders += campaign.backers;
+    }
+    channelMap.set("kickstarter", existing);
+  }
 
   for (const point of kickstarter.trend) {
     const current = inPeriod(point.date, period.start, period.end);
@@ -744,6 +790,8 @@ function buildDashboard(
 async function loadOrganizationDashboardData(
   organizationSlug: string,
   range: DashboardRange,
+  customStart?: string | null,
+  customEnd?: string | null,
 ): Promise<DashboardData> {
   if (!isSupabaseConfigured()) {
     return emptyDashboardData(organizationSlug, range, {
@@ -769,7 +817,7 @@ async function loadOrganizationDashboardData(
       });
     }
 
-    const period = periodFor(range, organization.timezone || "UTC");
+    const period = periodFor(range, organization.timezone || "UTC", customStart, customEnd);
     const bundle = await rpc<DashboardBundle | null>("brht_dashboard_bundle", {
       p_organization_slug: organizationSlug,
       p_start_date: period.start,
@@ -818,8 +866,15 @@ const cachedOrganizationDashboardData = unstable_cache(
 export async function getOrganizationDashboardData(
   organizationSlug: string,
   range: DashboardRange,
+  customStart?: string | null,
+  customEnd?: string | null,
 ): Promise<DashboardData> {
-  return cachedOrganizationDashboardData(organizationSlug, range);
+  return cachedOrganizationDashboardData(
+    organizationSlug,
+    range,
+    customStart ?? null,
+    customEnd ?? null,
+  );
 }
 
 export async function getFableFuryDashboardData(
