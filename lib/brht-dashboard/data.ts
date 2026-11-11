@@ -155,6 +155,23 @@ function titleCase(value: string): string {
     .join(" ");
 }
 
+function logicalProductKey(value: string): string {
+  const name = String(value ?? "").toLowerCase();
+  if (name.includes("besties")) return "besties-vs-baddies";
+  if (name.includes("fable fury")) return "fable-fury";
+  if (name.includes("metal coin")) return "premium-metal-coins";
+  if (name.includes("card sleeve")) return "custom-card-sleeves";
+  if (name.includes("drakorath") || name.includes("plush")) return "drakorath-jr-plushie";
+  if (name.includes("enemies unleashed")) return "enemies-unleashed";
+  if (name.includes("neoprene") || name.includes("game board")) return "neoprene-game-board";
+  return name.replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+}
+
+function sumNullable(values: Array<number | null>): number | null {
+  const numbers = values.filter((value): value is number => value !== null);
+  return numbers.length ? numbers.reduce((total, value) => total + value, 0) : null;
+}
+
 function sourceTypeToKind(sourceType: string): ChannelPerformanceRow["kind"] {
   if (sourceType === "commerce") return "commerce";
   if (sourceType === "paid_media") return "paid-media";
@@ -492,9 +509,14 @@ function buildDashboard(
   const currentSpend = sum(paidChannels, "spend");
   const previousSpend = sum(paidChannels, "previousSpend");
 
-  const inventoryMap = new Map(
-    inventoryRows.map((row) => [`${row.source_key}:${row.product_key}`, row]),
-  );
+  const inventoryByLogicalProduct = new Map<string, RawInventory[]>();
+  for (const row of inventoryRows) {
+    const key = logicalProductKey(row.product_name || row.product_key);
+    const group = inventoryByLogicalProduct.get(key) ?? [];
+    group.push(row);
+    inventoryByLogicalProduct.set(key, group);
+  }
+
   const productMap = new Map<
     string,
     {
@@ -527,18 +549,47 @@ function buildDashboard(
   const days = rangeToDays(range);
   const products: ProductPerformanceRow[] = Array.from(productMap.entries())
     .map(([key, values]) => {
-      const inventory = inventoryMap.get(key);
-      const availableQuantity = nullableFiniteNumber(inventory?.available);
+      const logicalKey = logicalProductKey(values.name);
+      const inventoryRowsForProduct = inventoryByLogicalProduct.get(logicalKey) ?? [];
+      const bySource = new Map<string, RawInventory[]>();
+      for (const inventoryRow of inventoryRowsForProduct) {
+        const rows = bySource.get(inventoryRow.source_key) ?? [];
+        rows.push(inventoryRow);
+        bySource.set(inventoryRow.source_key, rows);
+      }
+
+      const inventoryBySource = Array.from(bySource.entries()).map(([sourceKey, rows]) => ({
+        sourceKey,
+        available: sumNullable(rows.map((row) => nullableFiniteNumber(row.available))),
+        onHand: sumNullable(rows.map((row) => nullableFiniteNumber(row.on_hand))),
+        committed: sumNullable(rows.map((row) => nullableFiniteNumber(row.committed))),
+        incoming: sumNullable(rows.map((row) => nullableFiniteNumber(row.incoming))),
+        capturedAt:
+          rows
+            .map((row) => isoDate(row.captured_at))
+            .filter((value): value is string => Boolean(value))
+            .sort()
+            .at(-1) ?? null,
+      }));
+
+      const availableQuantity = sumNullable(inventoryBySource.map((row) => row.available));
+      const inventorySnapshotAt =
+        inventoryBySource
+          .map((row) => row.capturedAt)
+          .filter((value): value is string => Boolean(value))
+          .sort()
+          .at(-1) ?? null;
       const averageDailyUnits = values.current > 0 ? values.current / days : 0;
       const daysOfCover = safeDivide(availableQuantity, averageDailyUnits);
       return {
         productId: key,
-        productName: inventory?.product_name ?? values.name,
+        productName: values.name,
         unitsSold: values.current,
         previousUnitsSold: values.previous,
         changePercent: percentChange(values.current, values.previous),
         availableQuantity,
-        inventorySnapshotAt: isoDate(inventory?.captured_at),
+        inventorySnapshotAt,
+        inventoryBySource,
         averageDailyUnits,
         daysOfCover,
         inventoryStatus: inventoryStatus(
