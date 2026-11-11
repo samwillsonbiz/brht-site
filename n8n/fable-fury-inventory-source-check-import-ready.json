@@ -1,0 +1,81 @@
+{
+  "name": "BRHT — Fable Fury inventory source check — IMPORT READY",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "trigger",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -560,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  lower(coalesce(source, 'unknown')) AS source,\n  COUNT(*)::int AS snapshot_rows,\n  COUNT(DISTINCT product_id)::int AS products,\n  MAX(captured_at) AS latest_snapshot\nFROM inventory_snapshots\nGROUP BY lower(coalesce(source, 'unknown'))\nORDER BY source;",
+        "options": {}
+      },
+      "credentials": {
+        "postgres": {
+          "id": "Fvu3UbRaZ9S3hpH3",
+          "name": "Postgres account"
+        }
+      },
+      "id": "sources",
+      "name": "Inventory source summary",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -260,
+        -100
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH latest AS (\n  SELECT DISTINCT ON (lower(coalesce(i.source, 'unknown')), i.product_id)\n    lower(coalesce(i.source, 'unknown')) AS source,\n    i.product_id::text AS product_id,\n    i.available::numeric AS available,\n    i.captured_at,\n    i.variant_id::text AS variant_id,\n    i.inventory_item_id::text AS inventory_item_id,\n    i.location_id::text AS location_id\n  FROM inventory_snapshots i\n  ORDER BY lower(coalesce(i.source, 'unknown')), i.product_id, i.captured_at DESC\n)\nSELECT\n  l.source,\n  l.product_id,\n  COALESCE(p.product_name, pl.product_name, sp.product_name, l.product_id) AS product_name,\n  l.available,\n  l.captured_at,\n  l.variant_id,\n  l.inventory_item_id,\n  l.location_id\nFROM latest l\nLEFT JOIN products p\n  ON p.product_id::text = l.product_id\nLEFT JOIN product_lookup pl\n  ON pl.product_id::text = l.product_id\nLEFT JOIN shopify_products sp\n  ON sp.product_id::text = l.product_id\nORDER BY l.source, product_name\nLIMIT 100;",
+        "options": {}
+      },
+      "credentials": {
+        "postgres": {
+          "id": "Fvu3UbRaZ9S3hpH3",
+          "name": "Postgres account"
+        }
+      },
+      "id": "latest",
+      "name": "Latest inventory sample",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -260,
+        100
+      ]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Inventory source summary",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Latest inventory sample",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": []
+}
