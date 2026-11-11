@@ -1,0 +1,81 @@
+{
+  "name": "BRHT — Fable Fury inventory discovery — IMPORT READY",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "inv-trigger",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -500,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  table_name,\n  column_name,\n  data_type\nFROM information_schema.columns\nWHERE table_schema = 'public'\n  AND (\n    table_name ILIKE '%inventory%'\n    OR table_name ILIKE '%product%'\n    OR table_name ILIKE '%amazon%'\n    OR table_name ILIKE '%shopify%'\n    OR column_name ILIKE '%inventory%'\n    OR column_name ILIKE '%quantity%'\n    OR column_name ILIKE '%stock%'\n    OR column_name ILIKE '%available%'\n    OR column_name ILIKE '%asin%'\n  )\nORDER BY table_name, ordinal_position;",
+        "options": {}
+      },
+      "credentials": {
+        "postgres": {
+          "id": "Fvu3UbRaZ9S3hpH3",
+          "name": "Postgres account"
+        }
+      },
+      "id": "inv-schema",
+      "name": "Find inventory schema",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -220,
+        -90
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT to_jsonb(p) AS product_row\nFROM products p\nLIMIT 20;",
+        "options": {}
+      },
+      "credentials": {
+        "postgres": {
+          "id": "Fvu3UbRaZ9S3hpH3",
+          "name": "Postgres account"
+        }
+      },
+      "id": "inv-products",
+      "name": "Sample products",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -220,
+        90
+      ]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Find inventory schema",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Sample products",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": []
+}
