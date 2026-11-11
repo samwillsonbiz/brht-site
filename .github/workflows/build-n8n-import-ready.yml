@@ -1,0 +1,87 @@
+name: Build n8n import-ready backfill
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build exact credential-linked workflow
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          source = Path('n8n/fable-fury-postgres-backfill-api.json')
+          target = Path('n8n/fable-fury-postgres-backfill-import-ready.json')
+          workflow = json.loads(source.read_text())
+          workflow['name'] = 'BRHT — Fable Fury PostgreSQL historical backfill — IMPORT READY'
+          workflow['active'] = False
+
+          postgres_nodes = {
+              'Read channel metrics',
+              'Read product daily',
+              'Read latest inventory',
+          }
+          ingest_nodes = {
+              'Ingest channel metrics',
+              'Ingest products',
+              'Ingest inventory',
+          }
+
+          for node in workflow['nodes']:
+              if node['name'] in postgres_nodes:
+                  node['credentials'] = {
+                      'postgres': {
+                          'id': 'Fvu3UbRaZ9S3hpH3',
+                          'name': 'Postgres account',
+                      }
+                  }
+              if node['name'] in ingest_nodes:
+                  node['credentials'] = {
+                      'httpHeaderAuth': {
+                          'id': '5',
+                          'name': 'BRHT — Fable Fury Ingest',
+                      }
+                  }
+                  node['parameters']['url'] = 'https://www.brht.ai/api/brht/ingest/fable-fury'
+                  node['parameters']['method'] = 'POST'
+                  node['parameters']['authentication'] = 'genericCredentialType'
+                  node['parameters']['genericAuthType'] = 'httpHeaderAuth'
+                  node['parameters']['sendBody'] = True
+                  node['parameters']['contentType'] = 'raw'
+                  node['parameters']['rawContentType'] = 'application/json'
+                  node['parameters']['body'] = '={{ JSON.stringify($json) }}'
+                  node['parameters']['options'] = {'timeout': 120000}
+
+          assert len(workflow['nodes']) == 10
+          names = {node['name'] for node in workflow['nodes']}
+          assert postgres_nodes <= names
+          assert ingest_nodes <= names
+          assert workflow['connections']['Normalize products']['main'][0][0]['node'] == 'Ingest products'
+          assert workflow['connections']['Normalize inventory']['main'][0][0]['node'] == 'Ingest inventory'
+
+          target.write_text(json.dumps(workflow, indent=2, ensure_ascii=False) + '\n')
+          PY
+
+      - name: Commit generated workflow
+        shell: bash
+        run: |
+          rm -f .github/workflows/build-n8n-import-ready.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Add import-ready Fable Fury n8n backfill"
+          git push origin HEAD:main
