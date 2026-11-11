@@ -142,13 +142,13 @@ function SourceBadge({ data }: { data: DashboardData }) {
 }
 
 function rangeLabel(range: DashboardRange) {
-  return range === "7d"
-    ? "7 days"
-    : range === "14d"
-      ? "14 days"
-      : range === "30d"
-        ? "30 days"
-        : "90 days";
+  if (range === "7d") return "7 days";
+  if (range === "14d") return "14 days";
+  if (range === "30d") return "30 days";
+  if (range === "90d") return "90 days";
+  if (range === "180d") return "6 months";
+  if (range === "365d") return "12 months";
+  return "All time";
 }
 
 function ConnectionPanel({ data }: { data: DashboardData }) {
@@ -343,6 +343,7 @@ export function BusinessDashboard({ data }: { data: DashboardData }) {
                     key={range}
                     href={`/dashboards/${data.organization.slug}?range=${range}`}
                     scroll={false}
+                    prefetch={true}
                     className={`rounded-full px-4 py-2 text-xs font-semibold transition ${
                       data.range === range
                         ? "bg-[#1d1d1f] text-white shadow-sm"
