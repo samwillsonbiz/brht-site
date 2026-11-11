@@ -66,6 +66,35 @@ export type ProductPerformanceRow = {
     | "unknown";
 };
 
+export type KickstarterCampaign = {
+  campaignKey: string;
+  name: string;
+  status: string;
+  startDate: string | null;
+  endDate: string | null;
+  pledged: number;
+  backers: number;
+  goal: number;
+  averagePledge: number;
+  daysRemaining: number | null;
+  latestDate: string;
+};
+
+export type KickstarterTrendPoint = {
+  date: string;
+  campaignKey: string;
+  campaignName: string;
+  pledged: number;
+  backers: number;
+  dailyPledged: number | null;
+  dailyBackers: number | null;
+};
+
+export type KickstarterData = {
+  campaigns: KickstarterCampaign[];
+  trend: KickstarterTrendPoint[];
+};
+
 export type DataSourceHealth = {
   source: string;
   sourceKey: string;
@@ -112,6 +141,7 @@ export type DashboardData = {
   trend: DailyPerformancePoint[];
   channels: ChannelPerformanceRow[];
   products: ProductPerformanceRow[];
+  kickstarter: KickstarterData;
   dataHealth: DataSourceHealth[];
   capabilities: TableCapability[];
   warnings: string[];
@@ -197,6 +227,7 @@ export function emptyDashboardData(
     trend: [],
     channels: [],
     products: [],
+    kickstarter: { campaigns: [], trend: [] },
     dataHealth: [],
     capabilities: [
       { name: "Supabase database", available: false, required: true },
