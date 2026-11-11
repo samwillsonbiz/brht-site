@@ -1,3 +1,4 @@
+import { unstable_cache } from "next/cache";
 import { isSupabaseConfigured, rpc, selectRows } from "@/lib/supabaseRest";
 import {
   emptyDashboardData,
@@ -134,8 +135,16 @@ function addDays(date: string, amount: number): string {
 }
 
 function periodFor(range: DashboardRange, timezone: string): DashboardData["period"] {
-  const days = rangeToDays(range);
   const end = formatDateInTimezone(new Date(), timezone);
+  if (range === "max") {
+    return {
+      start: "2000-01-01",
+      end,
+      previousStart: "1970-01-01",
+      previousEnd: "1999-12-31",
+    };
+  }
+  const days = rangeToDays(range);
   const start = addDays(end, -(days - 1));
   const previousEnd = addDays(start, -1);
   const previousStart = addDays(previousEnd, -(days - 1));
@@ -348,18 +357,33 @@ function buildKickstarterData(rows: RawMetric[]): KickstarterData {
     const points = Array.from(campaign.byDate.values()).sort((a, b) => a.date.localeCompare(b.date));
     let previousPledged: number | null = null;
     let previousBackers: number | null = null;
+    let previousDate: string | null = null;
     for (const point of points) {
+      const isStartDate = campaign.startDate === point.date;
+      const consecutive =
+        previousDate !== null && addDays(previousDate, 1) === point.date;
+      const dailyPledged = isStartDate
+        ? point.pledged
+        : consecutive && previousPledged !== null
+          ? point.pledged - previousPledged
+          : null;
+      const dailyBackers = isStartDate
+        ? point.backers
+        : consecutive && previousBackers !== null
+          ? point.backers - previousBackers
+          : null;
       trend.push({
         date: point.date,
         campaignKey: campaign.campaignKey,
         campaignName: campaign.campaignName,
         pledged: point.pledged,
         backers: point.backers,
-        dailyPledged: previousPledged === null ? null : Math.max(0, point.pledged - previousPledged),
-        dailyBackers: previousBackers === null ? null : Math.max(0, point.backers - previousBackers),
+        dailyPledged,
+        dailyBackers,
       });
       previousPledged = point.pledged;
       previousBackers = point.backers;
+      previousDate = point.date;
     }
     const latest = points.at(-1);
     if (!latest) continue;
@@ -412,6 +436,33 @@ function buildDashboard(
     dailyMap.set(date, point);
     return point;
   };
+
+  for (const point of kickstarter.trend) {
+    const current = inPeriod(point.date, period.start, period.end);
+    const previous = inPeriod(point.date, period.previousStart, period.previousEnd);
+    if (!current && !previous) continue;
+    if (point.dailyPledged === null && point.dailyBackers === null) continue;
+
+    const existing = channelMap.get("kickstarter") ?? {
+      label: "Kickstarter",
+      values: emptyChannel("kickstarter", "crowdfunding"),
+    };
+    if (point.dailyPledged !== null) {
+      if (current) existing.values.revenue += point.dailyPledged;
+      if (previous) existing.values.previousRevenue += point.dailyPledged;
+    }
+    if (point.dailyBackers !== null) {
+      if (current) existing.values.orders += point.dailyBackers;
+      if (previous) existing.values.previousOrders += point.dailyBackers;
+    }
+    channelMap.set("kickstarter", existing);
+
+    if (current) {
+      const daily = ensureDaily(point.date);
+      if (point.dailyPledged !== null) daily.revenue += point.dailyPledged;
+      if (point.dailyBackers !== null) daily.orders += point.dailyBackers;
+    }
+  }
 
   for (const row of metricRows) {
     const date = dateOnly(row.metric_date);
@@ -579,7 +630,15 @@ function buildDashboard(
           .filter((value): value is string => Boolean(value))
           .sort()
           .at(-1) ?? null;
-      const averageDailyUnits = values.current > 0 ? values.current / days : 0;
+      const recentStart = addDays(period.end, -29);
+      const trailing30Units = productRows
+        .filter((row) =>
+          logicalProductKey(row.product_name || row.product_key) === logicalKey &&
+          Boolean(dateOnly(row.metric_date)) &&
+          inPeriod(String(dateOnly(row.metric_date)), recentStart, period.end),
+        )
+        .reduce((total, row) => total + finiteNumber(row.units_sold), 0);
+      const averageDailyUnits = trailing30Units > 0 ? trailing30Units / 30 : 0;
       const daysOfCover = safeDivide(availableQuantity, averageDailyUnits);
       return {
         productId: key,
@@ -682,7 +741,7 @@ function buildDashboard(
   };
 }
 
-export async function getOrganizationDashboardData(
+async function loadOrganizationDashboardData(
   organizationSlug: string,
   range: DashboardRange,
 ): Promise<DashboardData> {
@@ -748,6 +807,19 @@ export async function getOrganizationDashboardData(
           : "The BRHT data platform could not be reached.",
     });
   }
+}
+
+const cachedOrganizationDashboardData = unstable_cache(
+  loadOrganizationDashboardData,
+  ["brht-dashboard-data-v3"],
+  { revalidate: 60 },
+);
+
+export async function getOrganizationDashboardData(
+  organizationSlug: string,
+  range: DashboardRange,
+): Promise<DashboardData> {
+  return cachedOrganizationDashboardData(organizationSlug, range);
 }
 
 export async function getFableFuryDashboardData(
