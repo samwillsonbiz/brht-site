@@ -859,7 +859,7 @@ async function loadOrganizationDashboardData(
 
 const cachedOrganizationDashboardData = unstable_cache(
   loadOrganizationDashboardData,
-  ["brht-dashboard-data-v3"],
+  ["brht-dashboard-data-v4"],
   { revalidate: 60 },
 );
 
