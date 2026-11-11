@@ -638,6 +638,16 @@ export function BusinessDashboard({ data }: { data: DashboardData }) {
                                 ? "Quantity unavailable"
                                 : `${number.format(product.availableQuantity)} available`}
                             </div>
+                            {product.inventoryBySource.length > 0 ? (
+                              <div className="mt-1 flex flex-wrap gap-x-2 gap-y-1 text-[10px] text-[#a1a1a6]">
+                                {product.inventoryBySource.map((source) => (
+                                  <span key={source.sourceKey}>
+                                    {source.sourceKey === "amazon" ? "Amazon" : source.sourceKey === "shopify" ? "Shopify" : source.sourceKey}:{" "}
+                                    {source.available === null ? "—" : number.format(source.available)}
+                                  </span>
+                                ))}
+                              </div>
+                            ) : null}
                           </div>
                           <span className={`shrink-0 rounded-full px-3 py-1.5 text-[10px] font-bold ${inventoryStyle(product.inventoryStatus)}`}>
                             {formatCover(product)}
