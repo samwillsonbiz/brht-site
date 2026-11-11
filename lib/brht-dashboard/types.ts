@@ -55,6 +55,14 @@ export type ProductPerformanceRow = {
   changePercent: number | null;
   availableQuantity: number | null;
   inventorySnapshotAt: string | null;
+  inventoryBySource: Array<{
+    sourceKey: string;
+    available: number | null;
+    onHand: number | null;
+    committed: number | null;
+    incoming: number | null;
+    capturedAt: string | null;
+  }>;
   averageDailyUnits: number | null;
   daysOfCover: number | null;
   inventoryStatus:
