@@ -1,6 +1,7 @@
 export const DASHBOARD_RANGES = ["7d", "14d", "30d", "90d", "180d", "365d", "max"] as const;
 
-export type DashboardRange = (typeof DASHBOARD_RANGES)[number];
+export type DashboardPresetRange = (typeof DASHBOARD_RANGES)[number];
+export type DashboardRange = DashboardPresetRange | "custom";
 export type DashboardSource = "supabase" | "unconfigured";
 export type DashboardConnectionState =
   | "connected"
@@ -157,6 +158,7 @@ export type DashboardData = {
 };
 
 export function rangeToDays(range: DashboardRange): number {
+  if (range === "custom") return 0;
   if (range === "max") return 36500;
   return Number.parseInt(range.replace("d", ""), 10);
 }
@@ -165,8 +167,8 @@ export function normalizeDashboardRange(
   value: string | string[] | null | undefined,
 ): DashboardRange {
   const candidate = Array.isArray(value) ? value[0] : value;
-  return DASHBOARD_RANGES.includes(candidate as DashboardRange)
-    ? (candidate as DashboardRange)
+  return DASHBOARD_RANGES.includes(candidate as DashboardPresetRange)
+    ? (candidate as DashboardPresetRange)
     : "14d";
 }
 
