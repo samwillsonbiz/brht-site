@@ -337,22 +337,60 @@ export function BusinessDashboard({ data }: { data: DashboardData }) {
                     "One operating view across commerce, paid media, product velocity, inventory and ingestion reliability."}
                 </p>
               </div>
-              <div className="flex flex-wrap gap-2">
-                {DASHBOARD_RANGES.map((range) => (
-                  <Link
-                    key={range}
-                    href={`/dashboards/${data.organization.slug}?range=${range}`}
-                    scroll={false}
-                    prefetch={true}
-                    className={`rounded-full px-4 py-2 text-xs font-semibold transition ${
-                      data.range === range
-                        ? "bg-[#1d1d1f] text-white shadow-sm"
-                        : "border border-black/[0.08] bg-white text-[#6e6e73] hover:border-black/20 hover:text-[#1d1d1f]"
-                    }`}
+              <div className="flex max-w-full flex-col items-stretch gap-3 sm:items-end">
+                <div className="flex max-w-full flex-wrap gap-2">
+                  {DASHBOARD_RANGES.map((range) => (
+                    <Link
+                      key={range}
+                      href={`/dashboards/${data.organization.slug}?range=${range}`}
+                      scroll={false}
+                      prefetch={true}
+                      className={`rounded-full px-4 py-2 text-xs font-semibold transition ${
+                        data.range === range
+                          ? "bg-[#1d1d1f] text-white shadow-sm"
+                          : "border border-black/[0.08] bg-white text-[#6e6e73] hover:border-black/20 hover:text-[#1d1d1f]"
+                      }`}
+                    >
+                      {rangeLabel(range)}
+                    </Link>
+                  ))}
+                </div>
+                <form
+                  method="get"
+                  action={`/dashboards/${data.organization.slug}`}
+                  className="flex max-w-full flex-wrap items-end gap-2 rounded-2xl border border-black/[0.08] bg-white p-2.5 shadow-sm"
+                >
+                  <label className="min-w-[150px]">
+                    <span className="mb-1 block px-1 text-[10px] font-bold uppercase tracking-[0.11em] text-[#86868b]">
+                      Start
+                    </span>
+                    <input
+                      type="date"
+                      name="start"
+                      defaultValue={data.range === "custom" ? data.period.start : ""}
+                      className="h-10 w-full rounded-xl border border-black/[0.08] bg-[#f5f5f7] px-3 text-sm text-[#1d1d1f] outline-none focus:border-[#0071e3]"
+                      required
+                    />
+                  </label>
+                  <label className="min-w-[150px]">
+                    <span className="mb-1 block px-1 text-[10px] font-bold uppercase tracking-[0.11em] text-[#86868b]">
+                      End
+                    </span>
+                    <input
+                      type="date"
+                      name="end"
+                      defaultValue={data.range === "custom" ? data.period.end : ""}
+                      className="h-10 w-full rounded-xl border border-black/[0.08] bg-[#f5f5f7] px-3 text-sm text-[#1d1d1f] outline-none focus:border-[#0071e3]"
+                      required
+                    />
+                  </label>
+                  <button
+                    type="submit"
+                    className="h-10 rounded-xl bg-[#1d1d1f] px-4 text-xs font-semibold text-white transition hover:bg-black"
                   >
-                    {rangeLabel(range)}
-                  </Link>
-                ))}
+                    Apply dates
+                  </button>
+                </form>
               </div>
             </div>
 
