@@ -20,6 +20,8 @@ import {
   Unplug,
 } from "lucide-react";
 import { PerformanceChart } from "./PerformanceChart";
+import { MetricTrendChart } from "./MetricTrendChart";
+import { KickstarterPanel } from "./KickstarterPanel";
 import {
   DASHBOARD_RANGES,
   type DashboardData,
@@ -292,6 +294,7 @@ export function BusinessDashboard({ data }: { data: DashboardData }) {
             {[
               [BarChart3, "Overview", "#overview"],
               [CircleDollarSign, "Sales & marketing", "#channels"],
+              [TrendingUp, "Kickstarter", "#kickstarter"],
               [Boxes, "Products & inventory", "#products"],
               [Database, "Data health", "#data-health"],
             ].map(([Icon, label, href], index) => {
@@ -462,6 +465,24 @@ export function BusinessDashboard({ data }: { data: DashboardData }) {
                 </div>
               </article>
             </div>
+
+            <div className="mt-5 grid gap-5 xl:grid-cols-3">
+              <article className="rounded-[26px] border border-black/[0.06] bg-white p-5 shadow-[0_8px_30px_rgba(0,0,0,.04)] sm:p-6">
+                <div className="text-[11px] font-bold uppercase tracking-[0.13em] text-[#86868b]">Demand trend</div>
+                <h3 className="mt-2 text-lg font-semibold tracking-[-0.03em]">Orders by day</h3>
+                <div className="mt-3"><MetricTrendChart points={data.trend} metric="orders" /></div>
+              </article>
+              <article className="rounded-[26px] border border-black/[0.06] bg-white p-5 shadow-[0_8px_30px_rgba(0,0,0,.04)] sm:p-6">
+                <div className="text-[11px] font-bold uppercase tracking-[0.13em] text-[#86868b]">Product trend</div>
+                <h3 className="mt-2 text-lg font-semibold tracking-[-0.03em]">Units sold by day</h3>
+                <div className="mt-3"><MetricTrendChart points={data.trend} metric="unitsSold" /></div>
+              </article>
+              <article className="rounded-[26px] border border-black/[0.06] bg-white p-5 shadow-[0_8px_30px_rgba(0,0,0,.04)] sm:p-6">
+                <div className="text-[11px] font-bold uppercase tracking-[0.13em] text-[#86868b]">Efficiency trend</div>
+                <h3 className="mt-2 text-lg font-semibold tracking-[-0.03em]">Daily blended ROAS</h3>
+                <div className="mt-3"><MetricTrendChart points={data.trend} metric="roas" /></div>
+              </article>
+            </div>
           </section>
 
           <section id="channels" className="mt-12 scroll-mt-24">
@@ -529,6 +550,19 @@ export function BusinessDashboard({ data }: { data: DashboardData }) {
                   })}
                 </div>
               )}
+            </div>
+          </section>
+
+          <section id="kickstarter" className="mt-12 scroll-mt-24">
+            <div>
+              <div className="text-xs font-semibold text-[#0071e3]">Crowdfunding</div>
+              <h2 className="mt-2 text-3xl font-semibold tracking-[-0.045em]">Kickstarter performance</h2>
+              <p className="mt-2 max-w-3xl text-sm leading-6 text-[#6e6e73]">
+                Live campaign funding, backer growth and historical Fable Fury campaign performance.
+              </p>
+            </div>
+            <div className="mt-5">
+              <KickstarterPanel data={data.kickstarter} currency={data.organization.currency} />
             </div>
           </section>
 
