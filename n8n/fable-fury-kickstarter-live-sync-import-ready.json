@@ -1,0 +1,129 @@
+{
+  "name": "BRHT — Fable Fury Kickstarter live sync — IMPORT READY",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 1
+            }
+          ]
+        }
+      },
+      "id": "ks-hourly",
+      "name": "Every hour",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -620,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://www.kickstarter.com/projects/fablefury/magic-and-mayhem",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "text",
+              "outputPropertyName": "html"
+            }
+          }
+        }
+      },
+      "id": "ks-fetch",
+      "name": "Fetch Kickstarter page",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -380,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const html = String($input.first().json.html ?? $input.first().json.data ?? \"\");\nconst text = html\n  .replace(/<script[\\s\\S]*?<\\/script>/gi, \" \")\n  .replace(/<style[\\s\\S]*?<\\/style>/gi, \" \")\n  .replace(/<[^>]+>/g, \" \")\n  .replace(/&nbsp;/g, \" \")\n  .replace(/&amp;/g, \"&\")\n  .replace(/&#39;/g, \"'\")\n  .replace(/\\s+/g, \" \");\n\nconst moneyMatches = [...text.matchAll(/\\$([\\d,]+)\\s+pledged/gi)];\nconst backerMatches = [...text.matchAll(/([\\d,]+)\\s+backers/gi)];\nconst goalMatch = text.match(/pledged\\s+of\\s+\\$([\\d,]+)/i);\n\nif (!moneyMatches.length || !backerMatches.length) {\n  throw new Error(\"Could not parse Kickstarter pledged/backer totals from public campaign page.\");\n}\n\nconst pledged = Number(moneyMatches[0][1].replace(/,/g, \"\"));\nconst backers = Number(backerMatches[0][1].replace(/,/g, \"\"));\nconst goal = goalMatch ? Number(goalMatch[1].replace(/,/g, \"\")) : 10000;\nconst now = new Date();\nconst date = new Intl.DateTimeFormat(\"en-CA\", {\n  timeZone: \"Australia/Perth\",\n  year: \"numeric\",\n  month: \"2-digit\",\n  day: \"2-digit\"\n}).format(now);\nconst end = new Date(\"2026-11-19T16:57:00.000Z\");\nconst daysRemaining = Math.max(0, Math.ceil((end.getTime() - now.getTime()) / 86400000));\nconst dimensions = {\n  campaign: \"magic-and-mayhem\",\n  campaign_label: \"Fable Fury — Magic & Mayhem\",\n  campaign_status: daysRemaining > 0 ? \"live\" : \"finished\",\n  campaign_start: \"2026-10-20\",\n  campaign_end: \"2026-11-19\"\n};\n\nreturn [{\n  json: {\n    source: { key: \"kickstarter\", type: \"crowdfunding\", displayName: \"Kickstarter\" },\n    run: {\n      key: `kickstarter-live-${date}`,\n      status: \"success\",\n      startedAt: now.toISOString(),\n      finishedAt: now.toISOString(),\n      rowsRead: 4,\n      rowsWritten: 4,\n      rowsFailed: 0\n    },\n    metrics: [\n      { date, metric: \"campaign_pledged\", dimensionKey: \"magic-and-mayhem\", dimensions, value: pledged, unit: \"USD\", sourceUpdatedAt: now.toISOString() },\n      { date, metric: \"campaign_backers\", dimensionKey: \"magic-and-mayhem\", dimensions, value: backers, unit: \"count\", sourceUpdatedAt: now.toISOString() },\n      { date, metric: \"campaign_goal\", dimensionKey: \"magic-and-mayhem\", dimensions, value: goal, unit: \"USD\", sourceUpdatedAt: now.toISOString() },\n      { date, metric: \"campaign_days_remaining\", dimensionKey: \"magic-and-mayhem\", dimensions, value: daysRemaining, unit: \"days\", sourceUpdatedAt: now.toISOString() }\n    ],\n    products: [],\n    inventory: [],\n    records: []\n  }\n}];"
+      },
+      "id": "ks-normalize",
+      "name": "Normalize Kickstarter",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -120,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://www.brht.ai/api/brht/ingest/fable-fury",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify($json) }}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "5",
+          "name": "BRHT — Fable Fury Ingest"
+        }
+      },
+      "id": "ks-ingest",
+      "name": "Ingest Kickstarter",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        160,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Every hour": {
+      "main": [
+        [
+          {
+            "node": "Fetch Kickstarter page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Kickstarter page": {
+      "main": [
+        [
+          {
+            "node": "Normalize Kickstarter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Kickstarter": {
+      "main": [
+        [
+          {
+            "node": "Ingest Kickstarter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": []
+}
