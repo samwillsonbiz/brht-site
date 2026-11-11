@@ -1,0 +1,67 @@
+name: Build n8n API workflow definitions
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  build-api-definitions:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Create API-ready workflow definitions
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+
+          const definitions = [
+            ['n8n/fable-fury-postgres-backfill.json', 'n8n/fable-fury-postgres-backfill-api.json'],
+            ['n8n/fable-fury-postgres-live-sync.json', 'n8n/fable-fury-postgres-live-sync-api.json'],
+          ];
+
+          for (const [sourcePath, outputPath] of definitions) {
+            const source = JSON.parse(fs.readFileSync(sourcePath, 'utf8'));
+            const nodes = source.nodes.map((node) => {
+              const copy = structuredClone(node);
+              if (
+                copy.type === 'n8n-nodes-base.httpRequest' &&
+                typeof copy.name === 'string' &&
+                copy.name.startsWith('Ingest ')
+              ) {
+                copy.parameters.url = 'https://www.brht.ai/api/brht/ingest/fable-fury';
+              }
+              delete copy.credentials;
+              return copy;
+            });
+
+            const apiDefinition = {
+              name: `${source.name} — API DEPLOYED`,
+              nodes,
+              connections: source.connections,
+              settings: source.settings ?? { executionOrder: 'v1' },
+            };
+
+            fs.writeFileSync(outputPath, `${JSON.stringify(apiDefinition, null, 2)}\n`);
+          }
+          NODE
+
+      - name: Remove one-time workflow and commit definitions
+        shell: bash
+        run: |
+          rm -f .github/workflows/build-n8n-api-workflows.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Add API-ready n8n workflow definitions"
+          git push origin HEAD:main
