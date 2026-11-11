@@ -1,0 +1,129 @@
+{
+  "name": "BRHT — Fable Fury Shopify inventory live sync — IMPORT READY",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 1
+            }
+          ]
+        }
+      },
+      "id": "hourly",
+      "name": "Every hour",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -700,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH latest_date AS (\n  SELECT MAX(date) AS date\n  FROM shopify_product_inventory_daily\n)\nSELECT\n  d.product_id::text AS product_id,\n  COALESCE(p.product_name, sp.product_name, d.product_id::text) AS product_name,\n  d.inventory_count::numeric AS available_quantity,\n  d.date::text AS inventory_date,\n  d.updated_at\nFROM shopify_product_inventory_daily d\nJOIN latest_date ld ON ld.date = d.date\nLEFT JOIN products p ON p.product_id::text = d.product_id::text\nLEFT JOIN shopify_products sp ON sp.product_id::text = d.product_id::text\nORDER BY product_name;",
+        "options": {}
+      },
+      "credentials": {
+        "postgres": {
+          "id": "Fvu3UbRaZ9S3hpH3",
+          "name": "Postgres account"
+        }
+      },
+      "id": "read",
+      "name": "Read latest Shopify modeled inventory",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -430,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const rows = $input.all().map(item => item.json).filter(row => row?.product_id);\nif (!rows.length) return [];\n\nconst now = new Date().toISOString();\nconst latestDate = rows\n  .map(row => String(row.inventory_date).slice(0,10))\n  .sort()\n  .at(-1);\n\nreturn [{\n  json: {\n    source: {\n      key: \"shopify\",\n      type: \"commerce\",\n      displayName: \"Shopify\",\n      metadata: {\n        inventoryMode: \"modeled_daily\",\n        inventorySourceTable: \"shopify_product_inventory_daily\"\n      }\n    },\n    run: {\n      key: `shopify-inventory-live-${latestDate}`,\n      status: \"success\",\n      startedAt: now,\n      finishedAt: now,\n      rowsRead: rows.length,\n      rowsWritten: rows.length,\n      rowsFailed: 0\n    },\n    metrics: [],\n    products: [],\n    inventory: rows.map(row => ({\n      productKey: String(row.product_id),\n      productName: String(row.product_name ?? row.product_id),\n      capturedAt: `${String(row.inventory_date).slice(0,10)}T23:59:59.000Z`,\n      available: row.available_quantity == null ? null : Number(row.available_quantity),\n      metadata: {\n        inventoryMode: \"modeled_daily\",\n        sourceUpdatedAt: row.updated_at ?? null\n      }\n    })),\n    records: []\n  }\n}];"
+      },
+      "id": "normalize",
+      "name": "Normalize Shopify inventory",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -150,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://www.brht.ai/api/brht/ingest/fable-fury",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify($json) }}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "5",
+          "name": "BRHT — Fable Fury Ingest"
+        }
+      },
+      "id": "ingest",
+      "name": "Ingest Shopify inventory",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        140,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Every hour": {
+      "main": [
+        [
+          {
+            "node": "Read latest Shopify modeled inventory",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read latest Shopify modeled inventory": {
+      "main": [
+        [
+          {
+            "node": "Normalize Shopify inventory",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Shopify inventory": {
+      "main": [
+        [
+          {
+            "node": "Ingest Shopify inventory",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": []
+}
