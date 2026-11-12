@@ -9,6 +9,26 @@ import {
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+const requestBuckets = new Map<string, { count: number; resetAt: number }>();
+const RATE_WINDOW_MS = 10 * 60 * 1000;
+const RATE_LIMIT = 8;
+
+function checkRateLimit(request: Request) {
+  const forwarded = request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "unknown";
+  const ip = forwarded.split(",")[0]?.trim() || "unknown";
+  const now = Date.now();
+  const bucket = requestBuckets.get(ip);
+  if (!bucket || now >= bucket.resetAt) {
+    requestBuckets.set(ip, { count: 1, resetAt: now + RATE_WINDOW_MS });
+    return { ok: true, retryAfter: 0 };
+  }
+  if (bucket.count >= RATE_LIMIT) {
+    return { ok: false, retryAfter: Math.ceil((bucket.resetAt - now) / 1000) };
+  }
+  bucket.count += 1;
+  return { ok: true, retryAfter: 0 };
+}
+
 type ChatMessage = {
   role: "user" | "assistant";
   content: string;
@@ -153,6 +173,13 @@ const responseSchema = {
 
 export async function POST(request: Request) {
   try {
+    const rate = checkRateLimit(request);
+    if (!rate.ok) {
+      return NextResponse.json(
+        { error: "BRHT Analyst rate limit reached. Try again shortly." },
+        { status: 429, headers: { "Retry-After": String(rate.retryAfter) } },
+      );
+    }
     const body = (await request.json()) as AnalystRequest;
     const organization = body.organization || "fable-fury";
     if (organization !== "fable-fury") {
