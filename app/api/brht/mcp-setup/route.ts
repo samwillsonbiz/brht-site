@@ -13,28 +13,20 @@ export async function GET(request: Request) {
     );
   }
 
-  const token = process.env.BRHT_MCP_TOKEN;
-  if (!token) {
-    return NextResponse.json(
-      { error: "BRHT MCP is not configured." },
-      { status: 503, headers: { "Cache-Control": "no-store" } },
-    );
-  }
-
   return NextResponse.json(
     {
       name: "BRHT Intelligence — Fable Fury",
       endpoint: "https://www.brht.ai/api/brht/mcp",
-      authentication: "Bearer token",
-      token,
+      authentication: "OAuth",
       readOnly: true,
       setupSteps: [
-        "Open ChatGPT on the web.",
-        "Open Plugins and choose Add custom MCP server.",
+        "Open ChatGPT on the web and open Plugins.",
+        "Choose Add custom MCP server.",
         "Name it BRHT Intelligence — Fable Fury.",
-        "Use the endpoint shown here.",
-        "Choose bearer/API-token authentication and paste the private token.",
-        "Create/install the plugin, then @mention BRHT together with Gmail, Drive or other connected apps when a question needs both structured BRHT data and operating context.",
+        "Use https://www.brht.ai/api/brht/mcp as the server URL.",
+        "Choose OAuth authentication.",
+        "When ChatGPT opens the BRHT authorization page, sign in with your existing internal BRHT username and password.",
+        "Install/connect the plugin. After that, use BRHT together with Gmail, Drive or other connected apps in the same ChatGPT conversation when a question needs both structured operating data and business context.",
       ],
     },
     { headers: { "Cache-Control": "no-store" } },
