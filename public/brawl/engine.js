@@ -1,9 +1,9 @@
-// Fable Fury: Brawl v0.3. Serializable rules engine, independent of the browser UI.
+// Fable Fury: Brawl v0.3.1. Serializable rules engine, independent of the browser UI.
 export class Brawl {
   constructor(data, config = {}) {
     this.data = data;
     this.defs = Object.fromEntries(data.cards.map(c => [c.id, c]));
-    this.s = {version: 2, rng: config.seed ?? Date.now() % 2147483646 + 1, mode: config.mode || 'solo', round: 1,
+    this.s = {version: 3, rng: config.seed ?? Date.now() % 2147483646 + 1, mode: config.mode || 'solo', round: 1,
       phase: 'program', reveal: 0, edge: 0, uid: 0, effect: 0, log: [], queue: [], prompt: null,
       shown: [false, false], plans: [null, null], committed: [false, false], shopDone: [false, false],
       lootDeck: [], lootDiscard: [], players: [], winner: null, beat: 'Program two cards'};
@@ -34,7 +34,7 @@ export class Brawl {
   }
   static defaultBasics(data) {return data.cards.filter(c => c.category === 'Basic' && !['BAS-009', 'BAS-011'].includes(c.id)).map(c => c.id);}
   static restore(data, state) {
-    if (state.version !== 2 || !state.players?.length) throw Error('This saved match uses older rules. Start a new v0.3 Brawl.');
+    if (state.version !== 3 || !state.players?.length) throw Error('This saved match uses older rules. Start a new v0.3.1 Brawl.');
     const game = Object.create(Brawl.prototype); game.data = data;
     game.defs = Object.fromEntries(data.cards.map(c => [c.id, c])); game.s = structuredClone(state); return game;
   }
@@ -288,7 +288,7 @@ export class Brawl {
       case 'Body Check': this.move(i, 1, 'toward'); extra.push = 2; extra.follow = a.opts.follow; break;
       case 'Guard Break': extra.ignore = 2; break;
       case 'Wallop': extra.push = 1; break;
-      case 'Bandage Up': heal(2); break;
+      case 'Bandage Up': heal(1); break;
       case 'Sedative Dart': extra.onHit = 'sedate'; break;
       case 'Sterile Field': b(3); break;
       case 'Scalpel': extra.ignore = 99; break;
@@ -309,7 +309,7 @@ export class Brawl {
         b(5); doAttack = false;
         if (s.plans[1 - i][s.reveal].done) this.pushTasks({type: 'delayedAttack', actor: i});
         else p.specialCounter = true; break;
-      case 'STAT!': heal(2); this.move(i, 2, 'free', false, true); extra.ignore = 2; break;
+      case 'STAT!': heal(1); this.move(i, 2, 'free', false, true); extra.ignore = 2; break;
       default: throw Error(`Unimplemented card: ${name}`);
     }
     this.s.queue.splice(this.s.queue.findIndex(t => t.type === 'pause') < 0 ? this.s.queue.length : this.s.queue.findIndex(t => t.type === 'pause'), 0, {type: 'finishCard', actor: i});
@@ -409,7 +409,7 @@ export class Brawl {
       this.pushTasks({type: 'window', window: 'afterBasic', actor: i, card: a.card});
     }
     if (d.category === 'Special') p.usedSpecial++;
-    if (p.hero === 'SHE' && (d.block || /Heal/.test(d.text))) p.trait = Math.min(3, p.trait + 1);
+    if (p.hero === 'SHE' && d.category !== 'Basic' && (d.block || /Heal/.test(d.text))) p.trait = Math.min(3, p.trait + 1);
     if (op.specialCounter) {op.specialCounter = false;this.pushTasks({type: 'delayedAttack', actor: 1 - i});}
   }
   endReveal() {
