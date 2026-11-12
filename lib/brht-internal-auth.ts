@@ -7,7 +7,12 @@ function credentials() {
   const username = process.env.BRHT_DASHBOARD_USERNAME;
   const password = process.env.BRHT_DASHBOARD_PASSWORD;
   if (!username || !password) return null;
-  return { username, password };
+  const aliases = (process.env.BRHT_INTERNAL_USERNAME_ALIASES || username)
+    .split(",")
+    .map((value) => value.trim())
+    .filter(Boolean);
+  if (!aliases.includes(username)) aliases.unshift(username);
+  return { username, password, aliases };
 }
 
 function signingSecret() {
@@ -29,17 +34,22 @@ export function validateInternalCredentials(username: string, password: string) 
   const creds = credentials();
   if (!creds) return false;
 
-  const leftUser = Buffer.from(username);
-  const rightUser = Buffer.from(creds.username);
   const leftPass = Buffer.from(password);
   const rightPass = Buffer.from(creds.password);
-
-  return (
-    leftUser.length === rightUser.length &&
+  const passwordMatches =
     leftPass.length === rightPass.length &&
-    timingSafeEqual(leftUser, rightUser) &&
-    timingSafeEqual(leftPass, rightPass)
-  );
+    timingSafeEqual(leftPass, rightPass);
+
+  if (!passwordMatches) return false;
+
+  return creds.aliases.some((candidate) => {
+    const leftUser = Buffer.from(username);
+    const rightUser = Buffer.from(candidate);
+    return (
+      leftUser.length === rightUser.length &&
+      timingSafeEqual(leftUser, rightUser)
+    );
+  });
 }
 
 export function createInternalSession(username: string) {
@@ -78,7 +88,7 @@ export function verifyInternalSession(token: string | undefined | null) {
     }
 
     const creds = credentials();
-    if (!creds || parsed.username !== creds.username) return null;
+    if (!creds || !creds.aliases.includes(parsed.username)) return null;
     return parsed;
   } catch {
     return null;
