@@ -180,3 +180,53 @@ svg{width:16px;height:16px;flex-shrink:0;vertical-align:middle}
 .hand .game-card.unavailable-loot{filter:saturate(.65);border-color:#927ca0}
 .unavailable-loot .loot-card-label{background:#26303b;color:#bfc4cc;border-color:#81909d}
 .loot-only .battle-callout{visibility:hidden}
+
+/* Hero abilities are one click away from portraits, health panels and fighters. */
+.hero-hud{position:relative}
+.hero-guide-hit{position:absolute;inset:0;z-index:4;padding:0;border:0;border-radius:inherit;background:transparent!important;box-shadow:none;cursor:pointer}
+.hero-guide-hit span{position:absolute;right:7px;top:5px;font-size:12px;color:#e6cf9d;opacity:.7;line-height:1}
+.hero-guide-hit:hover,.hero-guide-hit:focus-visible{box-shadow:inset 0 0 0 1px #edcc88,0 0 16px #d5ac4222;background:#e9c68009!important;transform:none}
+.hero-guide-hit:hover span{opacity:1}
+.fighter-guide-hit{position:absolute;inset:0;z-index:3;padding:0;border:0;background:transparent!important;box-shadow:none!important;cursor:help}
+.fighter-guide-hit:focus-visible{outline:2px solid #efcf8c;outline-offset:1px;border-radius:35%}
+.guide-hero-header{display:flex;align-items:center;gap:22px;padding:0 0 20px;border-bottom:1px solid #c9b17b33}
+.guide-hero-header>img{width:130px;height:145px;object-fit:contain;filter:drop-shadow(0 7px 5px #0006)}
+.guide-hero-header h2{font-size:34px;margin:7px 0}.guide-hero-header>div>p:not(.eyebrow){font-size:12px;color:#b7c5cb}
+.guide-fury-state{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:#ebc98a;border:1px solid #b38b4e55;border-radius:20px;padding:6px 10px;margin-top:13px}
+.hero-guide-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;padding-top:22px}
+.hero-guide-grid section{padding:17px;border:1px solid color-mix(in srgb,var(--accent),transparent 60%);border-radius:9px;background:#14273380}
+.hero-guide-grid h3{font-size:24px;margin:8px 0 12px;color:#f4e0b6}.hero-guide-grid section>p:not(.eyebrow){font-size:13px;line-height:1.65;color:#d0d9d7}
+.guide-special-stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;font-size:10px;color:#f0d29a}.guide-special-stats span{display:flex;align-items:center;gap:4px}.guide-special-stats svg{width:12px;height:12px}
+.hero-guide-grid section>.guide-unlock{font-size:10px!important;color:#a7b7bf!important;border-top:1px solid #ffffff12;margin-top:14px;padding-top:12px}
+@media(max-width:600px){.guide-hero-header{gap:14px}.guide-hero-header>img{height:110px;width:90px}.guide-hero-header h2{font-size:26px}.hero-guide-grid{grid-template-columns:1fr;gap:12px;padding-top:14px}.hero-guide-grid section{padding:14px}.hero-guide-hit span{font-size:9px;top:4px;right:5px}}
+
+/* Persistent scenery runs independently of hand selection and combat renders. */
+.scene-layer{display:none;position:fixed;inset:66px 0 0;z-index:0;overflow:hidden;pointer-events:none;isolation:isolate;background:#0a141b}
+body.in-battle .scene-layer{display:block}
+#app{position:relative;z-index:1}.table.battlefield{background:transparent}
+.scenery-canvas{position:absolute;left:50%;top:48%;width:max(100vw,calc((100svh - 66px) * 1.776833));aspect-ratio:1672/941;transform:translate(-50%,-48%);animation:scene-breathe 36s ease-in-out infinite alternate;will-change:transform}
+.scene-layer .battle-backdrop{inset:0;height:100%;z-index:0;background-size:100% 100%;background-position:center}
+.scene-layer .battle-vignette{z-index:2}
+.arena-atmosphere{position:absolute;inset:0;z-index:1;overflow:hidden;pointer-events:none}
+.water-flow{position:absolute;overflow:hidden;mix-blend-mode:screen;opacity:.27;clip-path:polygon(12% 0,88% 0,100% 100%,0 100%)}
+.waterfall-one{left:59.8%;top:38.6%;width:3.7%;height:9.3%}.waterfall-two{left:65.6%;top:35.8%;width:2.9%;height:7.9%;opacity:.20}
+.water-flow:before{content:'';position:absolute;inset:-50% 0;background:repeating-linear-gradient(0deg,transparent 0px,#c0f5ff44 3px,transparent 10px,transparent 21px);animation:waterfall-stream 2.4s linear infinite}
+.waterfall-two:before{animation-duration:3.1s;animation-delay:-1s}
+.mist{position:absolute;background:radial-gradient(ellipse at 25% 50%,#c1e8ed38,transparent 58%),radial-gradient(ellipse at 70% 60%,#aecfd72b,transparent 60%);border-radius:50%;will-change:transform;pointer-events:none}
+.mist-far{left:39%;top:42%;width:38%;height:10%;filter:blur(9px);animation:mist-distance 23s ease-in-out infinite alternate}
+.mist-near{left:-15%;top:62%;width:125%;height:19%;opacity:.3;filter:blur(14px);animation:mist-foreground 31s ease-in-out infinite alternate}
+.sun-rays{position:absolute;left:55%;top:-5%;width:48%;height:60%;background:repeating-linear-gradient(132deg,transparent 0 10%,#ffdfa814 10.5% 13%,transparent 13.5% 24%);mask-image:radial-gradient(ellipse at 80% 15%,#000,transparent 68%);mix-blend-mode:screen;animation:sunlight-breathe 11s ease-in-out infinite alternate}
+.torch-glow{position:absolute;top:35%;width:8%;height:15%;background:radial-gradient(ellipse,#ffb93344,#ff79371c 35%,transparent 70%);mix-blend-mode:screen;animation:torch-flicker 2.9s ease-in-out infinite alternate}
+.torch-left{left:1%}.torch-right{right:1%;animation-delay:-1.4s;animation-duration:3.7s}
+.scene-embers{position:absolute;inset:0;overflow:hidden}.scene-embers i{position:absolute;left:var(--ember-x);top:var(--ember-y);width:2px;height:2px;background:#ffdc8e;border-radius:50%;box-shadow:0 0 5px #ffb23a;opacity:0;animation:torch-ember var(--ember-duration) var(--ember-delay) linear infinite}
+@keyframes scene-breathe{from{transform:translate(-50%,-48%) scale(1.005)}to{transform:translate(-50.15%,-48.2%) scale(1.018)}}
+@keyframes waterfall-stream{from{background-position:0 0}to{background-position:0 63px}}
+@keyframes mist-distance{from{transform:translateX(-14px);opacity:.35}to{transform:translateX(20px);opacity:.65}}
+@keyframes mist-foreground{from{transform:translate(-2%,4px)}to{transform:translate(3%,-5px)}}
+@keyframes sunlight-breathe{from{opacity:.35;transform:translateX(-4px)}to{opacity:.8;transform:translateX(5px)}}
+@keyframes torch-flicker{0%,100%{opacity:.5;transform:scale(.94)}35%{opacity:.9;transform:scale(1.06)}70%{opacity:.65;transform:scale(.99)}}
+@keyframes torch-ember{0%{opacity:0;transform:translate(0,0)}20%{opacity:.8}85%{opacity:.45}100%{opacity:0;transform:translate(12px,-65px)}}
+body.arena-paused .scene-layer *,body.arena-paused .scene-layer *:before,body.arena-paused .ambient i{animation-play-state:paused!important}
+@media(max-width:600px){.scene-layer{top:60px}.scenery-canvas{width:max(100vw,calc((100svh - 60px) * 1.776833))}.mist-near{display:none}}
+@media(prefers-reduced-motion:reduce){.scene-layer *,.scene-layer *:before{animation:none!important;will-change:auto}.water-flow{display:none}.scene-embers{display:none}.sun-rays{opacity:.25}.mist{opacity:.15}.torch-glow{opacity:.5}}
+.fighter-guide-hit{pointer-events:auto}
