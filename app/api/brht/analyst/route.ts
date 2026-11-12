@@ -158,9 +158,16 @@ const responseSchema = {
                 maxItems: 120,
                 items: {
                   type: "object",
-                  additionalProperties: {
-                    anyOf: [{ type: "string" }, { type: "number" }, { type: "null" }],
-                  },
+                  additionalProperties: false,
+                  required: ["x", "values"],
+                  properties: {
+                    x: { type: "string" },
+                    values: {
+                      type: "array",
+                      items: { type: "number" },
+                      maxItems: 4
+                    }
+                  }
                 },
               },
             },
@@ -226,6 +233,7 @@ Be concise, commercially useful, and numerical.
 Distinguish measured facts from estimates and assumptions.
 When the user asks for a relationship, compare the relevant time series and explain correlation cautiously; do not imply causation from correlation alone.
 When useful, return a chart using only rows that exist in the supplied context. Do not fabricate points.
+For chart data, each row must use {x: "label", values: [number for series 1, number for series 2, ...]} in exactly the same order as chart.series.
 For sales-vs-cost or margin analysis, only calculate gross margin if actual COGS/landed cost is present or the user explicitly supplies an assumption.
 The display currency is ${selected.organization.currency}.
 If inventory cover is available, use it to identify reorder risk, but explain that a purchase recommendation also needs lead time, MOQ, safety stock and inbound/open-PO data.
