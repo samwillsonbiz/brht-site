@@ -122,15 +122,14 @@ function DataFlow() {
       <div className={s.flowOutputs}>
         <span className={s.micro}>02 / YOUR OPERATING LAYER</span>
         {[
-          [Eye, "See the business"],
-          [Workflow, "Move work forward"],
-          [BrainCircuit, "Think with context"],
-        ].map(([Icon, title]) => {
-          const Symbol = Icon as typeof Eye;
+          { Icon: Eye, title: "See the business" },
+          { Icon: Workflow, title: "Move work forward" },
+          { Icon: BrainCircuit, title: "Think with context" },
+        ].map(({ Icon, title }) => {
           return (
-            <div key={String(title)}>
-              <Symbol size={19} aria-hidden="true" />
-              <span>{String(title)}</span>
+            <div key={title}>
+              <Icon size={19} aria-hidden="true" />
+              <span>{title}</span>
               <ArrowUpRight size={14} aria-hidden="true" />
             </div>
           );

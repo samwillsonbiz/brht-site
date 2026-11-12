@@ -1830,6 +1830,9 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  :global(html):has(.page) {
+    scroll-behavior: auto;
+  }
   .page * {
     animation: none !important;
     transition: none !important;
