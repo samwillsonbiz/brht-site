@@ -49,7 +49,7 @@ button{width:100%;height:46px;margin-top:20px;border:0;border-radius:13px;backgr
         "Content-Type": "text/html; charset=utf-8",
         "Cache-Control": "no-store",
         "X-Frame-Options": "DENY",
-        "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'",
+        "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'; form-action 'self' https://chatgpt.com; base-uri 'none'; frame-ancestors 'none'",
       },
     },
   );
@@ -136,6 +136,13 @@ export async function POST(request: Request) {
     return html(form(values, "Incorrect internal BRHT credentials."), 401);
   }
 
+  console.info("BRHT OAuth credentials accepted", {
+    clientId: values.clientId,
+    redirectUri: values.redirectUri,
+    resource: values.resource,
+    scope: values.scope,
+  });
+
   const code = await createAuthorizationCode({
     username,
     clientId: values.clientId,
@@ -150,5 +157,6 @@ export async function POST(request: Request) {
   redirect.searchParams.set("state", values.state);
   redirect.searchParams.set("iss", BRHT_OAUTH_ISSUER);
 
+  console.info("BRHT OAuth redirecting to ChatGPT callback");
   return NextResponse.redirect(redirect, 303);
 }
