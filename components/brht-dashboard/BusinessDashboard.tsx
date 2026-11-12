@@ -22,6 +22,7 @@ import {
 import { PerformanceChart } from "./PerformanceChart";
 import { MetricTrendChart } from "./MetricTrendChart";
 import { KickstarterPanel } from "./KickstarterPanel";
+import { AskBrhtPanel } from "./AskBrhtPanel";
 import {
   DASHBOARD_RANGES,
   type DashboardData,
@@ -273,6 +274,13 @@ export function BusinessDashboard({
           '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif',
       }}
     >
+      <AskBrhtPanel
+        organization={data.organization.slug}
+        range={data.range}
+        start={data.period.start}
+        end={data.period.end}
+        currency={data.organization.currency}
+      />
       <header className="sticky top-0 z-30 border-b border-black/[0.07] bg-[#f5f5f7]/88 backdrop-blur-xl">
         <div className="mx-auto flex max-w-[1520px] items-center justify-between gap-4 px-5 py-3 sm:px-8 lg:px-10">
           <div className="flex items-center gap-4">
