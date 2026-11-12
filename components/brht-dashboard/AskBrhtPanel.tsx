@@ -21,7 +21,7 @@ type AnalystChart = {
     label: string;
     format: "currency" | "number" | "percent" | "multiple";
   }>;
-  data: Array<Record<string, string | number | null>>;
+  data: Array<{ x: string; values: number[] }>;
 };
 
 type AnalystReply = {
@@ -76,8 +76,8 @@ function InlineAnalystChart({
 
   const numeric = rows.flatMap((row) =>
     chart.series.map((series) => {
-      const value = row[series.key];
-      return typeof value === "number" && Number.isFinite(value) ? value : 0;
+      const value = row.values[chart.series.findIndex((item) => item.key === series.key)] ?? 0;
+      return Number.isFinite(value) ? value : 0;
     }),
   );
   const max = Math.max(1, ...numeric);
@@ -140,8 +140,7 @@ function InlineAnalystChart({
                 const stroke = ["#0071e3", "#ff9f0a", "#05a66b", "#af52de"][seriesIndex % 4];
                 const points = rows
                   .map((row, index) => {
-                    const raw = row[series.key];
-                    const value = typeof raw === "number" ? raw : 0;
+                    const value = row.values[seriesIndex] ?? 0;
                     return `${x(index)},${y(value)}`;
                   })
                   .join(" ");
@@ -161,8 +160,7 @@ function InlineAnalystChart({
                 const groupWidth = (width - left - right) / Math.max(1, rows.length);
                 const barWidth = Math.max(3, Math.min(22, groupWidth / Math.max(1, chart.series.length + 0.5)));
                 return chart.series.map((series, seriesIndex) => {
-                  const raw = row[series.key];
-                  const value = typeof raw === "number" ? raw : 0;
+                  const value = row.values[seriesIndex] ?? 0;
                   const xx =
                     left +
                     index * groupWidth +
@@ -186,8 +184,7 @@ function InlineAnalystChart({
 
           {rows.map((row, index) => {
             if (index % labelStep !== 0 && index !== rows.length - 1) return null;
-            const rawLabel = row[chart.xKey];
-            const label = rawLabel == null ? "" : String(rawLabel);
+            const label = row.x;
             return (
               <text
                 key={`label-${index}`}
