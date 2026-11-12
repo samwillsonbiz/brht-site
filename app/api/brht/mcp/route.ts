@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 import { getOrganizationDashboardData } from "@/lib/brht-dashboard/data";
 import {
+  BRHT_READ_SCOPE,
+  authChallenge,
+  verifyToken,
+} from "@/lib/brht-mcp-oauth";
+import {
   convertDashboardCurrency,
   getUsdToAudRate,
   normalizeDisplayCurrency,
@@ -31,6 +36,15 @@ const readOnlyAnnotations = {
   idempotentHint: true,
 };
 
+const oauthSecurityMeta = {
+  securitySchemes: [
+    {
+      type: "oauth2",
+      scopes: [BRHT_READ_SCOPE],
+    },
+  ],
+};
+
 const tools = [
   {
     name: "get_business_overview",
@@ -54,6 +68,7 @@ const tools = [
       },
     },
     annotations: readOnlyAnnotations,
+    _meta: oauthSecurityMeta,
   },
   {
     name: "get_sales_timeseries",
@@ -78,6 +93,7 @@ const tools = [
       },
     },
     annotations: readOnlyAnnotations,
+    _meta: oauthSecurityMeta,
   },
   {
     name: "get_inventory_reorder_risk",
@@ -96,6 +112,7 @@ const tools = [
       },
     },
     annotations: readOnlyAnnotations,
+    _meta: oauthSecurityMeta,
   },
   {
     name: "get_kickstarter_performance",
@@ -114,6 +131,7 @@ const tools = [
       },
     },
     annotations: readOnlyAnnotations,
+    _meta: oauthSecurityMeta,
   },
   {
     name: "get_source_health",
@@ -126,6 +144,7 @@ const tools = [
       properties: {},
     },
     annotations: readOnlyAnnotations,
+    _meta: oauthSecurityMeta,
   },
   {
     name: "search",
@@ -164,6 +183,7 @@ const tools = [
       },
     },
     annotations: readOnlyAnnotations,
+    _meta: oauthSecurityMeta,
   },
   {
     name: "fetch",
@@ -194,14 +214,34 @@ const tools = [
       },
     },
     annotations: readOnlyAnnotations,
+    _meta: oauthSecurityMeta,
   },
 ];
 
-function authorized(request: Request) {
-  const expected = process.env.BRHT_MCP_TOKEN;
-  if (!expected) return false;
+function sessionFromRequest(request: Request) {
   const auth = request.headers.get("authorization") || "";
-  return auth === `Bearer ${expected}`;
+  const match = auth.match(/^Bearer\s+(.+)$/i);
+  return match ? verifyToken(match[1], "access") : null;
+}
+
+function authRequiredToolResult() {
+  return {
+    isError: true,
+    content: [
+      {
+        type: "text",
+        text: "BRHT internal authorization is required before private Fable Fury operating data can be read.",
+      },
+    ],
+    _meta: {
+      "mcp/www_authenticate": [
+        authChallenge(
+          "invalid_token",
+          "Sign in to the private BRHT Fable Fury connection to continue.",
+        ),
+      ],
+    },
+  };
 }
 
 function jsonRpc(id: JsonRpcRequest["id"], result: unknown) {
@@ -462,49 +502,29 @@ export async function OPTIONS() {
 }
 
 export async function GET(request: Request) {
-  if (!authorized(request)) {
-    return NextResponse.json(
-      { error: "Unauthorized" },
-      {
-        status: 401,
-        headers: {
-          "WWW-Authenticate": 'Bearer realm="BRHT MCP"',
-          "Cache-Control": "no-store",
-        },
-      },
-    );
-  }
-
+  const authenticated = Boolean(sessionFromRequest(request));
   return NextResponse.json(
     {
       name: "BRHT Intelligence — Fable Fury",
       mcp: true,
       endpoint: "/api/brht/mcp",
       readOnly: true,
+      authenticated,
+      authentication: "OAuth 2.1",
       tools: tools.map((tool) => tool.name),
     },
-    { headers: { "Cache-Control": "no-store" } },
+    {
+      headers: {
+        "Cache-Control": "no-store",
+        ...(authenticated
+          ? {}
+          : { "WWW-Authenticate": authChallenge() }),
+      },
+    },
   );
 }
 
 export async function POST(request: Request) {
-  if (!authorized(request)) {
-    return NextResponse.json(
-      {
-        jsonrpc: "2.0",
-        id: null,
-        error: { code: -32001, message: "Unauthorized" },
-      },
-      {
-        status: 401,
-        headers: {
-          "WWW-Authenticate": 'Bearer realm="BRHT MCP"',
-          "Cache-Control": "no-store",
-        },
-      },
-    );
-  }
-
   let body: JsonRpcRequest;
   try {
     body = (await request.json()) as JsonRpcRequest;
@@ -543,6 +563,9 @@ export async function POST(request: Request) {
   if (method === "tools/call") {
     const name = body.params?.name;
     if (!name) return jsonRpcError(body.id, -32602, "Tool name is required");
+    if (!sessionFromRequest(request)) {
+      return jsonRpc(body.id, authRequiredToolResult());
+    }
     try {
       const result = await callTool(
         name,
