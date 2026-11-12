@@ -1,6 +1,7 @@
 import {createRoomService,SupabaseRoomStore} from '../../../lib/brawl/rooms.mjs';
 import data from '../../../lib/brawl/data.json';
 export const runtime='nodejs';
+export const preferredRegion='syd1';
 export const dynamic='force-dynamic';
 export const maxDuration=30;
 async function handle(request){
