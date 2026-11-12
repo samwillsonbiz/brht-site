@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getOrganizationDashboardData } from "@/lib/brht-dashboard/data";
+import { internalSessionFromRequest } from "@/lib/brht-internal-auth";
 import {
   convertDashboardCurrency,
   getUsdToAudRate,
@@ -180,6 +181,14 @@ const responseSchema = {
 
 export async function POST(request: Request) {
   try {
+    const session = internalSessionFromRequest(request);
+    if (!session) {
+      return NextResponse.json(
+        { error: "Internal BRHT access required." },
+        { status: 401, headers: { "Cache-Control": "no-store" } },
+      );
+    }
+
     const rate = checkRateLimit(request);
     if (!rate.ok) {
       return NextResponse.json(
