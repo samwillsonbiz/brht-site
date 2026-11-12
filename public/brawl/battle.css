@@ -156,3 +156,27 @@ svg{width:16px;height:16px;flex-shrink:0;vertical-align:middle}
 @media(max-width:700px){.battlefield{--drawer-lift:235px}}
 @media(prefers-reduced-motion:reduce){.fighters,.arena-lane,.arena-front{transition:none}}
 .hand-open .battle-callout{translate:0 calc(-1 * var(--drawer-lift) - 35px)}
+
+/* Loot shares the real hand; combat reactions use a discreet invitation. */
+.hand-open .hand-zone .hand-and-loot{grid-template-columns:minmax(0,1fr) 85px;padding:10px 150px 0 70px}
+.hand.with-loot .game-card{margin-left:-16px;margin-right:-16px}
+.hand .game-card.loot{border-color:#ba91dd}
+.loot-card-label{position:absolute;top:-16px;left:50%;transform:translateX(-50%);z-index:5;padding:3px 8px;border:1px solid #d0a9ef;background:#433052;color:#f3dfff;border-radius:4px;font-size:7px;letter-spacing:.6px;white-space:nowrap;pointer-events:none}
+.hand .game-card.usable-loot{border-color:#e2c3fb;box-shadow:0 0 18px #c486e855,0 7px 15px #0008}
+.usable-loot .loot-card-label{background:#e1c3f5;color:#251631;border-color:#f5e3ff}
+.hand .game-card.new-loot{outline:2px solid #efcf8e;outline-offset:2px}
+.new-loot .loot-card-label{background:#edd090;color:#2d2412;border-color:#fff0c6}
+.loot-only .hand .game-card{margin:0 9px;--fan-angle:0deg!important;--fan-y:0px!important}
+.loot-only .hand{justify-content:center}
+.tray-caption{position:relative}.close-loot-tray{position:absolute;right:0;top:0;font-size:9px;padding:5px 9px;background:#172432e8;border-color:#be9bd455;z-index:6}
+.loot-alert{position:absolute;left:50%;bottom:57px;transform:translateX(-50%);display:flex;align-items:center;gap:7px;border:1px solid #c8a0e9;border-radius:24px;padding:8px 13px;background:#261d35f5;color:#f1dcff;font-size:11px;z-index:20;box-shadow:0 0 0 0 #d4a0f155;animation:loot-invitation 2.2s ease-in-out infinite}
+.loot-alert svg{width:16px;height:16px}.loot-alert b{display:grid;place-items:center;width:17px;height:17px;border-radius:50%;background:#bb94d7;color:#24172c;font-size:9px}
+.loot-alert:hover{background:#443056;transform:translateX(-50%) translateY(-2px)}
+.loot-inventory{display:flex;gap:4px;align-items:center;color:#d4b8e9}.loot-inventory svg{width:11px;height:11px}
+@keyframes loot-invitation{50%{box-shadow:0 0 0 7px #d4a0f100,0 0 18px #bf88df40}}
+@media(max-width:1000px){.hand-open .hand-zone .hand-and-loot{grid-template-columns:minmax(0,1fr);padding:10px 170px 0 10px}.hand.with-loot .game-card{margin-left:-22px;margin-right:-22px}}
+@media(max-width:700px){.hand-open .hand-zone .hand-and-loot{padding:0 0 85px}.hand.with-loot .game-card,.loot-only .hand .game-card{margin:0 4px}.loot-only .hand{justify-content:flex-start}.loot-alert{bottom:52px;font-size:10px;padding:7px 10px}.loot-card-label{font-size:6px;top:-15px}.table-footer .loot-inventory{font-size:7px}}
+@media(prefers-reduced-motion:reduce){.loot-alert{animation:none;box-shadow:0 0 12px #bd84df55}}
+.hand .game-card.unavailable-loot{filter:saturate(.65);border-color:#927ca0}
+.unavailable-loot .loot-card-label{background:#26303b;color:#bfc4cc;border-color:#81909d}
+.loot-only .battle-callout{visibility:hidden}

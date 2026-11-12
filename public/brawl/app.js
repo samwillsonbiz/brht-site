@@ -12,6 +12,7 @@ let data, game=null, screen='setup', editPlayer=0, mode='solo', heroes=['SMA','R
 const defaultStrategies=()=>[0,1].map(()=>({direction:'toward',steps:3,aim:'damage',trait:true,remedy:'block',coin:true}));
 let strategies=defaultStrategies();
 let targetSlot=null, previousBattle=null,lastAudioLog=null,handWasOpen=false;
+let lootUI={context:'',open:false,purchased:null};
 const battleAudio=new BattleAudio();
 let canOnline=false,onlineLobby=null,lobbyTimer=null,onlineRound=0,networkConnected=true,onlineBusy=false;
 const symbol=(name)=>{const paths={speed:'M13 2 4 14h7l-1 8 10-13h-7z',damage:'m5 3 13 13m-3-13L4 14m-1 4 5-5m8 3 5 5',range:'M3 12h18M6 8l-4 4 4 4m12-8 4 4-4 4',shield:'M12 2 3 6v6c0 5 9 10 9 10s9-5 9-10V6z',coin:'M12 3a9 9 0 1 0 0 18 9 9 0 1 0 0-18M12 7v10m-3-8h5a2 2 0 0 1 0 4h-4a2 2 0 0 0 0 4h5',eye:'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12m10-3a3 3 0 1 0 0 6 3 3 0 1 0 0-6',spark:'m12 2 3 7 7 3-7 3-3 7-3-7-7-3 7-3z'};return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${(paths[name]||paths.spark).split('|').map(d=>`<path d="${d}"/>`).join('')}</svg>`;};
@@ -44,14 +45,14 @@ function art(d){
   if(d.category==='Loot'&&![11,12,13,17,19].includes(Number(d.id.slice(-3))))return `<img src="assets/${d.id}.webp" alt="" loading="lazy">`;
   return `<span class="glyph" aria-hidden="true">${GLYPHS[d.name]||'✦'}</span>`;
 }
-function cardHTML(d,{uid='',selected=false,loot=false,inspect=true,button=true,fanIndex=null,fanTotal=5,selectionNumber=null}={}){
+function cardHTML(d,{uid='',selected=false,loot=false,inspect=true,button=true,fanIndex=null,fanTotal=5,selectionNumber=null,lootUsable=false,lootBlocked=false,newLoot=false}={}){
   const h=heroForCard(d),color=h?COLORS[h.id]:d.category==='Loot'?'#85649b':'#4b8185';
   const offset=fanIndex===null?0:fanIndex-(fanTotal-1)/2;
-  return `<${button?'button':'div'} class="game-card ${loot?'loot':''} ${selected?'selected':''} ${d.category==='Special'?'special-card':''} ${d.text.length>130?'dense-card':''}" style="--accent:${color};--fan-angle:${offset*2.3}deg;--fan-y:${Math.pow(offset,2)*3}px;--card-order:${fanIndex??0}" ${button?`data-card="${esc(uid||d.id)}" aria-pressed="${selected}" aria-label="${esc(d.name)}, ${d.category}${d.speed?', Speed '+d.speed:''}"`:''}>
-    ${selectionNumber?`<span class="assignment" aria-label="Action ${selectionNumber}">${selectionNumber}</span>`:''}<span class="card-head"><span>${esc(d.name)}</span>${d.speed?`<b title="Speed">${symbol('speed')}${d.speed}</b>`:''}</span>
+  return `<${button?'button':'div'} class="game-card ${loot?'loot':''} ${lootUsable?'usable-loot':''} ${lootBlocked?'unavailable-loot':''} ${newLoot?'new-loot':''} ${selected?'selected':''} ${d.category==='Special'?'special-card':''} ${d.text.length>130?'dense-card':''}" style="--accent:${color};--fan-angle:${offset*2.3}deg;--fan-y:${Math.pow(offset,2)*3}px;--card-order:${fanIndex??0}" ${button?`data-card="${esc(uid||d.id)}" ${loot?`data-loot-card="${d.id}"`:""} aria-pressed="${selected}" aria-label="${lootUsable?'Use ':''}${esc(d.name)}, ${d.category}${d.speed?', Speed '+d.speed:''}"`:''}>
+    ${loot?`<span class="loot-card-label">${newLoot?'NEW LOOT':lootUsable?'CLICK TO USE':lootBlocked?'NOT USABLE NOW':'REACTION LOOT'}</span>`:''}${selectionNumber?`<span class="assignment" aria-label="Action ${selectionNumber}">${selectionNumber}</span>`:''}<span class="card-head"><span>${esc(d.name)}</span>${d.speed?`<b title="Speed">${symbol('speed')}${d.speed}</b>`:''}</span>
     <span class="card-art">${art(d)}</span>
     <span class="card-stats"><span>${d.damage?symbol('damage')+d.damage+' damage':d.category==='Loot'?'SECRET LOOT':d.block?symbol('shield')+'Defense':'Movement / skill'}</span><span>${d.range?symbol('range')+'Range '+d.range:d.category==='Loot'?symbol('coin')+'4':''}</span></span>
-    <span class="card-text">${esc(d.text)}</span><span class="card-foot">${d.category==='Basic'?'+1 COIN':d.category==='Loot'?'SECRET LOOT':d.category==='Special'?'FURY SPECIAL':d.starter?'STARTER · 0 COINS':'HERO · 0 COINS'}</span>
+    <span class="card-text">${esc(d.text)}</span><span class="card-foot">${d.category==='Basic'?'+1 COIN':d.category==='Loot'?(lootUsable?'USE NOW':lootBlocked?'INSPECT · NOT USABLE NOW':'REACTION · NOT AN ACTION'):d.category==='Special'?'FURY SPECIAL':d.starter?'STARTER · 0 COINS':'HERO · 0 COINS'}</span>
     ${inspect?`<span class="inspect" data-inspect="${d.id}" title="Read full card">${symbol('eye')}</span>`:''}</${button?'button':'div'}>`;
 }
 function cardDetail(id){const d=def(id);if(!d)return;modal(`<div class="detail-layout">${cardHTML(d,{button:false,inspect:false})}<div><p class="eyebrow">${esc(d.id)} / ${esc(d.category)}</p><h2>${esc(d.name)}</h2>${d.timing?`<p class="timing"><b>Play timing</b><br>${esc(d.timing)}</p>`:''}<p>${esc(d.text)}</p><p class="muted">${d.category==='Basic'?'Gain 1 Coin after this card resolves, even if its Attack misses.':d.category==='Loot'?'Pay 4 Coins to draw random Loot after Action 2. Hold at most 2; use at most 1 per reveal.':d.category==='Special'?'Earned at 3 Fury. Kept outside the combat deck. Returns beside your mat after use.':'Choose 5 of your Hero’s 8 cards before the match. Hero cards generate 0 Coins.'}</p>${d.hero?`<p class="small muted">${esc(d.hero)}${d.starter?' · Recommended starter':''}</p>`:''}</div></div>`);}
@@ -111,8 +112,10 @@ function planHTML(i){
 function phaseControl(){
   const s=game.s,allShop=s.shopDone.every(Boolean);
   if(s.mode==='online'&&(s.phase==='program'&&s.committed[viewer]||s.phase==='shop'&&!allShop&&s.shopDone[viewer]||s.prompt?.kind==='waiting'))return `<div class="phase-control"><span class="control-step">ONLINE MATCH</span><h3>Waiting for your rival.</h3><p>${s.phase==='program'?'Your two actions are locked and private. The reveal opens when both players are ready.':s.phase==='shop'?'Your purchase phase is complete. Your rival is finishing theirs.':'Your rival is making a private choice. The battlefield updates automatically.'}</p><span class="online-connection">${networkConnected?'Room connected':'Reconnecting…'}</span></div>`;
+  if(s.prompt?.kind==='loot'&&s.prompt.player===viewer)return `<div class="phase-control"><span class="control-step">OPTIONAL REACTION</span><h3>${lootUI.open?'Use Loot or pass.':'Loot is available.'}</h3><button data-action="skip-prompt" class="primary">Pass without Loot →</button></div>`;
   if(s.phase==='program'){const n=selections.filter(Boolean).length;return `<div class="phase-control"><span class="control-step">${n}/2 ACTIONS CHOSEN</span><h3 aria-live="polite">${n===0?'Choose your first card.':n===1?'Now choose your second.':'Your plan is ready.'}</h3><p>${n===2?'Both cards stay hidden until the reveal.':'Pick from your hand below. Your first card plays first.'}</p><div class="control-buttons"><button class="swap" data-action="swap" ${n<2?'disabled':''} aria-label="Swap programmed cards">⇄ Swap</button><button class="primary" data-action="lock" ${n<2?'disabled':''}>${n===2?'Confirm 2 actions':'Choose '+(2-n)+' card'+(n?'':'s')} <span>→</span></button></div></div>`;}
   if(s.phase==='shop') {
+    if(lootUI.purchased)return `<div class="phase-control"><span class="control-step">ADDED TO YOUR HAND</span><h3>New Loot acquired.</h3><button class="primary" data-action="close-loot">Done →</button></div>`;
     if(allShop)return `<div class="phase-control"><h3>Round complete.</h3><p>Draw back to 5 cards, clear round effects, and pass Edge.</p><button class="primary" data-action="next-round">Next round →</button></div>`;
     const p=s.players[viewer],can=p.coins>=4&&p.loot.length<2;
     return `<div class="phase-control"><h3>A little retail therapy.</h3><p>Random secret Loot costs 4 Coins. You hold ${p.loot.length}/2.</p><div style="display:flex;gap:8px"><button class="primary" data-action="buy" ${!can?'disabled':''}>Buy Loot · 4 ●</button><button data-action="skip-buy">Skip</button></div></div>`;
@@ -126,7 +129,7 @@ function reactionHTML(){
   const q=game.s.prompt;if(!q)return '';
   if(q.kind==='waiting')return '<section class="reaction waiting-reaction"><h3>Your rival is choosing.</h3><p>Their private hand and choices stay hidden. Your game will update automatically.</p></section>';
   const p=game.s.players[q.player];
-  if(q.kind==='loot')return `<section class="reaction"><div><h3>${esc(p.name)}: Loot window</h3><p>${esc(WINDOW_LABELS[q.window])}. You may use one eligible Loot card. Using Loot is optional.</p></div><div class="reaction-choices">${q.choices.map(id=>`<button data-use-loot="${id}">${esc(def(id).name)} <span data-inspect="${id}" title="Read card">ⓘ</span></button>`).join('')}<button data-action="skip-prompt">Continue without Loot →</button></div></section>`;
+  if(q.kind==='loot')return '';
   if(q.kind==='space')return `<section class="reaction"><div><h3>Choose your destination.</h3><p>Teleport to any unoccupied Arena space. Select a highlighted space above.</p></div><button data-action="skip-prompt">Choose a free space for me</button></section>`;
   if(q.kind==='peek'||q.kind==='replace') {
     const p=game.s.players[q.player];
@@ -146,18 +149,27 @@ function revealedCardsHTML(){
   if(s.phase!=='resolve'||!s.shown[k])return '';
   return `<section class="reveal-stage" aria-label="Both revealed Action ${k+1} cards"><div class="reveal-caption">ACTION ${k+1} <span>Higher Speed acts first · Edge breaks ties</span></div><div class="reveal-pair">${[viewer,1-viewer].map(i=>{const a=s.plans[i]?.[k],d=a&&def(a.card.id);if(!d)return '';return `<article class="revealed-action ${a.done?'resolved':''}"><div class="reveal-owner">${s.mode==='hotseat'?esc(SHORT[s.players[i].hero]):i===viewer?'YOU':'RIVAL'} · ${esc(SHORT[s.players[i].hero])}<b>${a.done?'RESOLVED':a.speed+' SPEED'}</b></div>${cardHTML(d,{button:false})}</article>`;}).join('')}</div></section>`;
 }
+function lootContext(){const s=game.s;return JSON.stringify([s.round,s.phase,viewer,s.prompt]);}
+function openLoot(purchased=null){lootUI={context:lootContext(),open:true,purchased};render();($('.hand .usable-loot')||$('.hand [data-loot-card]'))?.focus({preventScroll:true});}
+function handCardsHTML(combatCards,lootCards,lootWindow){
+ const cards=[...combatCards.map(c=>({...c,isLoot:false})),...lootCards.map(id=>({id,uid:'loot-'+id,isLoot:true}))];
+ return cards.map((c,k)=>cardHTML(def(c.id),{uid:c.uid,loot:c.isLoot,selected:!c.isLoot&&selections.includes(c.uid),fanIndex:k,fanTotal:cards.length,selectionNumber:!c.isLoot&&selections.includes(c.uid)?selections.indexOf(c.uid)+1:null,lootUsable:c.isLoot&&lootWindow&&game.s.prompt.choices.includes(c.id),lootBlocked:c.isLoot&&lootWindow&&!game.s.prompt.choices.includes(c.id),newLoot:c.id===lootUI.purchased})).join('')||'<p class="muted small">Your hand is empty.</p>';
+}
 function renderTable(){
   const s=game.s;
-  if(s.mode==='hotseat'&&s.phase!=='over'){
+  if(lootUI.context!==lootContext())lootUI={context:lootContext(),open:false,purchased:null};
+  const purchaseReveal=Boolean(lootUI.open&&lootUI.purchased);
+  if(s.mode==='hotseat'&&s.phase!=='over'&&!purchaseReveal){
     const desired=desiredViewer(),privatePhase=s.phase==='program'||s.phase==='shop'&&!s.shopDone.every(Boolean)||Boolean(s.prompt);
     if(privatePhase&&(!ready||viewer!==desired)){ready=false;return renderPrivacy();}
   }
-  const p=s.players[viewer],publicPhase=s.mode==='hotseat'&&(s.phase==='resolve'&&!s.prompt||s.phase==='shop'&&s.shopDone.every(Boolean)||s.phase==='over');
+  const p=s.players[viewer],publicPhase=!purchaseReveal&&s.mode==='hotseat'&&(s.phase==='resolve'&&!s.prompt||s.phase==='shop'&&s.shopDone.every(Boolean)||s.phase==='over');
   const hand=game.available(viewer),last=[...s.log].reverse().find(l=>!['coin','info'].includes(l.kind))||s.log.at(-1);
   const step=s.phase==='program'?0:s.phase==='shop'||s.phase==='over'?3:s.shown[1]?2:1;
   const privateChoice=s.prompt&&['replace','discard'].includes(s.prompt.kind);
-  const handOpen=Boolean(privateChoice||s.phase==='program'&&!s.committed[viewer]),handEntering=handOpen&&!handWasOpen;handWasOpen=handOpen;
-  app.innerHTML=`<section class="table battlefield phase-${s.phase} ${privateChoice?'has-private-choice':''} ${handOpen?'hand-open':''} ${handEntering?'hand-entering':''}" style="--hero-accent:${COLORS[p.hero]}"><div class="battle-backdrop" aria-hidden="true"></div><div class="battle-vignette" aria-hidden="true"></div>
+  const lootWindow=s.prompt?.kind==='loot'&&s.prompt.player===viewer,lootOnly=lootUI.open&&s.phase!=='program'&&!privateChoice;
+  const handOpen=Boolean(privateChoice||s.phase==='program'&&!s.committed[viewer]||lootUI.open),handEntering=handOpen&&!handWasOpen;handWasOpen=handOpen;
+  app.innerHTML=`<section class="table battlefield phase-${s.phase} ${privateChoice?'has-private-choice':''} ${handOpen?'hand-open':''} ${handEntering?'hand-entering':''} ${lootOnly?'loot-only':''}" style="--hero-accent:${COLORS[p.hero]}"><div class="battle-backdrop" aria-hidden="true"></div><div class="battle-vignette" aria-hidden="true"></div>
     <div class="hud">${hud(0)}<div class="round-title"><span class="eyebrow">BRIARWOOD RUINS</span><span class="display">ROUND ${s.round}</span><span class="edge">✦ ${SHORT[s.players[s.edge].hero]} holds Edge</span><ol class="phase-track" aria-label="Round progress">${['Plan','Reveal 1','Reveal 2','Loot'].map((label,k)=>`<li class="${step===k?'current':step>k?'complete':''}" ${step===k?'aria-current="step"':''}><span>${step>k?'✓':k+1}</span><small>${label}</small></li>`).join('')}</ol></div>${hud(1)}</div>
     <div class="arena" aria-label="Seven-space Arena"><div class="ambient" aria-hidden="true">${Array.from({length:12},(_,k)=>`<i style="--mote-x:${8+(k*23)%85}%;--mote-y:${10+(k*17)%70}%;--mote-delay:${k*.7}s"></i>`).join('')}</div>
       <div class="arena-location"><span>THE OLD DUELING GROUND</span><small>Win by reducing your rival to 0 HP</small></div>
@@ -168,9 +180,10 @@ function renderTable(){
       <div class="fighters">${s.players.map((p,i)=>`<div class="fighter p${i+1} ${p.hp<=0?'ko':''}" style="left:${(p.pos-1)*100/7}%;--facing:${p.pos<s.players[1-i].pos?1:-1}" aria-label="${esc(p.name)} on space ${p.pos}"><span class="fighter-aura" aria-hidden="true"></span><span class="fighter-shadow" aria-hidden="true"></span><img class="fighter-art" src="${portrait(p.hero)}" alt="${esc(p.name)}"><span class="fighter-marker">${i?'II':'I'}</span></div>`).join('')}</div>
       <div class="arena-lane">${[1,2,3,4,5,6,7].map(n=>`<button class="space ${s.players.some(p=>p.pos===n)?'occupied':''} ${s.prompt?.kind==='space'&&s.prompt.choices.includes(n)?'target':''}" data-space="${n}" ${s.prompt?.kind!=='space'||!s.prompt.choices.includes(n)?'disabled':''} aria-label="Arena space ${n}"><span>${n}</span>${[1,7].includes(n)?'<small>WALL</small>':''}</button>`).join('')}</div><div class="arena-front" aria-hidden="true"></div></div>
     ${reactionHTML()}
+    ${lootWindow&&!lootUI.open?`<button class="loot-alert" data-action="view-loot" aria-label="Loot available: open your Loot hand" aria-expanded="false">${symbol('spark')}<span>Loot ready</span><b>${s.prompt.choices.length}</b></button>`:''}
     <section class="hand-zone"><div class="hand-toolbar"><div class="zone-header"><span class="hand-rule"></span><div><h3>${s.mode==='hotseat'?esc(SHORT[p.hero])+'’s':'Your'} hand <span>${hand.length}</span></h3><p>${privateChoice?'Choose a card below to '+(s.prompt.kind==='replace'?'replace Action 2.':'discard.') :s.phase==='program'?'Click two cards in order. Click again to put one back.':'Your remaining cards are safe until the next round.'}</p></div><span class="hand-rule"></span></div><div class="turn-dock">${phaseControl()}</div></div>
-    ${publicPhase?'<div class="public-note">'+symbol('eye')+' Both players can watch. Private hands and Loot are concealed.</div>':`<div class="hand-and-loot"><aside class="loot-area"><h3>${symbol('spark')} Secret Loot <span>${p.loot.length}/2</span></h3><div class="loot-hand">${p.loot.map(id=>cardHTML(def(id),{uid:id,loot:true})).join('')||'<div class="loot-empty"><span class="empty-loot-seal">✦</span><b>A trick up your sleeve.</b><span>Buy secret Loot for <strong>4 Coins</strong><br>after both actions resolve.</span></div>'}</div></aside><div class="hand-center"><div class="tray-caption"><b>${privateChoice?'CHOOSE A CARD':'CHOOSE TWO ACTIONS'}</b><span>${privateChoice?'Select a card from your hand':'Click in order · Click again to return a card'}</span></div><div class="hand" aria-label="Choose cards from your hand">${hand.map((c,k)=>cardHTML(def(c.id),{uid:c.uid,selected:selections.includes(c.uid),fanIndex:k,fanTotal:hand.length,selectionNumber:selections.includes(c.uid)?selections.indexOf(c.uid)+1:null})).join('')||'<p class="muted small">Your programmed cards are on the table.</p>'}</div>${s.phase==='program'?optionsHTML():''}</div><aside class="pile-area"><div class="draw-pile" aria-label="Combat deck: ${p.deck.length} cards"><div class="pile-back"><span>FABLE FURY</span><b>✦</b><strong>BRAWL</strong></div><span class="pile-count">${p.deck.length}</span></div><span class="pile-label">DRAW PILE</span><button class="discard-pile" data-action="view-discard">${p.discard.length}<span>Discard pile</span></button></aside></div>`}</section>
-    <footer class="table-footer"><button data-action="toggle-log">${showLog?'Hide':'Show'} battle log</button><button data-action="rules">Rules & card library</button><span class="save-indicator ${s.mode==='online'?'online-connection':''}"><i></i> ${s.mode==='online'?(networkConnected?'Room connected':'Reconnecting…'):'Match saved'}</span><span class="table-tip">${symbol('speed')} Higher Speed acts first · Edge wins ties</span><button class="right-link" data-action="new-match">New match</button></footer>${showLog?`<section class="battle-log" aria-label="Battle log">${s.log.slice(-45).map(l=>`<p class="${l.kind}"><span class="log-round">R${l.round}</span>${esc(l.message)}</p>`).join('')}</section>`:''}</section>`;
+    ${publicPhase?'<div class="public-note">'+symbol('eye')+' Both players can watch. Private hands and Loot are concealed.</div>':`<div class="hand-and-loot"><div class="hand-center"><div class="tray-caption"><b>${lootUI.purchased?'LOOT ACQUIRED':lootOnly?'YOUR LOOT':privateChoice?'CHOOSE A CARD':'CHOOSE TWO ACTIONS'}</b><span>${lootUI.purchased?esc(def(lootUI.purchased).name)+' added to your hand':lootWindow?esc(WINDOW_LABELS[s.prompt.window])+' · Click a glowing card to use it':lootOnly?'Your secret Loot · Click a card to inspect it':privateChoice?'Select a card from your hand':'Choose two actions · Purple Loot cards are reactions'}</span>${lootUI.open&&!lootUI.purchased?'<button class="close-loot-tray" data-action="close-loot">'+(lootUI.purchased?'Done':'Close')+'</button>':''}</div><div class="hand ${p.loot.length?'with-loot':''}" aria-label="${lootOnly?'Your Loot hand':'Choose cards from your hand'}">${handCardsHTML(lootOnly?[]:hand,privateChoice?[]:p.loot,lootWindow)}</div>${s.phase==='program'?optionsHTML():''}</div><aside class="pile-area"><div class="draw-pile" aria-label="Combat deck: ${p.deck.length} cards"><div class="pile-back"><span>FABLE FURY</span><b>✦</b><strong>BRAWL</strong></div><span class="pile-count">${p.deck.length}</span></div><span class="pile-label">DRAW PILE</span><button class="discard-pile" data-action="view-discard">${p.discard.length}<span>Discard pile</span></button></aside></div>`}</section>
+    <footer class="table-footer"><button data-action="toggle-log">${showLog?'Hide':'Show'} battle log</button><button data-action="rules">Rules & card library</button>${!publicPhase?`<button data-action="view-loot" class="loot-inventory">${symbol('spark')} Loot ${p.loot.length}/2</button>`:''}<span class="save-indicator ${s.mode==='online'?'online-connection':''}"><i></i> ${s.mode==='online'?(networkConnected?'Room connected':'Reconnecting…'):'Match saved'}</span><span class="table-tip">${symbol('speed')} Higher Speed acts first · Edge wins ties</span><button class="right-link" data-action="new-match">New match</button></footer>${showLog?`<section class="battle-log" aria-label="Battle log">${s.log.slice(-45).map(l=>`<p class="${l.kind}"><span class="log-round">R${l.round}</span>${esc(l.message)}</p>`).join('')}</section>`:''}</section>`;
   audioFeedback(previousBattle);
   battleFeedback(previousBattle);
   previousBattle=s.players.map(p=>({pos:p.pos,hp:p.hp}));
@@ -242,6 +255,7 @@ document.addEventListener('click',async e=>{
       if(dialog.open){cardDetail(uid);return;}
       if(screen!=='game')return;
       const q=game.s.prompt;
+      if(card.dataset.lootCard){const id=card.dataset.lootCard;if(q?.kind==='loot'&&q.player===viewer&&q.choices.includes(id)&&lootUI.open){await game.playLoot(id);lootUI.open=false;update();}else cardDetail(id);return;}
       if(q&&['discard','replace'].includes(q.kind)&&q.choices.includes(uid)){await game.choose(uid);update();return;}
       if(game.s.phase==='program'&&!game.s.committed[viewer]&&game.available(viewer).some(c=>c.uid===uid)){
         if(selections.includes(uid)){const index=selections.indexOf(uid);selections.splice(index,1);selections.push(null);strategies.splice(index,1);strategies.push(defaultStrategies()[0]);}
@@ -252,6 +266,8 @@ document.addEventListener('click',async e=>{
     }
     const btn=e.target.closest('[data-action]');if(!btn||btn.disabled)return;
     switch(btn.dataset.action){
+      case 'view-loot':openLoot();break;
+      case 'close-loot':lootUI.open=false;lootUI.purchased=null;if(game.s.mode==='hotseat'&&game.s.phase==='shop')ready=false;render();($('.loot-alert')||$('.loot-inventory'))?.focus({preventScroll:true});break;
       case 'toggle-audio':battleAudio.setEnabled(!battleAudio.enabled);syncAudioButton();audioSettings();break;
       case 'start':if(mode==='online')await startOnline();else{game?.close?.();start();}break;
       case 'starters':chosen[editPlayer]=data.cards.filter(c=>c.hero===hero(heroes[editPlayer]).name&&c.category==='Hero'&&c.starter).map(c=>c.id);render();break;
@@ -265,7 +281,7 @@ document.addEventListener('click',async e=>{
       case 'swap':[selections[0],selections[1]]=[selections[1],selections[0]];[strategies[0],strategies[1]]=[strategies[1],strategies[0]];render();break;
       case 'advance':await game.advance();update();break;
       case 'next-round':await nextRound();break;
-      case 'buy':await game.shop(viewer,true);if(game.s.mode==='hotseat')ready=false;update();playTone('loot');break;
+      case 'buy':{const before=[...game.s.players[viewer].loot];await game.shop(viewer,true);const bought=game.s.players[viewer].loot.find(id=>!before.includes(id));if(bought){lootUI={context:lootContext(),open:true,purchased:bought};}else if(game.s.mode==='hotseat')ready=false;update();playTone('loot');break;}
       case 'skip-buy':await game.shop(viewer,false);if(game.s.mode==='hotseat')ready=false;update();break;
       case 'skip-prompt':await game.skipPrompt();update();break;
       case 'toggle-log':showLog=!showLog;render();break;
