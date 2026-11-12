@@ -63,3 +63,39 @@ svg{width:16px;height:16px;flex-shrink:0;vertical-align:middle}
 .online-lobby-status{display:flex;justify-content:center;align-items:center;gap:12px;color:#e7c883}
 .online-lobby-status .spinner{width:18px;height:18px}
 .online-connection{font-size:11px;color:#aac9bb}
+
+/* In-hand selection and a shared reveal table. */
+.hand .game-card,.reveal-stage .game-card{display:grid;grid-template-rows:40px 56px 23px minmax(0,1fr) 21px;height:258px;min-height:258px;max-height:258px;padding:0;align-content:stretch;flex-shrink:0}
+.hand .game-card{width:164px;flex-basis:164px}
+.hand .game-card .card-head,.reveal-stage .game-card .card-head{height:40px;min-height:0;font-size:11px;padding:7px 8px}
+.hand .game-card .card-art,.reveal-stage .game-card .card-art{height:56px;min-height:0;display:grid;place-items:center}
+.hand .game-card .card-art img,.reveal-stage .game-card .card-art img{height:55px;max-width:95%;object-fit:contain}
+.hand .game-card .card-art .glyph,.reveal-stage .card-art .glyph{font-size:34px}
+.hand .game-card .card-stats,.reveal-stage .game-card .card-stats{font-size:8px;padding:4px 6px;min-height:0}
+.hand .game-card .card-text,.reveal-stage .game-card .card-text{font-size:10.5px;line-height:1.32;padding:8px 8px 3px;min-height:0;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#96754466 transparent;overscroll-behavior:contain;display:block}
+.hand .dense-card .card-text,.reveal-stage .dense-card .card-text{font-size:10px;line-height:1.3}
+.hand .game-card .card-foot,.reveal-stage .game-card .card-foot{position:static;align-self:center;padding:0 25px 0 8px;font-size:7px;line-height:1.1}
+.hand{padding-top:35px;min-height:308px;align-items:flex-start}
+.hand .game-card.selected{transform:translateY(-22px) rotate(0);z-index:35}
+.hand .game-card.selected:hover,.hand .game-card.selected:focus-visible{transform:translateY(-27px) rotate(0) scale(1.04)}
+.hand .game-card:hover:not(:disabled),.hand .game-card:focus-visible{transform:translateY(-18px) rotate(0) scale(1.04)}
+.assignment{top:-17px;left:50%;width:29px;height:29px;padding:0;border-radius:50%;display:grid;place-items:center;font-size:16px;letter-spacing:0;border:2px solid #fff0c6;box-shadow:0 2px 10px #0008;z-index:5;pointer-events:none}
+.hand-toolbar{display:grid;grid-template-columns:135px minmax(0,1fr) 300px;gap:15px;align-items:center;min-height:80px}
+.hand-toolbar .zone-header{grid-column:2;margin:0}.turn-dock{grid-column:3;background:linear-gradient(120deg,#122733f2,#0b1723e8);border:1px solid #ddbd7940;border-radius:10px;padding:10px 13px;box-shadow:0 5px 20px #0004;z-index:45}
+.turn-dock .phase-control{display:flex;min-height:0;align-items:stretch;gap:5px;padding:0;text-align:left}
+.turn-dock .phase-control h3{font-size:17px;max-width:none;grid-column:auto;grid-row:auto}.turn-dock .phase-control p{font-size:9px;max-width:none;grid-column:auto;grid-row:auto}.turn-dock .control-step{font-size:7px}
+.turn-dock .control-buttons{display:flex;flex-direction:row;justify-content:flex-end;gap:8px}.turn-dock .phase-control .primary{min-width:165px;font-size:11px;padding:10px 12px;margin:0;grid-column:auto;grid-row:auto}.turn-dock .phase-control .swap{font-size:9px;padding:5px}
+.hand-zone{margin-top:0;padding-top:0}.arena{flex:none;height:330px;min-height:330px}.fighter{bottom:22px}.fighter .fighter-art,.fighter.p2 .fighter-art{height:195px;width:180px}
+.range-badge{left:8%;top:14px;transform:none}.range-badge>small{font-size:7px}.range-badge b{font-size:32px}
+.rival-status{position:absolute;right:4%;top:18px;font-size:10px;color:#cfdfcb;background:#122631bb;border:1px solid #e3ca9233;border-radius:20px;padding:7px 13px;z-index:3}
+.battle-callout{top:auto;bottom:0;max-width:550px;min-width:0;font-size:10px;padding:7px 14px;z-index:7}
+.reveal-stage{position:absolute;left:50%;top:10px;transform:translateX(-50%);width:354px;z-index:5}
+.reveal-caption{display:flex;justify-content:space-between;align-items:center;color:#ffe3a9;text-shadow:0 2px 3px #000;font-size:10px;letter-spacing:1px;font-weight:800;padding:0 3px 7px}.reveal-caption span{font-size:7px;letter-spacing:0;color:#d8ddd6;font-weight:400}
+.reveal-pair{display:grid;grid-template-columns:1fr 1fr;gap:14px}.reveal-owner{font-size:7px;letter-spacing:.5px;background:#0c1e2aeb;padding:7px 6px;border-radius:5px 5px 0 0;color:#f3ddaf;display:flex;justify-content:space-between;gap:3px;align-items:center}.reveal-owner b{font-size:6px;color:#adcec1}
+.reveal-stage .game-card{width:170px;min-width:0;box-shadow:0 8px 28px #0009;animation:card-reveal-in .25s ease-out}.revealed-action.resolved .reveal-owner{background:#25413ce8}.revealed-action.resolved .game-card{border-color:#99bea7}
+@keyframes card-reveal-in{from{opacity:0;translate:0 8px}to{opacity:1;translate:0 0}}
+@media(min-width:1600px){.arena{height:370px;min-height:370px}.fighter .fighter-art,.fighter.p2 .fighter-art{height:235px;width:220px}.hand .game-card{width:178px;flex-basis:178px}.hand-toolbar{grid-template-columns:150px minmax(0,1fr) 320px}}
+@media(max-height:820px) and (min-width:1000px){.arena{height:300px;min-height:300px}.fighter{bottom:16px}.fighter .fighter-art,.fighter.p2 .fighter-art{height:170px;width:160px}.hand{min-height:294px;padding-top:28px}.hand-toolbar{min-height:72px}.reveal-stage{top:3px}.reveal-stage .game-card{height:235px;min-height:235px;max-height:235px;grid-template-rows:36px 40px 22px minmax(0,1fr) 21px}.reveal-stage .game-card .card-head{height:36px}.reveal-stage .game-card .card-art,.reveal-stage .game-card .card-art img{height:40px}.battle-callout{bottom:-2px}}
+@media(max-width:1000px){.hand-toolbar{grid-template-columns:1fr 260px;gap:12px}.hand-toolbar .zone-header{grid-column:1}.turn-dock{grid-column:2}.hand-and-loot{grid-template-columns:90px minmax(0,1fr) 75px}.hand .game-card{margin:0 -12px}.range-badge{left:2%}.rival-status{right:1%}}
+@media(max-width:700px){.hand-toolbar{grid-template-columns:minmax(0,1fr) 220px;gap:7px}.turn-dock{padding:9px}.turn-dock .phase-control h3{font-size:14px}.turn-dock .phase-control p{font-size:8px}.turn-dock .phase-control .primary{font-size:10px;min-width:130px}.hand-toolbar .hand-rule{display:none}.arena{height:330px;min-height:330px}.fighter{bottom:16px}.fighter .fighter-art,.fighter.p2 .fighter-art{height:135px;width:130px}.range-badge{top:4px}.range-badge>small{font-size:5px}.range-badge b{font-size:24px}.range-badge svg{width:16px}.rival-status{top:7px;font-size:8px;padding:5px 7px}.reveal-stage{top:48px;width:314px}.reveal-stage .game-card{width:150px;height:235px;min-height:235px;max-height:235px;grid-template-rows:36px 40px 22px minmax(0,1fr) 21px}.reveal-stage .game-card .card-head{height:36px;font-size:10px}.reveal-stage .game-card .card-art,.reveal-stage .game-card .card-art img{height:40px}.reveal-stage .game-card .card-text{font-size:10px}.reveal-stage .dense-card .card-text{font-size:9px}.hand .game-card{width:150px;flex-basis:150px;height:258px;min-height:258px;max-height:258px;margin:0 2px}.hand{min-height:305px;padding:33px 12px 12px;overflow-x:auto;justify-content:flex-start}.hand-and-loot{grid-template-columns:1fr}.hand-center{grid-row:1}.loot-area{grid-row:2}.pile-area{display:none}.hand .game-card.selected{transform:translateY(-17px)}.hand .game-card.selected:hover,.hand .game-card.selected:focus-visible{transform:translateY(-20px)}.hand .game-card:hover:not(:disabled),.hand .game-card:focus-visible{transform:translateY(-10px)}.hand .game-card .card-text{font-size:10px}.hand .dense-card .card-text{font-size:9px}.assignment{font-size:16px;top:-17px}.battle-callout{width:90%;font-size:9px}}
+@media(prefers-reduced-motion:reduce){.reveal-stage .game-card{animation:none}.hand .game-card.selected{outline:3px solid #ffe2a0;outline-offset:3px}}
