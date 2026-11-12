@@ -1,0 +1,16 @@
+Fable Fury: Brawl — Audio credits
+
+Music: The Final Battle — skrjablin
+https://opengameart.org/content/the-final-battle
+Source: https://opengameart.org/sites/default/files/the_final_battle.ogg
+License: CC0 1.0 / public domain
+
+Sound effects: Fantasy Sound Effects (Tinysized SFX) — Vehicle / Jan Schupke
+https://opengameart.org/content/fantasy-sound-effects-tinysized-sfx
+Source: https://opengameart.org/sites/default/files/tinysized.zip
+License: CC0 1.0 / public domain
+Selected WAV recordings excerpted, normalized, faded and encoded to 16-bit PCM for web playback; volume/rate varies in game.
+
+CC0: https://creativecommons.org/publicdomain/zero/1.0/
+Both packs permit commercial use without royalties. Credits are included voluntarily.
+Source pages and package notice verified 12 November 2026.

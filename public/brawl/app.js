@@ -1,4 +1,5 @@
 import {Brawl} from './engine.js';
+import {BattleAudio} from './battle-audio.js';
 import {OnlineGame,onlineSupported,invitation,savedSeat,createOnline,joinOnline,readOnline} from './online.js';
 
 const app=document.querySelector('#app'), dialog=document.querySelector('#dialog'), content=document.querySelector('#dialog-content');
@@ -7,10 +8,11 @@ const SHORT={SMA:'Smasherton',RAV:'Raven',ALF:'Alf',FRA:'Franc',HEL:'Helga',SHE:
 const GLYPHS={'Quick Jab':'⚔','Heavy Blow':'⚒','Lunge':'➜','Sweep':'↝','Shove':'⇥','Advance':'➜','Backstep':'↶','Guard':'◇','Throwing Stone':'◆','Counter':'↩','Feint':'⇄','Brace':'⬡','Smoke Bomb':'☁','Fury Flask':'♨','Teleport Scroll':'✧','Grappling Hook':'⚓','Crystal Ball':'◉'};
 const SAVE='fable-fury-brawl-v1';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let data, game=null, screen='setup', editPlayer=0, mode='solo', heroes=['SMA','RAV'], chosen=[[],[]], selections=[null,null], viewer=0, ready=false, showLog=false, sound=false, audio=null, winnerShown=false, lastLog=0, toastTimer;
+let data, game=null, screen='setup', editPlayer=0, mode='solo', heroes=['SMA','RAV'], chosen=[[],[]], selections=[null,null], viewer=0, ready=false, showLog=false, winnerShown=false, lastLog=0, toastTimer;
 const defaultStrategies=()=>[0,1].map(()=>({direction:'toward',steps:3,aim:'damage',trait:true,remedy:'block',coin:true}));
 let strategies=defaultStrategies();
-let targetSlot=null, previousBattle=null;
+let targetSlot=null, previousBattle=null,lastAudioLog=null,handWasOpen=false;
+const battleAudio=new BattleAudio();
 let canOnline=false,onlineLobby=null,lobbyTimer=null,onlineRound=0,networkConnected=true,onlineBusy=false;
 const symbol=(name)=>{const paths={speed:'M13 2 4 14h7l-1 8 10-13h-7z',damage:'m5 3 13 13m-3-13L4 14m-1 4 5-5m8 3 5 5',range:'M3 12h18M6 8l-4 4 4 4m12-8 4 4-4 4',shield:'M12 2 3 6v6c0 5 9 10 9 10s9-5 9-10V6z',coin:'M12 3a9 9 0 1 0 0 18 9 9 0 1 0 0-18M12 7v10m-3-8h5a2 2 0 0 1 0 4h-4a2 2 0 0 0 0 4h5',eye:'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12m10-3a3 3 0 1 0 0 6 3 3 0 1 0 0-6',spark:'m12 2 3 7 7 3-7 3-3 7-3-7-7-3 7-3z'};return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${(paths[name]||paths.spark).split('|').map(d=>`<path d="${d}"/>`).join('')}</svg>`;};
 const $=(sel,root=document)=>root.querySelector(sel);
@@ -20,18 +22,18 @@ const heroForCard=d=>data.heroes.find(h=>h.name===d.hero);
 const portrait=id=>`assets/${hero(id).slug}.webp`;
 
 function toast(message){$('#toast').textContent=message;$('#toast').classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('#toast').classList.remove('show'),3500);}
-function playTone(kind){
-  if(!sound)return;
-  try{audio ||= new AudioContext();audio.resume();const o=audio.createOscillator(),g=audio.createGain();o.connect(g);g.connect(audio.destination);
-    const t=audio.currentTime;const f={click:340,damage:90,move:230,fury:620,heal:520,victory:740,card:300,reveal:420,loot:570}[kind]||300;
-    o.type=kind==='damage'?'triangle':'sine';o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(kind==='damage'?45:f*1.5,t+.13);
-    g.gain.setValueAtTime(.045,t);g.gain.exponentialRampToValueAtTime(.001,t+.2);o.start(t);o.stop(t+.22);
-  }catch{sound=false;}
-}
+function playTone(kind){battleAudio.play(kind);}
+function audioSettings(){modal(`<h2>Battle audio</h2><p class="rules-copy">Epic music and combat effects. Audio pauses when this tab is hidden.</p><div class="audio-mixer"><label>Music <input type="range" min="0" max="100" value="${Math.round(battleAudio.musicVolume*100)}" data-audio-volume="music" aria-label="Music volume"><output>${Math.round(battleAudio.musicVolume*100)}%</output></label><label>Combat sounds <input type="range" min="0" max="100" value="${Math.round(battleAudio.effectsVolume*100)}" data-audio-volume="effects" aria-label="Combat sounds volume"><output>${Math.round(battleAudio.effectsVolume*100)}%</output></label></div><button class="primary" data-action="toggle-audio">${battleAudio.enabled?'Mute all audio':'Enable audio'}</button><p class="audio-credits">Music: “The Final Battle” — skrjablin.<br>Fantasy sound effects — Vehicle / Jan Schupke.<br>Both released under CC0 (public domain). <a href="AUDIO_CREDITS.txt" target="_blank" rel="noopener">Audio credits & licenses ↗</a></p>`);}
+function syncAudioButton(){const b=$('#sound-btn');b.textContent=battleAudio.enabled?'Sound on':'Sound off';b.setAttribute('aria-pressed',String(battleAudio.enabled));}
 function modal(html){content.innerHTML=html;if(!dialog.open)dialog.showModal();}
 $('.dialog-close').addEventListener('click',()=>dialog.close());
 dialog.addEventListener('click',e=>{if(e.target===dialog)dialog.close();});
-$('#sound-btn').addEventListener('click',()=>{sound=!sound;$('#sound-btn').textContent=sound?'Sound on':'Sound off';$('#sound-btn').setAttribute('aria-pressed',String(sound));playTone('click');});
+$('#sound-btn').addEventListener('click',()=>{battleAudio.setEnabled(!battleAudio.enabled);syncAudioButton();playTone('click');});
+$('#audio-settings-btn').addEventListener('click',audioSettings);
+syncAudioButton();
+document.addEventListener('pointerdown',()=>battleAudio.unlock(),{once:true});
+document.addEventListener('keydown',()=>battleAudio.unlock(),{once:true});
+document.addEventListener('input',e=>{const slider=e.target.closest('[data-audio-volume]');if(!slider)return;battleAudio.setVolume(slider.dataset.audioVolume,Number(slider.value)/100);slider.nextElementSibling.textContent=slider.value+'%';});
 $('#fullscreen-btn').addEventListener('click',()=>{if(document.fullscreenElement)document.exitFullscreen?.();else document.documentElement.requestFullscreen?.().catch(()=>toast('Fullscreen is unavailable in this browser.'));});
 $('.brand').addEventListener('click',e=>{e.preventDefault();if(!game||screen==='setup'){screen='setup';render();return;}modal(`<h2>Leave the Arena?</h2><p class="rules-copy" style="margin:18px 0">Your match is saved on this device. You can resume it from the Hero selection screen.</p><button class="primary" data-action="home">Choose Heroes</button>`);});
 $('#rules-btn').addEventListener('click',()=>rules('rules'));
@@ -154,7 +156,8 @@ function renderTable(){
   const hand=game.available(viewer),last=[...s.log].reverse().find(l=>!['coin','info'].includes(l.kind))||s.log.at(-1);
   const step=s.phase==='program'?0:s.phase==='shop'||s.phase==='over'?3:s.shown[1]?2:1;
   const privateChoice=s.prompt&&['replace','discard'].includes(s.prompt.kind);
-  app.innerHTML=`<section class="table battlefield phase-${s.phase} ${privateChoice?'has-private-choice':''}" style="--hero-accent:${COLORS[p.hero]}"><div class="battle-backdrop" aria-hidden="true"></div><div class="battle-vignette" aria-hidden="true"></div>
+  const handOpen=Boolean(privateChoice||s.phase==='program'&&!s.committed[viewer]),handEntering=handOpen&&!handWasOpen;handWasOpen=handOpen;
+  app.innerHTML=`<section class="table battlefield phase-${s.phase} ${privateChoice?'has-private-choice':''} ${handOpen?'hand-open':''} ${handEntering?'hand-entering':''}" style="--hero-accent:${COLORS[p.hero]}"><div class="battle-backdrop" aria-hidden="true"></div><div class="battle-vignette" aria-hidden="true"></div>
     <div class="hud">${hud(0)}<div class="round-title"><span class="eyebrow">BRIARWOOD RUINS</span><span class="display">ROUND ${s.round}</span><span class="edge">✦ ${SHORT[s.players[s.edge].hero]} holds Edge</span><ol class="phase-track" aria-label="Round progress">${['Plan','Reveal 1','Reveal 2','Loot'].map((label,k)=>`<li class="${step===k?'current':step>k?'complete':''}" ${step===k?'aria-current="step"':''}><span>${step>k?'✓':k+1}</span><small>${label}</small></li>`).join('')}</ol></div>${hud(1)}</div>
     <div class="arena" aria-label="Seven-space Arena"><div class="ambient" aria-hidden="true">${Array.from({length:12},(_,k)=>`<i style="--mote-x:${8+(k*23)%85}%;--mote-y:${10+(k*17)%70}%;--mote-delay:${k*.7}s"></i>`).join('')}</div>
       <div class="arena-location"><span>THE OLD DUELING GROUND</span><small>Win by reducing your rival to 0 HP</small></div>
@@ -166,13 +169,27 @@ function renderTable(){
       <div class="arena-lane">${[1,2,3,4,5,6,7].map(n=>`<button class="space ${s.players.some(p=>p.pos===n)?'occupied':''} ${s.prompt?.kind==='space'&&s.prompt.choices.includes(n)?'target':''}" data-space="${n}" ${s.prompt?.kind!=='space'||!s.prompt.choices.includes(n)?'disabled':''} aria-label="Arena space ${n}"><span>${n}</span>${[1,7].includes(n)?'<small>WALL</small>':''}</button>`).join('')}</div><div class="arena-front" aria-hidden="true"></div></div>
     ${reactionHTML()}
     <section class="hand-zone"><div class="hand-toolbar"><div class="zone-header"><span class="hand-rule"></span><div><h3>${s.mode==='hotseat'?esc(SHORT[p.hero])+'’s':'Your'} hand <span>${hand.length}</span></h3><p>${privateChoice?'Choose a card below to '+(s.prompt.kind==='replace'?'replace Action 2.':'discard.') :s.phase==='program'?'Click two cards in order. Click again to put one back.':'Your remaining cards are safe until the next round.'}</p></div><span class="hand-rule"></span></div><div class="turn-dock">${phaseControl()}</div></div>
-    ${publicPhase?'<div class="public-note">'+symbol('eye')+' Both players can watch. Private hands and Loot are concealed.</div>':`<div class="hand-and-loot"><aside class="loot-area"><h3>${symbol('spark')} Secret Loot <span>${p.loot.length}/2</span></h3><div class="loot-hand">${p.loot.map(id=>cardHTML(def(id),{uid:id,loot:true})).join('')||'<div class="loot-empty"><span class="empty-loot-seal">✦</span><b>A trick up your sleeve.</b><span>Buy secret Loot for <strong>4 Coins</strong><br>after both actions resolve.</span></div>'}</div></aside><div class="hand-center"><div class="hand" aria-label="Choose cards from your hand">${hand.map((c,k)=>cardHTML(def(c.id),{uid:c.uid,selected:selections.includes(c.uid),fanIndex:k,fanTotal:hand.length,selectionNumber:selections.includes(c.uid)?selections.indexOf(c.uid)+1:null})).join('')||'<p class="muted small">Your programmed cards are on the table.</p>'}</div>${s.phase==='program'?optionsHTML():''}</div><aside class="pile-area"><div class="draw-pile" aria-label="Combat deck: ${p.deck.length} cards"><div class="pile-back"><span>FABLE FURY</span><b>✦</b><strong>BRAWL</strong></div><span class="pile-count">${p.deck.length}</span></div><span class="pile-label">DRAW PILE</span><button class="discard-pile" data-action="view-discard">${p.discard.length}<span>Discard pile</span></button></aside></div>`}</section>
+    ${publicPhase?'<div class="public-note">'+symbol('eye')+' Both players can watch. Private hands and Loot are concealed.</div>':`<div class="hand-and-loot"><aside class="loot-area"><h3>${symbol('spark')} Secret Loot <span>${p.loot.length}/2</span></h3><div class="loot-hand">${p.loot.map(id=>cardHTML(def(id),{uid:id,loot:true})).join('')||'<div class="loot-empty"><span class="empty-loot-seal">✦</span><b>A trick up your sleeve.</b><span>Buy secret Loot for <strong>4 Coins</strong><br>after both actions resolve.</span></div>'}</div></aside><div class="hand-center"><div class="tray-caption"><b>${privateChoice?'CHOOSE A CARD':'CHOOSE TWO ACTIONS'}</b><span>${privateChoice?'Select a card from your hand':'Click in order · Click again to return a card'}</span></div><div class="hand" aria-label="Choose cards from your hand">${hand.map((c,k)=>cardHTML(def(c.id),{uid:c.uid,selected:selections.includes(c.uid),fanIndex:k,fanTotal:hand.length,selectionNumber:selections.includes(c.uid)?selections.indexOf(c.uid)+1:null})).join('')||'<p class="muted small">Your programmed cards are on the table.</p>'}</div>${s.phase==='program'?optionsHTML():''}</div><aside class="pile-area"><div class="draw-pile" aria-label="Combat deck: ${p.deck.length} cards"><div class="pile-back"><span>FABLE FURY</span><b>✦</b><strong>BRAWL</strong></div><span class="pile-count">${p.deck.length}</span></div><span class="pile-label">DRAW PILE</span><button class="discard-pile" data-action="view-discard">${p.discard.length}<span>Discard pile</span></button></aside></div>`}</section>
     <footer class="table-footer"><button data-action="toggle-log">${showLog?'Hide':'Show'} battle log</button><button data-action="rules">Rules & card library</button><span class="save-indicator ${s.mode==='online'?'online-connection':''}"><i></i> ${s.mode==='online'?(networkConnected?'Room connected':'Reconnecting…'):'Match saved'}</span><span class="table-tip">${symbol('speed')} Higher Speed acts first · Edge wins ties</span><button class="right-link" data-action="new-match">New match</button></footer>${showLog?`<section class="battle-log" aria-label="Battle log">${s.log.slice(-45).map(l=>`<p class="${l.kind}"><span class="log-round">R${l.round}</span>${esc(l.message)}</p>`).join('')}</section>`:''}</section>`;
+  audioFeedback(previousBattle);
   battleFeedback(previousBattle);
   previousBattle=s.players.map(p=>({pos:p.pos,hp:p.hp}));
-  if(s.log.length>lastLog){const entries=s.log.slice(lastLog);const effect=entries.findLast(e=>['damage','fury','heal','card','move'].includes(e.kind));if(effect)playTone(effect.kind);lastLog=s.log.length;}
+  lastLog=s.log.length;
   if(showLog){const log=$('.battle-log');if(log)log.scrollTop=log.scrollHeight;}
   if(s.phase==='over'&&!winnerShown){winnerShown=true;results();}
+}
+function audioFeedback(previous){
+ const logs=game.s.log,marker=logs.at(-1),key=x=>JSON.stringify(x);
+ const index=lastAudioLog?logs.findLastIndex(l=>key(l)===lastAudioLog):-1;
+ const recent=lastAudioLog?logs.slice(index+1):[];lastAudioLog=key(marker);
+ if(!previous)return;
+ const damage=game.s.players.some((p,i)=>p.hp<previous[i].hp),moved=game.s.players.some((p,i)=>p.pos!==previous[i].pos);
+ if(recent.some(l=>l.kind==='reveal'))playTone('reveal');
+ if(recent.some(l=>l.kind==='card'))playTone('card');
+ if(damage){playTone('damage');if(game.s.players.some((p,i)=>previous[i].hp-p.hp>=3))playTone('heavy');}
+ else if(recent.some(l=>['block','dodge'].includes(l.kind)))playTone('block');
+ if(moved)playTone('move');
+ for(const kind of ['fury','heal','loot'])if(recent.some(l=>l.kind===kind))playTone(kind);
 }
 function battleFeedback(previous){
   if(!previous||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
@@ -186,7 +203,7 @@ function battleFeedback(previous){
   const recent=game.s.log.slice(lastLog),attack=recent.findLast(l=>l.kind==='card');
   if(attack?.player!==null&&attack?.player!==undefined)$(`.fighter.p${attack.player+1}`)?.classList.add('attack');
 }
-function render(){if(!data)return;if(screen==='setup')renderSetup();else if(screen==='lobby')renderLobby();else renderTable();}
+function render(){if(!data)return;if(screen!=='game')handWasOpen=false;battleAudio.setBattle(screen==='game');if(screen==='setup')renderSetup();else if(screen==='lobby')renderLobby();else renderTable();}
 function persist(){if(game.s.mode==='online')return;try{localStorage.setItem(SAVE,JSON.stringify(game.s));}catch{toast('Browser storage is unavailable; keep this tab open to retain your match.');}}
 function update(){if(game.s.mode==='online'&&game.s.round!==onlineRound){onlineRound=game.s.round;selections=[null,null];targetSlot=null;}persist();render();}
 function start(){
@@ -235,6 +252,7 @@ document.addEventListener('click',async e=>{
     }
     const btn=e.target.closest('[data-action]');if(!btn||btn.disabled)return;
     switch(btn.dataset.action){
+      case 'toggle-audio':battleAudio.setEnabled(!battleAudio.enabled);syncAudioButton();audioSettings();break;
       case 'start':if(mode==='online')await startOnline();else{game?.close?.();start();}break;
       case 'starters':chosen[editPlayer]=data.cards.filter(c=>c.hero===hero(heroes[editPlayer]).name&&c.category==='Hero'&&c.starter).map(c=>c.id);render();break;
       case 'resume':{

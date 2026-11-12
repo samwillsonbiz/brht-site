@@ -104,3 +104,45 @@ svg{width:16px;height:16px;flex-shrink:0;vertical-align:middle}
 .phase-resolve:not(.has-private-choice) .hand-zone{margin-top:12px}
 @media(max-height:820px) and (min-width:1000px){.phase-program .arena{height:185px;min-height:185px}.hand .game-card{height:218px;min-height:218px;max-height:218px;grid-template-rows:36px 38px 22px minmax(0,1fr) 21px}.hand .game-card .card-head{height:36px;font-size:10px}.hand .game-card .card-art,.hand .game-card .card-art img{height:38px}.hand .game-card .card-text{font-size:10px;line-height:1.3}.hand .dense-card .card-text{font-size:9.5px}.hand{min-height:260px;padding-top:28px}.turn-dock .phase-control>p{display:none}.turn-dock .phase-control h3{font-size:16px}.hand-toolbar{min-height:76px}}
 .phase-resolve .arena{height:400px;min-height:400px}
+
+/* One persistent battlefield; the hand is a temporary bottom drawer. */
+.table.battlefield{height:calc(100svh - 66px);min-height:600px;padding-top:12px;padding-bottom:0}
+.table.battlefield .hud{flex:none}
+.table.battlefield .arena{flex:1;height:auto;min-height:0;margin-bottom:90px}
+.battle-backdrop{height:100%;background-position:center 48%}
+.hand-zone{position:absolute;bottom:40px;left:0;right:0;width:100%;max-width:none;padding:0 3.5%;margin:0!important;z-index:8}
+.hand-toolbar{display:contents}.hand-toolbar .zone-header{display:none}
+.hand-zone .turn-dock{position:absolute;right:2%;bottom:8px;grid-column:auto;width:max-content;max-width:245px;padding:9px 11px;border-radius:8px;z-index:45}
+.turn-dock .phase-control{gap:6px;align-items:stretch;min-height:0}
+.turn-dock .phase-control h3{font-size:17px;line-height:1.1;white-space:nowrap;max-width:none}
+.turn-dock .phase-control p{display:none}
+.turn-dock .phase-control .primary{width:auto;min-width:0;font-size:11px;padding:9px 11px;align-self:stretch}
+.turn-dock .phase-control .primary span{margin-left:12px}
+.turn-dock .control-step{font-size:6px;letter-spacing:1.3px}
+.turn-dock .control-buttons{justify-content:flex-end;gap:7px}
+.hand-zone .hand-and-loot{display:none!important}
+.hand-open .hand-zone .hand-and-loot{display:grid!important;grid-template-columns:110px minmax(0,1fr) 85px;max-width:1200px;margin:0 auto;padding:10px 100px 0 0;gap:15px;align-items:end;isolation:isolate;animation:hand-drawer-in .28s cubic-bezier(.16,.8,.3,1)}
+.hand-open .hand-zone:before{content:'';position:absolute;inset:-35px 0 -10px;background:linear-gradient(0deg,#07151df7 15%,#07151dde 55%,transparent);pointer-events:none;z-index:-1}
+.tray-caption{text-align:center;display:flex;flex-direction:column;gap:4px;padding-top:5px;text-shadow:0 1px 3px #000}
+.tray-caption b{font-size:9px;letter-spacing:2px;color:#edcf91}.tray-caption span{font-size:8px;color:#c5cfcb}
+.hand-open .hand{padding-top:29px;min-height:259px;padding-bottom:0}
+.hand-open .game-card{height:218px;min-height:218px;max-height:218px;grid-template-rows:36px 38px 22px minmax(0,1fr) 21px}
+.hand-open .hand .game-card .card-head{height:36px;font-size:10px}.hand-open .hand .game-card .card-art,.hand-open .hand .game-card .card-art img{height:38px}.hand-open .hand .game-card .card-text{font-size:10px;line-height:1.3}.hand-open .hand .dense-card .card-text{font-size:9.5px}
+.hand-open .options-row{margin:0 auto;padding:6px 9px;max-height:170px;overflow-y:auto;background:#0b1b26e8}
+.hand-open .loot-area,.hand-open .pile-area{align-self:center}
+.table-footer{position:absolute;left:3.5%;right:3.5%;bottom:0;margin:0;padding:5px 0;min-height:34px;z-index:9}
+.table-footer .table-tip{display:none}
+.battle-log{position:absolute;left:3.5%;right:3.5%;bottom:45px;max-height:200px;z-index:50;background:#0b1828fa}
+.reaction{position:absolute;right:2%;bottom:145px;max-width:410px;max-height:calc(100% - 180px);overflow-y:auto;z-index:40;margin:0;background:#122330f5;box-shadow:0 8px 30px #0008}
+.reaction .peek-cards{flex-wrap:wrap}.public-note{display:none}
+.audio-mixer{display:flex;flex-direction:column;gap:22px;margin:28px 0}
+.audio-mixer label{display:grid;grid-template-columns:120px 1fr 45px;align-items:center;gap:15px;font-size:14px}.audio-mixer input{width:100%;accent-color:#e2bd74}.audio-mixer output{text-align:right;color:#edce96;font-size:12px}
+.audio-credits{font-size:11px;color:#9eafb8;line-height:1.7;margin-top:28px}.audio-credits a{color:#dfc185}
+@keyframes hand-drawer-in{from{opacity:0;transform:translateY(65px)}to{opacity:1;transform:translateY(0)}}
+@media(min-width:1600px){.table.battlefield .arena{margin-bottom:100px}.hand-open .hand-zone .hand-and-loot{max-width:1400px;padding-right:120px}.hand-open .hand .game-card{width:178px;flex-basis:178px;height:245px;min-height:245px;max-height:245px;grid-template-rows:40px 52px 23px minmax(0,1fr) 21px}.hand-open .hand .game-card .card-head{height:40px;font-size:11px}.hand-open .hand .game-card .card-art,.hand-open .hand .game-card .card-art img{height:52px}.hand-open .hand{min-height:286px}.hand-zone .turn-dock{right:2%;max-width:260px}}
+@media(max-width:1000px){.hand-open .hand-zone .hand-and-loot{grid-template-columns:70px minmax(0,1fr);padding-right:150px;gap:6px}.hand-open .pile-area{display:none}.hand-open .hand .game-card{width:150px;flex-basis:150px;margin:0 -14px}.hand-zone .turn-dock{max-width:210px}.turn-dock .phase-control h3{font-size:15px}.turn-dock .phase-control .primary{font-size:10px}}
+@media(max-width:700px){.table.battlefield{height:calc(100svh - 60px);min-height:620px}.table.battlefield .arena{margin-bottom:85px}.hand-zone{bottom:40px;padding:0 2%}.hand-zone .turn-dock{right:2%;max-width:200px;bottom:4px;padding:8px 10px}.turn-dock .phase-control h3{font-size:14px}.hand-open .hand-zone .hand-and-loot{grid-template-columns:1fr;padding:0 0 85px;gap:0}.hand-open .loot-area{display:none!important}.hand-open .hand-center{grid-row:1}.hand-open .hand{justify-content:flex-start;min-height:252px;padding:25px 15px 4px;overflow-x:auto}.hand-open .hand .game-card{width:150px;flex-basis:150px;margin:0 3px}.hand-open .options-row{margin:0 10px;max-height:95px}.table-footer{left:2%;right:2%;gap:4px}.table-footer button{font-size:7px;padding:4px}.reaction{bottom:140px;left:3%;right:3%;max-width:none;max-height:280px}.audio-mixer label{grid-template-columns:90px 1fr 38px;gap:9px;font-size:12px}.topbar nav button{padding:5px;font-size:9px}.topbar{gap:8px}.edition{display:none}}
+@media(prefers-reduced-motion:reduce){.hand-open .hand-zone .hand-and-loot{animation:none}}
+.hand-open .hand-zone .hand-and-loot{animation:none}
+.hand-entering .hand-zone .hand-and-loot{animation:hand-drawer-in .28s cubic-bezier(.16,.8,.3,1)}
+@media(prefers-reduced-motion:reduce){.hand-entering .hand-zone .hand-and-loot{animation:none}}
