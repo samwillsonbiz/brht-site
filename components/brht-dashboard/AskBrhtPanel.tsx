@@ -1,11 +1,13 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowUp,
   BarChart3,
   Bot,
   Loader2,
+  LockKeyhole,
+  LogOut,
   MessageSquareText,
   Sparkles,
   X,
@@ -242,12 +244,70 @@ export function AskBrhtPanel({
   const [draft, setDraft] = useState("");
   const [status, setStatus] = useState<"idle" | "sending">("idle");
   const [error, setError] = useState<string | null>(null);
+  const [authStatus, setAuthStatus] = useState<"checking" | "authenticated" | "unauthenticated">("checking");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [authError, setAuthError] = useState<string | null>(null);
+  const [authBusy, setAuthBusy] = useState(false);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const contextLabel = useMemo(
     () => `${start} → ${end} · ${currency}`,
     [start, end, currency],
   );
+
+  useEffect(() => {
+    if (!open) return;
+    let active = true;
+    setAuthStatus("checking");
+    fetch("/api/brht/internal-auth", { cache: "no-store" })
+      .then((response) => response.json())
+      .then((payload: { authenticated?: boolean }) => {
+        if (!active) return;
+        setAuthStatus(payload.authenticated ? "authenticated" : "unauthenticated");
+      })
+      .catch(() => {
+        if (!active) return;
+        setAuthStatus("unauthenticated");
+      });
+    return () => {
+      active = false;
+    };
+  }, [open]);
+
+  async function login() {
+    if (!username.trim() || !password || authBusy) return;
+    setAuthBusy(true);
+    setAuthError(null);
+    try {
+      const response = await fetch("/api/brht/internal-auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: username.trim(), password }),
+      });
+      const payload = (await response.json()) as { authenticated?: boolean; error?: string };
+      if (!response.ok || !payload.authenticated) {
+        throw new Error(payload.error || "Internal login failed.");
+      }
+      setPassword("");
+      setAuthStatus("authenticated");
+      requestAnimationFrame(() => inputRef.current?.focus());
+    } catch (caught) {
+      setAuthError(caught instanceof Error ? caught.message : "Internal login failed.");
+    } finally {
+      setAuthBusy(false);
+    }
+  }
+
+  async function logout() {
+    await fetch("/api/brht/internal-auth", { method: "DELETE" }).catch(() => undefined);
+    setMessages([]);
+    setDraft("");
+    setError(null);
+    setUsername("");
+    setPassword("");
+    setAuthStatus("unauthenticated");
+  }
 
   async function ask(text: string) {
     const question = text.trim();
@@ -310,8 +370,8 @@ export function AskBrhtPanel({
         onClick={() => setOpen(true)}
         className="fixed bottom-5 right-5 z-40 inline-flex items-center gap-2 rounded-full bg-[#1d1d1f] px-5 py-3 text-sm font-semibold text-white shadow-[0_16px_50px_rgba(0,0,0,.22)] transition hover:bg-black"
       >
-        <Sparkles className="h-4 w-4 text-[#6fd3ff]" />
-        Ask BRHT
+        <LockKeyhole className="h-4 w-4 text-[#6fd3ff]" />
+        Internal · Ask BRHT
       </button>
 
       {open ? (
@@ -324,18 +384,92 @@ export function AskBrhtPanel({
                 </span>
                 <div>
                   <div className="text-sm font-semibold text-[#1d1d1f]">BRHT Analyst</div>
-                  <div className="mt-0.5 text-[11px] text-[#86868b]">{contextLabel}</div>
+                  <div className="mt-0.5 text-[11px] text-[#86868b]">
+                    {authStatus === "authenticated" ? contextLabel : "Internal access only"}
+                  </div>
                 </div>
               </div>
-              <button
+              <div className="flex items-center gap-2">
+                {authStatus === "authenticated" ? (
+                  <button
+                    onClick={logout}
+                    className="grid h-9 w-9 place-items-center rounded-full bg-[#f2f2f7] text-[#6e6e73] transition hover:bg-[#e5e5ea] hover:text-[#1d1d1f]"
+                    aria-label="Sign out of BRHT Analyst"
+                    title="Sign out"
+                  >
+                    <LogOut className="h-4 w-4" />
+                  </button>
+                ) : null}
+                <button
                 onClick={() => setOpen(false)}
                 className="grid h-9 w-9 place-items-center rounded-full bg-[#f2f2f7] text-[#6e6e73] transition hover:bg-[#e5e5ea] hover:text-[#1d1d1f]"
                 aria-label="Close BRHT Analyst"
               >
-                <X className="h-4 w-4" />
-              </button>
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
             </div>
 
+            {authStatus === "checking" ? (
+              <div className="grid flex-1 place-items-center px-6 text-center">
+                <div>
+                  <Loader2 className="mx-auto h-5 w-5 animate-spin text-[#0071e3]" />
+                  <div className="mt-3 text-sm font-semibold text-[#1d1d1f]">Checking internal access…</div>
+                </div>
+              </div>
+            ) : authStatus === "unauthenticated" ? (
+              <div className="flex flex-1 items-center justify-center overflow-y-auto px-4 py-8">
+                <div className="w-full max-w-sm rounded-[24px] border border-black/[0.07] bg-white p-6 shadow-[0_18px_60px_rgba(0,0,0,.06)]">
+                  <span className="grid h-12 w-12 place-items-center rounded-2xl bg-[#1d1d1f] text-white">
+                    <LockKeyhole className="h-5 w-5" />
+                  </span>
+                  <h3 className="mt-5 text-xl font-semibold tracking-[-0.03em] text-[#1d1d1f]">
+                    Internal BRHT access
+                  </h3>
+                  <p className="mt-2 text-sm leading-6 text-[#6e6e73]">
+                    The operating dashboard is public. The AI analyst and its business conversations are restricted to the internal team.
+                  </p>
+                  <div className="mt-5 space-y-3">
+                    <input
+                      type="text"
+                      value={username}
+                      onChange={(event) => setUsername(event.target.value)}
+                      placeholder="Internal username"
+                      autoComplete="username"
+                      className="h-11 w-full rounded-xl border border-black/[0.09] bg-[#f9f9fb] px-3 text-sm outline-none focus:border-[#0071e3]/50"
+                    />
+                    <input
+                      type="password"
+                      value={password}
+                      onChange={(event) => setPassword(event.target.value)}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter") login();
+                      }}
+                      placeholder="Password"
+                      autoComplete="current-password"
+                      className="h-11 w-full rounded-xl border border-black/[0.09] bg-[#f9f9fb] px-3 text-sm outline-none focus:border-[#0071e3]/50"
+                    />
+                    {authError ? (
+                      <div className="rounded-xl border border-[#f0c36a] bg-[#fffaf0] px-3 py-2 text-xs text-[#7a4a00]">
+                        {authError}
+                      </div>
+                    ) : null}
+                    <button
+                      onClick={login}
+                      disabled={!username.trim() || !password || authBusy}
+                      className="inline-flex h-11 w-full items-center justify-center rounded-xl bg-[#1d1d1f] text-sm font-semibold text-white transition hover:bg-black disabled:cursor-not-allowed disabled:opacity-35"
+                    >
+                      {authBusy ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                      Unlock Ask BRHT
+                    </button>
+                  </div>
+                  <div className="mt-4 text-[11px] leading-5 text-[#86868b]">
+                    Sign in with ChatGPT can replace this login once BRHT is accepted as a participating commercial integration.
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <>
             <div className="flex-1 overflow-y-auto px-4 py-5">
               {messages.length === 0 ? (
                 <div>
@@ -443,6 +577,8 @@ export function AskBrhtPanel({
                 </div>
               </div>
             </div>
+              </>
+            )}
           </div>
         </div>
       ) : null}
