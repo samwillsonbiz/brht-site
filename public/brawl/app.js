@@ -154,7 +154,7 @@ function renderTable(){
   const hand=game.available(viewer),last=[...s.log].reverse().find(l=>!['coin','info'].includes(l.kind))||s.log.at(-1);
   const step=s.phase==='program'?0:s.phase==='shop'||s.phase==='over'?3:s.shown[1]?2:1;
   const privateChoice=s.prompt&&['replace','discard'].includes(s.prompt.kind);
-  app.innerHTML=`<section class="table battlefield" style="--hero-accent:${COLORS[p.hero]}"><div class="battle-backdrop" aria-hidden="true"></div><div class="battle-vignette" aria-hidden="true"></div>
+  app.innerHTML=`<section class="table battlefield phase-${s.phase} ${privateChoice?'has-private-choice':''}" style="--hero-accent:${COLORS[p.hero]}"><div class="battle-backdrop" aria-hidden="true"></div><div class="battle-vignette" aria-hidden="true"></div>
     <div class="hud">${hud(0)}<div class="round-title"><span class="eyebrow">BRIARWOOD RUINS</span><span class="display">ROUND ${s.round}</span><span class="edge">✦ ${SHORT[s.players[s.edge].hero]} holds Edge</span><ol class="phase-track" aria-label="Round progress">${['Plan','Reveal 1','Reveal 2','Loot'].map((label,k)=>`<li class="${step===k?'current':step>k?'complete':''}" ${step===k?'aria-current="step"':''}><span>${step>k?'✓':k+1}</span><small>${label}</small></li>`).join('')}</ol></div>${hud(1)}</div>
     <div class="arena" aria-label="Seven-space Arena"><div class="ambient" aria-hidden="true">${Array.from({length:12},(_,k)=>`<i style="--mote-x:${8+(k*23)%85}%;--mote-y:${10+(k*17)%70}%;--mote-delay:${k*.7}s"></i>`).join('')}</div>
       <div class="arena-location"><span>THE OLD DUELING GROUND</span><small>Win by reducing your rival to 0 HP</small></div>
