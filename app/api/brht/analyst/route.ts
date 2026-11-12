@@ -102,10 +102,10 @@ function compactDashboard(data: Awaited<ReturnType<typeof getOrganizationDashboa
       unitsSold: point.unitsSold,
     })),
     sourceHealth: data.dataHealth.map((source) => ({
-      source: source.displayName,
+      source: source.source,
       sourceKey: source.sourceKey,
       status: source.status,
-      lastSyncedAt: source.lastSyncedAt,
+      lastSyncedAt: source.lastFinishedAt,
     })),
   };
 }
