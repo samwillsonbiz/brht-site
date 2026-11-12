@@ -192,7 +192,38 @@ My question: `;
 
   async function openChatGPT() {
     await navigator.clipboard.writeText(dashboardContextPrompt);
-    window.open("https://chatgpt.com/", "_blank", "noopener,noreferrer");
+
+    const width = 560;
+    const height = Math.min(840, Math.max(680, window.screen.availHeight - 80));
+    const left = Math.max(
+      0,
+      window.screenX + window.outerWidth - width - 24,
+    );
+    const top = Math.max(
+      0,
+      window.screenY + Math.round((window.outerHeight - height) / 2),
+    );
+
+    const features = [
+      `popup=yes`,
+      `width=${width}`,
+      `height=${height}`,
+      `left=${left}`,
+      `top=${top}`,
+      `resizable=yes`,
+      `scrollbars=yes`,
+      `noopener=yes`,
+      `noreferrer=yes`,
+    ].join(",");
+
+    const popup = window.open("https://chatgpt.com/", "brht-chatgpt", features);
+
+    if (!popup) {
+      window.open("https://chatgpt.com/", "_blank", "noopener,noreferrer");
+      return;
+    }
+
+    popup.focus();
   }
 
   return (
@@ -314,7 +345,7 @@ My question: `;
                         Ask about what you’re seeing
                       </h3>
                       <p className="mt-2 text-sm leading-6 text-[#6e6e73]">
-                        I’ll copy the current Fable Fury dashboard context to your clipboard and open a new ChatGPT chat. Paste it, add your question, and use BRHT together with Gmail, Drive or your other connected apps when needed.
+                        I’ll copy the current Fable Fury dashboard context to your clipboard and open ChatGPT in a compact sidecar window beside the dashboard. Paste it, add your question, and use BRHT together with Gmail, Drive or your other connected apps when needed.
                       </p>
                     </div>
                   </div>
@@ -343,7 +374,7 @@ My question: `;
                   </button>
 
                   <div className="mt-3 text-center text-[11px] leading-5 text-[#86868b]">
-                    Current dashboard context is copied automatically.
+                    Current dashboard context is copied automatically. If your browser blocks popups, ChatGPT will fall back to a normal new tab.
                   </div>
                 </div>
 
