@@ -17,7 +17,6 @@ type McpSetup = {
   name: string;
   endpoint: string;
   authentication: string;
-  token: string;
   readOnly: boolean;
   setupSteps: string[];
 };
@@ -170,9 +169,9 @@ export function AskBrhtPanel({
 
 Name: ${setup.name}
 Server URL: ${setup.endpoint}
-Authentication: Bearer token
+Authentication: OAuth
 
-After connecting it, use BRHT for structured Fable Fury operating data and combine it with my other connected apps such as Gmail and Google Drive when a question requires supplier emails, quotes, invoices, POs, project context, or documents. Never guess missing business facts.`
+When ChatGPT opens the BRHT authorization page, I will sign in with my existing internal BRHT credentials. After connecting it, use BRHT for structured Fable Fury operating data and combine it with my other connected apps such as Gmail and Google Drive when a question requires supplier emails, quotes, invoices, POs, project context, or documents. Never guess missing business facts.`
     : "";
 
   return (
@@ -287,7 +286,7 @@ After connecting it, use BRHT for structured Fable Fury operating data and combi
                     BRHT MCP is read-only and private
                   </div>
                   <p className="mt-2 text-sm leading-6 text-[#49705b]">
-                    ChatGPT can now use BRHT as the structured Fable Fury data layer, while Gmail, Drive and other apps provide supplier, document and communication context.
+                    BRHT exposes a private read-only MCP connection for ChatGPT. Once connected, ChatGPT can combine BRHT operating data with Gmail, Drive and your other connected apps in the same conversation.
                   </p>
                 </div>
 
@@ -317,14 +316,11 @@ After connecting it, use BRHT for structured Fable Fury operating data and combi
                         </div>
                       </div>
 
-                      <div className="mt-5">
-                        <div className="text-xs font-semibold text-[#6e6e73]">Bearer token</div>
-                        <code className="mt-2 block overflow-hidden text-ellipsis rounded-xl bg-[#f5f5f7] px-3 py-2.5 text-xs text-[#1d1d1f]">
-                          ••••••••••••••••••••••••••••••••
-                        </code>
-                        <div className="mt-2">
-                          <CopyButton value={setup.token} label="Copy private token" />
-                        </div>
+                      <div className="mt-5 rounded-2xl bg-[#f5f5f7] p-4">
+                        <div className="text-xs font-semibold text-[#1d1d1f]">Authentication: OAuth</div>
+                        <p className="mt-1.5 text-xs leading-5 text-[#6e6e73]">
+                          ChatGPT will open BRHT’s authorization page. Sign in there with your internal BRHT credentials; no API token needs to be copied or stored in ChatGPT manually.
+                        </p>
                       </div>
 
                       <div className="mt-5 flex flex-wrap gap-2">
@@ -373,7 +369,7 @@ After connecting it, use BRHT for structured Fable Fury operating data and combi
                     </div>
 
                     <p className="mt-4 px-1 text-[11px] leading-5 text-[#86868b]">
-                      BRHT exposes read-only structured operating data. It does not give ChatGPT access to your email or Drive; those remain separate ChatGPT connections and are only used when you select them for a prompt.
+                      BRHT exposes read-only structured operating data. Gmail, Drive and other apps remain separate ChatGPT connections. Select BRHT together with the relevant apps when you want ChatGPT to reason across both structured metrics and operating context.
                     </p>
                   </>
                 )}
