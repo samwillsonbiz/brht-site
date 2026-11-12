@@ -787,6 +787,25 @@ function buildDashboard(
   };
 }
 
+function isTransientDashboardError(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error ?? "");
+  return /statement timeout|ETIMEDOUT|ECONNRESET|fetch failed|network|57014/i.test(message);
+}
+
+async function withTransientRetry<T>(work: () => Promise<T>): Promise<T> {
+  let lastError: unknown;
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    try {
+      return await work();
+    } catch (error) {
+      lastError = error;
+      if (!isTransientDashboardError(error) || attempt === 2) throw error;
+      await new Promise((resolve) => setTimeout(resolve, 150 * (attempt + 1)));
+    }
+  }
+  throw lastError;
+}
+
 async function loadOrganizationDashboardData(
   organizationSlug: string,
   range: DashboardRange,
@@ -802,12 +821,12 @@ async function loadOrganizationDashboardData(
   }
 
   try {
-    const organizations = (await selectRows("brht_organizations", {
+    const organizations = (await withTransientRetry(() => selectRows("brht_organizations", {
       select: "id,slug,name,timezone,currency,status",
       slug: `eq.${organizationSlug}`,
       status: "neq.archived",
       limit: "1",
-    })) as OrganizationRow[];
+    }))) as OrganizationRow[];
     const organization = organizations[0];
     if (!organization) {
       return emptyDashboardData(organizationSlug, range, {
@@ -818,13 +837,15 @@ async function loadOrganizationDashboardData(
     }
 
     const period = periodFor(range, organization.timezone || "UTC", customStart, customEnd);
-    const bundle = await rpc<DashboardBundle | null>("brht_dashboard_bundle", {
-      p_organization_slug: organizationSlug,
-      p_start_date: period.start,
-      p_end_date: period.end,
-      p_previous_start_date: period.previousStart,
-      p_previous_end_date: period.previousEnd,
-    });
+    const bundle = await withTransientRetry(() =>
+      rpc<DashboardBundle | null>("brht_dashboard_bundle", {
+        p_organization_slug: organizationSlug,
+        p_start_date: period.start,
+        p_end_date: period.end,
+        p_previous_start_date: period.previousStart,
+        p_previous_end_date: period.previousEnd,
+      }),
+    );
 
     if (!bundle) {
       return emptyDashboardData(organizationSlug, range, {
@@ -834,32 +855,25 @@ async function loadOrganizationDashboardData(
       });
     }
 
-    const kickstarterMetrics = (await selectRows("brht_metric_daily", {
+    const kickstarterMetrics = (await withTransientRetry(() => selectRows("brht_metric_daily", {
       select: "metric_date,source_key,metric_key,dimension_key,dimensions,value,unit,source_updated_at,updated_at",
       organization_id: `eq.${organization.id}`,
       source_key: "eq.kickstarter",
       order: "metric_date.asc",
       limit: "5000",
-    })) as RawMetric[];
+    }))) as RawMetric[];
     bundle.kickstarterMetrics = kickstarterMetrics;
 
     return buildDashboard(organization, bundle, range, period);
   } catch (error) {
     console.error("BRHT Supabase dashboard load failed", error);
-    return emptyDashboardData(organizationSlug, range, {
-      source: "supabase",
-      connection: "unreachable",
-      error:
-        error instanceof Error
-          ? error.message
-          : "The BRHT data platform could not be reached.",
-    });
+    throw error;
   }
 }
 
 const cachedOrganizationDashboardData = unstable_cache(
   loadOrganizationDashboardData,
-  ["brht-dashboard-data-v4"],
+  ["brht-dashboard-data-v5"],
   { revalidate: 60 },
 );
 
@@ -869,12 +883,24 @@ export async function getOrganizationDashboardData(
   customStart?: string | null,
   customEnd?: string | null,
 ): Promise<DashboardData> {
-  return cachedOrganizationDashboardData(
-    organizationSlug,
-    range,
-    customStart ?? null,
-    customEnd ?? null,
-  );
+  try {
+    return await cachedOrganizationDashboardData(
+      organizationSlug,
+      range,
+      customStart ?? null,
+      customEnd ?? null,
+    );
+  } catch (error) {
+    console.error("BRHT dashboard request failed after retries", error);
+    return emptyDashboardData(organizationSlug, range, {
+      source: "supabase",
+      connection: "unreachable",
+      error:
+        error instanceof Error
+          ? error.message
+          : "The BRHT data platform could not be reached.",
+    });
+  }
 }
 
 export async function getFableFuryDashboardData(
