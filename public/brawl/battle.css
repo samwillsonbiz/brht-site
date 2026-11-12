@@ -230,3 +230,8 @@ body.arena-paused .scene-layer *,body.arena-paused .scene-layer *:before,body.ar
 @media(max-width:600px){.scene-layer{top:60px}.scenery-canvas{width:max(100vw,calc((100svh - 60px) * 1.776833))}.mist-near{display:none}}
 @media(prefers-reduced-motion:reduce){.scene-layer *,.scene-layer *:before{animation:none!important;will-change:auto}.water-flow{display:none}.scene-embers{display:none}.sun-rays{opacity:.25}.mist{opacity:.15}.torch-glow{opacity:.5}}
 .fighter-guide-hit{pointer-events:auto}
+
+/* Focused combat deck: keep optional Basic customisation tucked away. */
+.basic-loadout{margin-top:14px;border-top:1px solid #ddc68a30;padding-top:12px}
+.basic-loadout summary{cursor:pointer;color:var(--gold,#e7bd68);font-size:13px}
+.basic-loadout p{margin:10px 0}

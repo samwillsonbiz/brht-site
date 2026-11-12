@@ -1,9 +1,9 @@
-// Fable Fury: Brawl v0.2. Serializable rules engine, independent of the browser UI.
+// Fable Fury: Brawl v0.3. Serializable rules engine, independent of the browser UI.
 export class Brawl {
   constructor(data, config = {}) {
     this.data = data;
     this.defs = Object.fromEntries(data.cards.map(c => [c.id, c]));
-    this.s = {version: 1, rng: config.seed ?? Date.now() % 2147483646 + 1, mode: config.mode || 'solo', round: 1,
+    this.s = {version: 2, rng: config.seed ?? Date.now() % 2147483646 + 1, mode: config.mode || 'solo', round: 1,
       phase: 'program', reveal: 0, edge: 0, uid: 0, effect: 0, log: [], queue: [], prompt: null,
       shown: [false, false], plans: [null, null], committed: [false, false], shopDone: [false, false],
       lootDeck: [], lootDiscard: [], players: [], winner: null, beat: 'Program two cards'};
@@ -16,7 +16,9 @@ export class Brawl {
       const chosen = config.chosen?.[i] || pool.filter(c => c.starter).map(c => c.id);
       if (chosen.length !== 5 || new Set(chosen).size !== 5 || chosen.some(id => !pool.some(c => c.id === id))) throw Error('Choose five cards from your Hero pool.');
       const deck = [];
-      for (const d of data.cards.filter(c => c.category === 'Basic')) for (let q = 0; q < d.qty / 2; q++) deck.push(this.instance(d.id));
+      const basics = config.basics?.[i] || Brawl.defaultBasics(data);
+      if (basics.length !== 10 || new Set(basics).size !== 10 || basics.some(id => this.defs[id]?.category !== 'Basic')) throw Error('Choose ten different Basic cards.');
+      for (const id of basics) deck.push(this.instance(id));
       for (const id of chosen) deck.push(this.instance(id));
       this.s.players.push({hero, name: h.name, pos: i ? 6 : 2, hp: 18, coins: 0, fury: 0, specialReady: false,
         deck: this.shuffle(deck), discard: [], hand: [], loot: [], trait: 0, block: 0, roundBlock: 0,
@@ -30,8 +32,9 @@ export class Brawl {
     this.log('The Brawl begins. Program two cards.');
     this.prepareBot();
   }
+  static defaultBasics(data) {return data.cards.filter(c => c.category === 'Basic' && !['BAS-009', 'BAS-011'].includes(c.id)).map(c => c.id);}
   static restore(data, state) {
-    if (state.version !== 1 || !state.players?.length) throw Error('This saved match is incompatible.');
+    if (state.version !== 2 || !state.players?.length) throw Error('This saved match uses older rules. Start a new v0.3 Brawl.');
     const game = Object.create(Brawl.prototype); game.data = data;
     game.defs = Object.fromEntries(data.cards.map(c => [c.id, c])); game.s = structuredClone(state); return game;
   }
@@ -55,7 +58,7 @@ export class Brawl {
     const p = this.s.players[i];
     return [...p.hand, ...(p.specialReady ? [{id: `${p.hero}-SP1`, uid: `special-${i}`}] : [])];
   }
-  options(input = {}) {return {direction: 'toward', steps: 3, aim: 'damage', trait: true, remedy: 'block', coin: true, ...input};}
+  options(input = {}) {return {direction: 'toward', steps: 3, aim: 'damage', trait: true, remedy: 'damage', coin: true, push: true, follow: true, ...input};}
   commit(i, choices) {
     if (this.s.phase !== 'program' || this.s.committed[i]) throw Error('Programming is closed.');
     if (choices.length !== 2 || choices[0].uid === choices[1].uid) throw Error('Choose two different cards.');
@@ -96,7 +99,7 @@ export class Brawl {
     };
     const selected = this.available(i).map(c => ({c, v: score(c)})).sort((a, b) => b.v - a.v).slice(0, 2).map(x => x.c);
     if (dist > 1 && selected.length === 2 && /Move/.test(this.def(selected[1]).text) && !/Move/.test(this.def(selected[0]).text)) selected.reverse();
-    return selected.map(c => ({uid: c.uid, opts: {direction: p.hero === 'ALF' && dist < 3 ? 'away' : 'toward', remedy: p.hp < 12 && /Heal/.test(this.def(c).text) ? 'heal' : /Block/.test(this.def(c).text) ? 'block' : 'move'}}));
+    return selected.map(c => ({uid: c.uid, opts: {direction: p.hero === 'ALF' && dist < 3 ? 'away' : 'toward', remedy: this.def(c).damage ? 'damage' : /Block/.test(this.def(c).text) ? 'block' : 'move'}}));
   }
   printedRange(d) {const a = String(d.range || '1').split('-').map(Number); return [a[0], a[1] || a[0]];}
   opts(i) {return this.s.plans[i]?.[this.s.reveal]?.opts || this.options();}
@@ -150,7 +153,7 @@ export class Brawl {
     if (source !== i && p.lastFuryEffect !== effect) {p.lastFuryEffect = effect; this.gainFury(i);}
     return loss;
   }
-  heal(i, n) {this.s.players[i].hp += n; this.log(`${this.s.players[i].name} heals ${n} HP.`, 'heal', i);}
+  heal(i, n) {const p=this.s.players[i], amount=Math.max(0,Math.min(n,18-p.hp));p.hp+=amount;this.log(`${p.name} heals ${amount} HP.`, 'heal', i);}
   block(i, n, round = false) {this.s.players[i][round ? 'roundBlock' : 'block'] += n; this.log(`${this.s.players[i].name} gains Block ${n}${round ? ' for the round' : ''}.`, 'block', i);}
   coin(i, n) {this.s.players[i].coins = Math.min(8, Math.max(0, this.s.players[i].coins + n));}
   checkWinner() {
@@ -216,7 +219,7 @@ export class Brawl {
       this.pushTasks({type: 'window', window: 'between'}, {type: 'reveal', index: 1});
     } else if (t.type === 'delayedAttack') {
       const p = s.players[t.actor];
-      if (p.blocked > 0) {this.move(t.actor, 1, 'toward');this.attack(t.actor, this.def(`${p.hero}-SP1`), {damage: 3, range: '1', push: 2});}
+      if (p.blocked > 0) {this.move(t.actor, 1, 'toward');this.attack(t.actor, this.def(`${p.hero}-SP1`), {damage: 4, range: '1', push: 2});}
     }
   }
   resolveCard(i) {
@@ -226,41 +229,42 @@ export class Brawl {
     p.remedyBonus = null;
     if (p.hero === 'SHE' && p.trait && a.opts.trait) {
       const choice = a.opts.remedy;
-      if (choice === 'move' || choice === 'block' && d.block || choice === 'heal' && /Heal/.test(d.text)) {
+      if (choice === 'move' || choice === 'block' && d.block || choice === 'damage' && d.damage) {
         p.trait--; p.remedyBonus = choice;
         if (choice === 'move') this.move(i, 1, 'free');
       }
     }
     const b = (n, round = false) => this.block(i, n + (p.remedyBonus === 'block' ? 1 : 0), round);
-    const heal = n => this.heal(i, n + (p.remedyBonus === 'heal' ? 1 : 0));
+    const heal = n => this.heal(i, n);
     let extra = {}, doAttack = Boolean(d.damage);
     switch (name) {
-      case 'Quick Jab': case 'Heavy Blow': break;
-      case 'Lunge': this.move(i, 1, 'toward'); break;
-      case 'Sweep': extra.push = 1; break;
-      case 'Shove': extra.push = 2; break;
+      case 'Quick Jab': break;
+      case 'Heavy Blow': extra.ignore = 1; break;
+      case 'Lunge': this.move(i, 2, 'toward', false, true); break;
+      case 'Sweep': extra.push = a.opts.push ? 1 : 0; break;
+      case 'Shove': extra.push = a.opts.push ? 2 : 0; break;
       case 'Advance': case 'Run-Up': this.move(i, 2, 'toward', false, true); break;
       case 'Backstep': this.move(i, 2, 'away', false, true); b(1); break;
-      case 'Guard': b(3); break;
+      case 'Guard': b(2); break;
       case 'Throwing Stone': break;
       case 'Counter': b(2); p.counters.push(1); break;
       case 'Feint': this.move(i, 1); if (s.reveal === 0) p.nextSpeed += 2; break;
-      case 'Brace': b(4, true); p.immunePush = true; break;
-      case 'Shoulder Charge': this.move(i, 1, 'toward'); extra.push = 1; break;
+      case 'Brace': b(3, true); p.immunePush = true; break;
+      case 'Shoulder Charge': this.move(i, 1, 'toward'); extra.push = 1; extra.follow = a.opts.follow; break;
       case 'Hammer Drop': break;
       case 'Cragcruncher Sweep': extra.push = 2; break;
       case 'Plant Your Feet': b(3, true); p.planted = true; break;
       case 'Leap Smash': this.move(i, 2, 'toward', false, true); break;
-      case 'Backbreaker': if ([1, 7].includes(op.pos)) extra.bonus = 2; break;
+      case 'Backbreaker': if ([1, 7].includes(op.pos)) {extra.bonus = 2; extra.ignore = 2;} break;
       case 'Overrun': {const old = p.pos; this.move(i, 3, 'free', false, true); if ((old - op.pos) * (p.pos - op.pos) < 0) this.pushTasks({type: 'window', window: 'force', actor: i, target: 1 - i, amount: 1, dir: Math.sign(p.pos - old), effect: ++s.effect}, {type: 'force', actor: i, target: 1 - i, amount: 1, dir: Math.sign(p.pos - old), effect: s.effect}); break;}
       case 'Vanish': this.move(i, 1); p.trait = 1; break;
       case 'Shadow Step': {const old = p.pos;this.move(i, 2, 'free', false, true);if ((old - op.pos) * (p.pos - op.pos) < 0) p.trait = 1;break;}
-      case 'Backstab': extra.ignore = 1; if (p.crossed) extra.bonus = 1; break;
+      case 'Backstab': extra.ignore = 1; if (p.crossed) extra.bonus = 2; break;
       case 'Throwing Knives': break;
       case 'Feinting Slash': extra.onHit = 'dodge'; break;
       case 'Pickpocket': extra.onHit = 'steal1'; break;
       case 'Smoke Veil': b(2); p.veilStartBlocked=p.blocked; p.delayed.push('veil'); break;
-      case 'Poisoned Blade': extra.onHit = 'poison'; break;
+      case 'Poisoned Blade': extra.ignore = 2; break;
       case 'Quick Shot': case 'Power Shot': break;
       case 'Pinning Arrow': extra.onHit = 'pin'; break;
       case 'Reposition': this.move(i, 2, 'away', false, true); if (this.range() >= 3) p.trait = 1; break;
@@ -268,20 +272,20 @@ export class Brawl {
       case 'Grapple Arrow': extra.pull = 1; break;
       case 'Volley': extra.ignore = 1; break;
       case "Jasper's Warning": b(2); p.warning = true; break;
-      case 'Palm Strike': extra.push = 1; break;
+      case 'Palm Strike': extra.push = a.opts.push ? 1 : 0; break;
       case 'Flowing Step': this.move(i, 2, 'free', false, true); if (this.range() === 1) p.nextDamage++; break;
       case 'Coin Toss': if (a.opts.coin && p.coins) {this.coin(i, -1); extra.bonus = 2;} break;
       case 'Low Sweep': extra.undodgeable = true; extra.onHit = 'pin'; break;
       case 'Bribe': {const pay = a.opts.coin && p.coins; if (pay) this.coin(i, -1); b(pay ? 4 : 2); break;}
-      case 'Meditate': b(2, true); p.delayed.push('meditate'); break;
+      case 'Meditate': b(2, true); p.nextIgnore = (p.nextIgnore || 0) + 2; break;
       case 'Empty Hand': if (!p.loot.length) extra.bonus = 2; break;
       case 'Collection Plate': extra.onHit = 'collection'; break;
       case 'Shield Up': b(4); break;
       case 'Advance Behind Shield': this.move(i, 1, 'toward'); b(2); break;
-      case 'Shield Bash': if (p.block + p.roundBlock > 0) extra.push = 1; break;
+      case 'Shield Bash': if (p.trait) extra.bonus = 1; if (p.block + p.roundBlock > 0) extra.push = 1; break;
       case 'Hold the Line': b(3, true); p.immunePush = true; break;
       case 'Reversal': b(2); p.counters.push(2); break;
-      case 'Body Check': this.move(i, 1, 'toward'); extra.push = 2; break;
+      case 'Body Check': this.move(i, 1, 'toward'); extra.push = 2; extra.follow = a.opts.follow; break;
       case 'Guard Break': extra.ignore = 2; break;
       case 'Wallop': extra.push = 1; break;
       case 'Bandage Up': heal(2); break;
@@ -289,8 +293,8 @@ export class Brawl {
       case 'Sterile Field': b(3); break;
       case 'Scalpel': extra.ignore = 99; break;
       case 'Adrenaline': this.move(i, 1); if (s.reveal === 0) {p.nextSpeed += 2; p.adrenaline = true;} break;
-      case 'Painkiller': b(2); p.painkiller = true; p.painkillerHeal = p.remedyBonus === 'heal' ? 2 : 1; break;
-      case 'Defibrillator': if (p.hp <= 8) extra.bonus = 1; break;
+      case 'Painkiller': b(2); p.painkiller = true; p.painkillerHeal = 1; break;
+      case 'Defibrillator': if (p.hp <= 8) extra.bonus = 2; break;
       case 'Diagnosis':
         if (s.reveal === 0) {p.peek = [1];this.move(i, 1);this.chooseOrBot(i, 'peek', []);}
         else {this.draw(i, 1);this.chooseOrBot(i, 'discard', p.hand.map(c => c.uid));} break;
@@ -305,7 +309,7 @@ export class Brawl {
         b(5); doAttack = false;
         if (s.plans[1 - i][s.reveal].done) this.pushTasks({type: 'delayedAttack', actor: i});
         else p.specialCounter = true; break;
-      case 'STAT!': heal(1); this.move(i, 1); b(4, true); break;
+      case 'STAT!': heal(2); this.move(i, 2, 'free', false, true); extra.ignore = 2; break;
       default: throw Error(`Unimplemented card: ${name}`);
     }
     this.s.queue.splice(this.s.queue.findIndex(t => t.type === 'pause') < 0 ? this.s.queue.length : this.s.queue.findIndex(t => t.type === 'pause'), 0, {type: 'finishCard', actor: i});
@@ -317,15 +321,17 @@ export class Brawl {
     let bonus = extra.bonus || 0;
     bonus += p.nextDamage; p.nextDamage = 0;
     if (p.planted) {bonus++; p.planted = false;}
-    if (p.hero === 'FRA' && this.s.reveal === 1 && p.basicFirst && d.category === 'Hero') bonus++;
+    if (p.hero === 'FRA' && this.s.reveal === 1 && p.basicFirst && d.category === 'Hero') bonus += 2;
     let max = r[1];
     if (p.hero === 'ALF' && p.trait && this.opts(i).trait) {
       const choice = this.opts(i).aim;
-      if (choice === 'range' || this.range() >= 3) {p.trait = 0; if (choice === 'range') max++;else bonus++;}
+      if (choice === 'range' || this.range() >= 3) {p.trait = 0; if (choice === 'range') max++;else bonus += 2;}
     }
+    if (p.remedyBonus === 'damage') {bonus += 2;p.remedyBonus = null;}
+    const ignore = (extra.ignore || 0) + (p.nextIgnore || 0);p.nextIgnore = 0;
     const penalty = p.attackPenalty; p.attackPenalty = 0;
     this.s.attack = {actor: i, id: d.id, name: d.name, damage: Number(extra.damage ?? d.damage) + bonus - penalty + (p.protein || 0),
-      min: r[0], max, ignore: p.ignoreAll ? 99 : extra.ignore || 0, push: extra.push || 0, pull: extra.pull || 0,
+      min: r[0], max, ignore: p.ignoreAll ? 99 : ignore, follow: extra.follow, push: extra.push || 0, pull: extra.pull || 0,
       onHit: extra.onHit, undodgeable: extra.undodgeable, reduction: 0, effect: ++this.s.effect};
     p.protein = 0;p.ignoreAll = false;
     this.pushTasks({type: 'window', window: 'beforeRange', actor: i}, {type: 'attackRange'});
@@ -335,7 +341,7 @@ export class Brawl {
     const potentialDamage=Math.max(0,a.damage)+(p.hero==='SMA'?p.trait:0)+(p.hero==='HEL'&&p.trait&&this.opts(i).trait?2:0);
     const potentialBlock=Math.max(0,op.block+op.roundBlock+(a.tempBlock||0)-a.ignore);
     if (op.hero === 'RAV' && op.trait && this.opts(1 - i).trait && !a.undodgeable && potentialDamage>potentialBlock+a.reduction) {
-      op.trait = 0; this.log(`${op.name} spends Dodge: cancels ${a.name}.`, 'dodge', 1 - i);this.move(1 - i, 1);return;
+      op.trait = 0; op.nextIgnore = (op.nextIgnore || 0) + 1; this.log(`${op.name} spends Dodge: cancels ${a.name}.`, 'dodge', 1 - i);this.move(1 - i, 1);return;
     }
     // Momentum is applied only to a hit; fully blocked/dodged attacks preserve it.
     const block = Math.max(0, op.block + op.roundBlock + (a.tempBlock || 0) - a.ignore);
@@ -343,6 +349,10 @@ export class Brawl {
     if (p.hero === 'SMA') {damage += p.trait;if (damage > block + a.reduction) p.trait = 0;}
     if (p.hero === 'HEL' && p.trait && this.opts(i).trait) {damage += 2;a.push++;p.trait = 0;}
     const prevented = Math.min(damage, block);
+    // Spend only Block that actually absorbed damage; bypassed Block remains.
+    let spend=Math.max(0,prevented-(a.tempBlock||0));
+    const revealSpend=Math.min(op.block,spend);op.block-=revealSpend;spend-=revealSpend;
+    op.roundBlock=Math.max(0,op.roundBlock-spend);
     op.blocked += prevented;
     if (op.hero === 'HEL' && prevented >= 2 && !op.resolveEarned) {op.trait = 1;op.resolveEarned = true;this.log(`${op.name} gains Resolve.`, 'trait', 1 - i);}
     const loss = this.lose(1 - i, Math.max(0, damage - block - a.reduction), i, a.effect);
@@ -367,7 +377,7 @@ export class Brawl {
       }
       const n = a.push || a.pull;
       if (n) {
-        const t = {actor: i, target: 1 - i, amount: n, dir: Math.sign(op.pos - p.pos) * (a.pull ? -1 : 1), effect: a.effect};
+        const t = {actor: i, target: 1 - i, amount: n, dir: Math.sign(op.pos - p.pos) * (a.pull ? -1 : 1), effect: a.effect, follow: a.follow};
         this.pushTasks({type: 'window', window: 'force', ...t}, {type: 'force', ...t});
       }
     }
@@ -379,12 +389,14 @@ export class Brawl {
   force(t) {
     const p = this.s.players[t.target];
     if (p.immunePush) {this.log(`${p.name} cannot be pushed or pulled.`, 'block', t.target);return;}
+    if (p.forcePrevent) {p.forcePrevent=false;this.log(`${p.name} prevents the forced movement.`, 'block', t.target);return;}
     let amount = t.amount - (p.forceReduce || 0);p.forceReduce = 0;
     if (p.reverseForce) {amount = amount - 2 * Math.min(2, Math.max(0, amount));p.reverseForce = false;}
     if (!amount) return;
     const dir = Math.sign(amount) * t.dir, n = Math.abs(amount);
     const wall = p.pos + n * dir < 1 || p.pos + n * dir > 7;
-    this.move(t.target, n, dir, true);
+    const old=p.pos;this.move(t.target, n, dir, true);
+    if(t.follow && Math.sign(p.pos-old)===t.dir) this.move(t.actor,Math.abs(p.pos-old),'toward');
     if (wall) {this.log('Wall Slam!', 'slam', t.target);this.lose(t.target, 1, t.actor, t.effect);}
     this.checkWinner();
   }
@@ -405,7 +417,6 @@ export class Brawl {
       const p = this.s.players[i];
       for (const delayed of p.delayed) {
         if (delayed === 'veil') {this.move(i, 1);if (p.blocked>(p.veilStartBlocked||0)) p.trait = 1;}
-        if (delayed === 'meditate' && !p.damageTaken) this.heal(i, 1);
       }
       p.delayed = [];
       if (p.hero === 'ALF' && !p.moved) p.trait = 1;
@@ -484,7 +495,7 @@ export class Brawl {
     this.log(`${p.name} uses ${this.def(id).name}.`, 'loot', i);
     switch (n) {
       case 1: this.s.plans[i][this.s.reveal].speed += 3;break;
-      case 2: case 3: case 15: this.attack(i, {...this.def(id), damage: n === 15 ? '3' : '2', range: n === 2 ? '1-2' : n === 3 ? '3-4' : '2-4'});break;
+      case 2: case 3: case 15: this.attack(i, {...this.def(id), damage: n === 15 ? '4' : '3', range: n === 2 ? '1-2' : n === 3 ? '3-4' : '2-4'}, {ignore:n===3?1:0});break;
       case 4: this.move(i, 2, 'free', false, true);break;
       case 5: a.damage += 2;break;
       case 6: {
@@ -492,16 +503,16 @@ export class Brawl {
         for (let k=0;k<2;k++) {const pos=this.s.players[k].pos;this.move(k,1,pos<4?-1:pos>4?1:this.direction(k,this.opts(k).direction),true);}break;
       }
       case 7: if (priorDiscard.length) this.chooseOrBot(i,'retrieve',priorDiscard);break;
-      case 8: this.coin(i,3);break;
+      case 8: this.coin(i,3);this.gainFury(i);break;
       case 9: a.reduction += 2;break;
-      case 10: p.forceReduce = 2;break;
+      case 10: p.forcePrevent = true;p.nextDamage++;break;
       case 11: a.tempBlock = (a.tempBlock||0)+4;a.smokeMove=true;break;
-      case 12: this.gainFury(i);break;
+      case 12: this.gainFury(i,2);break;
       case 13: this.chooseOrBot(i,'space',[1,2,3,4,5,6,7].filter(v=>v!==op.pos&&v!==p.pos));break;
       case 14: p.ignoreAll=true;break;
       case 16: p.peek=[0,1];this.chooseOrBot(i,'peek',[]);break;
       case 17: {
-        const t={actor:i,target:1-i,amount:1,dir:Math.sign(p.pos-op.pos),effect:++this.s.effect};
+        const t={actor:i,target:1-i,amount:Math.min(2,this.opts(i).steps),dir:Math.sign(p.pos-op.pos),effect:++this.s.effect};
         this.pushTasks({type:'window',window:'force',...t},{type:'force',...t});break;
       }
       case 18: this.s.plans[i][this.s.reveal].speed=1;p.protein=3;break;
@@ -509,7 +520,7 @@ export class Brawl {
       case 20: a.max+=2;break;
       case 21: a.damage++;a.push+=2;break;
       case 22: p.reverseForce=true;break;
-      case 23: this.heal(i,2);this.block(i,1,true);break;
+      case 23: this.heal(i,2);p.nextDamage++;break;
       case 24: p.hand.push(context.card);this.s.plans[i][this.s.reveal].reclaimed=true;break;
       default: throw Error(`Unimplemented Loot: ${id}`);
     }
@@ -529,7 +540,7 @@ export class Brawl {
       const p=this.s.players[i];
       for(const a of this.s.plans[i]) if(this.def(a.card).category!=='Special'&&!a.reclaimed) p.discard.push(a.card);
       this.draw(i,Math.max(0,5-p.hand.length));
-      Object.assign(p,{block:0,roundBlock:0,usedLoot:false,moved:false,damageTaken:0,blocked:0,resolveEarned:false,crossed:false,immunePush:false,planted:false,nextDamage:0,nextSpeed:0,slow:0,movePenalty:0,attackPenalty:0,counters:[],delayed:[],basicFirst:false,reclaimed:[],peek:[],warning:false,painkiller:false,protein:0,ignoreAll:false,adrenaline:false,specialCounter:false});
+      Object.assign(p,{block:0,roundBlock:0,usedLoot:false,moved:false,damageTaken:0,blocked:0,resolveEarned:false,crossed:false,immunePush:false,planted:false,nextDamage:0,nextIgnore:0,forcePrevent:false,nextSpeed:0,slow:0,movePenalty:0,attackPenalty:0,counters:[],delayed:[],basicFirst:false,reclaimed:[],peek:[],warning:false,painkiller:false,protein:0,ignoreAll:false,adrenaline:false,specialCounter:false});
       if(['SMA','RAV'].includes(p.hero))p.trait=0;
     }
     this.s.round++;this.s.edge=1-this.s.edge;this.s.reveal=0;this.s.shown=[false,false];this.s.plans=[null,null];this.s.committed=[false,false];this.s.phase='program';this.s.beat='Program two cards';this.s.attack=null;

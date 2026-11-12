@@ -6,7 +6,7 @@ export function savedSeat(room){try{return JSON.parse(localStorage.getItem(PREFI
 export function rememberSeat(room,token,invite){try{localStorage.setItem(PREFIX+room,JSON.stringify({token,invite}));}catch{/* Active tabs still keep their seat in memory. */}}
 export async function onlineSupported(){if(location.protocol==='file:'||location.hostname.endsWith('.chatgpt.site'))return false;try{const r=await fetch(ROOM_API,{cache:'no-store',signal:AbortSignal.timeout(5000)});return r.ok&&(await r.json()).online===true;}catch{return false;}}
 async function api(body,{token,room,signal}={}){
-  const r=await fetch(ROOM_API+(body?'':'?room='+encodeURIComponent(room)),{method:body?'POST':'GET',cache:'no-store',headers:{...(body?{'Content-Type':'application/json'}:{}),...(token?{Authorization:`Bearer ${token}`}:{})},...(body?{body:JSON.stringify(body)}:{}),signal:signal||AbortSignal.timeout(15000)});
+  const r=await fetch(ROOM_API+(body?'':'?room='+encodeURIComponent(room)),{method:body?'POST':'GET',cache:'no-store',headers:{...(body?{'Content-Type':'application/json'}:{}),...(token?{Authorization:`Bearer ${token}`}:{})},...(body?{body:JSON.stringify({...body,engineVersion:'brawl-v0.3-online-2'})}:{}),signal:signal||AbortSignal.timeout(15000)});
   const result=await r.json().catch(()=>({error:'The room service did not respond. Please try again.'}));
   if(!r.ok)throw Object.assign(new Error(result.error||'Room request failed.'),{snapshot:result.snapshot,status:r.status});return result;
 }
@@ -23,7 +23,7 @@ export class OnlineGame extends Brawl{
   async poll(){
     if(this.closed)return;
     try{if(!this.pending){const snapshot=await readOnline(this.room.id,this.token);this.apply(snapshot);this.onConnection?.(true);}}
-    catch(error){this.onConnection?.(false);if([401,404,410].includes(error.status)){this.closed=true;this.onError?.(error);return;}}
+    catch(error){this.onConnection?.(false);if([401,404,409,410].includes(error.status)){this.closed=true;this.onError?.(error);return;}}
     if(!this.closed)this.timer=setTimeout(()=>this.poll(),document.hidden?4500:1100);
   }
   close(){this.closed=true;clearTimeout(this.timer);}
