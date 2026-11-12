@@ -2,6 +2,11 @@ import type { Metadata } from "next";
 import { BusinessDashboard } from "@/components/brht-dashboard/BusinessDashboard";
 import { getOrganizationDashboardData } from "@/lib/brht-dashboard/data";
 import { normalizeDashboardRange } from "@/lib/brht-dashboard/types";
+import {
+  convertDashboardCurrency,
+  getUsdToAudRate,
+  normalizeDisplayCurrency,
+} from "@/lib/brht-dashboard/currency";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -12,6 +17,7 @@ type PageProps = {
     range?: string | string[];
     start?: string | string[];
     end?: string | string[];
+    currency?: string | string[];
   }>;
 };
 
@@ -38,6 +44,9 @@ export default async function OrganizationDashboardPage({
   const start = validDate(rawStart);
   const end = validDate(rawEnd);
   const range = start && end ? "custom" : normalizeDashboardRange(query.range);
-  const data = await getOrganizationDashboardData(organization, range, start, end);
-  return <BusinessDashboard data={data} />;
+  const displayCurrency = normalizeDisplayCurrency(query.currency);
+  const baseData = await getOrganizationDashboardData(organization, range, start, end);
+  const usdToAudRate = displayCurrency === "AUD" ? await getUsdToAudRate() : 1;
+  const data = convertDashboardCurrency(baseData, displayCurrency, usdToAudRate);
+  return <BusinessDashboard data={data} fxRate={usdToAudRate} />;
 }
