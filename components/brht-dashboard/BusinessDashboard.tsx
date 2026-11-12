@@ -241,7 +241,13 @@ function formatCover(product: ProductPerformanceRow) {
   return `${Math.round(product.daysOfCover)} days cover`;
 }
 
-export function BusinessDashboard({ data }: { data: DashboardData }) {
+export function BusinessDashboard({
+  data,
+  fxRate = 1,
+}: {
+  data: DashboardData;
+  fxRate?: number;
+}) {
   const generated = new Intl.DateTimeFormat("en-AU", {
     dateStyle: "medium",
     timeStyle: "short",
@@ -252,6 +258,12 @@ export function BusinessDashboard({ data }: { data: DashboardData }) {
     ...data.channels.map((channel) => Math.max(channel.revenue, channel.spend)),
   );
   const maxProduct = Math.max(1, ...data.products.map((product) => product.unitsSold));
+  const displayCurrency = data.organization.currency === "AUD" ? "AUD" : "USD";
+  const currencyQuery = `currency=${displayCurrency}`;
+  const customDates =
+    data.range === "custom"
+      ? `&start=${data.period.start}&end=${data.period.end}`
+      : `&range=${data.range}`;
 
   return (
     <div
@@ -338,11 +350,36 @@ export function BusinessDashboard({ data }: { data: DashboardData }) {
                 </p>
               </div>
               <div className="flex max-w-full flex-col items-stretch gap-3 sm:items-end">
+                <div className="flex flex-wrap items-center justify-end gap-2">
+                  <span className="mr-1 text-[10px] font-bold uppercase tracking-[0.12em] text-[#86868b]">
+                    Display
+                  </span>
+                  {(["USD", "AUD"] as const).map((currency) => (
+                    <Link
+                      key={currency}
+                      href={`/dashboards/${data.organization.slug}?${currency === "USD" ? "currency=USD" : "currency=AUD"}${customDates}`}
+                      scroll={false}
+                      prefetch={true}
+                      className={`rounded-full px-3.5 py-2 text-xs font-semibold transition ${
+                        displayCurrency === currency
+                          ? "bg-[#0071e3] text-white shadow-sm"
+                          : "border border-black/[0.08] bg-white text-[#6e6e73] hover:border-black/20 hover:text-[#1d1d1f]"
+                      }`}
+                    >
+                      {currency}
+                    </Link>
+                  ))}
+                  {displayCurrency === "AUD" ? (
+                    <span className="ml-1 text-[10px] text-[#86868b]">
+                      1 USD ≈ {fxRate.toFixed(4)} AUD
+                    </span>
+                  ) : null}
+                </div>
                 <div className="flex max-w-full flex-wrap gap-2">
                   {DASHBOARD_RANGES.map((range) => (
                     <Link
                       key={range}
-                      href={`/dashboards/${data.organization.slug}?range=${range}`}
+                      href={`/dashboards/${data.organization.slug}?range=${range}&${currencyQuery}`}
                       scroll={false}
                       prefetch={true}
                       className={`rounded-full px-4 py-2 text-xs font-semibold transition ${
@@ -360,6 +397,7 @@ export function BusinessDashboard({ data }: { data: DashboardData }) {
                   action={`/dashboards/${data.organization.slug}`}
                   className="flex max-w-full flex-wrap items-end gap-2 rounded-2xl border border-black/[0.08] bg-white p-2.5 shadow-sm"
                 >
+                  <input type="hidden" name="currency" value={displayCurrency} />
                   <label className="min-w-[150px]">
                     <span className="mb-1 block px-1 text-[10px] font-bold uppercase tracking-[0.11em] text-[#86868b]">
                       Start
