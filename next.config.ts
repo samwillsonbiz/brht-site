@@ -18,6 +18,8 @@ const nextConfig: NextConfig = {
   },
   async rewrites() {
     return [
+      { source: "/brawl", destination: "/brawl/index.html" },
+      { source: "/brawl/", destination: "/brawl/index.html" },
       {
         source: "/beat-the-patriarchy",
         destination: "/beat-the-patriarchy/index.html",
