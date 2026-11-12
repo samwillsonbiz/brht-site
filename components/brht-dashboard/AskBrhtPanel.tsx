@@ -8,6 +8,7 @@ import {
   Loader2,
   LockKeyhole,
   LogOut,
+  MessageSquareText,
   PlugZap,
   Sparkles,
   X,
@@ -174,6 +175,26 @@ Authentication: OAuth
 When ChatGPT opens the BRHT authorization page, I will sign in with my existing internal BRHT credentials. After connecting it, use BRHT for structured Fable Fury operating data and combine it with my other connected apps such as Gmail and Google Drive when a question requires supplier emails, quotes, invoices, POs, project context, or documents. Never guess missing business facts.`
     : "";
 
+  const dashboardContextPrompt = `Use BRHT Intelligence — Fable Fury as the structured operating-data source for this analysis.
+
+I am currently looking at the Fable Fury BRHT dashboard:
+- Date range: ${start} through ${end}
+- Display currency: ${currency}
+- Dashboard range preset: ${range}
+
+Use BRHT for live structured metrics such as revenue, orders, advertising spend, product sales, inventory, Kickstarter and source health.
+
+When my question needs operating context that is not in BRHT — supplier MOQ, lead times, purchase orders, quotes, invoices, project history, communications or documents — also use my connected Gmail, Google Drive and other relevant ChatGPT apps rather than guessing.
+
+Distinguish facts from estimates and explicitly say which source each important conclusion came from.
+
+My question: `;
+
+  async function openChatGPT() {
+    await navigator.clipboard.writeText(dashboardContextPrompt);
+    window.open("https://chatgpt.com/", "_blank", "noopener,noreferrer");
+  }
+
   return (
     <>
       <button
@@ -181,7 +202,7 @@ When ChatGPT opens the BRHT authorization page, I will sign in with my existing 
         className="fixed bottom-5 right-5 z-40 inline-flex items-center gap-2 rounded-full bg-[#1d1d1f] px-5 py-3 text-sm font-semibold text-white shadow-[0_16px_50px_rgba(0,0,0,.22)] transition hover:bg-black"
       >
         <Sparkles className="h-4 w-4 text-[#6fd3ff]" />
-        Internal · Use in ChatGPT
+        Internal · Ask in ChatGPT
       </button>
 
       {open ? (
@@ -194,10 +215,10 @@ When ChatGPT opens the BRHT authorization page, I will sign in with my existing 
                 </span>
                 <div>
                   <div className="text-sm font-semibold text-[#1d1d1f]">
-                    BRHT → ChatGPT
+                    Ask ChatGPT
                   </div>
                   <div className="mt-0.5 text-[11px] text-[#86868b]">
-                    {authStatus === "authenticated" ? contextLabel : "Internal connection setup"}
+                    {authStatus === "authenticated" ? contextLabel : "Internal access only"}
                   </div>
                 </div>
               </div>
@@ -280,99 +301,109 @@ When ChatGPT opens the BRHT authorization page, I will sign in with my existing 
               </div>
             ) : (
               <div className="flex-1 overflow-y-auto px-5 py-5">
-                <div className="rounded-[24px] border border-[#b8e5c8] bg-[#f1fbf5] p-5">
-                  <div className="flex items-center gap-2 text-sm font-semibold text-[#167645]">
-                    <Check className="h-4 w-4" />
-                    BRHT MCP is read-only and private
+                <div className="rounded-[24px] border border-black/[0.06] bg-white p-6 shadow-[0_18px_60px_rgba(0,0,0,.04)]">
+                  <div className="flex items-start gap-4">
+                    <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-[#1d1d1f] text-white">
+                      <MessageSquareText className="h-5 w-5" />
+                    </span>
+                    <div>
+                      <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#0071e3]">
+                        Current dashboard context
+                      </div>
+                      <h3 className="mt-2 text-2xl font-semibold tracking-[-0.04em] text-[#1d1d1f]">
+                        Ask about what you’re seeing
+                      </h3>
+                      <p className="mt-2 text-sm leading-6 text-[#6e6e73]">
+                        I’ll copy the current Fable Fury dashboard context to your clipboard and open a new ChatGPT chat. Paste it, add your question, and use BRHT together with Gmail, Drive or your other connected apps when needed.
+                      </p>
+                    </div>
                   </div>
-                  <p className="mt-2 text-sm leading-6 text-[#49705b]">
-                    BRHT exposes a private read-only MCP connection for ChatGPT. Once connected, ChatGPT can combine BRHT operating data with Gmail, Drive and your other connected apps in the same conversation.
-                  </p>
+
+                  <div className="mt-5 grid grid-cols-3 gap-2 rounded-2xl bg-[#f5f5f7] p-3 text-center">
+                    <div>
+                      <div className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#86868b]">From</div>
+                      <div className="mt-1 text-xs font-semibold text-[#1d1d1f]">{start}</div>
+                    </div>
+                    <div>
+                      <div className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#86868b]">To</div>
+                      <div className="mt-1 text-xs font-semibold text-[#1d1d1f]">{end}</div>
+                    </div>
+                    <div>
+                      <div className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#86868b]">Currency</div>
+                      <div className="mt-1 text-xs font-semibold text-[#1d1d1f]">{currency}</div>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={openChatGPT}
+                    className="mt-5 inline-flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-[#1d1d1f] text-sm font-semibold text-white transition hover:bg-black"
+                  >
+                    Ask in ChatGPT
+                    <ExternalLink className="h-4 w-4" />
+                  </button>
+
+                  <div className="mt-3 text-center text-[11px] leading-5 text-[#86868b]">
+                    Current dashboard context is copied automatically.
+                  </div>
                 </div>
 
-                {setupError ? (
-                  <div className="mt-4 rounded-2xl border border-[#f0c36a] bg-[#fffaf0] px-4 py-3 text-sm text-[#7a4a00]">
-                    {setupError}
+                <div className="mt-4 rounded-[24px] border border-black/[0.06] bg-white p-5">
+                  <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#86868b]">
+                    Good questions to try
                   </div>
-                ) : !setup ? (
-                  <div className="mt-6 flex items-center gap-2 text-sm text-[#86868b]">
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Loading private connection details…
-                  </div>
-                ) : (
-                  <>
-                    <div className="mt-5 rounded-[24px] border border-black/[0.06] bg-white p-5">
-                      <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#86868b]">
-                        Private MCP connection
-                      </div>
-
-                      <div className="mt-4">
-                        <div className="text-xs font-semibold text-[#6e6e73]">Server URL</div>
-                        <code className="mt-2 block overflow-x-auto rounded-xl bg-[#f5f5f7] px-3 py-2.5 text-xs text-[#1d1d1f]">
-                          {setup.endpoint}
-                        </code>
+                  <div className="mt-3 space-y-3">
+                    {samplePrompts.map((prompt) => (
+                      <div key={prompt} className="rounded-2xl bg-[#f7f7f9] p-4">
+                        <div className="text-sm leading-6 text-[#3a3a3c]">“{prompt}”</div>
                         <div className="mt-2">
-                          <CopyButton value={setup.endpoint} label="Copy URL" />
+                          <CopyButton value={prompt} label="Copy question" />
                         </div>
                       </div>
+                    ))}
+                  </div>
+                </div>
 
-                      <div className="mt-5 rounded-2xl bg-[#f5f5f7] p-4">
-                        <div className="text-xs font-semibold text-[#1d1d1f]">Authentication: OAuth</div>
-                        <p className="mt-1.5 text-xs leading-5 text-[#6e6e73]">
-                          ChatGPT will open BRHT’s authorization page. Sign in there with your internal BRHT credentials; no API token needs to be copied or stored in ChatGPT manually.
-                        </p>
-                      </div>
+                <details className="mt-4 rounded-[24px] border border-black/[0.06] bg-white p-5">
+                  <summary className="cursor-pointer list-none text-sm font-semibold text-[#1d1d1f]">
+                    Connection settings
+                  </summary>
+                  <p className="mt-2 text-xs leading-5 text-[#86868b]">
+                    You only need this if BRHT is disconnected from ChatGPT or you want to reconnect it.
+                  </p>
 
-                      <div className="mt-5 flex flex-wrap gap-2">
+                  {setupError ? (
+                    <div className="mt-4 rounded-2xl border border-[#f0c36a] bg-[#fffaf0] px-4 py-3 text-sm text-[#7a4a00]">
+                      {setupError}
+                    </div>
+                  ) : !setup ? (
+                    <div className="mt-4 flex items-center gap-2 text-sm text-[#86868b]">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Loading connection details…
+                    </div>
+                  ) : (
+                    <div className="mt-4">
+                      <div className="text-xs font-semibold text-[#6e6e73]">Server URL</div>
+                      <code className="mt-2 block overflow-x-auto rounded-xl bg-[#f5f5f7] px-3 py-2.5 text-xs text-[#1d1d1f]">
+                        {setup.endpoint}
+                      </code>
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        <CopyButton value={setup.endpoint} label="Copy URL" />
                         <a
                           href="https://chatgpt.com/plugins"
                           target="_blank"
                           rel="noreferrer"
-                          className="inline-flex h-10 items-center gap-2 rounded-full bg-[#1d1d1f] px-4 text-xs font-semibold text-white"
+                          className="inline-flex h-9 items-center gap-2 rounded-full bg-[#1d1d1f] px-3.5 text-xs font-semibold text-white"
                         >
-                          Open ChatGPT Plugins <ExternalLink className="h-3.5 w-3.5" />
+                          Open Plugins <ExternalLink className="h-3.5 w-3.5" />
                         </a>
                         <CopyButton value={setupPrompt} label="Copy setup prompt" />
                       </div>
-                    </div>
-
-                    <div className="mt-4 rounded-[24px] border border-black/[0.06] bg-white p-5">
-                      <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#86868b]">
-                        Connect once
-                      </div>
-                      <ol className="mt-3 space-y-2.5 text-sm leading-6 text-[#6e6e73]">
-                        {setup.setupSteps.map((step, index) => (
-                          <li key={step} className="flex gap-3">
-                            <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-[#f2f2f7] text-[10px] font-bold text-[#6e6e73]">
-                              {index + 1}
-                            </span>
-                            <span>{step}</span>
-                          </li>
-                        ))}
-                      </ol>
-                    </div>
-
-                    <div className="mt-4 rounded-[24px] border border-black/[0.06] bg-white p-5">
-                      <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#86868b]">
-                        The demo questions
-                      </div>
-                      <div className="mt-3 space-y-3">
-                        {samplePrompts.map((prompt) => (
-                          <div key={prompt} className="rounded-2xl bg-[#f7f7f9] p-4">
-                            <div className="text-sm leading-6 text-[#3a3a3c]">“{prompt}”</div>
-                            <div className="mt-2">
-                              <CopyButton value={prompt} label="Copy prompt" />
-                            </div>
-                          </div>
-                        ))}
+                      <div className="mt-4 rounded-2xl bg-[#f5f5f7] p-4 text-xs leading-5 text-[#6e6e73]">
+                        Authentication: OAuth. If ChatGPT asks you to reconnect, sign in on the BRHT authorization page with your internal BRHT credentials.
                       </div>
                     </div>
-
-                    <p className="mt-4 px-1 text-[11px] leading-5 text-[#86868b]">
-                      BRHT exposes read-only structured operating data. Gmail, Drive and other apps remain separate ChatGPT connections. Select BRHT together with the relevant apps when you want ChatGPT to reason across both structured metrics and operating context.
-                    </p>
-                  </>
-                )}
+                  )}
+                </details>
               </div>
             )}
           </div>
