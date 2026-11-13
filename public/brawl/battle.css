@@ -242,3 +242,19 @@ body.arena-paused .scene-layer *,body.arena-paused .scene-layer *:before,body.ar
 @media(max-width:700px){.movement-choices{margin:0 10px 6px}.movement-choice-title output{font-size:10px}.movement-choice{padding:6px 8px}.movement-controls button{padding:5px 8px}.movement-choices>p{font-size:10px}}
 
 .arena-pressure{display:block;font-size:9px;color:#cfbda0;margin-top:4px}.arena-pressure.active{color:#ffb480;font-weight:800;text-shadow:0 0 10px #f63a33aa}
+/* Keep facing on a stable wrapper; combat animation never interpolates a mirror. */
+.fighter-facing{display:flex;width:100%;height:100%;align-items:flex-end;justify-content:center;scale:var(--facing) 1;transform:none;transition:none;pointer-events:none}
+.fighter .fighter-facing .fighter-art{flex-shrink:0;scale:none;transform:translate(0,0);transform-origin:center bottom;animation:hero-breathe 5s ease-in-out infinite}
+.fighter.p2 .fighter-facing .fighter-art{animation-duration:5.7s}
+.fighter.attack .fighter-facing .fighter-art{animation:hero-strike .38s ease-out}
+.fighter.hit .fighter-facing .fighter-art{animation:hero-recoil .4s ease-out}
+.fighter.ko .fighter-facing .fighter-art{animation:none;transform:rotate(-18deg);filter:grayscale(1);opacity:.6}
+@keyframes hero-breathe{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@keyframes hero-strike{0%,100%{transform:translateX(0)}45%{transform:translateX(16px)}75%{transform:translateX(-2px)}}
+@keyframes hero-recoil{0%,100%{transform:translateX(0);filter:drop-shadow(3px 8px 3px #0b141c5c)}20%,45%{transform:translateX(-7px);filter:brightness(1.8) drop-shadow(0 0 7px #ffbd9c)}65%{transform:translateX(3px)}}
+.movement-editor{max-width:680px}.movement-editor h2{font-size:28px;margin:8px 0 15px}.movement-editor>p{line-height:1.6;color:#c0cbd0;margin:12px 0}.movement-editor .eyebrow{color:#e9c579}
+.movement-preview{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin:20px 0}.movement-preview>span{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:62px;border:1px solid #a9c1bd55;border-radius:6px;background:#11242c}.movement-preview b{font-size:22px;color:#e4d4a9}.movement-preview small{font-size:9px;min-height:12px;color:#a8c5bd}.movement-preview .chosen{border-color:#f6d17a;box-shadow:inset 0 0 0 1px #f6d17a;background:#6b542c}.movement-preview .closed{opacity:.3}
+.movement-editor-options{display:flex;flex-wrap:wrap;gap:8px}.movement-editor-options button{padding:11px 16px;min-height:44px}.movement-editor-options button[aria-pressed=true]{background:#e7bd68;color:#12232b;border-color:#ffe1a4}.movement-editor-summary{display:block;margin:18px 0 12px;font-size:19px;font-weight:700;color:#f2d799}.movement-editor>.primary{width:100%;margin-top:8px;min-height:48px}.movement-choice-title .edit-movement{border:1px solid #d7ba6d;margin-left:auto;color:#f4d791;font-size:10px;white-space:nowrap;padding:5px 9px}
+@media(max-width:600px){.movement-editor h2{font-size:23px}.movement-editor-options button{flex:1;min-width:100px}.movement-preview{gap:3px}.movement-preview>span{min-height:50px}.movement-preview b{font-size:17px}.movement-preview small{font-size:7px}}
+@media(prefers-reduced-motion:reduce){.fighter .fighter-facing .fighter-art{animation:none!important}}
+.movement-controls.not-chosen{display:none}.movement-follow{display:flex;align-items:center;gap:9px;margin-top:14px;color:#e6d7b6;font-size:13px}.movement-follow input{width:18px;height:18px}

@@ -1,6 +1,6 @@
 import {Brawl} from './engine.js';
 import {BattleAudio} from './battle-audio.js';
-import {movementLimit,movementSummary} from './movement.js';
+import {movementLimit,movementSummary,pendingMovement,movementOptions} from './movement.js';
 import {OnlineGame,onlineSupported,invitation,savedSeat,createOnline,joinOnline,readOnline} from './online.js';
 
 const app=document.querySelector('#app'), dialog=document.querySelector('#dialog'), content=document.querySelector('#dialog-content');
@@ -10,8 +10,10 @@ const GLYPHS={'Step':'➜','Quick Step':'➜','Dash':'➜','Pivot':'⇄','Quick 
 const SAVE='fable-fury-brawl-v5';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let data, game=null, screen='setup', editPlayer=0, mode='solo', heroes=['SMA','RAV'], chosen=[[],[]], basics=[[],[]], selections=[null,null], viewer=0, ready=false, showLog=false, winnerShown=false, lastLog=0, toastTimer;
-const defaultStrategies=()=>[0,1].map(()=>({direction:'toward',steps:3,path:'',aim:'damage',trait:true,remedy:'damage',coin:true,push:true,follow:true}));
-let strategies=defaultStrategies();
+const defaultStrategies=()=>[0,1].map(()=>({direction:'toward',steps:3,path:'',aim:'damage',trait:true,remedy:'damage',coin:true,push:true,follow:false}));
+let strategies=defaultStrategies(),movementApproved=[null,null],movementEditor=null;
+function resetMovement(){strategies=defaultStrategies();movementApproved=[null,null];movementEditor=null;}
+function pendingMove(){return pendingMovement(selections,movementApproved,game.available(viewer),def);}
 let targetSlot=null, previousBattle=null,lastAudioLog=null,handWasOpen=false;
 let lootUI={context:'',open:false,purchased:null};
 const battleAudio=new BattleAudio();
@@ -78,8 +80,8 @@ function inviteLink(){const u=new URL(document.baseURI);u.hash=new URLSearchPara
 function renderLobby(){app.innerHTML=`<section class="privacy online-lobby"><span class="seal">✦</span><p class="eyebrow">ONLINE 1v1 · PRIVATE ROOM</p><h1>Your battlefield is ready.</h1><p>Send this invite link to your friend. They can join from another computer and choose their own Hero. The match starts when they join.</p><div class="invite-box"><input readonly aria-label="Private invite link" value="${esc(inviteLink())}"><button class="primary" data-action="copy-invite">Copy invite link</button></div><p class="online-lobby-status"><span class="spinner"></span> ${networkConnected?'Waiting for your rival…':'Reconnecting to your room…'}</p><p class="small muted">Keep this tab open, or reopen the room in this browser to reconnect. Rooms last 24 hours.</p><button class="quiet" data-action="leave-online">Back to Hero selection</button></section>`;}
 function onlineConnection(value){if(networkConnected===value)return;networkConnected=value;if(screen==='lobby')renderLobby();else{const indicator=$('.online-connection');if(indicator)indicator.textContent=value?'Room connected':'Reconnecting…';}}
 function enterOnline(snapshot,token){
-  clearTimeout(lobbyTimer);game?.close?.();viewer=snapshot.room.seat;onlineRound=snapshot.game.round;selections=[null,null];targetSlot=null;previousBattle=null;winnerShown=false;lastLog=snapshot.game.log.length;screen='game';mode='online';
-  game=OnlineGame.connect(data,snapshot,token,{onUpdate:g=>{if(g.s.round!==onlineRound||g.s.committed[g.seat]){selections=[null,null];targetSlot=null;}onlineRound=g.s.round;viewer=g.seat;render();},onConnection:onlineConnection,onError:error=>toast(error.message)});render();
+  clearTimeout(lobbyTimer);game?.close?.();viewer=snapshot.room.seat;onlineRound=snapshot.game.round;resetMovement();selections=[null,null];targetSlot=null;previousBattle=null;winnerShown=false;lastLog=snapshot.game.log.length;screen='game';mode='online';
+  game=OnlineGame.connect(data,snapshot,token,{onUpdate:g=>{if(g.s.round!==onlineRound||g.s.committed[g.seat]){resetMovement();selections=[null,null];targetSlot=null;}onlineRound=g.s.round;viewer=g.seat;render();},onConnection:onlineConnection,onError:error=>toast(error.message)});render();
 }
 async function pollLobby(){if(screen!=='lobby'||!onlineLobby)return;try{const snapshot=await readOnline(onlineLobby.room.id,onlineLobby.token);networkConnected=true;if(snapshot.game){enterOnline(snapshot,onlineLobby.token);return;}onlineLobby={...onlineLobby,...snapshot};}catch(error){networkConnected=false;if([401,404,409,410].includes(error.status)){toast(error.message);screen='setup';render();return;}}renderLobby();lobbyTimer=setTimeout(pollLobby,1500);}
 async function startOnline(){
@@ -124,8 +126,9 @@ function planHTML(i){
 function phaseControl(){
   const s=game.s,allShop=s.shopDone.every(Boolean);
   if(s.mode==='online'&&(s.phase==='program'&&s.committed[viewer]||s.phase==='shop'&&!allShop&&s.shopDone[viewer]||s.prompt?.kind==='waiting'))return `<div class="phase-control"><span class="control-step">ONLINE MATCH</span><h3>Waiting for your rival.</h3><p>${s.phase==='program'?'Your two actions are locked and private. The reveal opens when both players are ready.':s.phase==='shop'?'Your purchase phase is complete. Your rival is finishing theirs.':'Your rival is making a private choice. The battlefield updates automatically.'}</p><span class="online-connection">${networkConnected?'Room connected':'Reconnecting…'}</span></div>`;
+  if(s.prompt?.kind==='lootMove'&&s.prompt.player===viewer)return `<div class="phase-control"><span class="control-step">YOUR MOVEMENT</span><h3>Choose where to move.</h3><p>Use the direction buttons in the movement panel. Stay is allowed.</p></div>`;
   if(s.prompt?.kind==='loot'&&s.prompt.player===viewer)return `<div class="phase-control"><span class="control-step">OPTIONAL LOOT ATTACHMENT</span><h3>${lootUI.open?'Use Loot or pass.':'Loot is available.'}</h3><button data-action="skip-prompt" class="primary">Pass without Loot →</button></div>`;
-  if(s.phase==='program'){const n=selections.filter(Boolean).length;return `<div class="phase-control"><span class="control-step">${n}/2 ACTIONS CHOSEN</span><h3 aria-live="polite">${n===0?'Choose your first card.':n===1?'Now choose your second.':'Your plan is ready.'}</h3><p>${n===2?'Check movement below, then confirm your hidden plan.':'Pick from your hand below. Your first card plays first.'}</p><div class="control-buttons"><button class="swap" data-action="swap" ${n<2?'disabled':''} aria-label="Swap programmed cards">⇄ Swap</button><button class="primary" data-action="lock" ${n<2?'disabled':''}>${n===2?'Confirm 2 actions':'Choose '+(2-n)+' card'+(n?'':'s')} <span>→</span></button></div></div>`;}
+  if(s.phase==='program'){const n=selections.filter(Boolean).length,pending=pendingMove();return `<div class="phase-control"><span class="control-step">${n}/2 ACTIONS CHOSEN</span><h3 aria-live="polite">${n===0?'Choose your first card.':n===1?'Now choose your second.':pending>=0?'Choose your movement.':'Your plan is ready.'}</h3><p>${n===2?'Choose movement for each movement card, then confirm.':'Pick from your hand below. Your first card plays first.'}</p><div class="control-buttons"><button class="swap" data-action="swap" ${n<2?'disabled':''} aria-label="Swap programmed cards">⇄ Swap</button><button class="primary" data-action="lock" ${n<2?'disabled':''}>${n===2?(pending>=0?'Choose movement':'Confirm 2 actions'):'Choose '+(2-n)+' card'+(n?'':'s')} <span>→</span></button></div></div>`;}
   if(s.phase==='shop') {
     if(lootUI.purchased)return `<div class="phase-control"><span class="control-step">ADDED TO YOUR HAND</span><h3>New Loot acquired.</h3><button class="primary" data-action="close-loot">Done →</button></div>`;
     if(allShop)return `<div class="phase-control"><h3>Ready to plan.</h3><p>Start-round purchases are complete.</p><button class="primary" data-action="next-round">Choose your actions →</button></div>`;
@@ -142,7 +145,7 @@ function reactionHTML(){
   if(q.kind==='waiting')return '<section class="reaction waiting-reaction"><h3>Your rival is choosing.</h3><p>Their private hand and choices stay hidden. Your game will update automatically.</p></section>';
   const p=game.s.players[q.player];
   if(q.kind==='loot')return '';
-  if(q.kind==='lootMove')return `<section class="reaction"><div><h3>${esc(q.lootName||'Loot')}: choose your movement.</h3><p>Move up to 2, cross your rival, turn, or stay. Movement penalties still apply.</p></div><div class="reaction-choices">${q.choices.map(path=>`<button data-choice="${path}">${path==='stay'?'Stay':path==='T'?'Turn in place':(path[0]==='L'?'← Left ':'Right → ')+path.length}</button>`).join('')}</div></section>`;
+  if(q.kind==='lootMove')return `<section class="reaction"><div><h3>${esc(q.lootName||'Movement')}: choose your movement.</h3><p>Move up to ${q.max||2}, turn, or stay. Movement penalties still apply.</p></div><div class="reaction-choices">${q.choices.map(path=>`<button data-choice="${path}">${path==='stay'?'Stay':path==='T'?'Turn in place':(path[0]==='L'?'← Left ':'Right → ')+path.length}</button>`).join('')}</div></section>`;
   if(q.kind==='space')return `<section class="reaction"><div><h3>Choose your destination.</h3><p>Teleport to any unoccupied Arena space. Select a highlighted space above.</p></div><button data-action="skip-prompt">Choose a free space for me</button></section>`;
   if(q.kind==='peek'||q.kind==='replace') {
     const p=game.s.players[q.player];
@@ -154,13 +157,23 @@ function reactionHTML(){
   if(q.kind==='retrieve')return `<section class="reaction"><div><h3>Gum & String: retrieve Loot.</h3><p>Choose one card from the Loot discard pile.</p></div><div class="reaction-choices">${q.choices.map(id=>`<button data-choice="${id}">${esc(def(id).name)}</button>`).join('')}</div></section>`;
   return '';
 }
+function openMovementEditor(slot){
+ const card=game.available(viewer).find(c=>c.uid===selections[slot]),d=card&&def(card.id);if(!movementLimit(d))return;
+ movementEditor={slot,uid:card.uid,choice:movementApproved[slot]===card.uid?{...strategies[slot]}:null,follow:strategies[slot].follow};paintMovementEditor();
+}
+function paintMovementEditor(){
+ const editor=movementEditor;if(!editor||game.s.phase!=='program'||game.s.committed[viewer]){dialog.close();return;}
+ const d=def(game.available(viewer).find(c=>c.uid===editor.uid).id),limit=movementLimit(d),p=game.s.players[viewer],op=game.s.players[1-viewer],o=editor.choice;
+ const destination=o?p.pos+(o.path||o.steps===0?0:(o.direction==='left'?-1:1)*o.steps):null;
+ modal(`<section class="movement-editor"><p class="eyebrow">ACTION ${editor.slot+1} · YOUR HIDDEN PLAN</p><h2>Choose movement: ${esc(d.name)}</h2><p>Choose direction and distance before confirming your cards. ${limit.optional?'You can stay put.':''} Each space costs 1 movement point; crossing your rival is allowed, but you cannot finish on their space.</p><div class="movement-preview" aria-label="Current battlefield positions">${[1,2,3,4,5,6,7].map(n=>`<span class="${n<game.s.left||n>game.s.right?'closed':''} ${n===destination?'chosen':''}"><b>${n}</b><small>${n===p.pos?'YOU':n===op.pos?'RIVAL':n<game.s.left||n>game.s.right?'CLOSED':''}</small></span>`).join('')}</div><div class="movement-editor-options" role="group" aria-label="Choose a movement">${movementOptions(d).map(option=>`<button data-movement-pick="${option.key}" aria-pressed="${Boolean(o&&o.direction===option.direction&&o.steps===option.steps&&o.path===option.path)}">${option.label}</button>`).join('')}</div>${['Shoulder Charge','Body Check'].includes(d.name)?`<label class="movement-follow"><input type="checkbox" data-movement-follow ${editor.follow?'checked':''}> Follow the opponent after a successful Push</label>`:''}<output class="movement-editor-summary" aria-live="polite">${o?esc(movementSummary(d,o)):'Choose a movement above.'}</output><p class="small muted">Movement resolves with this card. These are current positions; the rival may move first. Attacks turn you to face their target. Being pushed or pulled is forced movement.</p><button class="primary" data-action="confirm-movement" ${!o?'disabled':''}>Save movement →</button></section>`);
+}
 function movementChoicesHTML(){
  if(game.s.phase!=='program'||game.s.committed[viewer])return '';
  const p=game.s.players[viewer],op=game.s.players[1-viewer];
  const rows=selections.flatMap((uid,k)=>{
   const c=game.available(viewer).find(c=>c.uid===uid),d=c&&def(c.id),limit=movementLimit(d);if(!limit)return [];
   const o=strategies[k],steps=Math.max(limit.min,Math.min(limit.max,o.steps)),cross=Math.abs(p.pos-op.pos)+1,dir=op.pos>p.pos?'right':'left',target=op.pos+(op.pos>p.pos?1:-1),canCross=cross<=limit.max&&target>=game.s.left&&target<=game.s.right;
-  return [`<section class="movement-choice" aria-label="Action ${k+1} movement"><div class="movement-choice-title"><span>${k+1}</span><b>${esc(d.name)}</b><output aria-live="polite">${esc(movementSummary(d,o))}</output></div><div class="movement-controls"><div class="movement-direction" role="group" aria-label="Action ${k+1} direction">${[['left','← Left'],['right','Right →']].map(([value,label])=>`<button data-move-direction="${value}" data-slot="${k}" aria-pressed="${!o.path&&o.direction===value}">${label}</button>`).join('')}</div><div class="movement-distance" role="group" aria-label="Action ${k+1} distance"><small>${limit.optional?'Up to':'Move'}</small>${Array.from({length:limit.max-limit.min+1},(_,n)=>n+limit.min).map(n=>`<button data-move-distance="${n}" data-slot="${k}" aria-label="Action ${k+1}: ${n===0?'stay put':n+' space'+(n===1?'':'s')}" aria-pressed="${!o.path&&steps===n}">${n===0?'Stay':n}</button>`).join('')}</div><button data-move-turn="true" data-slot="${k}" aria-pressed="${o.path==='T'}">↶ Turn</button>${canCross?`<button data-move-cross="${dir}" data-move-count="${cross}" data-slot="${k}">Cross rival · ${cross}</button>`:''}</div></section>`];
+  return [`<section class="movement-choice" aria-label="Action ${k+1} movement"><div class="movement-choice-title"><span>${k+1}</span><b>${esc(d.name)}</b><output aria-live="polite">${movementApproved[k]===uid?esc(movementSummary(d,o)):'Movement not chosen'}</output><button data-edit-movement="${k}" class="edit-movement">${movementApproved[k]===uid?'Edit movement':'Choose movement'}</button></div><div class="movement-controls ${movementApproved[k]===uid?'':'not-chosen'}"><div class="movement-direction" role="group" aria-label="Action ${k+1} direction">${[['left','← Left'],['right','Right →']].map(([value,label])=>`<button data-move-direction="${value}" data-slot="${k}" aria-pressed="${!o.path&&o.direction===value}">${label}</button>`).join('')}</div><div class="movement-distance" role="group" aria-label="Action ${k+1} distance"><small>${limit.optional?'Up to':'Move'}</small>${Array.from({length:limit.max-limit.min+1},(_,n)=>n+limit.min).map(n=>`<button data-move-distance="${n}" data-slot="${k}" aria-label="Action ${k+1}: ${n===0?'stay put':n+' space'+(n===1?'':'s')}" aria-pressed="${!o.path&&steps===n}">${n===0?'Stay':n}</button>`).join('')}</div><button data-move-turn="true" data-slot="${k}" aria-pressed="${o.path==='T'}">↶ Turn</button>${canCross?`<button data-move-cross="${dir}" data-move-count="${cross}" data-slot="${k}">Cross rival · ${cross}</button>`:''}</div></section>`];
  });
  return rows.length?`<div class="movement-choices"><p>Choose movement for your hidden plan. Crossing uses one point per space; you cannot finish on your rival.</p>${rows.join('')}</div>`:'';
 }
@@ -201,7 +214,7 @@ function renderTable(){
       ${revealedCardsHTML()}
       <div class="range-badge"><small>CURRENT DISTANCE</small><span>${symbol('range')}<b>${game.range()}</b><em>spaces</em></span></div>
       ${last?`<div class="battle-callout ${last.kind}" aria-live="polite"><span class="callout-icon">${symbol(['damage','slam'].includes(last.kind)?'damage':last.kind==='block'?'shield':last.kind==='move'?'range':'spark')}</span>${esc(last.message)}</div>`:''}
-      <div class="fighters">${s.players.map((p,i)=>`<div class="fighter p${i+1} ${p.hp<=0?'ko':''}" style="left:${(p.pos-1)*100/7}%;--facing:${p.facing}" aria-label="${esc(p.name)} on space ${p.pos}"><button class="fighter-guide-hit" data-hero-guide="${p.hero}" data-guide-seat="${i}" aria-label="View ${esc(p.name)} abilities" aria-haspopup="dialog" title="Hero trait & Fury Special"></button><span class="fighter-aura" aria-hidden="true"></span><span class="fighter-shadow" aria-hidden="true"></span><img class="fighter-art" src="${portrait(p.hero)}" alt="${esc(p.name)}"><span class="fighter-marker">${p.facing===1?'FACING →':'← FACING'}</span></div>`).join('')}</div>
+      <div class="fighters">${s.players.map((p,i)=>`<div class="fighter p${i+1} ${p.hp<=0?'ko':''}" style="left:${(p.pos-1)*100/7}%;--facing:${p.facing}" aria-label="${esc(p.name)} on space ${p.pos}"><button class="fighter-guide-hit" data-hero-guide="${p.hero}" data-guide-seat="${i}" aria-label="View ${esc(p.name)} abilities" aria-haspopup="dialog" title="Hero trait & Fury Special"></button><span class="fighter-aura" aria-hidden="true"></span><span class="fighter-shadow" aria-hidden="true"></span><span class="fighter-facing"><img class="fighter-art" src="${portrait(p.hero)}" alt="${esc(p.name)}"></span><span class="fighter-marker">${p.facing===1?'FACING →':'← FACING'}</span></div>`).join('')}</div>
       <div class="arena-lane">${[1,2,3,4,5,6,7].map(n=>`<button class="space ${n<s.left||n>s.right?'closed-space':''} ${s.players.some(p=>p.pos===n)?'occupied':''} ${s.prompt?.kind==='space'&&s.prompt.choices.includes(n)?'target':''}" data-space="${n}" ${s.prompt?.kind!=='space'||!s.prompt.choices.includes(n)?'disabled':''} aria-label="Arena space ${n}"><span>${n}</span>${[s.left,s.right].includes(n)?'<small>WALL</small>':''}</button>`).join('')}</div><div class="arena-front" aria-hidden="true"></div></div>
     ${reactionHTML()}
     ${lootWindow&&!lootUI.open?`<button class="loot-alert" data-action="view-loot" aria-label="Loot available: open your Loot hand" aria-expanded="false">${symbol('spark')}<span>Loot ready</span><b>${s.prompt.choices.length}</b></button>`:''}
@@ -242,11 +255,12 @@ function battleFeedback(previous){
 }
 function render(){if(!data)return;document.body.classList.toggle('in-battle',screen==='game');document.body.classList.toggle('arena-paused',document.hidden);if(screen!=='game')handWasOpen=false;battleAudio.setBattle(screen==='game');if(screen==='setup')renderSetup();else if(screen==='lobby')renderLobby();else renderTable();}
 function persist(){if(game.s.mode==='online')return;try{localStorage.setItem(SAVE,JSON.stringify(game.s));}catch{toast('Browser storage is unavailable; keep this tab open to retain your match.');}}
-function update(){if(game.s.mode==='online'&&game.s.round!==onlineRound){onlineRound=game.s.round;selections=[null,null];targetSlot=null;}persist();render();}
+function update(){if(game.s.mode==='online'&&game.s.round!==onlineRound){onlineRound=game.s.round;resetMovement();selections=[null,null];targetSlot=null;}persist();render();}
 function start(){
+  resetMovement();
   game=new Brawl(data,{mode,heroes,chosen,basics});screen='game';viewer=0;ready=mode==='solo';selections=[null,null];winnerShown=false;lastLog=0;previousBattle=null;targetSlot=null;dialog.close();update();playTone('reveal');
 }
-async function nextRound(){await game.nextRound();selections=[null,null];targetSlot=null;ready=game.s.mode==='solo';viewer=game.s.mode==='online'?game.seat:0;update();}
+async function nextRound(){await game.nextRound();resetMovement();selections=[null,null];targetSlot=null;ready=game.s.mode==='solo';viewer=game.s.mode==='online'?game.seat:0;update();}
 function results(){
   const s=game.s,w=s.winner==='draw'?null:s.players[s.winner];
   modal(`<section class="winner"><p class="eyebrow">THE ARENA HAS SPOKEN</p>${w?`<img src="${portrait(w.hero)}" alt="${esc(w.name)}">`:''}<h1>${w?esc(w.name)+' wins!':'Double knockout!'}</h1><p>${w?'A fine display of questionable tactics.':'Two Heroes. Zero survivors. Incredible.'}</p><div class="stats"><div class="stat"><b>${s.round}</b><span>ROUNDS FOUGHT</span></div><div class="stat"><b>${w?.hp??0}</b><span>WINNER HP</span></div><div class="stat"><b>${s.players.reduce((n,p)=>n+p.lootBought,0)}</b><span>LOOT PURCHASED</span></div></div><div class="winner-actions"><button class="primary" data-action="rematch">Rematch</button><button data-action="home">Choose Heroes</button><button data-action="export">Save battle log</button></div></section>`);playTone('victory');
@@ -263,6 +277,9 @@ function rules(tab='rules',query=''){
 
 document.addEventListener('click',async e=>{
   try{
+    const editMovement=e.target.closest('[data-edit-movement]');if(editMovement){openMovementEditor(Number(editMovement.dataset.editMovement));return;}
+    const followChoice=e.target.closest('[data-movement-follow]');if(followChoice&&movementEditor){movementEditor.follow=followChoice.checked;return;}
+    const pick=e.target.closest('[data-movement-pick]');if(pick&&movementEditor){const d=def(game.available(viewer).find(c=>c.uid===movementEditor.uid).id);movementEditor.choice=movementOptions(d).find(o=>o.key===pick.dataset.movementPick);paintMovementEditor();return;}
     const movement=e.target.closest('[data-move-direction],[data-move-distance],[data-move-turn],[data-move-cross]');
     if(movement){const k=Number(movement.dataset.slot),o=strategies[k];if(!game||game.s.phase!=='program'||game.s.committed[viewer])return;
       const selected=game.available(viewer).find(c=>c.uid===selections[k]),limit=movementLimit(selected&&def(selected.id));if(!limit)return;
@@ -270,7 +287,7 @@ document.addEventListener('click',async e=>{
       if(movement.dataset.moveDistance!==undefined){o.steps=Number(movement.dataset.moveDistance);o.path='';if(!['left','right'].includes(o.direction))o.direction=game.s.players[viewer].pos<game.s.players[1-viewer].pos?'right':'left';}
       if(movement.dataset.moveTurn){o.path='T';o.steps=1;}
       if(movement.dataset.moveCross){o.direction=movement.dataset.moveCross;o.steps=Number(movement.dataset.moveCount);o.path='';}
-      render();return;
+      movementApproved[k]=selections[k];render();return;
     }
     const guide=e.target.closest('[data-hero-guide]');if(guide){heroGuide(guide.dataset.heroGuide,Number(guide.dataset.guideSeat));return;}
     const inspect=e.target.closest('[data-inspect]');if(inspect){e.stopPropagation();cardDetail(inspect.dataset.inspect);return;}
@@ -293,14 +310,15 @@ document.addEventListener('click',async e=>{
       if(card.dataset.lootCard){const id=card.dataset.lootCard;if(q?.kind==='loot'&&q.player===viewer&&q.choices.includes(id)&&lootUI.open){await game.playLoot(id);lootUI.open=false;update();}else cardDetail(id);return;}
       if(q&&['discard','replace'].includes(q.kind)&&q.choices.includes(uid)){await game.choose(uid);update();return;}
       if(game.s.phase==='program'&&!game.s.committed[viewer]&&game.available(viewer).some(c=>c.uid===uid)){
-        if(selections.includes(uid)){const index=selections.indexOf(uid);selections.splice(index,1);selections.push(null);strategies.splice(index,1);strategies.push(defaultStrategies()[0]);}
-        else {const index=selections.indexOf(null);if(index>=0)selections[index]=uid;else toast('Two cards chosen. Click one again to return it to your hand.');}targetSlot=null;
-        playTone('click');render();return;
+        if(selections.includes(uid)){const index=selections.indexOf(uid);selections.splice(index,1);selections.push(null);strategies.splice(index,1);strategies.push(defaultStrategies()[0]);movementApproved.splice(index,1);movementApproved.push(null);}
+        else {const index=selections.indexOf(null);if(index>=0){selections[index]=uid;strategies[index]=defaultStrategies()[index];movementApproved[index]=null;}else toast('Two cards chosen. Click one again to return it to your hand.');}targetSlot=null;
+        playTone('click');render();const index=selections.indexOf(uid);if(index>=0&&movementLimit(def(game.available(viewer).find(c=>c.uid===uid).id)))openMovementEditor(index);return;
       }
       const id=game.available(viewer).find(c=>c.uid===uid)?.id||uid;cardDetail(id);return;
     }
     const btn=e.target.closest('[data-action]');if(!btn||btn.disabled)return;
     switch(btn.dataset.action){
+      case 'confirm-movement':{if(!movementEditor?.choice)return;const {slot,uid,choice}=movementEditor;if(selections[slot]!==uid)return;strategies[slot]={...strategies[slot],direction:choice.direction,steps:choice.steps,path:choice.path,follow:movementEditor.follow};movementApproved[slot]=uid;movementEditor=null;dialog.close();render();break;}
       case 'view-loot':openLoot();break;
       case 'close-loot':lootUI.open=false;lootUI.purchased=null;if(game.s.mode==='hotseat'&&game.s.phase==='shop')ready=false;render();($('.loot-alert')||$('.loot-inventory'))?.focus({preventScroll:true});break;
       case 'toggle-audio':battleAudio.setEnabled(!battleAudio.enabled);syncAudioButton();audioSettings();break;
@@ -309,11 +327,12 @@ document.addEventListener('click',async e=>{
       case 'resume':{
         try{game=Brawl.restore(data,JSON.parse(localStorage.getItem(SAVE)));screen='game';mode=game.s.mode;heroes=game.s.players.map(p=>p.hero);viewer=0;ready=mode==='solo';selections=[null,null];winnerShown=false;lastLog=game.s.log.length;render();}catch{toast('That saved match could not be loaded. Start a new Brawl.');}break;
       }
-      case 'ready':viewer=desiredViewer();ready=true;selections=[null,null];targetSlot=null;if(game.s.phase==='program')strategies=defaultStrategies();render();break;
+      case 'ready':viewer=desiredViewer();ready=true;selections=[null,null];targetSlot=null;if(game.s.phase==='program')resetMovement();render();break;
       case 'lock':{
+        const pending=pendingMove();if(pending>=0){openMovementEditor(pending);return;}
         await game.commit(viewer,selections.map((uid,k)=>({uid,opts:strategies[k]})));if(game.s.mode!=='online'&&game.s.phase==='resolve'&&!game.s.shown[0])await game.advance();selections=[null,null];targetSlot=null;if(game.s.mode==='hotseat')ready=false;update();playTone('reveal');break;
       }
-      case 'swap':[selections[0],selections[1]]=[selections[1],selections[0]];[strategies[0],strategies[1]]=[strategies[1],strategies[0]];render();break;
+      case 'swap':[selections[0],selections[1]]=[selections[1],selections[0]];[strategies[0],strategies[1]]=[strategies[1],strategies[0]];[movementApproved[0],movementApproved[1]]=[movementApproved[1],movementApproved[0]];render();break;
       case 'advance':await game.advance();update();break;
       case 'next-round':await nextRound();break;
       case 'buy':{const before=[...game.s.players[viewer].loot];await game.shop(viewer,true);const bought=game.s.players[viewer].loot.find(id=>!before.includes(id));if(bought){lootUI={context:lootContext(),open:true,purchased:bought};}else if(game.s.mode==='hotseat')ready=false;update();playTone('loot');break;}
@@ -335,7 +354,7 @@ document.addEventListener('click',async e=>{
     }
   }catch(error){console.error(error);toast(error.message||'That action could not be completed.');}
 });
-document.addEventListener('change',e=>{const el=e.target.closest('[data-option]');if(!el)return;const key=el.dataset.option,expanded=$('.options-row')?.open;strategies[Number(el.dataset.slot)][key]=el.type==='checkbox'?el.checked:key==='steps'?Number(el.value):el.value;render();if(expanded&&$('.options-row'))$('.options-row').open=true;});
+document.addEventListener('change',e=>{const el=e.target.closest('[data-option]');if(!el)return;const key=el.dataset.option,expanded=$('.options-row')?.open;strategies[Number(el.dataset.slot)][key]=el.type==='checkbox'?el.checked:key==='steps'?Number(el.value):el.value;if(['direction','steps','path'].includes(key))movementApproved[Number(el.dataset.slot)]=selections[Number(el.dataset.slot)];render();if(expanded&&$('.options-row'))$('.options-row').open=true;});
 document.addEventListener('keydown',async e=>{if(e.key===' '&&screen==='game'&&!dialog.open&&!['INPUT','SELECT','BUTTON','TEXTAREA'].includes(e.target.tagName)&&!game.s.prompt&&game.s.phase==='resolve'){e.preventDefault();try{await game.advance();update();}catch(error){toast(error.message);}}});
 
 try{
