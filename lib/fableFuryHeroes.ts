@@ -1,3 +1,5 @@
+import { fableAsset } from "@/lib/fableFuryStorage";
+
 export type SkillColor = "red" | "blue" | "green" | "yellow";
 export type TokenKind = "healing" | "lucky" | "crystal";
 
@@ -18,8 +20,8 @@ export type FableHero = {
   skillSlots: SkillColor[];
 };
 
-const thumb = (id: string, size = 1200) =>
-  `https://drive.google.com/thumbnail?id=${id}&sz=w${size}`;
+const heroMat = (number: number) =>
+  fableAsset(`Hero Mats & Bag/Digital Hero Mats/CUTS - Hero Mats (For Digital Games)${number === 1 ? "" : number}.png`);
 
 export const FABLE_HEROES: FableHero[] = [
   {
@@ -28,7 +30,7 @@ export const FABLE_HEROES: FableHero[] = [
     name: "Alf Featherbottom",
     race: "Elf",
     role: "Archer",
-    mat: thumb("1_MwjyIx66kGn6aQWEmf2PJSiCk9raEmm"),
+    mat: heroMat(1),
     startingHealth: 7,
     startingArmor: 1,
     startingAttackDice: 1,
@@ -44,7 +46,7 @@ export const FABLE_HEROES: FableHero[] = [
     name: "Dr. Shealer",
     race: "Human",
     role: "Priest",
-    mat: thumb("1wFz_XyRoZVI33fgvwH4u1GWL-Ymp4oYD"),
+    mat: heroMat(2),
     startingHealth: 8,
     startingArmor: 1,
     startingAttackDice: 0,
@@ -60,7 +62,7 @@ export const FABLE_HEROES: FableHero[] = [
     name: "Friar Franc",
     race: "Human",
     role: "Monk",
-    mat: thumb("1smn18D_5C90fFAn2l_1CAYSjmFEtOPFg"),
+    mat: heroMat(3),
     startingHealth: 10,
     startingArmor: 0,
     startingAttackDice: 1,
@@ -76,7 +78,7 @@ export const FABLE_HEROES: FableHero[] = [
     name: "Helga",
     race: "Dwarf",
     role: "Tank",
-    mat: thumb("17Aua39SVOGH9swaW7_IyyuN9sSmikg1x"),
+    mat: heroMat(4),
     startingHealth: 5,
     startingArmor: 2,
     startingAttackDice: 0,
@@ -92,7 +94,7 @@ export const FABLE_HEROES: FableHero[] = [
     name: "Lord Smasherton",
     race: "Dwarf",
     role: "Barbarian",
-    mat: thumb("1jv64LvKTNm8zkzuxtXMoxF9yDabq4LLu"),
+    mat: heroMat(5),
     startingHealth: 8,
     startingArmor: 1,
     startingAttackDice: 2,
@@ -108,7 +110,7 @@ export const FABLE_HEROES: FableHero[] = [
     name: "Raven Madison",
     race: "Elf",
     role: "Rogue",
-    mat: thumb("1UekNZ1XSLa_NcMahuEls6OQHHClF6gF9"),
+    mat: heroMat(6),
     startingHealth: 6,
     startingArmor: 1,
     startingAttackDice: 1,
