@@ -235,3 +235,5 @@ body.arena-paused .scene-layer *,body.arena-paused .scene-layer *:before,body.ar
 .basic-loadout{margin-top:14px;border-top:1px solid #ddc68a30;padding-top:12px}
 .basic-loadout summary{cursor:pointer;color:var(--gold,#e7bd68);font-size:13px}
 .basic-loadout p{margin:10px 0}
+/* v0.4 deck copies and public position state */
+.quantity-card{display:flex;align-items:center;gap:8px;cursor:default}.quantity-card>span{flex:1}.copy-controls{display:flex;align-items:center;gap:7px;white-space:nowrap}.copy-controls button{min-width:30px;padding:4px 8px}.copy-controls b{font-size:12px;min-width:26px}.quantity-card .info{position:static;flex-shrink:0}.attached-loot{padding:8px 10px;border:1px solid #b99ad0;border-radius:8px;background:#251f34;color:#e2c9f1;font-size:13px;text-align:center;max-width:100%}.space.closed-space{opacity:.15;filter:grayscale(1);text-decoration:line-through}.fighter-marker{white-space:nowrap;font-size:10px!important;letter-spacing:1px}.option-group input[data-option="path"]{width:110px;padding:5px;background:#12222c;border:1px solid #53666b;border-radius:5px;color:#f6e9c4}.fury-pips i{min-width:6px}.guide-special:last-child{grid-column:1/-1}
