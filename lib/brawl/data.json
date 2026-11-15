@@ -9,7 +9,7 @@
       "damage": "",
       "range": "",
       "block": "",
-      "text": "Move up to 2 spaces. Each point may move 1 space in either direction or turn in place.",
+      "text": "Move up to 2 spaces in either direction. You may cross the opponent but cannot finish on their space.",
       "timing": "Action",
       "starter": false,
       "qty": 2,
@@ -24,7 +24,7 @@
       "damage": "",
       "range": "",
       "block": "",
-      "text": "Move 1 space or turn in place.",
+      "text": "Move 1 space in either direction.",
       "timing": "Action",
       "starter": false,
       "qty": 2,
@@ -39,7 +39,7 @@
       "damage": "",
       "range": "",
       "block": "",
-      "text": "Move up to 3 spaces, spending movement freely on spaces and/or turning.",
+      "text": "Move up to 3 spaces in either direction. You may cross the opponent but cannot finish on their space.",
       "timing": "Action",
       "starter": false,
       "qty": 2,
@@ -54,7 +54,7 @@
       "damage": "",
       "range": "",
       "block": "",
-      "text": "Turn around, then you may Move 1.",
+      "text": "Gain 1 Block this reveal, then you may Move 1.",
       "timing": "Action",
       "starter": false,
       "qty": 2,
@@ -204,7 +204,7 @@
       "damage": "",
       "range": "",
       "block": "",
-      "text": "Move 1 or turn in place. Your Action 2 gets +2 Speed this round.",
+      "text": "Move 1 space in either direction. Your Action 2 gets +2 Speed this round.",
       "timing": "Action",
       "starter": false,
       "qty": 2,
@@ -396,10 +396,10 @@
       "category": "Special",
       "hero": "Lord Smasherton",
       "speed": "4",
-      "damage": "2",
+      "damage": "3",
       "range": "1",
       "block": "",
-      "text": "Move up to 3 spaces. If you reach Range 1, Attack for 2 damage and Push 1 on hit.",
+      "text": "Move up to 3 spaces, then Attack for 3 damage at Range 1. Push 1 on hit. Pain applies to this Attack.",
       "timing": "Unlock once at 3 Fury. Added to hand; after use, joins normal discard/deck cycle.",
       "starter": false,
       "qty": 1,
@@ -444,7 +444,7 @@
       "damage": "3",
       "range": "1",
       "block": "",
-      "text": "Attack for 3 damage at Range 1 and ignore 1 Block. If Raven is Behind immediately before auto-turn, deal +2 damage.",
+      "text": "Attack for 3 damage at Range 1, ignoring 1 Block. If you crossed the opponent this round, add +2 damage and consume that crossing.",
       "timing": "Action",
       "starter": true,
       "qty": 2,
@@ -531,10 +531,10 @@
       "category": "Special",
       "hero": "Raven Madison",
       "speed": "6",
-      "damage": "",
-      "range": "",
+      "damage": "2",
+      "range": "1-2",
       "block": "",
-      "text": "Move up to 2 spaces and may cross the opponent. Set Dodge.",
+      "text": "Move up to 2 spaces, then Attack for 2 damage at Range 1–2. If you crossed the opponent this round, add +1 damage and consume that crossing. Set Dodge.",
       "timing": "Unlock once at 3 Fury. Added to hand; after use, joins normal discard/deck cycle.",
       "starter": false,
       "qty": 1,
@@ -666,10 +666,10 @@
       "category": "Special",
       "hero": "Alf Featherbottom",
       "speed": "7",
-      "damage": "",
-      "range": "",
+      "damage": "2",
+      "range": "2-5",
       "block": "",
-      "text": "Gain Aim. If the opponent still has an unrevealed programmed Action, privately look at it; otherwise look at 2 random cards from their hand. Then you may Move 1.",
+      "text": "Gain Aim, then you may Move up to 2 spaces. Scout the opponent’s unrevealed Action, or 2 random hand cards. Attack for 2 damage at Range 2–5, ignoring 1 Block. You may spend Aim normally.",
       "timing": "Unlock once at 3 Fury. Added to hand; after use, joins normal discard/deck cycle.",
       "starter": false,
       "qty": 1,
@@ -801,10 +801,10 @@
       "category": "Special",
       "hero": "Friar Franc",
       "speed": "5",
-      "damage": "1",
+      "damage": "2",
       "range": "1",
       "block": "",
-      "text": "Attack twice for 1 damage each at Range 1. If both cause HP loss, draw 1 at cleanup before refilling. Card-wide bonuses apply to the first Attack only.",
+      "text": "You may Move 1, then Attack twice for 2 damage each at Range 1. If both cause HP loss, draw 1 at cleanup before refilling. Card-wide bonuses affect the first Attack only.",
       "timing": "Unlock once at 3 Fury. Added to hand; after use, joins normal discard/deck cycle.",
       "starter": false,
       "qty": 1,
@@ -939,7 +939,7 @@
       "damage": "",
       "range": "",
       "block": "5",
-      "text": "Gain 5 Block until end of round.",
+      "text": "Gain 5 Block until end of round. If an Attack at Range 1 is fully stopped by your Block this reveal, deal 2 damage back to its attacker. Each stopped Attack can trigger this once.",
       "timing": "Unlock once at 3 Fury. Added to hand; after use, joins normal discard/deck cycle.",
       "starter": false,
       "qty": 1,
@@ -1073,8 +1073,8 @@
       "speed": "6",
       "damage": "",
       "range": "",
-      "block": "",
-      "text": "Heal 1 HP. Gain exactly 1 Remedy total from this card, including your passive.",
+      "block": "2",
+      "text": "Heal 2 HP and gain 2 Block this reveal. Gain exactly 1 Remedy total from this card, including your passive.",
       "timing": "Unlock once at 3 Fury. Added to hand; after use, joins normal discard/deck cycle.",
       "starter": false,
       "qty": 1,
@@ -1095,7 +1095,8 @@
       "qty": 1,
       "master_page": 67,
       "back": "Loot",
-      "png": "cards-png/LOO-001.png"
+      "png": "cards-png/LOO-001.png",
+      "cost": 3
     },
     {
       "id": "LOO-002",
@@ -1112,7 +1113,8 @@
       "qty": 1,
       "master_page": 68,
       "back": "Loot",
-      "png": "cards-png/LOO-002.png"
+      "png": "cards-png/LOO-002.png",
+      "cost": 3
     },
     {
       "id": "LOO-003",
@@ -1129,7 +1131,8 @@
       "qty": 1,
       "master_page": 69,
       "back": "Loot",
-      "png": "cards-png/LOO-003.png"
+      "png": "cards-png/LOO-003.png",
+      "cost": 3
     },
     {
       "id": "LOO-004",
@@ -1146,7 +1149,8 @@
       "qty": 1,
       "master_page": 70,
       "back": "Loot",
-      "png": "cards-png/LOO-004.png"
+      "png": "cards-png/LOO-004.png",
+      "cost": 3
     },
     {
       "id": "LOO-005",
@@ -1163,7 +1167,8 @@
       "qty": 1,
       "master_page": 71,
       "back": "Loot",
-      "png": "cards-png/LOO-005.png"
+      "png": "cards-png/LOO-005.png",
+      "cost": 3
     },
     {
       "id": "LOO-006",
@@ -1180,7 +1185,8 @@
       "qty": 1,
       "master_page": 72,
       "back": "Loot",
-      "png": "cards-png/LOO-006.png"
+      "png": "cards-png/LOO-006.png",
+      "cost": 3
     },
     {
       "id": "LOO-007",
@@ -1197,7 +1203,8 @@
       "qty": 1,
       "master_page": 73,
       "back": "Loot",
-      "png": "cards-png/LOO-007.png"
+      "png": "cards-png/LOO-007.png",
+      "cost": 3
     },
     {
       "id": "LOO-008",
@@ -1214,7 +1221,8 @@
       "qty": 1,
       "master_page": 74,
       "back": "Loot",
-      "png": "cards-png/LOO-008.png"
+      "png": "cards-png/LOO-008.png",
+      "cost": 3
     },
     {
       "id": "LOO-009",
@@ -1231,7 +1239,8 @@
       "qty": 1,
       "master_page": 75,
       "back": "Loot",
-      "png": "cards-png/LOO-009.png"
+      "png": "cards-png/LOO-009.png",
+      "cost": 3
     },
     {
       "id": "LOO-010",
@@ -1248,7 +1257,8 @@
       "qty": 1,
       "master_page": 76,
       "back": "Loot",
-      "png": "cards-png/LOO-010.png"
+      "png": "cards-png/LOO-010.png",
+      "cost": 3
     },
     {
       "id": "LOO-011",
@@ -1265,7 +1275,8 @@
       "qty": 1,
       "master_page": 77,
       "back": "Loot",
-      "png": "cards-png/LOO-011.png"
+      "png": "cards-png/LOO-011.png",
+      "cost": 3
     },
     {
       "id": "LOO-012",
@@ -1282,7 +1293,8 @@
       "qty": 1,
       "master_page": 78,
       "back": "Loot",
-      "png": "cards-png/LOO-012.png"
+      "png": "cards-png/LOO-012.png",
+      "cost": 3
     },
     {
       "id": "LOO-013",
@@ -1293,13 +1305,14 @@
       "damage": "",
       "range": "",
       "block": "",
-      "text": "Move to any legal unoccupied active battlefield space before resolving the attached Action. Teleporting does not change facing.",
+      "text": "Move to any legal unoccupied active battlefield space before resolving the attached Action. This voluntary relocation can prime Raven’s crossing bonus.",
       "timing": "Before your Action card resolves",
       "starter": false,
       "qty": 1,
       "master_page": 79,
       "back": "Loot",
-      "png": "cards-png/LOO-013.png"
+      "png": "cards-png/LOO-013.png",
+      "cost": 3
     },
     {
       "id": "LOO-014",
@@ -1316,7 +1329,8 @@
       "qty": 1,
       "master_page": 80,
       "back": "Loot",
-      "png": "cards-png/LOO-014.png"
+      "png": "cards-png/LOO-014.png",
+      "cost": 3
     },
     {
       "id": "LOO-015",
@@ -1333,7 +1347,8 @@
       "qty": 1,
       "master_page": 81,
       "back": "Loot",
-      "png": "cards-png/LOO-015.png"
+      "png": "cards-png/LOO-015.png",
+      "cost": 3
     },
     {
       "id": "LOO-016",
@@ -1350,7 +1365,8 @@
       "qty": 1,
       "master_page": 82,
       "back": "Loot",
-      "png": "cards-png/LOO-016.png"
+      "png": "cards-png/LOO-016.png",
+      "cost": 3
     },
     {
       "id": "LOO-017",
@@ -1367,7 +1383,8 @@
       "qty": 1,
       "master_page": 83,
       "back": "Loot",
-      "png": "cards-png/LOO-017.png"
+      "png": "cards-png/LOO-017.png",
+      "cost": 3
     },
     {
       "id": "LOO-018",
@@ -1384,7 +1401,8 @@
       "qty": 1,
       "master_page": 84,
       "back": "Loot",
-      "png": "cards-png/LOO-018.png"
+      "png": "cards-png/LOO-018.png",
+      "cost": 3
     },
     {
       "id": "LOO-019",
@@ -1401,7 +1419,8 @@
       "qty": 1,
       "master_page": 85,
       "back": "Loot",
-      "png": "cards-png/LOO-019.png"
+      "png": "cards-png/LOO-019.png",
+      "cost": 3
     },
     {
       "id": "LOO-020",
@@ -1418,7 +1437,8 @@
       "qty": 1,
       "master_page": 86,
       "back": "Loot",
-      "png": "cards-png/LOO-020.png"
+      "png": "cards-png/LOO-020.png",
+      "cost": 3
     },
     {
       "id": "LOO-021",
@@ -1435,7 +1455,8 @@
       "qty": 1,
       "master_page": 87,
       "back": "Loot",
-      "png": "cards-png/LOO-021.png"
+      "png": "cards-png/LOO-021.png",
+      "cost": 3
     },
     {
       "id": "LOO-022",
@@ -1452,7 +1473,8 @@
       "qty": 1,
       "master_page": 88,
       "back": "Loot",
-      "png": "cards-png/LOO-022.png"
+      "png": "cards-png/LOO-022.png",
+      "cost": 3
     },
     {
       "id": "LOO-023",
@@ -1469,7 +1491,8 @@
       "qty": 1,
       "master_page": 89,
       "back": "Loot",
-      "png": "cards-png/LOO-023.png"
+      "png": "cards-png/LOO-023.png",
+      "cost": 3
     },
     {
       "id": "LOO-024",
@@ -1486,7 +1509,8 @@
       "qty": 1,
       "master_page": 90,
       "back": "Loot",
-      "png": "cards-png/LOO-024.png"
+      "png": "cards-png/LOO-024.png",
+      "cost": 3
     }
   ],
   "heroes": [
@@ -1507,13 +1531,13 @@
       "name": "Raven Madison",
       "archetype": "Mobile assassin / cross-up / backstab",
       "trait": "Dodge",
-      "traitText": "Hold 1 Dodge. Spend it to cancel one Attack and all its on-hit effects. After that Attack, you may Move 1; your next Attack this round gets +1 damage and ignores 1 additional Block. Unused Dodge expires at cleanup. Backstab rewards attacking from Behind.",
+      "traitText": "Hold 1 Dodge. Spend it to cancel one Attack and all its on-hit effects. After that Attack, you may Move 1; your next Attack this round gets +1 damage and ignores 1 additional Block. Unused Dodge expires at cleanup. Crossing the opponent primes Backstab this round. Backstab or Shadowstep consumes the crossing; forced movement does not prime it.",
       "special": "NOTHING PERSONAL",
       "slug": "hero-raven-madison",
       "id": "RAV",
       "ultimate": {
         "name": "Living Shadow",
-        "text": "For the rest of combat, once per round after you move through or end a movement Behind the opponent, Set Dodge and your next Backstab this round gets +1 damage."
+        "text": "Once per round, after voluntarily crossing the opponent, Set Dodge and prime +1 damage for your next Backstab this round. No facing bookkeeping."
       }
     },
     {
@@ -1569,7 +1593,7 @@
       }
     }
   ],
-  "rulesVersion": "0.6",
+  "rulesVersion": "0.7",
   "deckRules": {
     "basics": 10,
     "hero": 5,
@@ -1593,5 +1617,59 @@
     "damagePerStep": 2,
     "text": "At the end of round 13, both Heroes lose 2 HP simultaneously. Increase this loss by 2 each later round. Arena Fury ignores Block and Dodge, grants no Fury or Pain, and a double knockout is a draw."
   },
-  "movementRules": "Program cards only. When a voluntary movement effect resolves, choose a legal arena destination using current positions and the printed movement allowance. Optional movement may stay; moving through the rival costs the occupied space too, and cannot end there. Movement penalties reduce the allowance once. A turn in place costs one movement point. Follow movement is optional and limited to the distance actually pushed."
+  "movementRules": "Choose a legal arena destination when each movement effect resolves. Optional movement permits staying. No facing or turn actions. Voluntary crossing primes Raven; forced movement does not.",
+  "startingCoins": 0,
+  "lootCost": 3,
+  "events": [
+    {
+      "id": "giant-fan",
+      "name": "Giant Fan",
+      "text": "When revealed, move both Heroes to the two leftmost active spaces, preserving their left-to-right order. No Wall Slams or crossing bonuses."
+    },
+    {
+      "id": "false-start",
+      "name": "False Start!",
+      "text": "This round, lower effective Speed acts first. Initiative breaks ties."
+    },
+    {
+      "id": "long-sticks",
+      "name": "The Longest Sticks in the Kingdom",
+      "text": "Action-card Attacks get +1 maximum Range this round. Minimum Range is unchanged."
+    },
+    {
+      "id": "loot-cart",
+      "name": "Loot Cart Crash",
+      "text": "Each Hero draws one free secret Loot. If holding two, you may discard one to make room, or pass."
+    },
+    {
+      "id": "lava",
+      "name": "The Edges Are Lava",
+      "text": "After Action 2, each Hero on an active battlefield edge loses 2 HP simultaneously. No Block, Dodge, Fury or Pain."
+    },
+    {
+      "id": "goblin-show",
+      "name": "The Goblin Halftime Show",
+      "text": "After Action 1 fully finishes, each Hero may secretly replace Action 2 with a card from hand, returning the original to hand."
+    },
+    {
+      "id": "encore",
+      "name": "Encore! Encore!",
+      "text": "If both survive Action 2, secretly choose, reveal and resolve one bonus Action from hand. Bonuses explicitly naming Action 2 do not apply."
+    },
+    {
+      "id": "luggage",
+      "name": "Mixed-up Luggage",
+      "text": "When revealed, each Hero draws two combat cards, then secretly discards two cards from hand."
+    },
+    {
+      "id": "devil",
+      "name": "A Perfectly Reasonable Devil",
+      "text": "At round end before the next Loot purchase, each Hero may lose 2 HP to gain 3 Coins. You must survive the payment. Coin cap 8."
+    },
+    {
+      "id": "rubber-shields",
+      "name": "Rubber Shields",
+      "text": "If an Action card causes no HP loss and its defender spent Block against it, its attacker loses 1 HP after the card finishes. Once per Action card. Loot Attacks excluded. No Fury or Pain."
+    }
+  ]
 }
