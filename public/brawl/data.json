@@ -1569,7 +1569,7 @@
       }
     }
   ],
-  "rulesVersion": "0.5",
+  "rulesVersion": "0.6",
   "deckRules": {
     "basics": 10,
     "hero": 5,
@@ -1592,5 +1592,6 @@
     "startsRound": 13,
     "damagePerStep": 2,
     "text": "At the end of round 13, both Heroes lose 2 HP simultaneously. Increase this loss by 2 each later round. Arena Fury ignores Block and Dodge, grants no Fury or Pain, and a double knockout is a draw."
-  }
+  },
+  "movementRules": "Program cards only. When a voluntary movement effect resolves, choose a legal arena destination using current positions and the printed movement allowance. Optional movement may stay; moving through the rival costs the occupied space too, and cannot end there. Movement penalties reduce the allowance once. A turn in place costs one movement point. Follow movement is optional and limited to the distance actually pushed."
 }
