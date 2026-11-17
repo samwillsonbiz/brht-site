@@ -22,7 +22,7 @@ export class OnlineGame extends Brawl2{
   apply(snapshot,notify=true){if(snapshot.room.revision<this.room.revision)return;const changed=snapshot.room.revision!==this.room.revision;this.room=snapshot.room;if(snapshot.game)this.s=snapshot.game;if(changed&&notify)this.onUpdate?.(this);}
   async poll(){
     if(this.closed)return;
-    try{if(!this.pending){const snapshot=await readOnline(this.room.id,this.token);this.apply(snapshot);this.onConnection?.(true);}}
+    try{if(!this.pending){const snapshot=await readOnline(this.room.id,this.token);if(this.closed)return;this.apply(snapshot);this.onConnection?.(true);}}
     catch(error){this.onConnection?.(false);if([401,404,409,410].includes(error.status)){this.closed=true;this.onError?.(error);return;}}
     if(!this.closed)this.timer=setTimeout(()=>this.poll(),document.hidden?4500:1100);
   }
