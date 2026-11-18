@@ -18,3 +18,4 @@
 /* Four attack choices stay together, with the reaction reserve below. */
 .t-hands{display:block}.t-hands .r-hand{justify-content:center}.t-hands>section+section{margin-top:8px}.t-hands>section+section .r-hand{padding-top:12px}@media(max-width:700px){.t-hands .r-hand{justify-content:flex-start}}
 .t-hands>section:first-child .r-hand{padding-top:46px}
+button.r-card:hover:not(:disabled){background:#f4e7bf}
