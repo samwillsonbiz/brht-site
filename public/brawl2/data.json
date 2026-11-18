@@ -654,7 +654,7 @@
       "name": "Wind Up",
       "category": "Basic",
       "speed": 7,
-      "text": "Your next Attack this round gets +1 damage on its first hit.",
+      "text": "Your next Attack this round gets +2 damage on its first hit.",
       "ops": [
         {
           "op": "boost",
