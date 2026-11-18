@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';
-import {Brawl2,VERSION} from '../lib/brawl2/engine.mjs';
+import {Brawl2,VERSION,LOOT_COST} from '../lib/brawl2/engine.mjs';
 import {projectGame,createRoomService,MemoryRoomStore} from '../lib/brawl2/rooms.mjs';
 const data=JSON.parse(fs.readFileSync(new URL('../lib/brawl2/data.json',import.meta.url)));
 const fresh=(heroes=['SMA','ALF'])=>new Brawl2(data,{seed:47,heroes});
@@ -37,3 +37,6 @@ test('Reaction refill keeps unused instances, adds at most two, stops at three',
 test('explicit draws can exceed three; cleanup keeps extra cards and draws none',()=>{const g=fresh();g.draw(0,1,'Reaction');const before=g.hand(0,'Reaction').map(c=>c.uid);g.cleanup();assert.deepEqual(g.hand(0,'Reaction').map(c=>c.uid),before);assert.equal(g.s.lastRefill[0].reactionDrawn,0);invariant(g);});
 test('public result reports damage minus Block, wall damage and Coin reward',()=>{const g=fresh();pair(g,['T-S01','T-B02'],['T-A01','T-B03']);advance(g);g.s.players[0].pos=1;g.s.players[0].block=2;settle(g);assert.deepEqual(g.s.lastResult.hits,[{damage:5,blocked:2,loss:3,miss:false,pierce:false}]);const projected=projectGame(g,0);assert.deepEqual(projected.lastResult,g.s.lastResult);assert.ok(projected.trail.some(t=>t.includes('passes')));assert.equal(projected.context,undefined);});
 test('refill and result summaries expose counts and public attacks, not hidden identities',()=>{const g=fresh();g.cleanup();const v=projectGame(g,1);assert.deepEqual(v.lastRefill,g.s.lastRefill);assert.ok(v.players[0].hand.every(c=>c.id==='hidden'));assert.equal(v.queue,undefined);assert.equal(v.lootDeck,undefined);});
+
+test('Loot opens at two Coins, costs exactly two, and preserves spare Coins',()=>{assert.equal(LOOT_COST,2);for(const coins of [0,1,2,3]){const g=fresh();g.s.players[0].coins=coins;g.cleanup();assert.equal(g.s.shopDone[0],coins<2);if(coins<2){assert.equal(g.s.phase,'program');assert.throws(()=>g.shop(0,true));}else{assert.equal(g.s.phase,'shop');g.shop(0,true);assert.equal(g.s.players[0].coins,coins-2);assert.equal(g.s.players[0].loot.length,1);assert.throws(()=>g.shop(0,true));}invariant(g);}});
+test('two held Loot still prevent buying even with enough Coins',()=>{const g=fresh(),p=g.s.players[0];p.coins=8;p.loot=g.s.lootDeck.splice(0,2);g.cleanup();assert.equal(g.s.shopDone[0],true);assert.throws(()=>g.shop(0,true));assert.equal(p.coins,8);invariant(g);});

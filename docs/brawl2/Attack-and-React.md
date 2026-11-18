@@ -10,29 +10,29 @@ Commit two Attacks face down in order. Reveal first pair together, higher Speed 
 
 No automatic draw after a Reaction or individual Attack. Explicit card effects can draw Reactions, at most one draw effect per player per active attack. After all four attacks, keep unused cards, refill Attacks to 4 and draw at most 2 new Reactions, stopping at 3 held. Fury may temporarily give a fifth Attack. Block clears per attack except Helga banks it until the end of all four. Maximum Block 6; attack bonuses expire after that attack. Movement is chosen on the arena at resolution: up to, either direction, crossing allowed, never land together. Push/pull distances are optional. No facing bookkeeping.
 
-Only resolved Basic Attacks earn 1 Coin; Reactions earn none, including misses; cap 8. After all four attacks, buy one blind Loot for 3 Coins or save; hold two. Loot uses the same alternating reaction turns. Twelve unique Loot cards form a finite shared pile; spent Loot reshuffles when needed. No events.
+Only resolved Basic Attacks earn 1 Coin; including misses; Reactions earn none. Cap 8. After all four attacks, buy one blind Loot for 2 Coins or save; hold two. Loot uses the same alternating reaction turns. Twelve unique Loot cards form a finite shared pile; spent Loot reshuffles when needed. No events.
 
 Gain 1 Fury per opposing damaging card play, not per damage point. Attack and wall share a source. Full Block and self-damage give none. At 3, the Hero's Fury Attack enters hand once and cycles thereafter; at 5, the permanent passive upgrades. Immediate KO ends play. At round-10 cleanup, both lose 2 Health ignoring Block, rising by 1 each later round (cap 18).
 
 ## Reproduce
 
 - `node brawl2/tools/build-reactions.mjs` builds the current card database.
-- `node --test brawl2/tests/*.test.mjs` runs 48 rule/network/UI-forecast tests, including the user's exact move/chase/block example and all 15 matchups.
+- `node --test brawl2/tests/*.test.mjs` runs 51 rule/network/UI-forecast tests, including the user's exact move/chase/block example and all 15 matchups.
 - `GAMES_PER_PAIR=60 node brawl2/tools/simulate-reactions.mjs` runs 5,400 deterministic games across all non-mirror pairs, both seats, suggested/random drafts, three public-state heuristic weightings.
 - `node brawl2/tools/serve.mjs` serves localhost:8779/brawl2.
 - `node brawl2/tools/smoke-reactions.mjs` exercises three two-seat rooms covering all six Heroes.
 - `node brawl2/tools/prepare-release.mjs` copies only Brawl2 release files.
 - `node brawl2/tools/verify-reactions-live.mjs` checks published files, artwork and both API versions.
 
-Engine `brawl2-reactions-3`. New browser save and seat keys isolate older saves/rooms. Existing room storage uses an exact engine-version filter; no database schema, RLS, permissions, existing room or scheduler data changes.
+Engine `brawl2-reactions-4`. New browser save and seat keys isolate older saves/rooms. Existing room storage uses an exact engine-version filter; no database schema, RLS, permissions, existing room or scheduler data changes.
 
-The bots do not read opposing hidden hands or future draws. Results are diagnostic, not proof of human balance, match duration in minutes, or fun. See `outputs/brawl2-clarity/Simulation.json` and `outputs/brawl2-clarity/Debrief.md`. Current authoritative sources are `tools/build-reactions.mjs`, `dist/engine.js`, `dist/reaction-ai.js` and `dist/app.js`. Older builders and simulators are historical.
+The bots do not read opposing hidden hands or future draws. Results are diagnostic, not proof of human balance, match duration in minutes, or fun. See `outputs/brawl2-loot2/Simulation.json` and `outputs/brawl2-loot2/Debrief.md`. Current authoritative sources are `tools/build-reactions.mjs`, `dist/engine.js`, `dist/reaction-ai.js` and `dist/app.js`. Older builders and simulators are historical.
 
 ## Implemented economy and clarity update
 
 Implemented at the user's request. Keep the seven-space linear arena. Start a fresh match for the new rules.
 
-- Loot stays at 3 Coins. Only resolved Basic Attacks earn 1 Coin; Reactions earn no Coins, including Basic Reactions.
+- Loot now costs 2 Coins. Only resolved Basic Attacks earn 1 Coin; Reactions earn no Coins, including Basic Reactions.
 - Start with 3 Reactions. Keep unused Reactions; after all four committed attacks, draw at most 2 new Reactions, stopping at 3 held. Explicit card draw effects remain exceptions. Attack hand remains refill to 4, commit 2.
 - Explain the current combat step persistently: active attacker/card, whose reaction turn, projected damage if both pass, and a clear last-chance message after one pass.
 - Highlight the active Attack, dim the waiting Attack, and show currently threatened arena spaces.
