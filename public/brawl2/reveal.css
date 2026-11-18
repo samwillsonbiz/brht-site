@@ -5,3 +5,8 @@
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
 
 .r-passive{font-size:9px;color:#dac48e;margin:6px 0 0}.r-library{display:flex;flex-wrap:wrap;gap:15px;padding:20px 0}.r-resources{gap:11px;font-size:11px}@media(max-width:700px){.r-passive{font-size:7px}.r-resources{gap:5px;font-size:8px}}
+
+/* Six distinct fighting styles */
+.r-roster{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:12px}.r-roster>button{padding:6px;background:#081a24;border:1px solid #e3d29b33;border-radius:9px;display:flex;align-items:center;gap:7px;color:#b9cdca}.r-roster>button.active{border-color:#f5d08c;background:#725a2538;color:#fff0c6}.r-roster img{width:37px;height:45px;object-fit:contain}.r-roster b{font-size:12px}.r-card.hero-SHE{border-color:#bd7491}.hero-SHE .r-card-head{background:#904d68}.r-card.hero-HEL{border-color:#76a5ba}.hero-HEL .r-card-head{background:#36627a}.r-card.hero-RAV{border-color:#a486c1}.hero-RAV .r-card-head{background:#614879}.r-card.hero-FRA{border-color:#c5a75b}.hero-FRA .r-card-head{background:#8b722d}.r-passive{min-height:12px;line-height:1.4}.r-card-text{scrollbar-width:thin}.r-clash-title>b{font-size:28px}@media(max-width:700px){.r-roster img{width:30px;height:37px}.r-roster b{font-size:11px}.r-hud h2{font-size:17px}.r-passive{font-size:7px}.r-pool-grid{grid-template-columns:1fr}.r-control .r-choices{width:100%}}
+
+.r-combo-tip{padding:10px;border-left:2px solid #d9b66d;background:#d3b0650c;color:#f1dbaa!important;font-size:12px;line-height:1.5}.r-card-head>b{overflow-wrap:anywhere}.r-setup .r-hero-stage>div{right:0}

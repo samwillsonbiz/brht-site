@@ -1,6 +1,6 @@
 import {Brawl2,VERSION} from './engine.js';
 export const ROOM_API='/api/brawl2';
-const PREFIX='fable-brawl2-reveal-room-';
+const PREFIX='fable-brawl2-reveal2-room-';
 export function invitation(){const p=new URLSearchParams(location.hash.replace(/^#/,''));return {room:p.get('room'),invite:p.get('invite')};}
 export function savedSeat(room){try{return JSON.parse(localStorage.getItem(PREFIX+room)||'null');}catch{return null;}}
 export function rememberSeat(room,token,invite){try{localStorage.setItem(PREFIX+room,JSON.stringify({token,invite}));}catch{/* Active tabs still keep their seat in memory. */}}
