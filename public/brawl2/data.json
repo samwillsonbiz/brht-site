@@ -1999,7 +1999,7 @@
   "rules": [
     [
       "Commit attacks, keep reactions",
-      "Draft 10 Basics and 5 Hero cards, at most two copies per design. Your deck needs at least 2 Attacks and 3 Reactions. Attacks and Reactions form separate draw piles. Start with 2 Attacks and 3 Reactions. Commit two Attack cards face down in order."
+      "Draft 10 Basics and 5 Hero cards, at most two copies per design. Your deck needs at least 4 Attacks and 3 Reactions. Attacks and Reactions form separate draw piles. Start with 4 Attacks and 3 Reactions. Commit two Attack cards face down in order."
     ],
     [
       "Flip a pair",
@@ -2011,7 +2011,7 @@
     ],
     [
       "No free draws in a fight",
-      "Do not draw after reactions or individual attacks. Explicit draw effects may draw Reaction cards; at most one draw effect per player per attack. After all four committed attacks finish, refill to 2 Attacks and 3 Reactions. Keep unused cards. Fury cards may temporarily increase your Attack hand."
+      "Do not draw after reactions or individual attacks. Explicit draw effects may draw Reaction cards; at most one draw effect per player per attack. After all four committed attacks finish, refill to 4 Attacks and 3 Reactions. Keep unused cards. Fury cards may temporarily increase your Attack hand."
     ],
     [
       "Move, block, boost",
