@@ -1,6 +1,6 @@
 import {Brawl2,VERSION} from './engine.js';
 export const ROOM_API='/api/brawl2';
-const PREFIX='fable-brawl2-a2-room-';
+const PREFIX='fable-brawl2-reveal-room-';
 export function invitation(){const p=new URLSearchParams(location.hash.replace(/^#/,''));return {room:p.get('room'),invite:p.get('invite')};}
 export function savedSeat(room){try{return JSON.parse(localStorage.getItem(PREFIX+room)||'null');}catch{return null;}}
 export function rememberSeat(room,token,invite){try{localStorage.setItem(PREFIX+room,JSON.stringify({token,invite}));}catch{/* Active tabs still keep their seat in memory. */}}
@@ -40,10 +40,9 @@ export class OnlineGame extends Brawl2{
     }catch(error){if(error.snapshot)this.apply(error.snapshot);throw error;}
     finally{this.pending=false;}
   }
-  commit(i,uid,options={}){if(i!==this.seat)throw Error('Choose your own card.');return this.command('commit',{uid,...options});}
+  commit(i,uids){if(i!==this.seat)throw Error('Choose your own cards.');return this.command('commit',{uids});}
   advance(){return this.command('advance');}
-  playLoot(i,card){if(i!==this.seat)throw Error('Choose your own Loot.');return this.command('loot',{card});}
+  lootChoice(i,card){if(i!==this.seat)throw Error('Choose your own Loot.');return this.command('loot',{card});}
   choose(i,value){if(i!==this.seat)throw Error('Choose your own move.');return this.command('choose',{value});}
   shop(i,buy){if(i!==this.seat)throw Error('Buy your own Loot.');return this.command('shop',{buy});}
-  next(){return this.command('next');}
 }

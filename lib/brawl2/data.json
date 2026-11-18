@@ -1,19 +1,18 @@
 {
-  "version": "brawl2-a2",
-  "title": "Fable Fury: Brawl 2",
+  "title": "Brawl2 · Double Trouble",
   "heroes": [
     {
       "id": "SMA",
       "name": "Lord Smasherton",
       "slug": "hero-lord-smasherton",
       "archetype": "Get close. Hit hard.",
-      "trait": "Heavy Hands",
-      "traitText": "Your Attacks deal +1 damage at Range 1.",
+      "trait": "Wallbreaker",
+      "traitText": "Your wall slams deal 2 extra damage instead of 1.",
       "ultimate": {
-        "name": "SMASH HARDER!",
-        "text": "Heavy Hands adds +2 damage instead of +1."
+        "name": "BRING THE HOUSE DOWN",
+        "text": "Your wall slams deal 3 extra damage instead of 2."
       },
-      "weakness": "His biggest swings are slow and need an adjacent target. He relies on drafted Basics for defence."
+      "weakness": "Slow punches can miss. Draft movement to catch Alf."
     },
     {
       "id": "ALF",
@@ -26,1921 +25,494 @@
         "name": "No Safe Distance",
         "text": "Long Shot adds +2 maximum Range instead of +1."
       },
-      "weakness": "His main shots cannot hit an adjacent opponent. Movement and heavy damage usually require separate cards."
-    },
-    {
-      "id": "SHE",
-      "name": "Dr. Shealer",
-      "slug": "hero-dr-shealer",
-      "archetype": "Spend Health for power. Patch yourself up.",
-      "trait": "Good Medicine",
-      "traitText": "When one of your cards heals you, heal 1 extra Health.",
-      "ultimate": {
-        "name": "Miracle Worker",
-        "text": "Your Hero cards’ 2-Health payments now cost 1 Health."
-      },
-      "weakness": "Paying Health brings her closer to losing. Healing uses a card and an Action. Her Hero pool supplies no Block."
-    },
-    {
-      "id": "HEL",
-      "name": "Helga Stonewall",
-      "slug": "hero-helga",
-      "archetype": "My shield is my weapon.",
-      "trait": "Shield Bank",
-      "traitText": "Keep your unused Block between exchanges.",
-      "ultimate": {
-        "name": "ABSOLUTELY NOT",
-        "text": "Gain 1 Block before each of your Action cards resolves."
-      },
-      "weakness": "Damage can remove Block before she spends it. Paying Block makes her easier to hurt. Her strongest setup takes time."
-    },
-    {
-      "id": "RAV",
-      "name": "Raven Madison",
-      "slug": "hero-raven-madison",
-      "archetype": "Slip past them. Strike from the other side.",
-      "trait": "Slippery",
-      "traitText": "After your Move crosses the opponent, gain 1 Block.",
-      "ultimate": {
-        "name": "Living Shadow",
-        "text": "Slippery gives 2 Block instead of 1."
-      },
-      "weakness": "Her ordinary hits are small. Crossings need a legal landing space. Fast attacks can catch her before she moves."
-    },
-    {
-      "id": "FRA",
-      "name": "Friar Franc",
-      "slug": "hero-friar-franc",
-      "archetype": "Open with a Basic. Finish with a Hero Attack.",
-      "trait": "One-Two",
-      "traitText": "Your opening Basic card grants Combo, even without a hit.",
-      "ultimate": {
-        "name": "Divine Rhythm",
-        "text": "Your follow-up Attacks deal +1 damage."
-      },
-      "weakness": "A Combo needs another Hero card in hand. His finishers still need Range. The opponent acts before his follow-up window."
+      "weakness": "Power Shot cannot hit next door. Draft escapes and close-range backup."
     }
   ],
   "cards": [
     {
-      "name": "Step",
-      "speed": 5,
-      "range": null,
-      "text": "Move up to 2.",
-      "role": "Movement / setup",
-      "id": "B2-BAS-001",
+      "id": "R-B01",
+      "name": "Charge",
       "category": "Basic",
-      "hero": "",
-      "effects": [
-        {
-          "op": "move",
-          "n": 2
-        }
-      ],
-      "damage": "",
-      "block": "",
-      "starter": false
-    },
-    {
-      "name": "Dash",
-      "speed": 3,
-      "range": null,
-      "text": "Move up to 3.",
-      "role": "Movement / setup",
-      "id": "B2-BAS-002",
-      "category": "Basic",
-      "hero": "",
-      "effects": [
-        {
-          "op": "move",
-          "n": 3
-        }
-      ],
-      "damage": "",
-      "block": "",
-      "starter": false
-    },
-    {
-      "name": "Quick Strike",
-      "speed": 5,
-      "range": "1",
-      "text": "Hit for 2.",
-      "role": "Attack",
-      "id": "B2-BAS-003",
-      "category": "Basic",
-      "hero": "",
-      "effects": [
-        {
-          "op": "attack",
-          "n": 2
-        }
-      ],
-      "damage": 2,
-      "block": "",
-      "starter": false
-    },
-    {
-      "name": "Heavy Strike",
-      "speed": 2,
-      "range": "1",
-      "text": "Hit for 4.",
-      "role": "Attack",
-      "id": "B2-BAS-004",
-      "category": "Basic",
-      "hero": "",
-      "effects": [
-        {
-          "op": "attack",
-          "n": 4
-        }
-      ],
-      "damage": 4,
-      "block": "",
-      "starter": false
-    },
-    {
-      "name": "Lunge",
       "speed": 4,
-      "range": "1",
-      "text": "Move up to 2. Hit for 2.",
-      "role": "Attack",
-      "id": "B2-BAS-005",
-      "category": "Basic",
-      "hero": "",
-      "effects": [
+      "text": "Move up to 2. Hit for 3 at Range 1.",
+      "ops": [
         {
           "op": "move",
           "n": 2
         },
         {
-          "op": "attack",
-          "n": 2
+          "op": "hit",
+          "n": 3,
+          "min": 1,
+          "max": 1
         }
-      ],
-      "damage": 2,
-      "block": "",
-      "starter": false
+      ]
     },
     {
-      "name": "Shove",
-      "speed": 4,
-      "range": "1",
-      "text": "Hit for 1. On hit, Push up to 2.",
-      "role": "Attack",
-      "id": "B2-BAS-006",
-      "category": "Basic",
-      "hero": "",
-      "effects": [
-        {
-          "op": "attack",
-          "n": 1
-        },
-        {
-          "op": "push",
-          "n": 2,
-          "onHit": true
-        }
-      ],
-      "damage": 1,
-      "block": "",
-      "starter": false
-    },
-    {
+      "id": "R-B02",
       "name": "Guard",
-      "speed": 5,
-      "range": null,
-      "text": "Gain 2 Block. Move up to 1.",
-      "role": "Defence / setup",
-      "id": "B2-BAS-007",
       "category": "Basic",
-      "hero": "",
-      "effects": [
-        {
-          "op": "block",
-          "n": 2
-        },
-        {
-          "op": "move",
-          "n": 1
-        }
-      ],
-      "damage": "",
-      "block": 2,
-      "starter": false
-    },
-    {
-      "name": "Brace",
-      "speed": 2,
-      "range": null,
-      "text": "Gain 4 Block.",
-      "role": "Defence / setup",
-      "id": "B2-BAS-008",
-      "category": "Basic",
-      "hero": "",
-      "effects": [
+      "speed": 6,
+      "text": "Gain 4 Block for this reveal.",
+      "ops": [
         {
           "op": "block",
           "n": 4
         }
-      ],
-      "damage": "",
-      "block": 4,
-      "starter": false
+      ]
     },
     {
-      "name": "Recover",
-      "speed": 3,
-      "range": null,
-      "text": "Heal 1.",
-      "role": "Defence / setup",
-      "id": "B2-BAS-009",
+      "id": "R-B03",
+      "name": "Advance",
       "category": "Basic",
-      "hero": "",
-      "effects": [
+      "speed": 5,
+      "text": "Move up to 2.",
+      "ops": [
         {
-          "op": "heal",
-          "n": 1
+          "op": "move",
+          "n": 2
         }
-      ],
-      "damage": "",
-      "block": "",
-      "starter": false
+      ]
     },
     {
-      "name": "Feint",
-      "speed": 4,
-      "range": null,
-      "text": "Move up to 1. Combo.",
-      "role": "Movement / setup",
-      "id": "B2-BAS-010",
+      "id": "R-B04",
+      "name": "Sidestep",
       "category": "Basic",
-      "hero": "",
-      "effects": [
+      "speed": 6,
+      "text": "Move up to 1.",
+      "ops": [
         {
           "op": "move",
           "n": 1
-        },
-        {
-          "op": "combo"
         }
-      ],
-      "damage": "",
-      "block": "",
-      "starter": false
+      ]
     },
     {
-      "name": "Battle Cry",
-      "speed": 4,
-      "range": null,
-      "text": "Gain 1 extra Coin.",
-      "role": "Movement / setup",
-      "id": "B2-BAS-011",
-      "category": "Basic",
-      "hero": "",
-      "effects": [
-        {
-          "op": "coin",
-          "n": 1
-        }
-      ],
-      "damage": "",
-      "block": "",
-      "starter": false
-    },
-    {
+      "id": "R-B05",
       "name": "Throw a Rock",
-      "speed": 4,
-      "range": "2–3",
-      "text": "Hit for 1.",
-      "role": "Attack",
-      "id": "B2-BAS-012",
       "category": "Basic",
-      "hero": "",
-      "effects": [
-        {
-          "op": "attack",
-          "n": 1
-        }
-      ],
-      "damage": 1,
-      "block": "",
-      "starter": false
-    },
-    {
-      "name": "Shoulder Charge",
       "speed": 4,
-      "range": "1",
-      "text": "Move up to 2. Hit for 2.",
-      "role": "Attack",
-      "id": "B2-SMA-001",
-      "category": "Hero",
-      "hero": "Lord Smasherton",
-      "effects": [
+      "text": "Hit for 2 at Range 1–3.",
+      "ops": [
         {
-          "op": "move",
-          "n": 2
-        },
-        {
-          "op": "attack",
-          "n": 2
+          "op": "hit",
+          "n": 2,
+          "min": 1,
+          "max": 3
         }
-      ],
-      "damage": 2,
-      "block": "",
-      "starter": true
+      ]
     },
     {
-      "name": "Hammer Drop",
-      "speed": 1,
-      "range": "1",
-      "text": "Move up to 1. Hit for 5.",
-      "role": "Attack",
-      "id": "B2-SMA-002",
-      "category": "Hero",
-      "hero": "Lord Smasherton",
-      "effects": [
+      "id": "R-B06",
+      "name": "Lunge",
+      "category": "Basic",
+      "speed": 4,
+      "text": "Move up to 1. Hit for 2 at Range 1.",
+      "ops": [
         {
           "op": "move",
           "n": 1
         },
         {
-          "op": "attack",
-          "n": 5
+          "op": "hit",
+          "n": 2,
+          "min": 1,
+          "max": 1
         }
-      ],
-      "damage": 5,
-      "block": "",
-      "starter": true
+      ]
     },
     {
-      "name": "Groundbreaker",
-      "speed": 3,
-      "range": "1–2",
-      "text": "Hit for 3.",
-      "role": "Attack",
-      "id": "B2-SMA-003",
-      "category": "Hero",
-      "hero": "Lord Smasherton",
-      "effects": [
-        {
-          "op": "attack",
-          "n": 3
-        }
-      ],
-      "damage": 3,
-      "block": "",
-      "starter": true
-    },
-    {
-      "name": "Big Swing",
-      "speed": 3,
-      "range": "1",
-      "text": "Move up to 1. Hit for 3.",
-      "role": "Attack",
-      "id": "B2-SMA-004",
-      "category": "Hero",
-      "hero": "Lord Smasherton",
-      "effects": [
+      "id": "R-B07",
+      "name": "Feint",
+      "category": "Basic",
+      "speed": 7,
+      "text": "Move up to 1. Gain 1 Block for this reveal.",
+      "ops": [
         {
           "op": "move",
           "n": 1
         },
         {
-          "op": "attack",
-          "n": 3
+          "op": "block",
+          "n": 1
         }
-      ],
-      "damage": 3,
-      "block": "",
-      "starter": true
+      ]
     },
     {
-      "name": "Backbreaker",
+      "id": "R-B08",
+      "name": "Backstep",
+      "category": "Basic",
+      "speed": 6,
+      "text": "Move up to 2.",
+      "ops": [
+        {
+          "op": "move",
+          "n": 2
+        }
+      ]
+    },
+    {
+      "id": "R-S01",
+      "name": "Uppercut",
+      "category": "Hero",
+      "speed": 3,
+      "text": "Hit for 4 at Range 1. Push up to 2 on hit.",
+      "ops": [
+        {
+          "op": "hit",
+          "n": 4,
+          "min": 1,
+          "max": 1
+        },
+        {
+          "op": "push",
+          "n": 2
+        }
+      ],
+      "hero": "Lord Smasherton"
+    },
+    {
+      "id": "R-S02",
+      "name": "Big Smash",
+      "category": "Hero",
       "speed": 2,
-      "range": "1",
-      "text": "Hit for 3. Add 2 damage if the opponent is on space 1 or 7.",
-      "role": "Attack",
-      "id": "B2-SMA-005",
-      "category": "Hero",
-      "hero": "Lord Smasherton",
-      "effects": [
+      "text": "Hit for 5 at Range 1.",
+      "ops": [
         {
-          "op": "attack",
-          "n": 3,
-          "edgeBonus": 2
+          "op": "hit",
+          "n": 5,
+          "min": 1,
+          "max": 1
         }
       ],
-      "damage": 3,
-      "block": "",
-      "starter": true
+      "hero": "Lord Smasherton"
     },
     {
+      "id": "R-S03",
       "name": "Get Over Here!",
-      "speed": 5,
-      "range": null,
-      "text": "Pull up to 2. Combo.",
-      "role": "Movement / setup",
-      "id": "B2-SMA-006",
       "category": "Hero",
-      "hero": "Lord Smasherton",
-      "effects": [
+      "speed": 4,
+      "text": "Pull up to 2. Hit for 2 at Range 1.",
+      "ops": [
         {
           "op": "pull",
           "n": 2
         },
         {
-          "op": "combo"
-        }
-      ],
-      "damage": "",
-      "block": "",
-      "starter": false
-    },
-    {
-      "name": "Bull Rush",
-      "speed": 4,
-      "range": "1",
-      "text": "Move up to 2. Hit for 1. On hit, Push up to 2.",
-      "role": "Attack",
-      "id": "B2-SMA-007",
-      "category": "Hero",
-      "hero": "Lord Smasherton",
-      "effects": [
-        {
-          "op": "move",
-          "n": 2
-        },
-        {
-          "op": "attack",
-          "n": 1
-        },
-        {
-          "op": "push",
+          "op": "hit",
           "n": 2,
-          "onHit": true
+          "min": 1,
+          "max": 1
         }
       ],
-      "damage": 1,
-      "block": "",
-      "starter": false
+      "hero": "Lord Smasherton"
     },
     {
-      "name": "Quick Smash",
-      "speed": 6,
-      "range": "1",
-      "text": "Hit for 2.",
-      "role": "Attack",
-      "id": "B2-SMA-008",
+      "id": "R-S04",
+      "name": "Groundbreaker",
       "category": "Hero",
-      "hero": "Lord Smasherton",
-      "effects": [
-        {
-          "op": "attack",
-          "n": 2
-        }
-      ],
-      "damage": 2,
-      "block": "",
-      "starter": false
-    },
-    {
-      "name": "Unstoppable Charge",
-      "speed": 4,
-      "range": "1",
-      "text": "Move up to 3. Hit for 4.",
-      "role": "Attack",
-      "id": "B2-SMA-FURY",
-      "category": "Special",
-      "hero": "Lord Smasherton",
-      "effects": [
-        {
-          "op": "move",
-          "n": 3
-        },
-        {
-          "op": "attack",
-          "n": 4
-        }
-      ],
-      "damage": 4,
-      "block": "",
-      "starter": false
-    },
-    {
-      "name": "Quick Shot",
-      "speed": 6,
-      "range": "2–3",
-      "text": "Hit for 2.",
-      "role": "Attack",
-      "id": "B2-ALF-001",
-      "category": "Hero",
-      "hero": "Alf Featherbottom",
-      "effects": [
-        {
-          "op": "attack",
-          "n": 2
-        }
-      ],
-      "damage": 2,
-      "block": "",
-      "starter": true
-    },
-    {
-      "name": "Power Shot",
-      "speed": 2,
-      "range": "3–4",
-      "text": "Move up to 1. Hit for 4.",
-      "role": "Attack",
-      "id": "B2-ALF-002",
-      "category": "Hero",
-      "hero": "Alf Featherbottom",
-      "effects": [
-        {
-          "op": "move",
-          "n": 1
-        },
-        {
-          "op": "attack",
-          "n": 4
-        }
-      ],
-      "damage": 4,
-      "block": "",
-      "starter": true
-    },
-    {
-      "name": "Volley",
       "speed": 3,
-      "range": "2–4",
-      "text": "Hit for 3.",
-      "role": "Attack",
-      "id": "B2-ALF-003",
-      "category": "Hero",
-      "hero": "Alf Featherbottom",
-      "effects": [
+      "text": "Hit for 3 at Range 1–2.",
+      "ops": [
         {
-          "op": "attack",
-          "n": 3
-        }
-      ],
-      "damage": 3,
-      "block": "",
-      "starter": true
-    },
-    {
-      "name": "Point Blank",
-      "speed": 4,
-      "range": "1",
-      "text": "Hit for 2. On hit, Push up to 1.",
-      "role": "Attack",
-      "id": "B2-ALF-004",
-      "category": "Hero",
-      "hero": "Alf Featherbottom",
-      "effects": [
-        {
-          "op": "attack",
-          "n": 2
-        },
-        {
-          "op": "push",
-          "n": 1,
-          "onHit": true
-        }
-      ],
-      "damage": 2,
-      "block": "",
-      "starter": true
-    },
-    {
-      "name": "Reposition",
-      "speed": 5,
-      "range": null,
-      "text": "Move up to 2. Combo.",
-      "role": "Movement / setup",
-      "id": "B2-ALF-005",
-      "category": "Hero",
-      "hero": "Alf Featherbottom",
-      "effects": [
-        {
-          "op": "move",
-          "n": 2
-        },
-        {
-          "op": "combo"
-        }
-      ],
-      "damage": "",
-      "block": "",
-      "starter": true
-    },
-    {
-      "name": "Retreating Shot",
-      "speed": 4,
-      "range": "2–3",
-      "text": "Hit for 2. Then Move up to 1.",
-      "role": "Attack",
-      "id": "B2-ALF-006",
-      "category": "Hero",
-      "hero": "Alf Featherbottom",
-      "effects": [
-        {
-          "op": "attack",
-          "n": 2
-        },
-        {
-          "op": "move",
-          "n": 1
-        }
-      ],
-      "damage": 2,
-      "block": "",
-      "starter": false
-    },
-    {
-      "name": "Hooked Arrow",
-      "speed": 4,
-      "range": "2–4",
-      "text": "Hit for 2. On hit, Pull up to 1.",
-      "role": "Attack",
-      "id": "B2-ALF-007",
-      "category": "Hero",
-      "hero": "Alf Featherbottom",
-      "effects": [
-        {
-          "op": "attack",
-          "n": 2
-        },
-        {
-          "op": "pull",
-          "n": 1,
-          "onHit": true
-        }
-      ],
-      "damage": 2,
-      "block": "",
-      "starter": false
-    },
-    {
-      "name": "Piercing Shot",
-      "speed": 3,
-      "range": "2–3",
-      "text": "Hit for 2. Ignore 2 Block.",
-      "role": "Attack",
-      "id": "B2-ALF-008",
-      "category": "Hero",
-      "hero": "Alf Featherbottom",
-      "effects": [
-        {
-          "op": "attack",
-          "n": 2,
-          "ignore": 2
-        }
-      ],
-      "damage": 2,
-      "block": "",
-      "starter": false
-    },
-    {
-      "name": "Eagle Eye",
-      "speed": 5,
-      "range": "2–4",
-      "text": "Move up to 1. Hit for 4.",
-      "role": "Attack",
-      "id": "B2-ALF-FURY",
-      "category": "Special",
-      "hero": "Alf Featherbottom",
-      "effects": [
-        {
-          "op": "move",
-          "n": 1
-        },
-        {
-          "op": "attack",
-          "n": 4
-        }
-      ],
-      "damage": 4,
-      "block": "",
-      "starter": false
-    },
-    {
-      "name": "Bandage Up",
-      "speed": 4,
-      "range": null,
-      "text": "Heal 2.",
-      "role": "Defence / setup",
-      "id": "B2-SHE-001",
-      "category": "Hero",
-      "hero": "Dr. Shealer",
-      "effects": [
-        {
-          "op": "heal",
-          "n": 2
-        }
-      ],
-      "damage": "",
-      "block": "",
-      "starter": true
-    },
-    {
-      "name": "Scalpel",
-      "speed": 5,
-      "range": "1",
-      "text": "Move up to 1. Pay 2 Health to hit for 4; otherwise hit for 2.",
-      "role": "Attack",
-      "id": "B2-SHE-002",
-      "category": "Hero",
-      "hero": "Dr. Shealer",
-      "effects": [
-        {
-          "op": "move",
-          "n": 1
-        },
-        {
-          "op": "pay",
-          "n": 2,
-          "resource": "hp",
-          "bonus": 2
-        },
-        {
-          "op": "attack",
-          "n": 2
-        }
-      ],
-      "damage": 2,
-      "block": "",
-      "starter": true
-    },
-    {
-      "name": "Risky Dose",
-      "speed": 4,
-      "range": "2–3",
-      "text": "Pay 2 Health to hit for 4; otherwise hit for 2.",
-      "role": "Attack",
-      "id": "B2-SHE-003",
-      "category": "Hero",
-      "hero": "Dr. Shealer",
-      "effects": [
-        {
-          "op": "pay",
-          "n": 2,
-          "resource": "hp",
-          "bonus": 2
-        },
-        {
-          "op": "attack",
-          "n": 2
-        }
-      ],
-      "damage": 2,
-      "block": "",
-      "starter": true
-    },
-    {
-      "name": "Defibrillator",
-      "speed": 2,
-      "range": "1",
-      "text": "Pay 2 Health to hit for 6; otherwise hit for 4.",
-      "role": "Attack",
-      "id": "B2-SHE-004",
-      "category": "Hero",
-      "hero": "Dr. Shealer",
-      "effects": [
-        {
-          "op": "pay",
-          "n": 2,
-          "resource": "hp",
-          "bonus": 2
-        },
-        {
-          "op": "attack",
-          "n": 4
-        }
-      ],
-      "damage": 4,
-      "block": "",
-      "starter": true
-    },
-    {
-      "name": "Adrenaline",
-      "speed": 6,
-      "range": null,
-      "text": "Move up to 1. You may pay 2 Health to gain Combo.",
-      "role": "Movement / setup",
-      "id": "B2-SHE-005",
-      "category": "Hero",
-      "hero": "Dr. Shealer",
-      "effects": [
-        {
-          "op": "move",
-          "n": 1
-        },
-        {
-          "op": "payCombo",
-          "n": 2
-        }
-      ],
-      "damage": "",
-      "block": "",
-      "starter": true
-    },
-    {
-      "name": "Blood Rush",
-      "speed": 3,
-      "range": "1",
-      "text": "Move up to 2. Pay 2 Health to hit for 3; otherwise hit for 1.",
-      "role": "Attack",
-      "id": "B2-SHE-006",
-      "category": "Hero",
-      "hero": "Dr. Shealer",
-      "effects": [
-        {
-          "op": "move",
-          "n": 2
-        },
-        {
-          "op": "pay",
-          "n": 2,
-          "resource": "hp",
-          "bonus": 2
-        },
-        {
-          "op": "attack",
-          "n": 1
-        }
-      ],
-      "damage": 1,
-      "block": "",
-      "starter": false
-    },
-    {
-      "name": "Painkiller",
-      "speed": 5,
-      "range": null,
-      "text": "Heal 1. Then Move up to 1.",
-      "role": "Defence / setup",
-      "id": "B2-SHE-007",
-      "category": "Hero",
-      "hero": "Dr. Shealer",
-      "effects": [
-        {
-          "op": "heal",
-          "n": 1
-        },
-        {
-          "op": "move",
-          "n": 1
-        }
-      ],
-      "damage": "",
-      "block": "",
-      "starter": false
-    },
-    {
-      "name": "Transfusion",
-      "speed": 3,
-      "range": "1",
-      "text": "Hit for 1. If it hits, Heal 2.",
-      "role": "Attack",
-      "id": "B2-SHE-008",
-      "category": "Hero",
-      "hero": "Dr. Shealer",
-      "effects": [
-        {
-          "op": "attack",
-          "n": 1
-        },
-        {
-          "op": "heal",
-          "n": 2,
-          "onHit": true
-        }
-      ],
-      "damage": 1,
-      "block": "",
-      "starter": false
-    },
-    {
-      "name": "Emergency Treatment",
-      "speed": 5,
-      "range": "1",
-      "text": "Heal 3. Then hit for 2.",
-      "role": "Attack",
-      "id": "B2-SHE-FURY",
-      "category": "Special",
-      "hero": "Dr. Shealer",
-      "effects": [
-        {
-          "op": "heal",
-          "n": 3
-        },
-        {
-          "op": "attack",
-          "n": 2
-        }
-      ],
-      "damage": 2,
-      "block": "",
-      "starter": false
-    },
-    {
-      "name": "Shield Up",
-      "speed": 6,
-      "range": null,
-      "text": "Gain 3 Block.",
-      "role": "Defence / setup",
-      "id": "B2-HEL-001",
-      "category": "Hero",
-      "hero": "Helga Stonewall",
-      "effects": [
-        {
-          "op": "block",
-          "n": 3
-        }
-      ],
-      "damage": "",
-      "block": 3,
-      "starter": true
-    },
-    {
-      "name": "Advance Behind Shield",
-      "speed": 4,
-      "range": null,
-      "text": "Move up to 1. Gain 2 Block.",
-      "role": "Defence / setup",
-      "id": "B2-HEL-002",
-      "category": "Hero",
-      "hero": "Helga Stonewall",
-      "effects": [
-        {
-          "op": "move",
-          "n": 1
-        },
-        {
-          "op": "block",
-          "n": 2
-        }
-      ],
-      "damage": "",
-      "block": 2,
-      "starter": true
-    },
-    {
-      "name": "Shield Bash",
-      "speed": 4,
-      "range": "1",
-      "text": "Move up to 1. Spend 2 Block to hit for 5; otherwise hit for 2.",
-      "role": "Attack",
-      "id": "B2-HEL-003",
-      "category": "Hero",
-      "hero": "Helga Stonewall",
-      "effects": [
-        {
-          "op": "move",
-          "n": 1
-        },
-        {
-          "op": "pay",
-          "n": 2,
-          "resource": "block",
-          "bonus": 3
-        },
-        {
-          "op": "attack",
-          "n": 2
-        }
-      ],
-      "damage": 2,
-      "block": "",
-      "starter": true
-    },
-    {
-      "name": "Iron Charge",
-      "speed": 3,
-      "range": "1",
-      "text": "Move up to 2. Spend 2 Block to hit for 3; otherwise hit for 1.",
-      "role": "Attack",
-      "id": "B2-HEL-004",
-      "category": "Hero",
-      "hero": "Helga Stonewall",
-      "effects": [
-        {
-          "op": "move",
-          "n": 2
-        },
-        {
-          "op": "pay",
-          "n": 2,
-          "resource": "block",
-          "bonus": 2
-        },
-        {
-          "op": "attack",
-          "n": 1
-        }
-      ],
-      "damage": 1,
-      "block": "",
-      "starter": true
-    },
-    {
-      "name": "Hold the Line",
-      "speed": 5,
-      "range": null,
-      "text": "Gain 4 Block.",
-      "role": "Defence / setup",
-      "id": "B2-HEL-005",
-      "category": "Hero",
-      "hero": "Helga Stonewall",
-      "effects": [
-        {
-          "op": "block",
-          "n": 4
-        }
-      ],
-      "damage": "",
-      "block": 4,
-      "starter": true
-    },
-    {
-      "name": "Wallop",
-      "speed": 2,
-      "range": "1",
-      "text": "Hit for 4. On hit, Push up to 1.",
-      "role": "Attack",
-      "id": "B2-HEL-006",
-      "category": "Hero",
-      "hero": "Helga Stonewall",
-      "effects": [
-        {
-          "op": "attack",
-          "n": 4
-        },
-        {
-          "op": "push",
-          "n": 1,
-          "onHit": true
-        }
-      ],
-      "damage": 4,
-      "block": "",
-      "starter": false
-    },
-    {
-      "name": "Guard Break",
-      "speed": 3,
-      "range": "1",
-      "text": "Hit for 2. Ignore 2 Block.",
-      "role": "Attack",
-      "id": "B2-HEL-007",
-      "category": "Hero",
-      "hero": "Helga Stonewall",
-      "effects": [
-        {
-          "op": "attack",
-          "n": 2,
-          "ignore": 2
-        }
-      ],
-      "damage": 2,
-      "block": "",
-      "starter": false
-    },
-    {
-      "name": "Fortress",
-      "speed": 3,
-      "range": null,
-      "text": "Gain 2 Block. Combo.",
-      "role": "Defence / setup",
-      "id": "B2-HEL-008",
-      "category": "Hero",
-      "hero": "Helga Stonewall",
-      "effects": [
-        {
-          "op": "block",
-          "n": 2
-        },
-        {
-          "op": "combo"
-        }
-      ],
-      "damage": "",
-      "block": 2,
-      "starter": false
-    },
-    {
-      "name": "Shield Wall",
-      "speed": 5,
-      "range": "1",
-      "text": "Gain 4 Block. Then hit for 2.",
-      "role": "Attack",
-      "id": "B2-HEL-FURY",
-      "category": "Special",
-      "hero": "Helga Stonewall",
-      "effects": [
-        {
-          "op": "block",
-          "n": 4
-        },
-        {
-          "op": "attack",
-          "n": 2
-        }
-      ],
-      "damage": 2,
-      "block": 4,
-      "starter": false
-    },
-    {
-      "name": "Shadow Step",
-      "speed": 5,
-      "range": "1",
-      "text": "Move up to 2. Hit for 1.",
-      "role": "Attack",
-      "id": "B2-RAV-001",
-      "category": "Hero",
-      "hero": "Raven Madison",
-      "effects": [
-        {
-          "op": "move",
-          "n": 2
-        },
-        {
-          "op": "attack",
-          "n": 1
-        }
-      ],
-      "damage": 1,
-      "block": "",
-      "starter": true
-    },
-    {
-      "name": "Backstab",
-      "speed": 3,
-      "range": "1",
-      "text": "Move up to 2. Hit for 2. Add 2 damage if that Move crossed the opponent.",
-      "role": "Attack",
-      "id": "B2-RAV-002",
-      "category": "Hero",
-      "hero": "Raven Madison",
-      "effects": [
-        {
-          "op": "move",
-          "n": 2
-        },
-        {
-          "op": "attack",
-          "n": 2,
-          "crossBonus": 2
-        }
-      ],
-      "damage": 2,
-      "block": "",
-      "starter": true
-    },
-    {
-      "name": "Throwing Knives",
-      "speed": 5,
-      "range": "2–3",
-      "text": "Hit for 2.",
-      "role": "Attack",
-      "id": "B2-RAV-003",
-      "category": "Hero",
-      "hero": "Raven Madison",
-      "effects": [
-        {
-          "op": "attack",
-          "n": 2
-        }
-      ],
-      "damage": 2,
-      "block": "",
-      "starter": true
-    },
-    {
-      "name": "Feinting Slash",
-      "speed": 4,
-      "range": "1",
-      "text": "Hit for 2. Then Move up to 1.",
-      "role": "Attack",
-      "id": "B2-RAV-004",
-      "category": "Hero",
-      "hero": "Raven Madison",
-      "effects": [
-        {
-          "op": "attack",
-          "n": 2
-        },
-        {
-          "op": "move",
-          "n": 1
-        }
-      ],
-      "damage": 2,
-      "block": "",
-      "starter": true
-    },
-    {
-      "name": "Pickpocket",
-      "speed": 5,
-      "range": "1",
-      "text": "Hit for 1. If it hits, steal 1 Coin.",
-      "role": "Attack",
-      "id": "B2-RAV-005",
-      "category": "Hero",
-      "hero": "Raven Madison",
-      "effects": [
-        {
-          "op": "attack",
-          "n": 1
-        },
-        {
-          "op": "steal",
-          "n": 1,
-          "onHit": true
-        }
-      ],
-      "damage": 1,
-      "block": "",
-      "starter": true
-    },
-    {
-      "name": "Smoke Veil",
-      "speed": 6,
-      "range": null,
-      "text": "Gain 2 Block. Move up to 1.",
-      "role": "Defence / setup",
-      "id": "B2-RAV-006",
-      "category": "Hero",
-      "hero": "Raven Madison",
-      "effects": [
-        {
-          "op": "block",
-          "n": 2
-        },
-        {
-          "op": "move",
-          "n": 1
-        }
-      ],
-      "damage": "",
-      "block": 2,
-      "starter": false
-    },
-    {
-      "name": "Poisoned Blade",
-      "speed": 4,
-      "range": "1",
-      "text": "Hit for 2. Ignore 2 Block.",
-      "role": "Attack",
-      "id": "B2-RAV-007",
-      "category": "Hero",
-      "hero": "Raven Madison",
-      "effects": [
-        {
-          "op": "attack",
-          "n": 2,
-          "ignore": 2
-        }
-      ],
-      "damage": 2,
-      "block": "",
-      "starter": false
-    },
-    {
-      "name": "Vanish",
-      "speed": 6,
-      "range": null,
-      "text": "Move up to 2. Combo.",
-      "role": "Movement / setup",
-      "id": "B2-RAV-008",
-      "category": "Hero",
-      "hero": "Raven Madison",
-      "effects": [
-        {
-          "op": "move",
-          "n": 2
-        },
-        {
-          "op": "combo"
-        }
-      ],
-      "damage": "",
-      "block": "",
-      "starter": false
-    },
-    {
-      "name": "Nothing Personal",
-      "speed": 6,
-      "range": "1",
-      "text": "Move up to 2. Hit for 3. Then Move up to 1.",
-      "role": "Attack",
-      "id": "B2-RAV-FURY",
-      "category": "Special",
-      "hero": "Raven Madison",
-      "effects": [
-        {
-          "op": "move",
-          "n": 2
-        },
-        {
-          "op": "attack",
-          "n": 3
-        },
-        {
-          "op": "move",
-          "n": 1
-        }
-      ],
-      "damage": 3,
-      "block": "",
-      "starter": false
-    },
-    {
-      "name": "Opening Jab",
-      "speed": 6,
-      "range": "1",
-      "text": "Hit for 1. Combo.",
-      "role": "Attack",
-      "id": "B2-FRA-001",
-      "category": "Hero",
-      "hero": "Friar Franc",
-      "effects": [
-        {
-          "op": "attack",
-          "n": 1
-        },
-        {
-          "op": "combo"
-        }
-      ],
-      "damage": 1,
-      "block": "",
-      "starter": true
-    },
-    {
-      "name": "Flowing Step",
-      "speed": 5,
-      "range": null,
-      "text": "Move up to 2. Combo.",
-      "role": "Movement / setup",
-      "id": "B2-FRA-002",
-      "category": "Hero",
-      "hero": "Friar Franc",
-      "effects": [
-        {
-          "op": "move",
-          "n": 2
-        },
-        {
-          "op": "combo"
-        }
-      ],
-      "damage": "",
-      "block": "",
-      "starter": true
-    },
-    {
-      "name": "Coin Toss",
-      "speed": 5,
-      "range": "2–3",
-      "text": "Hit for 2.",
-      "role": "Attack",
-      "id": "B2-FRA-003",
-      "category": "Hero",
-      "hero": "Friar Franc",
-      "effects": [
-        {
-          "op": "attack",
-          "n": 2
-        }
-      ],
-      "damage": 2,
-      "block": "",
-      "starter": true
-    },
-    {
-      "name": "Low Sweep",
-      "speed": 4,
-      "range": "1",
-      "text": "Hit for 2. Ignore 2 Block.",
-      "role": "Attack",
-      "id": "B2-FRA-004",
-      "category": "Hero",
-      "hero": "Friar Franc",
-      "effects": [
-        {
-          "op": "attack",
-          "n": 2,
-          "ignore": 2
-        }
-      ],
-      "damage": 2,
-      "block": "",
-      "starter": true
-    },
-    {
-      "name": "Spinning Kick",
-      "speed": 3,
-      "range": "1",
-      "text": "Hit for 3. On hit, Push up to 1.",
-      "role": "Attack",
-      "id": "B2-FRA-005",
-      "category": "Hero",
-      "hero": "Friar Franc",
-      "effects": [
-        {
-          "op": "attack",
-          "n": 3
-        },
-        {
-          "op": "push",
-          "n": 1,
-          "onHit": true
-        }
-      ],
-      "damage": 3,
-      "block": "",
-      "starter": true
-    },
-    {
-      "name": "Second Wind",
-      "speed": 4,
-      "range": null,
-      "text": "Draw 2 combat cards.",
-      "role": "Movement / setup",
-      "id": "B2-FRA-006",
-      "category": "Hero",
-      "hero": "Friar Franc",
-      "effects": [
-        {
-          "op": "draw",
-          "n": 2
-        }
-      ],
-      "damage": "",
-      "block": "",
-      "starter": false
-    },
-    {
-      "name": "Palm Strike",
-      "speed": 4,
-      "range": "1",
-      "text": "Hit for 3.",
-      "role": "Attack",
-      "id": "B2-FRA-007",
-      "category": "Hero",
-      "hero": "Friar Franc",
-      "effects": [
-        {
-          "op": "attack",
-          "n": 3
-        }
-      ],
-      "damage": 3,
-      "block": "",
-      "starter": false
-    },
-    {
-      "name": "Perfect Finish",
-      "speed": 2,
-      "range": "1",
-      "text": "Hit for 3, or 5 if this is your follow-up card.",
-      "role": "Attack",
-      "id": "B2-FRA-008",
-      "category": "Hero",
-      "hero": "Friar Franc",
-      "effects": [
-        {
-          "op": "attack",
+          "op": "hit",
           "n": 3,
-          "followBonus": 2
+          "min": 1,
+          "max": 2
         }
       ],
-      "damage": 3,
-      "block": "",
-      "starter": false
+      "hero": "Lord Smasherton"
     },
     {
-      "name": "Flurry of Faith",
+      "id": "R-S05",
+      "name": "Bull Rush",
+      "category": "Hero",
       "speed": 5,
-      "range": "1",
-      "text": "Hit for 3. Combo.",
-      "role": "Attack",
-      "id": "B2-FRA-FURY",
-      "category": "Special",
-      "hero": "Friar Franc",
-      "effects": [
+      "text": "Move up to 2. Hit for 2 at Range 1. Push up to 1 on hit.",
+      "ops": [
         {
-          "op": "attack",
-          "n": 3
+          "op": "move",
+          "n": 2
         },
         {
-          "op": "combo"
+          "op": "hit",
+          "n": 2,
+          "min": 1,
+          "max": 1
+        },
+        {
+          "op": "push",
+          "n": 1
         }
       ],
-      "damage": 3,
-      "block": "",
-      "starter": false
+      "hero": "Lord Smasherton"
     },
     {
-      "id": "B2-LOO-001",
-      "name": "Double Trouble",
-      "text": "After your opening card, you may play one Hero Attack even if the opener misses.",
-      "category": "Loot",
-      "hero": "",
-      "speed": "",
-      "range": "",
-      "damage": "",
-      "block": "",
-      "kind": "combo",
-      "n": 0,
-      "asset": "LOO-024",
-      "cost": 3,
-      "window": "attack",
-      "attackOnly": false,
-      "timing": "With your opening card"
+      "id": "R-S06",
+      "name": "Backbreaker",
+      "category": "Hero",
+      "speed": 1,
+      "text": "Hit for 6 at Range 1.",
+      "ops": [
+        {
+          "op": "hit",
+          "n": 6,
+          "min": 1,
+          "max": 1
+        }
+      ],
+      "hero": "Lord Smasherton"
     },
     {
-      "id": "B2-LOO-002",
-      "name": "Rocket Boots",
-      "text": "Move up to 3 now.",
-      "category": "Loot",
-      "hero": "",
-      "speed": "",
-      "range": "",
-      "damage": "",
-      "block": "",
-      "kind": "move",
-      "n": 3,
-      "asset": "LOO-004",
-      "cost": 3,
-      "window": "either",
-      "attackOnly": false,
-      "timing": "With your opener OR as your one defence response"
+      "id": "R-A01",
+      "name": "Power Shot",
+      "category": "Hero",
+      "speed": 2,
+      "text": "Hit for 5 at Range 2–4.",
+      "ops": [
+        {
+          "op": "hit",
+          "n": 5,
+          "min": 2,
+          "max": 4
+        }
+      ],
+      "hero": "Alf Featherbottom"
     },
     {
-      "id": "B2-LOO-003",
-      "name": "Grappling Hook",
-      "text": "Pull the opponent up to 2 spaces now.",
-      "category": "Loot",
-      "hero": "",
-      "speed": "",
-      "range": "",
-      "damage": "",
-      "block": "",
-      "kind": "pull",
-      "n": 2,
-      "asset": null,
-      "cost": 3,
-      "window": "either",
-      "attackOnly": false,
-      "timing": "With your opener OR as your one defence response"
+      "id": "R-A02",
+      "name": "Quick Shot",
+      "category": "Hero",
+      "speed": 5,
+      "text": "Move up to 1. Hit for 3 at Range 1–3.",
+      "ops": [
+        {
+          "op": "move",
+          "n": 1
+        },
+        {
+          "op": "hit",
+          "n": 3,
+          "min": 1,
+          "max": 3
+        }
+      ],
+      "hero": "Alf Featherbottom"
     },
     {
-      "id": "B2-LOO-004",
-      "name": "Pinwheel",
-      "text": "Move both fighters to spaces 1 and 2, keeping their left-to-right order.",
-      "category": "Loot",
-      "hero": "",
-      "speed": "",
-      "range": "",
-      "damage": "",
-      "block": "",
-      "kind": "pinwheel",
-      "n": 0,
-      "asset": "LOO-022",
-      "cost": 3,
-      "window": "either",
-      "attackOnly": false,
-      "timing": "With your opener OR as your one defence response"
+      "id": "R-A03",
+      "name": "Vaulting Shot",
+      "category": "Hero",
+      "speed": 6,
+      "text": "Move up to 2, including through your rival. Hit for 2 at Range 2–3.",
+      "ops": [
+        {
+          "op": "move",
+          "n": 2
+        },
+        {
+          "op": "hit",
+          "n": 2,
+          "min": 2,
+          "max": 3
+        }
+      ],
+      "hero": "Alf Featherbottom"
     },
     {
-      "id": "B2-LOO-005",
-      "name": "Alarm Clock",
-      "text": "Defender movement resolves after your opening Attack, regardless of Speed.",
-      "category": "Loot",
-      "hero": "",
-      "speed": "",
-      "range": "",
-      "damage": "",
-      "block": "",
-      "kind": "reverse",
-      "n": 0,
+      "id": "R-A04",
+      "name": "Double Arrow",
+      "category": "Hero",
+      "speed": 3,
+      "text": "Hit for 2 twice at Range 2–3.",
+      "ops": [
+        {
+          "op": "hit",
+          "n": 2,
+          "min": 2,
+          "max": 3
+        },
+        {
+          "op": "hit",
+          "n": 2,
+          "min": 2,
+          "max": 3
+        }
+      ],
+      "hero": "Alf Featherbottom"
+    },
+    {
+      "id": "R-A05",
+      "name": "Knockback Arrow",
+      "category": "Hero",
+      "speed": 4,
+      "text": "Hit for 3 at Range 2–3. Push up to 2 on hit.",
+      "ops": [
+        {
+          "op": "hit",
+          "n": 3,
+          "min": 2,
+          "max": 3
+        },
+        {
+          "op": "push",
+          "n": 2
+        }
+      ],
+      "hero": "Alf Featherbottom"
+    },
+    {
+      "id": "R-A06",
+      "name": "Perfect Aim",
+      "category": "Hero",
+      "speed": 4,
+      "text": "Hit for 3 at Range 2–4. Ignore Block.",
+      "ops": [
+        {
+          "op": "hit",
+          "n": 3,
+          "min": 2,
+          "max": 4,
+          "pierce": true
+        }
+      ],
+      "hero": "Alf Featherbottom"
+    },
+    {
+      "id": "R-FS",
+      "name": "Demolition Day",
+      "category": "Special",
+      "speed": 4,
+      "text": "Move up to 2. Hit for 6 at Range 1. Push up to 3 on hit.",
+      "ops": [
+        {
+          "op": "move",
+          "n": 2
+        },
+        {
+          "op": "hit",
+          "n": 6,
+          "min": 1,
+          "max": 1
+        },
+        {
+          "op": "push",
+          "n": 3
+        }
+      ],
+      "hero": "Lord Smasherton"
+    },
+    {
+      "id": "R-FA",
+      "name": "Arrow Storm",
+      "category": "Special",
+      "speed": 5,
+      "text": "Hit for 5 at Range 1–4. Then move up to 2.",
+      "ops": [
+        {
+          "op": "hit",
+          "n": 5,
+          "min": 1,
+          "max": 4
+        },
+        {
+          "op": "move",
+          "n": 2
+        }
+      ],
+      "hero": "Alf Featherbottom"
+    },
+    {
+      "id": "R-L01",
+      "name": "Giant Boxing Glove",
+      "text": "Your revealed Attack pushes 3 extra spaces on hit.",
+      "effect": "glove",
       "asset": "LOO-001",
-      "cost": 3,
-      "window": "attack",
-      "attackOnly": true,
-      "timing": "With your opening card"
+      "category": "Loot",
+      "ops": []
     },
     {
-      "id": "B2-LOO-006",
-      "name": "Dueling Pickles",
-      "text": "Your opening card’s Attack deals +2 damage.",
-      "category": "Loot",
-      "hero": "",
-      "speed": "",
-      "range": "",
-      "damage": "",
-      "block": "",
-      "kind": "bonus",
-      "n": 2,
-      "asset": "LOO-005",
-      "cost": 3,
-      "window": "attack",
-      "attackOnly": true,
-      "timing": "With your opening card"
-    },
-    {
-      "id": "B2-LOO-007",
-      "name": "Binoculars",
-      "text": "Your opening card’s Attack gets +2 maximum Range.",
-      "category": "Loot",
-      "hero": "",
-      "speed": "",
-      "range": "",
-      "damage": "",
-      "block": "",
-      "kind": "range",
-      "n": 2,
-      "asset": "LOO-020",
-      "cost": 3,
-      "window": "attack",
-      "attackOnly": true,
-      "timing": "With your opening card"
-    },
-    {
-      "id": "B2-LOO-008",
-      "name": "Smoke Bomb",
-      "text": "Gain 3 Block. Move up to 1 now.",
-      "category": "Loot",
-      "hero": "",
-      "speed": "",
-      "range": "",
-      "damage": "",
-      "block": "",
-      "kind": "smoke",
-      "n": 3,
-      "asset": null,
-      "cost": 3,
-      "window": "either",
-      "attackOnly": false,
-      "timing": "With your opener OR as your one defence response"
-    },
-    {
-      "id": "B2-LOO-009",
-      "name": "Attack Kitten",
-      "text": "After your opening card, make a Loot Attack for 2 damage at Range 1–2.",
-      "category": "Loot",
-      "hero": "",
-      "speed": "",
-      "range": "",
-      "damage": "",
-      "block": "",
-      "kind": "kitten",
-      "n": 2,
+      "id": "R-L02",
+      "name": "Spring Boots",
+      "text": "Move up to 2 before either revealed card resolves.",
+      "effect": "boots",
       "asset": "LOO-002",
-      "cost": 3,
-      "window": "attack",
-      "attackOnly": false,
-      "timing": "With your opening card"
+      "category": "Loot",
+      "ops": []
     },
     {
-      "id": "B2-LOO-010",
-      "name": "Mixed-up Luggage",
-      "text": "Draw 3 combat cards now.",
-      "category": "Loot",
-      "hero": "",
-      "speed": "",
-      "range": "",
-      "damage": "",
-      "block": "",
-      "kind": "draw",
-      "n": 3,
-      "asset": null,
-      "cost": 3,
-      "window": "either",
-      "attackOnly": false,
-      "timing": "With your opener OR as your one defence response"
-    },
-    {
-      "id": "B2-LOO-011",
-      "name": "Explosive Barrel",
-      "text": "After your opening card, both fighters lose 2 Health.",
-      "category": "Loot",
-      "hero": "",
-      "speed": "",
-      "range": "",
-      "damage": "",
-      "block": "",
-      "kind": "barrel",
-      "n": 2,
-      "asset": "LOO-006",
-      "cost": 3,
-      "window": "attack",
-      "attackOnly": false,
-      "timing": "With your opening card"
-    },
-    {
-      "id": "B2-LOO-012",
-      "name": "Teleport Scroll",
-      "text": "Move to any unoccupied space now.",
-      "category": "Loot",
-      "hero": "",
-      "speed": "",
-      "range": "",
-      "damage": "",
-      "block": "",
-      "kind": "teleport",
-      "n": 0,
-      "asset": null,
-      "cost": 3,
-      "window": "either",
-      "attackOnly": false,
-      "timing": "With your opener OR as your one defence response"
-    },
-    {
-      "id": "B2-LOO-013",
-      "name": "Jackhammer",
-      "text": "Your opening Attack gets +1 damage and Push up to 2 on hit.",
-      "category": "Loot",
-      "hero": "",
-      "speed": "",
-      "range": "",
-      "damage": "",
-      "block": "",
-      "kind": "jackhammer",
-      "n": 1,
-      "asset": "LOO-021",
-      "cost": 3,
-      "window": "attack",
-      "attackOnly": true,
-      "timing": "With your opening card"
-    },
-    {
-      "id": "B2-LOO-014",
-      "name": "Holy Hand Grenade",
-      "text": "After your opening card, make a Loot Attack for 3 damage at Range 2–4.",
-      "category": "Loot",
-      "hero": "",
-      "speed": "",
-      "range": "",
-      "damage": "",
-      "block": "",
-      "kind": "grenade",
-      "n": 3,
-      "asset": "LOO-015",
-      "cost": 3,
-      "window": "attack",
-      "attackOnly": false,
-      "timing": "With your opening card"
-    },
-    {
-      "id": "B2-LOO-015",
-      "name": "Coin Finder",
-      "text": "Gain 2 Coins now.",
-      "category": "Loot",
-      "hero": "",
-      "speed": "",
-      "range": "",
-      "damage": "",
-      "block": "",
-      "kind": "coin",
-      "n": 2,
-      "asset": "LOO-008",
-      "cost": 3,
-      "window": "either",
-      "attackOnly": false,
-      "timing": "With your opener OR as your one defence response"
-    },
-    {
-      "id": "B2-LOO-016",
-      "name": "Protein Shake",
-      "text": "Your opening Attack gets +3 damage. Your opening card has Speed 1.",
-      "category": "Loot",
-      "hero": "",
-      "speed": "",
-      "range": "",
-      "damage": "",
-      "block": "",
-      "kind": "protein",
-      "n": 3,
-      "asset": "LOO-018",
-      "cost": 3,
-      "window": "attack",
-      "attackOnly": true,
-      "timing": "With your opening card"
-    },
-    {
-      "id": "B2-LOO-017",
-      "name": "Charcuterie Board",
-      "text": "Heal 2 now.",
-      "category": "Loot",
-      "hero": "",
-      "speed": "",
-      "range": "",
-      "damage": "",
-      "block": "",
-      "kind": "heal",
-      "n": 2,
-      "asset": "LOO-023",
-      "cost": 3,
-      "window": "either",
-      "attackOnly": false,
-      "timing": "With your opener OR as your one defence response"
-    },
-    {
-      "id": "B2-LOO-018",
-      "name": "Wand of Orcus",
-      "text": "Your opening Attack ignores all Block. It still needs Range.",
-      "category": "Loot",
-      "hero": "",
-      "speed": "",
-      "range": "",
-      "damage": "",
-      "block": "",
-      "kind": "pierce",
-      "n": 0,
-      "asset": "LOO-014",
-      "cost": 3,
-      "window": "attack",
-      "attackOnly": true,
-      "timing": "With your opening card"
-    },
-    {
-      "id": "B2-LOO-019",
-      "name": "Blowgun",
-      "text": "After your opening card, make a Loot Attack for 2 damage at Range 3–5.",
-      "category": "Loot",
-      "hero": "",
-      "speed": "",
-      "range": "",
-      "damage": "",
-      "block": "",
-      "kind": "blowgun",
-      "n": 2,
+      "id": "R-L03",
+      "name": "Ridiculous Telescope",
+      "text": "Your revealed Attack gains +2 maximum Range.",
+      "effect": "scope",
       "asset": "LOO-003",
-      "cost": 3,
-      "window": "attack",
-      "attackOnly": false,
-      "timing": "With your opening card"
+      "category": "Loot",
+      "ops": []
     },
     {
-      "id": "B2-LOO-020",
-      "name": "Stunner Glasses",
-      "text": "Gain 4 Block now.",
+      "id": "R-L04",
+      "name": "Pocket Anvil",
+      "text": "Cancel movement printed on your rival’s revealed card.",
+      "effect": "anvil",
+      "asset": "LOO-004",
       "category": "Loot",
-      "hero": "",
-      "speed": "",
-      "range": "",
-      "damage": "",
-      "block": "",
-      "kind": "block",
-      "n": 4,
-      "asset": "LOO-009",
-      "cost": 3,
-      "window": "either",
-      "attackOnly": false,
-      "timing": "With your opener OR as your one defence response"
+      "ops": []
+    },
+    {
+      "id": "R-L05",
+      "name": "Exploding Present",
+      "text": "Your revealed Attack deals +2 damage. If it hits, lose 1 Health.",
+      "effect": "present",
+      "asset": "LOO-005",
+      "category": "Loot",
+      "ops": []
+    },
+    {
+      "id": "R-L06",
+      "name": "Emergency Sandwich",
+      "text": "Heal 4 before either revealed card resolves.",
+      "effect": "sandwich",
+      "asset": "LOO-006",
+      "category": "Loot",
+      "ops": []
     }
   ],
   "rules": [
     [
-      "Build",
-      "Choose 10 Basics and 5 Hero cards, max two copies. Start on spaces 3 and 5 with 18 Health and 0 Coins. Draw five."
+      "Pick two. Keep them secret.",
+      "Click two cards in order. Click again to return one. Confirm to lock your plan. You and your rival reveal the first pair together, then the second."
     ],
     [
-      "Lead",
-      "Attacker chooses one opening card, optionally pairing one movement card with an Attack and one attack-timing Loot. Resolve approach movement and printed pre-Attack effects."
+      "Read the reveal. Throw a surprise.",
+      "After a pair flips, each player can throw one Loot or save it. Both choices lock before the Loot is shown. Loot resolves in Edge order, before the cards."
     ],
     [
-      "Answer",
-      "Defender sees the opening and chooses one defence/healing/movement card OR one defence-timing Loot, or takes the hit. Block/healing applies before the Attack. Ordinary response movement is capped at one space and evades before the hit only if strictly faster; otherwise it happens after the opening. Loot movement uses its printed allowance."
+      "Speed decides who acts first.",
+      "Higher Speed resolves its entire card first. Edge wins ties. Check Range when the Attack actually happens. A knockout ends the fight immediately."
     ],
     [
-      "Finish",
-      "An opening Attack in Range earns one optional Hero/Fury Attack follow-up, even if fully blocked. Evading out of Range denies it. Printed Combo also permits one even on a miss or setup. No second response, extra Loot or chains. Unused Block protects against the follow-up."
+      "Choose movement when it happens.",
+      "Click a glowing arena space. Stay put, move either direction, or pass through your rival. You cannot finish on their space. Push and pull distances are also optional choices."
     ],
     [
-      "Reset",
-      "Read the result, then swap attacker and defender. Discard played cards, refill to five (keep extras), and clear the defender’s unused Block except Helga’s. Attacker Block remains for the incoming attack. Two attacks form a round. Buy one blind Loot for 3 Coins at round start, max two held. Empty purchase windows skip automatically."
+      "Walls hurt. Block is brief.",
+      "A push beyond space 1 or 7 stops at the wall and adds 1 damage. Block absorbs damage point for point and clears after each reveal."
     ],
     [
-      "Fury",
-      "One opposing damaging card gives 1 Fury, not one per damage point. Self-payments and fully blocked hits give none. At 3 add the cycling Fury card once; at 5 activate the permanent Hero effect."
+      "Basics buy the ridiculous stuff.",
+      "Each Basic grants 1 Coin after resolving, even on a miss. Coins cap at 8. Between plans, buy one blind Loot for 3 Coins or save. Hold at most two."
     ],
     [
-      "No dead hand",
-      "On attack, choose any card and Reposition instead: discard it, Move up to 2, draw 1. No card effects or Coins from that card."
+      "Getting hit builds Fury.",
+      "Gain 1 Fury per opposing card that damages you, not per Health point. At 3, your special card enters your hand once and cycles through your deck afterward. At 5, your Hero’s permanent Fury ability turns on. Full Block and self-damage grant none."
     ],
     [
-      "Movement",
-      "Choose destination at resolution; up to allows zero. Crossing costs spaces, never stop on the rival. Push/Pull allows zero and cannot cross a fighter. Wall Slam is 1 Health per forced-movement effect."
+      "Keep the fight moving.",
+      "After both reveals, refill to five and flip Edge. Empty purchase windows skip. At the end of round 10 onward, both fighters lose 2 Health to Sudden Death."
     ],
     [
-      "End",
-      "KO ends immediately. Arena Fury starts at round 13 cleanup: both lose 2 Health, +2 at each later round; no defence/Fury."
+      "Build your fighting style.",
+      "Choose 10 Basics and 5 Hero cards, at most two copies per design. Quick Play uses a suggested draft; Randomize gives another legal deck. This is a two-Hero playtest, not a balanced final edition."
     ]
-  ],
-  "designStatus": "A2 attacker–defender playtest. Balance remains experimental."
+  ]
 }
