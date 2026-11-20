@@ -1,5 +1,5 @@
 import {choosePlan,chooseReaction,choosePrompt} from './reaction-ai.js';
-export const VERSION='brawl2-one-deck-1';
+export const VERSION='brawl2-one-deck-2';
 export const LOOT_COST=2;
 export const MAX_HEALTH=20;
 const copy=x=>structuredClone(x);
@@ -9,7 +9,7 @@ export class Brawl2 {
   this.s={version:VERSION,mode,rng:(seed>>>0)||1,serial:0,playSerial:0,round:1,edge:0,phase:'program',active:null,turn:null,attackIndex:0,reveal:0,order:[],passes:0,committed:[false,false],plans:[[],[]],mains:[null,null],mods:[{},{}],drawUsed:[false,false],shopDone:[true,true],players:[],queue:[],prompt:null,context:null,activeSource:null,lastReaction:null,trail:[],lastResult:null,lastRefill:[null,null],lastCoin:null,winner:null,log:[],notice:'One hand. Choose two attacks; keep your answers.',lootDeck:[],lootDiscard:[]};
   this.need(Array.isArray(heroes)&&heroes.length===2,'Choose two Heroes.');
   for(let i=0;i<2;i++){
-   const h=data.heroes.find(h=>h.id===heroes[i]);this.need(h,'Choose Smasherton or Alf.');
+   const h=data.heroes.find(h=>h.id===heroes[i]);this.need(h,'Choose a valid Hero.');
    const deck=decks?.[i]||Brawl2.defaultDeck(data,h.id),fury=furies?.[i]||Brawl2.defaultFury(data,h.id);
    this.need(Brawl2.validDeck(data,h.id,deck),'Choose exactly 24 cards from your Hero’s pool, at most two of each.');
    this.need(h.furies.includes(fury),'Choose one of your Hero’s three Fury cards.');
@@ -22,7 +22,7 @@ export class Brawl2 {
  static restore(data,s){if(s?.version!==VERSION)throw Error('Start a new One Deck match. Earlier Brawl2 saves use different rules.');const g=Object.create(Brawl2.prototype);g.data=data;g.s=copy(s);return g;}
  static validLoadout(a,n,allowed){return Array.isArray(a)&&a.length===n&&a.every(id=>typeof id==='string'&&allowed.includes(id)&&a.filter(x=>x===id).length<=2);}
  static validDeck(data,id,deck){const h=data.heroes.find(h=>h.id===id);return !!h&&Brawl2.validLoadout(deck,24,h.pool);}
- static defaultBuild(data,id){return data.builds.find(b=>b.id===(id==='SMA'?'sma-wall':'alf-mobile'))||data.builds.find(b=>b.hero===id);}
+ static defaultBuild(data,id){return data.builds.find(b=>b.id===({SMA:'sma-wall',ALF:'alf-mobile'}[id]))||data.builds.find(b=>b.hero===id);}
  static defaultDeck(data,id){return [...Brawl2.defaultBuild(data,id).deck];}
  static defaultFury(data,id){return Brawl2.defaultBuild(data,id).fury;}
  static randomLoadout(data,id,random=Math.random){const h=data.heroes.find(h=>h.id===id),a=h.pool.flatMap(id=>[id,id]);for(let j=a.length-1;j>0;j--){const k=Math.floor(random()*(j+1));[a[j],a[k]]=[a[k],a[j]];}return {deck:a.slice(0,24),fury:h.furies[Math.floor(random()*h.furies.length)]};}
@@ -73,12 +73,13 @@ export class Brawl2 {
   if(s.drawUsed[i]&&d.ops.every(o=>o.op==='draw'))return false;
   return true;
  }
- cost(i,t){return t.n;}
+ cost(i,t){const p=this.s.players[i];return t.resource==='hp'&&p.hero==='SHE'&&p.ultimate?Math.max(1,t.n-1):t.n;}
  react(i,uid){const p=this.s.players[i],c=p.hand.find(c=>c.uid===uid);this.need(c&&this.isReaction(c)&&this.canPlay(i,c),'Choose a usable Reaction half from your hand on your turn.');p.hand=p.hand.filter(c=>c.uid!==uid);this.playReaction(i,c,false);}
  playLoot(i,id){const p=this.s.players[i];this.need(p.loot.includes(id)&&this.def(id)?.kind==='Loot'&&this.canPlay(i,id),'Choose usable Loot on your turn.');p.loot.splice(p.loot.indexOf(id),1);this.playReaction(i,{id,uid:'loot-'+(++this.s.playSerial)},true);}
  playReaction(i,card,loot){
   const s=this.s,p=s.players[i],d=this.reactionDef(card);
   if(d.cost){const n=this.cost(i,d.cost);p[d.cost.resource]-=n;this.log(`${p.name} pays ${n} ${d.cost.resource==='hp'?'Health':'Block'}.`);this.checkThresholds(i);}
+  if(p.hero==='FRA'&&s.active===i&&d.category==='Basic'&&!s.mods[i].oneTwo&&['Hero','Special'].includes(this.def(s.mains[i])?.category)){s.mods[i].oneTwo=true;s.mods[i].damage=(s.mods[i].damage||0)+(p.ultimate?2:1);this.log(`One-Two: +${p.ultimate?2:1} damage.`);}
   s.lastReaction={player:i,id:card.id};s.context={i,card,source:`reaction-${++s.playSerial}-${card.uid}`,type:'reaction',hit:false,loot};s.passes=0;
   s.queue=d.ops.map(o=>({...o,i}));s.queue.push({op:'reactionEnd',i,card,loot});s.phase='resolve';this.log(`${p.name} ${loot?'throws':'plays'} ${d.name}${d.kind==='Dual'?' · Reaction half':''}.`);this.pump();
  }
@@ -92,8 +93,9 @@ export class Brawl2 {
  availableMoves(i,n){const p=this.s.players[i],o=this.s.players[1-i];return Array.from({length:7},(_,k)=>k+1).filter(v=>v!==o.pos&&Math.abs(v-p.pos)<=n);}
  ask(i,kind,title,choices,task){this.s.prompt={player:i,kind,title,choices,task};}
  choose(i,value){const q=this.s.prompt;this.need(q&&q.player===i&&q.choices.includes(value),'Choose a legal option for your own fighter.');this.s.prompt=null;const t=q.task;if(t.op==='move')this.moveTo(i,value);else if(t.op==='pay'){if(value===1){this.s.players[i][t.resource]-=t.cost;this.s.mods[i].damage=(this.s.mods[i].damage||0)+t.bonus;this.checkThresholds(i);}}else this.force(t,value);this.pump();}
- moveTo(i,to){const p=this.s.players[i],from=p.pos;p.pos=to;this.log(to===from?`${p.name} stays on ${from}.`:`${p.name} moves ${from} → ${to}.`);}
- heal(i,n){const p=this.s.players[i],before=p.hp;p.hp=Math.min(MAX_HEALTH,p.hp+n);this.log(`${p.name} heals ${p.hp-before} · ${p.hp} Health.`);}
+ moveTo(i,to){const p=this.s.players[i],from=p.pos,o=this.s.players[1-i];p.pos=to;this.crossing(i,from,to,o.pos);this.log(to===from?`${p.name} stays on ${from}.`:`${p.name} moves ${from} → ${to}.`);}
+ crossing(i,from,to,rival){const s=this.s,p=s.players[i],m=s.mods[i];if(p.hero!=='RAV'||s.context?.type==='attack'&&s.context.hit||s.active==null||m.crossed||Math.sign(from-rival)===Math.sign(to-rival))return;m.crossed=true;const n=p.ultimate?3:2;if(s.active===i)m.damage=(m.damage||0)+n;else p.block=Math.min(6,p.block+n);this.log(`Slippery: +${n} ${s.active===i?'damage':'Block'}.`);}
+ heal(i,n){const p=this.s.players[i],before=p.hp;p.hp=Math.min(MAX_HEALTH,p.hp+n+(p.hero==='SHE'?1:0));this.log(`${p.name} heals ${p.hp-before} · ${p.hp} Health.`);}
  checkThresholds(i){const p=this.s.players[i];if(p.hp<=0)return;if(p.hp<=10&&!p.skillUnlocked){p.skillUnlocked=true;p.hand.push(this.instance(p.furyId));this.log(`${p.name} unlocks ${this.def(p.furyId).name}! Commit it in a future round.`);}if(p.hp<=5&&!p.ultimate){p.ultimate=true;this.log(`${p.name} unlocks ${this.data.heroes.find(h=>h.id===p.hero).ultimate.name}!`);}}
  damage(target,n,source,{pierce=false,ignore=0,self=false}={}){
   const p=this.s.players[target];let amount=n;
@@ -106,7 +108,7 @@ export class Brawl2 {
   s.queue=[];s.prompt=null;s.turn=null;this.log(s.winner==='draw'?'Double knockout!':`${s.players[s.winner].name} wins!`);
  }}
  force(t,n){if(!n)return;const s=this.s,p=s.players[t.i],o=s.players[1-t.i],from=o.pos,dir=Math.sign(o.pos-p.pos)*(t.op==='pull'?-1:1),raw=from+dir*n;let to=Math.max(1,Math.min(7,raw));if(t.op==='pull')to=dir>0?Math.min(to,p.pos-1):Math.max(to,p.pos+1);o.pos=to;this.log(`${p.name} ${t.op==='pull'?'pulls':'launches'} ${o.name} ${from} → ${to}.`);if(t.op==='push'&&(raw<1||raw>7)){const damage=p.hero==='SMA'?(p.ultimate?3:2):1;this.log('WALL SLAM!');if(s.lastResult)s.lastResult.walls.push({damage,target:1-t.i});this.damage(1-t.i,damage,s.context.source,{pierce:true});}}
- attackInfo(i=this.s.active){if(i===null||i===undefined)return null;const s=this.s,c=this.def(s.mains[i]);if(!c)return null;const p=s.players[i],o=s.players[1-i],m=s.mods[i];return {name:c.name,distance:Math.abs(p.pos-o.pos),hits:c.ops.filter(t=>t.op==='hit').map((h,k)=>({damage:h.n+(k===0?m.damage||0:0),min:m.minimum??h.min,max:h.max+(p.hero==='ALF'&&h.min>=2?(p.ultimate?2:1):0)+(m.range||0),ignore:(h.ignore||0)+(m.ignore||0),pierce:!!(h.pierce||m.pierce)})),payment:c.ops.filter(t=>t.op==='pay').map(t=>({resource:t.resource,cost:t.n,bonus:t.bonus})),block:o.block};}
+ attackInfo(i=this.s.active){if(i===null||i===undefined)return null;const s=this.s,c=this.def(s.mains[i]);if(!c)return null;const p=s.players[i],o=s.players[1-i],m=s.mods[i];return {name:c.name,distance:Math.abs(p.pos-o.pos),hits:c.ops.filter(t=>t.op==='hit').map((h,k)=>({damage:h.n+(k===0?m.damage||0:0)+(p.hero==='ALF'&&Math.abs(p.pos-o.pos)>=2?(p.ultimate?2:1):0),min:m.minimum??h.min,max:h.max+(p.hero==='ALF'&&h.min>=2?1:0)+(m.range||0),ignore:(h.ignore||0)+(m.ignore||0),pierce:!!(h.pierce||m.pierce)})),payment:c.ops.filter(t=>t.op==='pay').map(t=>({resource:t.resource,cost:this.cost(i,t),bonus:t.bonus})),block:o.block};}
  pump(){const s=this.s;let guard=0;while(['pre','resolve'].includes(s.phase)&&!s.prompt&&s.queue.length){
   if(++guard>100)throw Error('Resolution overflow.');const t=s.queue.shift(),p=s.players[t.i],o=s.players[1-t.i],m=s.mods[t.i],ctx=s.context;
   if(t.attackingOnly&&s.active!==t.i||t.onHit&&!ctx.hit||t.rangeMax&&Math.abs(p.pos-o.pos)>t.rangeMax)continue;
@@ -134,7 +136,7 @@ export class Brawl2 {
    case'pull':{const max=Math.min(t.n,Math.max(0,Math.abs(p.pos-o.pos)-1));if(max)this.ask(t.i,'pull',`Pull up to ${max}. Choose a distance.`,Array.from({length:max+1},(_,k)=>k),t);else this.log('Already adjacent: no pull.');break;}
    case'selfPresent':if(ctx.hit)this.damage(t.i,1,ctx.source,{self:true});break;
    case'reactionEnd':if(t.loot)s.lootDiscard.push(t.card.id);else p.discard.push(t.card);s.phase='reaction';s.turn=1-t.i;s.context=null;this.log(`${s.players[s.turn].name}: react or pass.`);break;
-   case'attackEnd':p.discard.push(t.card);if(this.def(t.card).category==='Basic'){const earned=Math.min(1,8-p.coins);p.coins+=earned;s.lastCoin={player:t.i,amount:earned,name:this.def(t.card).name};s.lastResult.coin=earned;this.log(`${p.name}: +${earned} Coin · Basic Attack${earned?'':' (Coin cap 8)'}.`);}s.players.forEach(p=>p.block=0);s.phase='result';s.turn=null;s.context=null;this.log(`${this.def(t.card).name} finished. No cards are drawn.`);break;
+   case'attackEnd':p.discard.push(t.card);s.plans[t.i][s.reveal].spent=true;if(this.def(t.card).category==='Basic'){const earned=Math.min(1,8-p.coins);p.coins+=earned;s.lastCoin={player:t.i,amount:earned,name:this.def(t.card).name};s.lastResult.coin=earned;this.log(`${p.name}: +${earned} Coin · Basic Attack${earned?'':' (Coin cap 8)'}.`);}s.players.forEach(p=>p.block=p.hero==='HEL'?Math.min(p.block,p.ultimate?4:2):0);s.phase='result';s.turn=null;s.context=null;this.log(`${this.def(t.card).name} finished. No cards are drawn.`);break;
   }
  }}
  cleanup(){const s=this.s;
