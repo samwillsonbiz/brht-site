@@ -1,11 +1,11 @@
 {
-  "title": "Brawl2 · One deck",
+  "title": "Brawl2 — Distinct by design",
   "heroes": [
     {
       "id": "SMA",
       "name": "Lord Smasherton",
       "slug": "hero-lord-smasherton",
-      "archetype": "Get close. Hit hard. Make the wall hurt.",
+      "archetype": "Break shields and force positions. Slow, expensive to chase.",
       "trait": "Wallbreaker",
       "traitText": "your wall slams deal 2 damage instead of 1.",
       "ultimate": {
@@ -34,7 +34,7 @@
           "T-B09"
         ]
       },
-      "combo": "Use printed movement to start the chase, and keep one movement Reaction to answer the escape. Buy Loot with Quick Jab, Lunge or Advance when a Hero hit is not worth spending.",
+      "combo": "Choose which weakness to cover with your 24 cards.",
       "pool": [
         "B01",
         "B02",
@@ -67,7 +67,7 @@
       "id": "ALF",
       "name": "Alf Featherbottom",
       "slug": "hero-alf-featherbottom",
-      "archetype": "Make space. Find the angle. Fire before they catch you.",
+      "archetype": "Prepare your draws and dominate firing distance. Weak at contact.",
       "trait": "Long Shot",
       "traitText": "Your ranged attacks get +1 maximum Range. At Range 2 or more, your attacks deal +1 damage.",
       "ultimate": {
@@ -96,7 +96,7 @@
           "T-B09"
         ]
       },
-      "combo": "Use Attack movement for the first reposition and hold a Reaction for the pursuit. Keep useful Basics to pay for surprise Loot.",
+      "combo": "Choose which weakness to cover with your 24 cards.",
       "pool": [
         "B01",
         "B02",
@@ -129,7 +129,7 @@
       "id": "SHE",
       "name": "Dr. Shealer",
       "slug": "hero-dr-shealer",
-      "archetype": "Spend Health. Steal it back. Risk the knockout.",
+      "archetype": "Spend Health to gain choices and burst; heal by landing attacks.",
       "trait": "Good Medicine",
       "traitText": "Your healing cards restore 1 extra Health.",
       "ultimate": {
@@ -158,7 +158,7 @@
           "T-B09"
         ]
       },
-      "combo": "Trade Health for clean hits, then recover with life-steal and healing.",
+      "combo": "Choose which weakness to cover with your 24 cards.",
       "pool": [
         "B01",
         "B02",
@@ -191,12 +191,12 @@
       "id": "HEL",
       "name": "Helga Stonewall",
       "slug": "hero-helga",
-      "archetype": "Build your shield. Spend it on a crushing hit.",
+      "archetype": "Bank Block and choose where to spend it. Slow without a shield.",
       "trait": "Shield Bank",
-      "traitText": "After each attack, keep up to 2 unused Block. Clear it at round end.",
+      "traitText": "After each attack, keep up to 3 unused Block. Clear it at round end.",
       "ultimate": {
         "name": "Absolutely Not",
-        "text": "Shield Bank keeps up to 4 unused Block instead of 2."
+        "text": "Shield Bank keeps up to 5 unused Block instead of 3."
       },
       "weakness": "Hits can break your shield before you spend it.",
       "recommended": {
@@ -220,7 +220,7 @@
           "T-B09"
         ]
       },
-      "combo": "Use Block as protection or cash it in for a heavy strike.",
+      "combo": "Choose which weakness to cover with your 24 cards.",
       "pool": [
         "B01",
         "B02",
@@ -253,12 +253,12 @@
       "id": "RAV",
       "name": "Raven Madison",
       "slug": "hero-raven-madison",
-      "archetype": "Cross your rival. Strike from the other side.",
+      "archetype": "Cross, disrupt and steal. Low direct damage without positioning.",
       "trait": "Slippery",
-      "traitText": "Your first crossing before the strike gives +2 damage while attacking, or 2 Block while defending.",
+      "traitText": "Your first crossing before your own strike gives +2 damage. Crossing while defending gives no Block.",
       "ultimate": {
         "name": "Living Shadow",
-        "text": "Slippery gives +3 damage or 3 Block instead."
+        "text": "Crossing during your own attack gives +3 damage instead."
       },
       "weakness": "You need a landing space beyond your rival. No facing bookkeeping.",
       "recommended": {
@@ -282,7 +282,7 @@
           "T-B09"
         ]
       },
-      "combo": "Cross for your passive, then keep one move to answer a chase.",
+      "combo": "Choose which weakness to cover with your 24 cards.",
       "pool": [
         "B01",
         "B02",
@@ -315,12 +315,12 @@
       "id": "FRA",
       "name": "Friar Franc",
       "slug": "hero-friar-franc",
-      "archetype": "Turn plain cards into a ridiculous one-two combo.",
-      "trait": "One-Two",
-      "traitText": "Your first Basic Reaction during each of your Hero or Fury attacks adds +1 damage.",
+      "archetype": "Earn, spend and recycle. Coins cannot fund both powers and Loot.",
+      "trait": "Hustler",
+      "traitText": "Your Basic Attacks earn 2 Coins instead of 1.",
       "ultimate": {
-        "name": "Divine Rhythm",
-        "text": "One-Two adds +2 damage instead of +1."
+        "name": "Money Talks",
+        "text": "While holding at least 3 Coins, your Hero and Fury attacks deal +2 damage."
       },
       "weakness": "The finisher still needs Range. Your first card reveals your setup.",
       "recommended": {
@@ -344,7 +344,7 @@
           "T-B09"
         ]
       },
-      "combo": "Keep a Basic Reaction for your Hero attack; the plain cards make the combo.",
+      "combo": "Choose which weakness to cover with your 24 cards.",
       "pool": [
         "B01",
         "B02",
@@ -382,11 +382,11 @@
       "kind": "Attack",
       "heroId": null,
       "hero": null,
-      "speed": 5,
+      "speed": 6,
       "ops": [
         {
           "op": "hit",
-          "n": 3,
+          "n": 2,
           "min": 1,
           "max": 1
         }
@@ -394,14 +394,16 @@
       "reactionOps": null,
       "side": "either",
       "reactionRange": null,
-      "attackText": "Hit for 3 at Range 1.",
+      "attackText": "Hit for 2 at Range 1.",
       "reactionText": "",
-      "text": "Hit for 3 at Range 1.",
-      "purpose": "Fast income at close range; gives up damage for Speed.",
+      "text": "Hit for 2 at Range 1.",
       "art": "assets/basic-atlas.webp",
       "artIndex": 0,
       "artCols": 4,
-      "artRows": 3
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
     },
     {
       "id": "B02",
@@ -410,11 +412,11 @@
       "kind": "Attack",
       "heroId": null,
       "hero": null,
-      "speed": 2,
+      "speed": 1,
       "ops": [
         {
           "op": "hit",
-          "n": 5,
+          "n": 6,
           "min": 1,
           "max": 1
         }
@@ -422,48 +424,57 @@
       "reactionOps": null,
       "side": "either",
       "reactionRange": null,
-      "attackText": "Hit for 5 at Range 1.",
+      "attackText": "Hit for 6 at Range 1.",
       "reactionText": "",
-      "text": "Hit for 5 at Range 1.",
-      "purpose": "Reliable raw damage plus a Coin; needs help to catch a retreat.",
+      "text": "Hit for 6 at Range 1.",
       "art": "assets/basic-atlas.webp",
       "artIndex": 1,
       "artCols": 4,
-      "artRows": 3
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
     },
     {
       "id": "B03",
       "name": "Throw a Rock",
       "category": "Basic",
-      "kind": "Attack",
+      "kind": "Dual",
       "heroId": null,
       "hero": null,
       "speed": 3,
       "ops": [
         {
           "op": "hit",
-          "n": 3,
+          "n": 2,
           "min": 2,
           "max": 3
         }
       ],
-      "reactionOps": null,
-      "side": "either",
+      "reactionOps": [
+        {
+          "op": "shred",
+          "n": 2
+        }
+      ],
+      "side": "attacker",
       "reactionRange": null,
-      "attackText": "Hit for 3 at Range 2–3.",
-      "reactionText": "",
-      "text": "Hit for 3 at Range 2–3.",
-      "purpose": "Earn money from a distance; cannot hit an adjacent rival.",
+      "attackText": "Hit for 2 at Range 2–3.",
+      "reactionText": "Remove 2 rival Block.",
+      "text": "Hit for 2 at Range 2–3. OR Remove 2 rival Block.",
       "art": "assets/basic-atlas.webp",
       "artIndex": 2,
       "artCols": 4,
-      "artRows": 3
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
     },
     {
       "id": "B04",
       "name": "Lunge",
       "category": "Basic",
-      "kind": "Attack",
+      "kind": "Dual",
       "heroId": null,
       "hero": null,
       "speed": 4,
@@ -474,22 +485,29 @@
         },
         {
           "op": "hit",
-          "n": 3,
+          "n": 2,
           "min": 1,
           "max": 1
         }
       ],
-      "reactionOps": null,
+      "reactionOps": [
+        {
+          "op": "move",
+          "n": 1
+        }
+      ],
       "side": "either",
       "reactionRange": null,
-      "attackText": "Move up to 1. Hit for 3 at Range 1.",
-      "reactionText": "",
-      "text": "Move up to 1. Hit for 3 at Range 1.",
-      "purpose": "Approach while attacking, saving a Reaction card.",
+      "attackText": "Move up to 1. Hit for 2 at Range 1.",
+      "reactionText": "Move up to 1.",
+      "text": "Move up to 1. Hit for 2 at Range 1. OR Move up to 1.",
       "art": "assets/basic-atlas.webp",
       "artIndex": 3,
       "artCols": 4,
-      "artRows": 3
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
     },
     {
       "id": "B05",
@@ -498,7 +516,7 @@
       "kind": "Dual",
       "heroId": null,
       "hero": null,
-      "speed": 3,
+      "speed": 2,
       "ops": [
         {
           "op": "move",
@@ -522,11 +540,13 @@
       "attackText": "Move up to 2. Hit for 2 at Range 1.",
       "reactionText": "Move up to 1.",
       "text": "Move up to 2. Hit for 2 at Range 1. OR Move up to 1.",
-      "purpose": "A weaker approach Attack or a small reposition; cannot provide both.",
       "art": "assets/basic-atlas.webp",
       "artIndex": 5,
       "artCols": 4,
-      "artRows": 3
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
     },
     {
       "id": "B06",
@@ -555,15 +575,17 @@
       "attackText": "Hit for 3 at Range 1.",
       "reactionText": "Gain 2 Block.",
       "text": "Hit for 3 at Range 1. OR Gain 2 Block.",
-      "purpose": "Trade Quick Jab’s Speed for the option to defend.",
       "art": "assets/basic-atlas.webp",
       "artIndex": 6,
       "artCols": 4,
-      "artRows": 3
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
     },
     {
       "id": "B07",
-      "name": "Wide Swing",
+      "name": "Long Reach",
       "category": "Basic",
       "kind": "Dual",
       "heroId": null,
@@ -573,7 +595,7 @@
         {
           "op": "hit",
           "n": 3,
-          "min": 1,
+          "min": 2,
           "max": 2
         }
       ],
@@ -585,14 +607,16 @@
       ],
       "side": "attacker",
       "reactionRange": null,
-      "attackText": "Hit for 3 at Range 1–2.",
-      "reactionText": "Your current attack gets +1 maximum Range.",
-      "text": "Hit for 3 at Range 1–2. OR Your current attack gets +1 maximum Range.",
-      "purpose": "A low-damage broad Attack or a reach extension for a better one.",
+      "attackText": "Hit for 3 at Range 2.",
+      "reactionText": "Add 1 maximum Range.",
+      "text": "Hit for 3 at Range 2. OR Add 1 maximum Range.",
       "art": "assets/basic-atlas.webp",
       "artIndex": 4,
       "artCols": 4,
-      "artRows": 3
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
     },
     {
       "id": "B08",
@@ -605,7 +629,7 @@
       "ops": [
         {
           "op": "hit",
-          "n": 2,
+          "n": 1,
           "min": 1,
           "max": 1
         }
@@ -618,14 +642,16 @@
       ],
       "side": "attacker",
       "reactionRange": null,
-      "attackText": "Hit for 2 at Range 1.",
-      "reactionText": "Your current attack gets +1 damage.",
-      "text": "Hit for 2 at Range 1. OR Your current attack gets +1 damage.",
-      "purpose": "Cash in a fast weak Attack, or sacrifice that income to strengthen another.",
+      "attackText": "Hit for 1 at Range 1.",
+      "reactionText": "Add 1 damage to your attack.",
+      "text": "Hit for 1 at Range 1. OR Add 1 damage to your attack.",
       "art": "assets/basic-atlas.webp",
       "artIndex": 8,
       "artCols": 4,
-      "artRows": 3
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
     },
     {
       "id": "B09",
@@ -652,11 +678,13 @@
       "attackText": "",
       "reactionText": "Move up to 2.",
       "text": "Move up to 2.",
-      "purpose": "Twice Advance’s movement, but can never fill an Attack slot.",
       "art": "assets/basic-atlas.webp",
       "artIndex": 5,
       "artCols": 4,
-      "artRows": 3
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
     },
     {
       "id": "B10",
@@ -683,11 +711,13 @@
       "attackText": "",
       "reactionText": "Gain 3 Block.",
       "text": "Gain 3 Block.",
-      "purpose": "More protection than Guarded Strike, at the cost of Attack flexibility.",
       "art": "assets/basic-atlas.webp",
       "artIndex": 6,
       "artCols": 4,
-      "artRows": 3
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
     },
     {
       "id": "S01",
@@ -696,11 +726,11 @@
       "kind": "Attack",
       "heroId": "SMA",
       "hero": "Lord Smasherton",
-      "speed": 2,
+      "speed": 1,
       "ops": [
         {
           "op": "hit",
-          "n": 6,
+          "n": 8,
           "min": 1,
           "max": 1,
           "ignore": 1
@@ -709,23 +739,25 @@
       "reactionOps": null,
       "side": "either",
       "reactionRange": null,
-      "attackText": "Hit for 6 at Range 1. Ignore 1 Block.",
+      "attackText": "Hit for 8 at Range 1, ignoring 1 Block.",
       "reactionText": "",
-      "text": "Hit for 6 at Range 1. Ignore 1 Block.",
-      "purpose": "The largest normal hammer hit. Unlike Uppercut, it trades Speed and displacement for damage and limited armour breaking.",
+      "text": "Hit for 8 at Range 1, ignoring 1 Block.",
       "art": "assets/hero-atlas-SMA.webp",
       "artIndex": 0,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
     },
     {
       "id": "S02",
-      "name": "Uppercut",
+      "name": "Duck!",
       "category": "Hero",
-      "kind": "Attack",
+      "kind": "Dual",
       "heroId": "SMA",
       "hero": "Lord Smasherton",
-      "speed": 4,
+      "speed": 2,
       "ops": [
         {
           "op": "hit",
@@ -736,33 +768,40 @@
         {
           "op": "push",
           "n": 2,
-          "onHit": true
+          "inRange": true
         }
       ],
-      "reactionOps": null,
-      "side": "either",
+      "reactionOps": [
+        {
+          "op": "pull",
+          "n": 2
+        }
+      ],
+      "side": "defender",
       "reactionRange": null,
-      "attackText": "Hit for 4 at Range 1. On hit, push your rival up to 2.",
-      "reactionText": "",
-      "text": "Hit for 4 at Range 1. On hit, push your rival up to 2.",
-      "purpose": "Fast wall setup or cash-out; pushing can also spoil your second Attack.",
+      "attackText": "Hit for 4 at Range 1. If the strike was in range, push the rival up to 2.",
+      "reactionText": "Pull the rival up to 2.",
+      "text": "Hit for 4 at Range 1. If the strike was in range, push the rival up to 2. OR Pull the rival up to 2.",
       "art": "assets/hero-atlas-SMA.webp",
       "artIndex": 1,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
     },
     {
       "id": "S03",
-      "name": "Bull Rush",
+      "name": "Hammer First",
       "category": "Hero",
-      "kind": "Attack",
+      "kind": "Dual",
       "heroId": "SMA",
       "hero": "Lord Smasherton",
       "speed": 3,
       "ops": [
         {
           "op": "move",
-          "n": 2
+          "n": 1
         },
         {
           "op": "hit",
@@ -771,54 +810,72 @@
           "max": 1
         }
       ],
-      "reactionOps": null,
+      "reactionOps": [
+        {
+          "op": "move",
+          "n": 2
+        }
+      ],
       "side": "either",
       "reactionRange": null,
-      "attackText": "Move up to 2. Hit for 4 at Range 1.",
-      "reactionText": "",
-      "text": "Move up to 2. Hit for 4 at Range 1.",
-      "purpose": "Built-in pursuit saves your limited Reaction supply.",
+      "attackText": "Reveal: you may pay 2 Health for +3 Speed. Move up to 1. Hit for 4 at Range 1.",
+      "reactionText": "Move up to 2.",
+      "text": "Reveal: you may pay 2 Health for +3 Speed. Move up to 1. Hit for 4 at Range 1. OR Move up to 2.",
       "art": "assets/hero-atlas-SMA.webp",
       "artIndex": 2,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "cost": null,
+      "reveal": {
+        "resource": "hp",
+        "n": 2,
+        "speed": 3
+      },
+      "slow": 0
     },
     {
       "id": "S04",
-      "name": "Earthshaker",
+      "name": "Rattle Their Teeth",
       "category": "Hero",
-      "kind": "Attack",
+      "kind": "Dual",
       "heroId": "SMA",
       "hero": "Lord Smasherton",
-      "speed": 1,
+      "speed": 2,
       "ops": [
         {
           "op": "hit",
-          "n": 5,
+          "n": 3,
           "min": 1,
-          "max": 2
+          "max": 1
         },
         {
-          "op": "push",
+          "op": "disrupt",
           "n": 1,
           "onHit": true
         }
       ],
-      "reactionOps": null,
-      "side": "either",
+      "reactionOps": [
+        {
+          "op": "block",
+          "n": 2
+        }
+      ],
+      "side": "defender",
       "reactionRange": null,
-      "attackText": "Hit for 5 at Range 1–2. On hit, push your rival up to 1.",
-      "reactionText": "",
-      "text": "Hit for 5 at Range 1–2. On hit, push your rival up to 1.",
-      "purpose": "Reach catches a short dodge; deliberately the slowest normal Attack.",
+      "attackText": "Hit for 3 at Range 1. On hit, the rival chooses and discards 1 card from their remaining hand.",
+      "reactionText": "Gain 2 Block.",
+      "text": "Hit for 3 at Range 1. On hit, the rival chooses and discards 1 card from their remaining hand. OR Gain 2 Block.",
       "art": "assets/hero-atlas-SMA.webp",
       "artIndex": 3,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
     },
     {
       "id": "S05",
-      "name": "Shoulder Check",
+      "name": "Shoulder Charge",
       "category": "Hero",
       "kind": "Dual",
       "heroId": "SMA",
@@ -827,7 +884,7 @@
       "ops": [
         {
           "op": "move",
-          "n": 1
+          "n": 2
         },
         {
           "op": "hit",
@@ -848,23 +905,25 @@
       ],
       "side": "attacker",
       "reactionRange": null,
-      "attackText": "Move up to 1. Hit for 3 at Range 1.",
-      "reactionText": "Move up to 1. Your current attack gets +1 damage.",
-      "text": "Move up to 1. Hit for 3 at Range 1. OR Move up to 1. Your current attack gets +1 damage.",
-      "purpose": "A modest attack or an offensive chase; the Reaction cannot rescue him while defending.",
+      "attackText": "Move up to 2. Hit for 3 at Range 1.",
+      "reactionText": "Move up to 1. Add 1 damage to your attack.",
+      "text": "Move up to 2. Hit for 3 at Range 1. OR Move up to 1. Add 1 damage to your attack.",
       "art": "assets/hero-atlas-SMA.webp",
       "artIndex": 2,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
     },
     {
       "id": "S06",
-      "name": "Hammer Hook",
+      "name": "Get Over Here",
       "category": "Hero",
       "kind": "Dual",
       "heroId": "SMA",
       "hero": "Lord Smasherton",
-      "speed": 3,
+      "speed": 2,
       "ops": [
         {
           "op": "hit",
@@ -874,33 +933,32 @@
         },
         {
           "op": "pull",
-          "n": 1,
+          "n": 2,
           "onHit": true
         }
       ],
       "reactionOps": [
         {
           "op": "pull",
-          "n": 1
+          "n": 2
         }
       ],
-      "side": "either",
-      "reactionRange": [
-        1,
-        2
-      ],
-      "attackText": "Hit for 3 at Range 1–2. On hit, pull your rival up to 1.",
-      "reactionText": "At Range 1–2: pull your rival up to 1.",
-      "text": "Hit for 3 at Range 1–2. On hit, pull your rival up to 1. OR At Range 1–2: pull your rival up to 1.",
-      "purpose": "Pull an archer into a dead zone or prepare the next close Attack. The Reaction cannot reach across the whole board.",
+      "side": "attacker",
+      "reactionRange": null,
+      "attackText": "Hit for 3 at Range 1–2. On hit, pull the rival up to 2.",
+      "reactionText": "Pull the rival up to 2.",
+      "text": "Hit for 3 at Range 1–2. On hit, pull the rival up to 2. OR Pull the rival up to 2.",
       "art": "assets/hero-atlas-SMA.webp",
       "artIndex": 7,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
     },
     {
       "id": "S07",
-      "name": "Bear Hug",
+      "name": "Too Heavy to Stop",
       "category": "Hero",
       "kind": "Dual",
       "heroId": "SMA",
@@ -911,30 +969,28 @@
           "op": "hit",
           "n": 4,
           "min": 1,
-          "max": 1
+          "max": 1,
+          "ignore": 3
         }
       ],
       "reactionOps": [
         {
           "op": "block",
-          "n": 2
-        },
-        {
-          "op": "pull",
-          "n": 1,
-          "rangeMax": 2
+          "n": 3
         }
       ],
       "side": "defender",
       "reactionRange": null,
-      "attackText": "Hit for 4 at Range 1.",
-      "reactionText": "Gain 2 Block. If your rival is at Range 1–2, pull them up to 1.",
-      "text": "Hit for 4 at Range 1. OR Gain 2 Block. If your rival is at Range 1–2, pull them up to 1.",
-      "purpose": "Defence that brings the fight closer; lower Block than Brace and only works as a Reaction while defending.",
+      "attackText": "Hit for 4 at Range 1, ignoring 3 Block.",
+      "reactionText": "Gain 3 Block.",
+      "text": "Hit for 4 at Range 1, ignoring 3 Block. OR Gain 3 Block.",
       "art": "assets/hero-atlas-SMA.webp",
       "artIndex": 5,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
     },
     {
       "id": "S08",
@@ -943,17 +999,17 @@
       "kind": "Dual",
       "heroId": "SMA",
       "hero": "Lord Smasherton",
-      "speed": 4,
+      "speed": 5,
       "ops": [
         {
           "op": "hit",
-          "n": 3,
+          "n": 2,
           "min": 1,
           "max": 1
         },
         {
           "op": "push",
-          "n": 1,
+          "n": 2,
           "onHit": true
         }
       ],
@@ -968,59 +1024,20 @@
         1,
         1
       ],
-      "attackText": "Hit for 3 at Range 1. On hit, push your rival up to 1.",
-      "reactionText": "At Range 1: push your rival up to 1.",
-      "text": "Hit for 3 at Range 1. On hit, push your rival up to 1. OR At Range 1: push your rival up to 1.",
-      "purpose": "A small launch for positioning or a wall slam; Reaction is adjacent-only, so cannot ping an archer from afar.",
+      "attackText": "Hit for 2 at Range 1. On hit, push the rival up to 2.",
+      "reactionText": "Push the rival up to 1.",
+      "text": "Hit for 2 at Range 1. On hit, push the rival up to 2. OR Push the rival up to 1.",
       "art": "assets/hero-atlas-SMA.webp",
       "artIndex": 1,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
     },
     {
       "id": "S09",
-      "name": "Hammer Dash",
-      "category": "Hero",
-      "kind": "Reaction",
-      "heroId": "SMA",
-      "hero": "Lord Smasherton",
-      "speed": null,
-      "ops": [
-        {
-          "op": "move",
-          "n": 2
-        },
-        {
-          "op": "boost",
-          "n": 1,
-          "attackingOnly": true
-        }
-      ],
-      "reactionOps": [
-        {
-          "op": "move",
-          "n": 2
-        },
-        {
-          "op": "boost",
-          "n": 1,
-          "attackingOnly": true
-        }
-      ],
-      "side": "either",
-      "reactionRange": null,
-      "attackText": "",
-      "reactionText": "Move up to 2. If you are attacking, your current attack gets +1 damage.",
-      "text": "Move up to 2. If you are attacking, your current attack gets +1 damage.",
-      "purpose": "Dedicated pursuit is stronger than Advance, but drafting it reduces Attack density.",
-      "art": "assets/hero-atlas-SMA.webp",
-      "artIndex": 4,
-      "artCols": 3,
-      "artRows": 3
-    },
-    {
-      "id": "S10",
-      "name": "Wrecking Ball",
+      "name": "Hit Something!",
       "category": "Hero",
       "kind": "Reaction",
       "heroId": "SMA",
@@ -1029,7 +1046,7 @@
       "ops": [
         {
           "op": "boost",
-          "n": 2
+          "n": 3
         },
         {
           "op": "launch",
@@ -1039,7 +1056,7 @@
       "reactionOps": [
         {
           "op": "boost",
-          "n": 2
+          "n": 3
         },
         {
           "op": "launch",
@@ -1049,13 +1066,57 @@
       "side": "attacker",
       "reactionRange": null,
       "attackText": "",
-      "reactionText": "Your current attack gets +2 damage and pushes up to 1 extra space on hit.",
-      "text": "Your current attack gets +2 damage and pushes up to 1 extra space on hit.",
-      "purpose": "The dedicated damage-and-wall enabler; no escape, defence or Attack mode.",
+      "reactionText": "Discard another card. Add 3 damage to your attack. Add 1 on-hit push.",
+      "text": "Discard another card. Add 3 damage to your attack. Add 1 on-hit push.",
+      "art": "assets/hero-atlas-SMA.webp",
+      "artIndex": 4,
+      "artCols": 3,
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0,
+      "discardCost": true
+    },
+    {
+      "id": "S10",
+      "name": "Break Through",
+      "category": "Hero",
+      "kind": "Reaction",
+      "heroId": "SMA",
+      "hero": "Lord Smasherton",
+      "speed": null,
+      "ops": [
+        {
+          "op": "move",
+          "n": 2
+        },
+        {
+          "op": "shred",
+          "n": 2
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "move",
+          "n": 2
+        },
+        {
+          "op": "shred",
+          "n": 2
+        }
+      ],
+      "side": "attacker",
+      "reactionRange": null,
+      "attackText": "",
+      "reactionText": "Move up to 2. Remove 2 rival Block.",
+      "text": "Move up to 2. Remove 2 rival Block.",
       "art": "assets/hero-atlas-SMA.webp",
       "artIndex": 6,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
     },
     {
       "id": "FS1",
@@ -1064,7 +1125,7 @@
       "kind": "Attack",
       "heroId": "SMA",
       "hero": "Lord Smasherton",
-      "speed": 2,
+      "speed": 1,
       "ops": [
         {
           "op": "move",
@@ -1072,27 +1133,29 @@
         },
         {
           "op": "hit",
-          "n": 7,
+          "n": 8,
           "min": 1,
-          "max": 2
+          "max": 1
         },
         {
           "op": "push",
-          "n": 1,
+          "n": 2,
           "onHit": true
         }
       ],
       "reactionOps": null,
       "side": "either",
       "reactionRange": null,
-      "attackText": "Move up to 2. Hit for 7 at Range 1–2. On hit, push your rival up to 1.",
+      "attackText": "Move up to 2. Hit for 8 at Range 1. On hit, push the rival up to 2.",
       "reactionText": "",
-      "text": "Move up to 2. Hit for 7 at Range 1–2. On hit, push your rival up to 1.",
-      "purpose": "Broad close-range threat: get in, catch a short dodge, then slam.",
+      "text": "Move up to 2. Hit for 8 at Range 1. On hit, push the rival up to 2.",
       "art": "assets/hero-atlas-SMA.webp",
       "artIndex": 8,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
     },
     {
       "id": "FS2",
@@ -1109,27 +1172,29 @@
         },
         {
           "op": "hit",
-          "n": 6,
+          "n": 5,
           "min": 1,
           "max": 1
         },
         {
           "op": "push",
           "n": 3,
-          "onHit": true
+          "inRange": true
         }
       ],
       "reactionOps": null,
       "side": "either",
       "reactionRange": null,
-      "attackText": "Move up to 3. Hit for 6 at Range 1. On hit, push your rival up to 3.",
+      "attackText": "Move up to 3. Hit for 5 at Range 1. If the strike was in range, push the rival up to 3.",
       "reactionText": "",
-      "text": "Move up to 3. Hit for 6 at Range 1. On hit, push your rival up to 3.",
-      "purpose": "Fast pursuit and the biggest launch; narrower hit range and less raw damage than Meteor Smash.",
+      "text": "Move up to 3. Hit for 5 at Range 1. If the strike was in range, push the rival up to 3.",
       "art": "assets/hero-atlas-SMA.webp",
       "artIndex": 2,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
     },
     {
       "id": "FS3",
@@ -1142,7 +1207,7 @@
       "ops": [
         {
           "op": "hit",
-          "n": 8,
+          "n": 9,
           "min": 1,
           "max": 1,
           "pierce": true
@@ -1151,80 +1216,87 @@
       "reactionOps": null,
       "side": "either",
       "reactionRange": null,
-      "attackText": "Hit for 8 at Range 1. Ignore all Block.",
+      "attackText": "Hit for 9 at Range 1, ignoring all Block.",
       "reactionText": "",
-      "text": "Hit for 8 at Range 1. Ignore all Block.",
-      "purpose": "The frightening finisher: highest damage, but slowest Speed, no movement and only Range 1.",
+      "text": "Hit for 9 at Range 1, ignoring all Block.",
       "art": "assets/hero-atlas-SMA.webp",
       "artIndex": 0,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
     },
     {
       "id": "A01",
-      "name": "Power Shot",
+      "name": "Dead Centre",
       "category": "Hero",
       "kind": "Attack",
       "heroId": "ALF",
       "hero": "Alf Featherbottom",
-      "speed": 2,
+      "speed": 1,
       "ops": [
         {
           "op": "hit",
-          "n": 6,
-          "min": 2,
-          "max": 4
+          "n": 9,
+          "min": 3,
+          "max": 5
         }
       ],
       "reactionOps": null,
       "side": "either",
       "reactionRange": null,
-      "attackText": "Hit for 6 at Range 2–4.",
+      "attackText": "Hit for 9 at Range 3–5.",
       "reactionText": "",
-      "text": "Hit for 6 at Range 2–4.",
-      "purpose": "A real sniper payoff with a two-space dead zone; cannot reposition for free.",
+      "text": "Hit for 9 at Range 3–5.",
       "art": "assets/hero-atlas-ALF.webp",
       "artIndex": 0,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
     },
     {
       "id": "A02",
-      "name": "Quick Shot",
+      "name": "Quick on the Draw",
       "category": "Hero",
-      "kind": "Attack",
+      "kind": "Dual",
       "heroId": "ALF",
       "hero": "Alf Featherbottom",
-      "speed": 5,
+      "speed": 7,
       "ops": [
-        {
-          "op": "move",
-          "n": 1
-        },
         {
           "op": "hit",
           "n": 3,
           "min": 2,
-          "max": 3
+          "max": 4
         }
       ],
-      "reactionOps": null,
-      "side": "either",
+      "reactionOps": [
+        {
+          "op": "move",
+          "n": 2
+        }
+      ],
+      "side": "defender",
       "reactionRange": null,
-      "attackText": "Move up to 1. Hit for 3 at Range 2–3.",
-      "reactionText": "",
-      "text": "Move up to 1. Hit for 3 at Range 2–3.",
-      "purpose": "Get a shot away early with a small built-in reposition; sacrifices power.",
+      "attackText": "Hit for 3 at Range 2–4.",
+      "reactionText": "Move up to 2.",
+      "text": "Hit for 3 at Range 2–4. OR Move up to 2.",
       "art": "assets/hero-atlas-ALF.webp",
       "artIndex": 1,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
     },
     {
       "id": "A03",
       "name": "Vaulting Shot",
       "category": "Hero",
-      "kind": "Attack",
+      "kind": "Dual",
       "heroId": "ALF",
       "hero": "Alf Featherbottom",
       "speed": 3,
@@ -1235,51 +1307,69 @@
         },
         {
           "op": "hit",
-          "n": 4,
+          "n": 3,
           "min": 2,
           "max": 3
         }
       ],
-      "reactionOps": null,
+      "reactionOps": [
+        {
+          "op": "move",
+          "n": 1
+        },
+        {
+          "op": "scry",
+          "n": 2
+        }
+      ],
       "side": "either",
       "reactionRange": null,
-      "attackText": "Move up to 2. Hit for 4 at Range 2–3.",
-      "reactionText": "",
-      "text": "Move up to 2. Hit for 4 at Range 2–3.",
-      "purpose": "Strong movement included in the Attack, but still has an adjacent dead zone.",
+      "attackText": "Move up to 2. Hit for 3 at Range 2–3.",
+      "reactionText": "Move up to 1. Scry 2.",
+      "text": "Move up to 2. Hit for 3 at Range 2–3. OR Move up to 1. Scry 2.",
       "art": "assets/hero-atlas-ALF.webp",
       "artIndex": 2,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
     },
     {
       "id": "A04",
       "name": "Piercing Arrow",
       "category": "Hero",
-      "kind": "Attack",
+      "kind": "Dual",
       "heroId": "ALF",
       "hero": "Alf Featherbottom",
-      "speed": 3,
+      "speed": 2,
       "ops": [
         {
           "op": "hit",
           "n": 5,
           "min": 2,
           "max": 4,
-          "ignore": 2
+          "ignore": 3
         }
       ],
-      "reactionOps": null,
-      "side": "either",
+      "reactionOps": [
+        {
+          "op": "ignore",
+          "n": 3
+        }
+      ],
+      "side": "attacker",
       "reactionRange": null,
-      "attackText": "Hit for 5 at Range 2–4. Ignore 2 Block.",
-      "reactionText": "",
-      "text": "Hit for 5 at Range 2–4. Ignore 2 Block.",
-      "purpose": "Dedicated answer to armour; no free movement, and still cannot hit at Range 1.",
+      "attackText": "Hit for 5 at Range 2–4, ignoring 3 Block.",
+      "reactionText": "Ignore 3 additional Block.",
+      "text": "Hit for 5 at Range 2–4, ignoring 3 Block. OR Ignore 3 additional Block.",
       "art": "assets/hero-atlas-ALF.webp",
       "artIndex": 3,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
     },
     {
       "id": "A05",
@@ -1296,7 +1386,7 @@
         },
         {
           "op": "hit",
-          "n": 3,
+          "n": 2,
           "min": 1,
           "max": 2
         }
@@ -1304,19 +1394,21 @@
       "reactionOps": [
         {
           "op": "move",
-          "n": 2
+          "n": 3
         }
       ],
-      "side": "either",
+      "side": "defender",
       "reactionRange": null,
-      "attackText": "Move up to 1. Hit for 3 at Range 1–2.",
-      "reactionText": "Move up to 2.",
-      "text": "Move up to 1. Hit for 3 at Range 1–2. OR Move up to 2.",
-      "purpose": "A weaker close escape Attack or a defensive retreat. Unlike Move 2, its Reaction cannot reposition Alf during his own Attack.",
+      "attackText": "Move up to 1. Hit for 2 at Range 1–2.",
+      "reactionText": "Move up to 3.",
+      "text": "Move up to 1. Hit for 2 at Range 1–2. OR Move up to 3.",
       "art": "assets/hero-atlas-ALF.webp",
       "artIndex": 2,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
     },
     {
       "id": "A06",
@@ -1343,17 +1435,19 @@
       "side": "attacker",
       "reactionRange": null,
       "attackText": "Hit for 3 at Range 2–3.",
-      "reactionText": "Your current attack’s minimum Range becomes 1.",
-      "text": "Hit for 3 at Range 2–3. OR Your current attack’s minimum Range becomes 1.",
-      "purpose": "Spend a future arrow to remove today’s dead zone. Does not extend maximum Range.",
+      "reactionText": "Your attack's minimum Range becomes 1.",
+      "text": "Hit for 3 at Range 2–3. OR Your attack's minimum Range becomes 1.",
       "art": "assets/hero-atlas-ALF.webp",
       "artIndex": 7,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
     },
     {
       "id": "A07",
-      "name": "Driving Arrow",
+      "name": "Pinning Shot",
       "category": "Hero",
       "kind": "Dual",
       "heroId": "ALF",
@@ -1364,34 +1458,45 @@
           "op": "hit",
           "n": 3,
           "min": 2,
-          "max": 3
+          "max": 4
         },
         {
           "op": "push",
           "n": 1,
           "onHit": true
+        },
+        {
+          "op": "burnCoins",
+          "n": 2,
+          "onHit": true
         }
       ],
       "reactionOps": [
         {
-          "op": "reach",
+          "op": "scry",
           "n": 2
+        },
+        {
+          "op": "draw",
+          "n": 1
         }
       ],
-      "side": "attacker",
+      "side": "either",
       "reactionRange": null,
-      "attackText": "Hit for 3 at Range 2–3. On hit, push your rival up to 1.",
-      "reactionText": "Your current attack gets +2 maximum Range.",
-      "text": "Hit for 3 at Range 2–3. On hit, push your rival up to 1. OR Your current attack gets +2 maximum Range.",
-      "purpose": "An arrow that opens distance, or a longer shot. Preserves minimum Range.",
+      "attackText": "Hit for 3 at Range 2–4. On hit, push the rival up to 1. On hit, the rival loses up to 2 Coins.",
+      "reactionText": "Scry 2. Draw 1 (one draw effect per attack).",
+      "text": "Hit for 3 at Range 2–4. On hit, push the rival up to 1. On hit, the rival loses up to 2 Coins. OR Scry 2. Draw 1 (one draw effect per attack).",
       "art": "assets/hero-atlas-ALF.webp",
       "artIndex": 1,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
     },
     {
       "id": "A08",
-      "name": "Bow Parry",
+      "name": "Prepared Shot",
       "category": "Hero",
       "kind": "Dual",
       "heroId": "ALF",
@@ -1399,41 +1504,46 @@
       "speed": 4,
       "ops": [
         {
-          "op": "hit",
-          "n": 3,
-          "min": 1,
-          "max": 1
+          "op": "move",
+          "n": 2
         },
         {
-          "op": "push",
-          "n": 1,
-          "onHit": true
+          "op": "scry",
+          "n": 2
+        },
+        {
+          "op": "forecast",
+          "n": 0
+        },
+        {
+          "op": "hit",
+          "n": 4,
+          "min": 2,
+          "max": 4
         }
       ],
       "reactionOps": [
         {
-          "op": "block",
-          "n": 2
-        },
-        {
-          "op": "move",
-          "n": 1
+          "op": "forecast",
+          "n": 0
         }
       ],
-      "side": "defender",
+      "side": "attacker",
       "reactionRange": null,
-      "attackText": "Hit for 3 at Range 1. On hit, push your rival up to 1.",
-      "reactionText": "Gain 2 Block. Move up to 1.",
-      "text": "Hit for 3 at Range 1. On hit, push your rival up to 1. OR Gain 2 Block. Move up to 1.",
-      "purpose": "A close-range bow strike or a guarded escape. It is useful when cornered, but not his highest damage source.",
+      "attackText": "Move up to 2. Scry 2. Reveal and bottom your top deck card: Attack-capable gives +2 damage and ignores 2 Block; otherwise minimum Range becomes 1 and maximum Range gains 2. Hit for 4 at Range 2–4.",
+      "reactionText": "Reveal and bottom your top deck card: Attack-capable gives +2 damage and ignores 2 Block; otherwise minimum Range becomes 1 and maximum Range gains 2.",
+      "text": "Move up to 2. Scry 2. Reveal and bottom your top deck card: Attack-capable gives +2 damage and ignores 2 Block; otherwise minimum Range becomes 1 and maximum Range gains 2. Hit for 4 at Range 2–4. OR Reveal and bottom your top deck card: Attack-capable gives +2 damage and ignores 2 Block; otherwise minimum Range becomes 1 and maximum Range gains 2.",
       "art": "assets/hero-atlas-ALF.webp",
       "artIndex": 5,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
     },
     {
       "id": "A09",
-      "name": "Grapple",
+      "name": "Survey the Battlefield",
       "category": "Hero",
       "kind": "Reaction",
       "heroId": "ALF",
@@ -1441,11 +1551,19 @@
       "speed": null,
       "ops": [
         {
+          "op": "scry",
+          "n": 2
+        },
+        {
           "op": "move",
           "n": 3
         }
       ],
       "reactionOps": [
+        {
+          "op": "scry",
+          "n": 2
+        },
         {
           "op": "move",
           "n": 3
@@ -1454,17 +1572,19 @@
       "side": "either",
       "reactionRange": null,
       "attackText": "",
-      "reactionText": "Move up to 3.",
-      "text": "Move up to 3.",
-      "purpose": "Best movement in the ordinary pool, but no damage, Block, Coin or Attack mode.",
+      "reactionText": "Scry 2. Move up to 3.",
+      "text": "Scry 2. Move up to 3.",
       "art": "assets/hero-atlas-ALF.webp",
       "artIndex": 4,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
     },
     {
       "id": "A10",
-      "name": "Perfect Aim",
+      "name": "Perfect Preparation",
       "category": "Hero",
       "kind": "Reaction",
       "heroId": "ALF",
@@ -1472,8 +1592,12 @@
       "speed": null,
       "ops": [
         {
-          "op": "boost",
+          "op": "scry",
           "n": 2
+        },
+        {
+          "op": "forecast",
+          "n": 0
         },
         {
           "op": "ignore",
@@ -1482,8 +1606,12 @@
       ],
       "reactionOps": [
         {
-          "op": "boost",
+          "op": "scry",
           "n": 2
+        },
+        {
+          "op": "forecast",
+          "n": 0
         },
         {
           "op": "ignore",
@@ -1493,73 +1621,18 @@
       "side": "attacker",
       "reactionRange": null,
       "attackText": "",
-      "reactionText": "Your current attack gets +2 damage and ignores 2 Block.",
-      "text": "Your current attack gets +2 damage and ignores 2 Block.",
-      "purpose": "A specialist damage-and-armour answer. Unlike Trick Shot, cannot fix range.",
+      "reactionText": "Scry 2. Reveal and bottom your top deck card: Attack-capable gives +2 damage and ignores 2 Block; otherwise minimum Range becomes 1 and maximum Range gains 2. Ignore 2 additional Block.",
+      "text": "Scry 2. Reveal and bottom your top deck card: Attack-capable gives +2 damage and ignores 2 Block; otherwise minimum Range becomes 1 and maximum Range gains 2. Ignore 2 additional Block.",
       "art": "assets/hero-atlas-ALF.webp",
       "artIndex": 6,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
     },
     {
       "id": "FA1",
-      "name": "Arrow Storm",
-      "category": "Special",
-      "kind": "Attack",
-      "heroId": "ALF",
-      "hero": "Alf Featherbottom",
-      "speed": 5,
-      "ops": [
-        {
-          "op": "hit",
-          "n": 5,
-          "min": 1,
-          "max": 5
-        }
-      ],
-      "reactionOps": null,
-      "side": "either",
-      "reactionRange": null,
-      "attackText": "Hit for 5 at Range 1–5.",
-      "reactionText": "",
-      "text": "Hit for 5 at Range 1–5.",
-      "purpose": "Reliable coverage and Speed, including adjacent enemies. One hit, so no repeated-hit accounting.",
-      "art": "assets/hero-atlas-ALF.webp",
-      "artIndex": 8,
-      "artCols": 3,
-      "artRows": 3
-    },
-    {
-      "id": "FA2",
-      "name": "Ballista Bolt",
-      "category": "Special",
-      "kind": "Attack",
-      "heroId": "ALF",
-      "hero": "Alf Featherbottom",
-      "speed": 2,
-      "ops": [
-        {
-          "op": "hit",
-          "n": 8,
-          "min": 3,
-          "max": 5,
-          "ignore": 2
-        }
-      ],
-      "reactionOps": null,
-      "side": "either",
-      "reactionRange": null,
-      "attackText": "Hit for 8 at Range 3–5. Ignore 2 Block.",
-      "reactionText": "",
-      "text": "Hit for 8 at Range 3–5. Ignore 2 Block.",
-      "purpose": "A huge ranged finisher with a dangerous close dead zone.",
-      "art": "assets/hero-atlas-ALF.webp",
-      "artIndex": 0,
-      "artCols": 3,
-      "artRows": 3
-    },
-    {
-      "id": "FA3",
       "name": "Skybound Volley",
       "category": "Special",
       "kind": "Attack",
@@ -1569,43 +1642,231 @@
       "ops": [
         {
           "op": "move",
-          "n": 3
+          "n": 2
         },
+        {
+          "op": "scry",
+          "n": 2
+        },
+        {
+          "op": "hit",
+          "n": 5,
+          "min": 2,
+          "max": 5
+        }
+      ],
+      "reactionOps": null,
+      "side": "either",
+      "reactionRange": null,
+      "attackText": "Move up to 2. Scry 2. Hit for 5 at Range 2–5.",
+      "reactionText": "",
+      "text": "Move up to 2. Scry 2. Hit for 5 at Range 2–5.",
+      "art": "assets/hero-atlas-ALF.webp",
+      "artIndex": 8,
+      "artCols": 3,
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "FA2",
+      "name": "Impossible Shot",
+      "category": "Special",
+      "kind": "Attack",
+      "heroId": "ALF",
+      "hero": "Alf Featherbottom",
+      "speed": 2,
+      "ops": [
         {
           "op": "hit",
           "n": 6,
           "min": 2,
+          "max": 6,
+          "pierce": true
+        }
+      ],
+      "reactionOps": null,
+      "side": "either",
+      "reactionRange": null,
+      "attackText": "Hit for 6 at Range 2–6, ignoring all Block.",
+      "reactionText": "",
+      "text": "Hit for 6 at Range 2–6, ignoring all Block.",
+      "art": "assets/hero-atlas-ALF.webp",
+      "artIndex": 0,
+      "artCols": 3,
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "FA3",
+      "name": "Escape Plan",
+      "category": "Special",
+      "kind": "Attack",
+      "heroId": "ALF",
+      "hero": "Alf Featherbottom",
+      "speed": 6,
+      "ops": [
+        {
+          "op": "move",
+          "n": 3
+        },
+        {
+          "op": "hit",
+          "n": 4,
+          "min": 1,
           "max": 4
         }
       ],
       "reactionOps": null,
       "side": "either",
       "reactionRange": null,
-      "attackText": "Move up to 3. Hit for 6 at Range 2–4.",
+      "attackText": "Move up to 3. Hit for 4 at Range 1–4.",
       "reactionText": "",
-      "text": "Move up to 3. Hit for 6 at Range 2–4.",
-      "purpose": "Escape a bad position and fire; still vulnerable to a rival chasing inside minimum Range.",
+      "text": "Move up to 3. Hit for 4 at Range 1–4.",
       "art": "assets/hero-atlas-ALF.webp",
       "artIndex": 2,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
     },
     {
       "id": "D01",
-      "name": "Scalpel Strike",
-      "speed": 4,
+      "name": "Experimental Treatment",
+      "speed": 2,
       "kind": "Attack",
+      "category": "Hero",
+      "ops": [
+        {
+          "op": "invest",
+          "n": 3,
+          "bonus": 4,
+          "resource": "hp"
+        },
+        {
+          "op": "hit",
+          "n": 5,
+          "min": 1,
+          "max": 2
+        }
+      ],
+      "attackText": "Before reactions, you may pay 3 Health for +4 damage. Hit for 5 at Range 1–2.",
+      "reactionText": "",
+      "artId": "T-D01",
+      "heroId": "SHE",
+      "hero": "Dr. Shealer",
+      "text": "Before reactions, you may pay 3 Health for +4 damage. Hit for 5 at Range 1–2.",
+      "side": "either",
+      "art": "assets/hero-atlas-SHE.webp",
+      "artIndex": 0,
+      "artCols": 3,
+      "artRows": 3,
+      "reactionOps": null,
+      "cost": null,
+      "reveal": null,
+      "slow": 0,
+      "reactionRange": null
+    },
+    {
+      "id": "D02",
+      "name": "Blood Bolt",
+      "speed": 3,
+      "kind": "Dual",
+      "category": "Hero",
+      "ops": [
+        {
+          "op": "pay",
+          "n": 2,
+          "bonus": 3,
+          "resource": "hp"
+        },
+        {
+          "op": "hit",
+          "n": 2,
+          "min": 1,
+          "max": 3
+        }
+      ],
+      "attackText": "At strike, you may spend 2 Health for +3 damage. Hit for 2 at Range 1–3.",
+      "reactionText": "Pay 2 Health. Add 3 damage to your attack.",
+      "artId": "T-D02",
+      "heroId": "SHE",
+      "hero": "Dr. Shealer",
+      "text": "At strike, you may spend 2 Health for +3 damage. Hit for 2 at Range 1–3. OR Pay 2 Health. Add 3 damage to your attack.",
+      "side": "attacker",
+      "art": "assets/hero-atlas-SHE.webp",
+      "artIndex": 1,
+      "artCols": 3,
+      "artRows": 3,
+      "reactionOps": [
+        {
+          "op": "boost",
+          "n": 3
+        }
+      ],
+      "cost": {
+        "resource": "hp",
+        "n": 2
+      },
+      "reveal": null,
+      "slow": 0,
+      "reactionRange": null
+    },
+    {
+      "id": "D03",
+      "name": "Life Transfusion",
+      "speed": 2,
+      "kind": "Dual",
+      "category": "Hero",
+      "ops": [
+        {
+          "op": "hit",
+          "n": 3,
+          "min": 1,
+          "max": 2
+        },
+        {
+          "op": "heal",
+          "n": 2,
+          "onHit": true
+        }
+      ],
+      "attackText": "Hit for 3 at Range 1–2. On hit, heal 2.",
+      "reactionText": "Heal 1.",
+      "artId": "T-D03",
+      "heroId": "SHE",
+      "hero": "Dr. Shealer",
+      "text": "Hit for 3 at Range 1–2. On hit, heal 2. OR Heal 1.",
+      "side": "either",
+      "art": "assets/hero-atlas-SHE.webp",
+      "artIndex": 2,
+      "artCols": 3,
+      "artRows": 3,
+      "reactionOps": [
+        {
+          "op": "heal",
+          "n": 1
+        }
+      ],
+      "cost": null,
+      "reveal": null,
+      "slow": 0,
+      "reactionRange": null
+    },
+    {
+      "id": "D04",
+      "name": "Adrenaline Injection",
+      "speed": 3,
+      "kind": "Dual",
       "category": "Hero",
       "ops": [
         {
           "op": "move",
           "n": 1
-        },
-        {
-          "op": "pay",
-          "n": 2,
-          "bonus": 2,
-          "resource": "hp"
         },
         {
           "op": "hit",
@@ -1614,116 +1875,36 @@
           "max": 1
         }
       ],
-      "attackText": "Move up to 1. Hit for 3 at Range 1. At strike, you may pay 2 Health for +2 damage.",
-      "reactionText": "",
-      "artId": "T-D01",
-      "heroId": "SHE",
-      "hero": "Dr. Shealer",
-      "text": "Move up to 1. Hit for 3 at Range 1. At strike, you may pay 2 Health for +2 damage.",
-      "side": "either",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
-      "art": "assets/hero-atlas-SHE.webp",
-      "artIndex": 0,
-      "artCols": 3,
-      "artRows": 3
-    },
-    {
-      "id": "D02",
-      "name": "Blood Bolt",
-      "speed": 3,
-      "kind": "Attack",
-      "category": "Hero",
-      "ops": [
-        {
-          "op": "pay",
-          "n": 2,
-          "bonus": 2,
-          "resource": "hp"
-        },
-        {
-          "op": "hit",
-          "n": 3,
-          "min": 1,
-          "max": 3
-        }
-      ],
-      "attackText": "Hit for 3 at Range 1–3. At strike, you may pay 2 Health for +2 damage.",
-      "reactionText": "",
-      "artId": "T-D02",
-      "heroId": "SHE",
-      "hero": "Dr. Shealer",
-      "text": "Hit for 3 at Range 1–3. At strike, you may pay 2 Health for +2 damage.",
-      "side": "either",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
-      "art": "assets/hero-atlas-SHE.webp",
-      "artIndex": 1,
-      "artCols": 3,
-      "artRows": 3
-    },
-    {
-      "id": "D03",
-      "name": "Life Transfusion",
-      "speed": 2,
-      "kind": "Attack",
-      "category": "Hero",
-      "ops": [
-        {
-          "op": "hit",
-          "n": 4,
-          "min": 1,
-          "max": 2
-        },
-        {
-          "op": "heal",
-          "n": 1,
-          "onHit": true
-        }
-      ],
-      "attackText": "Hit for 4 at Range 1–2. On hit, heal 1.",
-      "reactionText": "",
-      "artId": "T-D03",
-      "heroId": "SHE",
-      "hero": "Dr. Shealer",
-      "text": "Hit for 4 at Range 1–2. On hit, heal 1.",
-      "side": "either",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
-      "art": "assets/hero-atlas-SHE.webp",
-      "artIndex": 2,
-      "artCols": 3,
-      "artRows": 3
-    },
-    {
-      "id": "D04",
-      "name": "Bad Medicine",
-      "speed": 3,
-      "kind": "Attack",
-      "category": "Hero",
-      "ops": [
-        {
-          "op": "hit",
-          "n": 4,
-          "min": 1,
-          "max": 2,
-          "ignore": 2
-        }
-      ],
-      "attackText": "Hit for 4 at Range 1–2. Ignore 2 Block.",
-      "reactionText": "",
+      "attackText": "Reveal: you may pay 2 Health for +4 Speed. Move up to 1. Hit for 3 at Range 1.",
+      "reactionText": "Move up to 2.",
       "artId": "T-D04",
       "heroId": "SHE",
       "hero": "Dr. Shealer",
-      "text": "Hit for 4 at Range 1–2. Ignore 2 Block.",
+      "text": "Reveal: you may pay 2 Health for +4 Speed. Move up to 1. Hit for 3 at Range 1. OR Move up to 2.",
       "side": "either",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
       "art": "assets/hero-atlas-SHE.webp",
       "artIndex": 3,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "reactionOps": [
+        {
+          "op": "move",
+          "n": 2
+        }
+      ],
+      "cost": null,
+      "reveal": {
+        "resource": "hp",
+        "n": 2,
+        "speed": 4
+      },
+      "slow": 0,
+      "reactionRange": null
     },
     {
       "id": "D05",
       "name": "Emergency Dash",
-      "speed": 4,
+      "speed": 5,
       "kind": "Dual",
       "category": "Hero",
       "ops": [
@@ -1751,15 +1932,18 @@
       "heroId": "SHE",
       "hero": "Dr. Shealer",
       "text": "Move up to 2. Hit for 2 at Range 1. OR Move up to 2.",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
       "art": "assets/hero-atlas-SHE.webp",
       "artIndex": 6,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0,
+      "reactionRange": null
     },
     {
       "id": "D06",
-      "name": "Medical Shield",
+      "name": "Organ Donation",
       "speed": 3,
       "kind": "Dual",
       "category": "Hero",
@@ -1772,65 +1956,36 @@
         }
       ],
       "attackText": "Hit for 3 at Range 1–2.",
-      "reactionText": "Gain 3 Block.",
+      "reactionText": "Discard another card. Heal 2. Gain 2 Block.",
       "artId": "T-D06",
       "reactionOps": [
         {
+          "op": "heal",
+          "n": 2
+        },
+        {
           "op": "block",
-          "n": 3
+          "n": 2
         }
       ],
       "side": "defender",
       "heroId": "SHE",
       "hero": "Dr. Shealer",
-      "text": "Hit for 3 at Range 1–2. OR Gain 3 Block.",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
+      "text": "Hit for 3 at Range 1–2. OR Discard another card. Heal 2. Gain 2 Block.",
       "art": "assets/hero-atlas-SHE.webp",
       "artIndex": 5,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0,
+      "reactionRange": null,
+      "discardCost": true
     },
     {
       "id": "D07",
-      "name": "Stitch & Strike",
+      "name": "Questionable Diagnosis",
       "speed": 2,
-      "kind": "Dual",
-      "category": "Hero",
-      "ops": [
-        {
-          "op": "heal",
-          "n": 1
-        },
-        {
-          "op": "hit",
-          "n": 3,
-          "min": 1,
-          "max": 1
-        }
-      ],
-      "attackText": "Heal 1. Hit for 3 at Range 1.",
-      "reactionText": "Heal 1.",
-      "artId": "T-D05",
-      "reactionOps": [
-        {
-          "op": "heal",
-          "n": 1
-        }
-      ],
-      "side": "either",
-      "heroId": "SHE",
-      "hero": "Dr. Shealer",
-      "text": "Heal 1. Hit for 3 at Range 1. OR Heal 1.",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
-      "art": "assets/hero-atlas-SHE.webp",
-      "artIndex": 4,
-      "artCols": 3,
-      "artRows": 3
-    },
-    {
-      "id": "D08",
-      "name": "Second Opinion",
-      "speed": 4,
       "kind": "Dual",
       "category": "Hero",
       "ops": [
@@ -1839,96 +1994,166 @@
           "n": 3,
           "min": 1,
           "max": 2
+        },
+        {
+          "op": "draw",
+          "n": 1,
+          "onHit": true
         }
       ],
-      "attackText": "Hit for 3 at Range 1–2.",
-      "reactionText": "Move up to 1. Gain 1 Block.",
-      "artId": "T-D01",
+      "attackText": "Hit for 3 at Range 1–2. On hit, draw 1 (one draw effect per attack).",
+      "reactionText": "Heal 1. Scry 2.",
+      "artId": "T-D05",
       "reactionOps": [
         {
-          "op": "move",
+          "op": "heal",
           "n": 1
         },
         {
+          "op": "scry",
+          "n": 2
+        }
+      ],
+      "side": "either",
+      "heroId": "SHE",
+      "hero": "Dr. Shealer",
+      "text": "Hit for 3 at Range 1–2. On hit, draw 1 (one draw effect per attack). OR Heal 1. Scry 2.",
+      "art": "assets/hero-atlas-SHE.webp",
+      "artIndex": 4,
+      "artCols": 3,
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0,
+      "reactionRange": null
+    },
+    {
+      "id": "D08",
+      "name": "Bad Medicine",
+      "speed": 4,
+      "kind": "Dual",
+      "category": "Hero",
+      "ops": [
+        {
+          "op": "hit",
+          "n": 2,
+          "min": 1,
+          "max": 3,
+          "ignore": 2
+        }
+      ],
+      "attackText": "Hit for 2 at Range 1–3, ignoring 2 Block.",
+      "reactionText": "Pay 1 Health. Gain 3 Block.",
+      "artId": "T-D01",
+      "reactionOps": [
+        {
           "op": "block",
-          "n": 1
+          "n": 3
         }
       ],
       "side": "defender",
       "heroId": "SHE",
       "hero": "Dr. Shealer",
-      "text": "Hit for 3 at Range 1–2. OR Move up to 1. Gain 1 Block.",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
+      "text": "Hit for 2 at Range 1–3, ignoring 2 Block. OR Pay 1 Health. Gain 3 Block.",
       "art": "assets/hero-atlas-SHE.webp",
       "artIndex": 0,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "cost": {
+        "resource": "hp",
+        "n": 1
+      },
+      "reveal": null,
+      "slow": 0,
+      "reactionRange": null
     },
     {
       "id": "D09",
-      "name": "Stitch Up",
+      "name": "Emergency Research",
       "speed": null,
       "kind": "Reaction",
       "category": "Hero",
       "ops": [
         {
-          "op": "heal",
+          "op": "draw",
           "n": 2
+        },
+        {
+          "op": "discard",
+          "n": 1
         }
       ],
       "reactionOps": [
         {
-          "op": "heal",
+          "op": "draw",
           "n": 2
+        },
+        {
+          "op": "discard",
+          "n": 1
         }
       ],
       "attackText": "",
-      "reactionText": "Heal 2.",
+      "reactionText": "Pay 2 Health. Draw 2 (one draw effect per attack). Choose and discard 1 card from your remaining hand.",
       "side": "either",
       "artId": "T-D05",
       "heroId": "SHE",
       "hero": "Dr. Shealer",
-      "text": "Heal 2.",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
+      "text": "Pay 2 Health. Draw 2 (one draw effect per attack). Choose and discard 1 card from your remaining hand.",
       "art": "assets/hero-atlas-SHE.webp",
       "artIndex": 4,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "cost": {
+        "resource": "hp",
+        "n": 2
+      },
+      "reveal": null,
+      "slow": 0,
+      "reactionRange": null
     },
     {
       "id": "D10",
-      "name": "Sacrifice",
+      "name": "Second Opinion",
       "speed": null,
       "kind": "Reaction",
       "category": "Hero",
       "ops": [
         {
-          "op": "boost",
-          "n": 3
+          "op": "heal",
+          "n": 1
+        },
+        {
+          "op": "move",
+          "n": 1
         }
       ],
       "reactionOps": [
         {
-          "op": "boost",
-          "n": 3
+          "op": "heal",
+          "n": 1
+        },
+        {
+          "op": "move",
+          "n": 1
         }
       ],
       "attackText": "",
-      "reactionText": "Pay 2 Health. Your attack gets +3 damage.",
-      "side": "attacker",
+      "reactionText": "Discard another card. Heal 1. Move up to 1.",
+      "side": "either",
       "artId": "T-D08",
-      "cost": {
-        "resource": "hp",
-        "n": 2
-      },
+      "cost": null,
       "heroId": "SHE",
       "hero": "Dr. Shealer",
-      "text": "Pay 2 Health. Your attack gets +3 damage.",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
+      "text": "Discard another card. Heal 1. Move up to 1.",
       "art": "assets/hero-atlas-SHE.webp",
       "artIndex": 7,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "reveal": null,
+      "slow": 0,
+      "reactionRange": null,
+      "discardCost": true
     },
     {
       "id": "FD1",
@@ -1939,7 +2164,7 @@
       "ops": [
         {
           "op": "heal",
-          "n": 2
+          "n": 3
         },
         {
           "op": "move",
@@ -1947,35 +2172,39 @@
         },
         {
           "op": "hit",
-          "n": 5,
+          "n": 4,
           "min": 1,
           "max": 2
         }
       ],
-      "attackText": "Heal 2. Move up to 1. Hit for 5 at Range 1–2.",
+      "attackText": "Heal 3. Move up to 1. Hit for 4 at Range 1–2.",
       "reactionText": "",
       "artId": "T-FD",
       "heroId": "SHE",
       "hero": "Dr. Shealer",
-      "text": "Heal 2. Move up to 1. Hit for 5 at Range 1–2.",
+      "text": "Heal 3. Move up to 1. Hit for 4 at Range 1–2.",
       "side": "either",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
       "art": "assets/hero-atlas-SHE.webp",
       "artIndex": 8,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "reactionOps": null,
+      "cost": null,
+      "reveal": null,
+      "slow": 0,
+      "reactionRange": null
     },
     {
       "id": "FD2",
       "name": "Do No Harm?",
-      "speed": 4,
+      "speed": 3,
       "kind": "Attack",
       "category": "Special",
       "ops": [
         {
-          "op": "pay",
-          "n": 2,
-          "bonus": 3,
+          "op": "invest",
+          "n": 3,
+          "bonus": 5,
           "resource": "hp"
         },
         {
@@ -1985,23 +2214,27 @@
           "max": 3
         }
       ],
-      "attackText": "Hit for 5 at Range 1–3. At strike, you may pay 2 Health for +3 damage.",
+      "attackText": "Before reactions, you may pay 3 Health for +5 damage. Hit for 5 at Range 1–3.",
       "reactionText": "",
       "artId": "T-D02",
       "heroId": "SHE",
       "hero": "Dr. Shealer",
-      "text": "Hit for 5 at Range 1–3. At strike, you may pay 2 Health for +3 damage.",
+      "text": "Before reactions, you may pay 3 Health for +5 damage. Hit for 5 at Range 1–3.",
       "side": "either",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
       "art": "assets/hero-atlas-SHE.webp",
       "artIndex": 1,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "reactionOps": null,
+      "cost": null,
+      "reveal": null,
+      "slow": 0,
+      "reactionRange": null
     },
     {
       "id": "FD3",
       "name": "Borrowed Time",
-      "speed": 2,
+      "speed": 1,
       "kind": "Attack",
       "category": "Special",
       "ops": [
@@ -2013,98 +2246,113 @@
         },
         {
           "op": "heal",
-          "n": 3,
+          "n": 4,
           "onHit": true
         }
       ],
-      "attackText": "Hit for 6 at Range 1–2. On hit, heal 3.",
+      "attackText": "Hit for 6 at Range 1–2. On hit, heal 4.",
       "reactionText": "",
       "artId": "T-D03",
       "heroId": "SHE",
       "hero": "Dr. Shealer",
-      "text": "Hit for 6 at Range 1–2. On hit, heal 3.",
+      "text": "Hit for 6 at Range 1–2. On hit, heal 4.",
       "side": "either",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
       "art": "assets/hero-atlas-SHE.webp",
       "artIndex": 2,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "reactionOps": null,
+      "cost": null,
+      "reveal": null,
+      "slow": 0,
+      "reactionRange": null
     },
     {
       "id": "H01",
-      "name": "Shield Bash",
-      "speed": 3,
+      "name": "Fortress Fist",
+      "speed": 1,
       "kind": "Attack",
       "category": "Hero",
       "ops": [
         {
-          "op": "block",
-          "n": 1
-        },
-        {
           "op": "pay",
-          "n": 2,
-          "bonus": 2,
+          "n": 3,
+          "bonus": 5,
           "resource": "block"
         },
         {
           "op": "hit",
-          "n": 3,
+          "n": 4,
           "min": 1,
           "max": 1
         }
       ],
-      "attackText": "Gain 1 Block. Hit for 3 at Range 1. At strike, you may spend 2 Block for +2 damage.",
+      "attackText": "At strike, you may spend 3 Block for +5 damage. Hit for 4 at Range 1.",
       "reactionText": "",
       "artId": "T-H01",
       "heroId": "HEL",
       "hero": "Helga Stonewall",
-      "text": "Gain 1 Block. Hit for 3 at Range 1. At strike, you may spend 2 Block for +2 damage.",
+      "text": "At strike, you may spend 3 Block for +5 damage. Hit for 4 at Range 1.",
       "side": "either",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
       "art": "assets/hero-atlas-HEL.webp",
       "artIndex": 0,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "reactionOps": null,
+      "cost": null,
+      "reveal": null,
+      "slow": 0,
+      "reactionRange": null
     },
     {
       "id": "H02",
-      "name": "Iron Fist",
+      "name": "Shield Rocket",
       "speed": 2,
-      "kind": "Attack",
+      "kind": "Dual",
       "category": "Hero",
       "ops": [
         {
-          "op": "pay",
-          "n": 2,
-          "bonus": 3,
-          "resource": "block"
+          "op": "move",
+          "n": 1
         },
         {
           "op": "hit",
-          "n": 3,
+          "n": 4,
           "min": 1,
-          "max": 2
+          "max": 1
         }
       ],
-      "attackText": "Hit for 3 at Range 1–2. At strike, you may spend 2 Block for +3 damage.",
-      "reactionText": "",
+      "attackText": "Reveal: you may pay 2 Block for +5 Speed. Move up to 1. Hit for 4 at Range 1.",
+      "reactionText": "Gain 2 Block.",
       "artId": "T-H02",
       "heroId": "HEL",
       "hero": "Helga Stonewall",
-      "text": "Hit for 3 at Range 1–2. At strike, you may spend 2 Block for +3 damage.",
+      "text": "Reveal: you may pay 2 Block for +5 Speed. Move up to 1. Hit for 4 at Range 1. OR Gain 2 Block.",
       "side": "either",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
       "art": "assets/hero-atlas-HEL.webp",
       "artIndex": 1,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "reactionOps": [
+        {
+          "op": "block",
+          "n": 2
+        }
+      ],
+      "cost": null,
+      "reveal": {
+        "resource": "block",
+        "n": 2,
+        "speed": 5
+      },
+      "slow": 0,
+      "reactionRange": null
     },
     {
       "id": "H03",
       "name": "Battering Ram",
       "speed": 3,
-      "kind": "Attack",
+      "kind": "Dual",
       "category": "Hero",
       "ops": [
         {
@@ -2123,44 +2371,69 @@
         }
       ],
       "attackText": "Move up to 2. Gain 1 Block. Hit for 3 at Range 1.",
-      "reactionText": "",
+      "reactionText": "Move up to 1. Gain 1 Block.",
       "artId": "T-H03",
       "heroId": "HEL",
       "hero": "Helga Stonewall",
-      "text": "Move up to 2. Gain 1 Block. Hit for 3 at Range 1.",
+      "text": "Move up to 2. Gain 1 Block. Hit for 3 at Range 1. OR Move up to 1. Gain 1 Block.",
       "side": "either",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
       "art": "assets/hero-atlas-HEL.webp",
       "artIndex": 2,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "reactionOps": [
+        {
+          "op": "move",
+          "n": 1
+        },
+        {
+          "op": "block",
+          "n": 1
+        }
+      ],
+      "cost": null,
+      "reveal": null,
+      "slow": 0,
+      "reactionRange": null
     },
     {
       "id": "H04",
       "name": "Shield Throw",
       "speed": 4,
-      "kind": "Attack",
+      "kind": "Dual",
       "category": "Hero",
       "ops": [
         {
           "op": "hit",
-          "n": 4,
+          "n": 5,
           "min": 2,
           "max": 3
         }
       ],
-      "attackText": "Hit for 4 at Range 2–3.",
-      "reactionText": "",
+      "attackText": "Hit for 5 at Range 2–3.",
+      "reactionText": "Pay 2 Block. Add 3 damage to your attack.",
       "artId": "T-H04",
       "heroId": "HEL",
       "hero": "Helga Stonewall",
-      "text": "Hit for 4 at Range 2–3.",
-      "side": "either",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
+      "text": "Hit for 5 at Range 2–3. OR Pay 2 Block. Add 3 damage to your attack.",
+      "side": "attacker",
       "art": "assets/hero-atlas-HEL.webp",
       "artIndex": 3,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "reactionOps": [
+        {
+          "op": "boost",
+          "n": 3
+        }
+      ],
+      "cost": {
+        "resource": "block",
+        "n": 2
+      },
+      "reveal": null,
+      "slow": 0,
+      "reactionRange": null
     },
     {
       "id": "H05",
@@ -2175,12 +2448,12 @@
         },
         {
           "op": "hit",
-          "n": 3,
+          "n": 2,
           "min": 1,
           "max": 1
         }
       ],
-      "attackText": "Move up to 1. Hit for 3 at Range 1.",
+      "attackText": "Move up to 1. Hit for 2 at Range 1.",
       "reactionText": "Move up to 1. Gain 2 Block.",
       "artId": "T-H06",
       "reactionOps": [
@@ -2196,12 +2469,15 @@
       "side": "either",
       "heroId": "HEL",
       "hero": "Helga Stonewall",
-      "text": "Move up to 1. Hit for 3 at Range 1. OR Move up to 1. Gain 2 Block.",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
+      "text": "Move up to 1. Hit for 2 at Range 1. OR Move up to 1. Gain 2 Block.",
       "art": "assets/hero-atlas-HEL.webp",
       "artIndex": 5,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0,
+      "reactionRange": null
     },
     {
       "id": "H06",
@@ -2212,7 +2488,7 @@
       "ops": [
         {
           "op": "block",
-          "n": 1
+          "n": 3
         },
         {
           "op": "hit",
@@ -2221,7 +2497,7 @@
           "max": 2
         }
       ],
-      "attackText": "Gain 1 Block. Hit for 3 at Range 1–2.",
+      "attackText": "Gain 3 Block. Hit for 3 at Range 1–2.",
       "reactionText": "Gain 3 Block.",
       "artId": "T-H07",
       "reactionOps": [
@@ -2233,17 +2509,20 @@
       "side": "either",
       "heroId": "HEL",
       "hero": "Helga Stonewall",
-      "text": "Gain 1 Block. Hit for 3 at Range 1–2. OR Gain 3 Block.",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
+      "text": "Gain 3 Block. Hit for 3 at Range 1–2. OR Gain 3 Block.",
       "art": "assets/hero-atlas-HEL.webp",
       "artIndex": 6,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0,
+      "reactionRange": null
     },
     {
       "id": "H07",
-      "name": "Spiked Guard",
-      "speed": 4,
+      "name": "Scrap Into Steel",
+      "speed": 3,
       "kind": "Dual",
       "category": "Hero",
       "ops": [
@@ -2255,141 +2534,160 @@
         }
       ],
       "attackText": "Hit for 3 at Range 1.",
-      "reactionText": "Gain 2 Block.",
+      "reactionText": "Discard another card. Gain 5 Block.",
       "artId": "T-H08",
       "reactionOps": [
         {
           "op": "block",
-          "n": 2
+          "n": 5
         }
       ],
       "side": "either",
       "heroId": "HEL",
       "hero": "Helga Stonewall",
-      "text": "Hit for 3 at Range 1. OR Gain 2 Block.",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
+      "text": "Hit for 3 at Range 1. OR Discard another card. Gain 5 Block.",
       "art": "assets/hero-atlas-HEL.webp",
       "artIndex": 7,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0,
+      "reactionRange": null,
+      "discardCost": true
     },
     {
       "id": "H08",
-      "name": "Stand Firm",
+      "name": "Shield Dividend",
       "speed": 2,
       "kind": "Dual",
       "category": "Hero",
       "ops": [
         {
+          "op": "block",
+          "n": 1
+        },
+        {
           "op": "hit",
-          "n": 4,
+          "n": 2,
           "min": 1,
-          "max": 1
+          "max": 2
         }
       ],
-      "attackText": "Hit for 4 at Range 1.",
-      "reactionText": "Gain 2 Block. Remove up to 2 rival Block.",
+      "attackText": "Gain 1 Block. Hit for 2 at Range 1–2.",
+      "reactionText": "Pay 3 Block. Gain 1 Coin.",
       "artId": "T-H02",
       "reactionOps": [
         {
-          "op": "block",
-          "n": 2
-        },
-        {
-          "op": "shred",
-          "n": 2
+          "op": "coin",
+          "n": 1
         }
       ],
       "side": "either",
       "heroId": "HEL",
       "hero": "Helga Stonewall",
-      "text": "Hit for 4 at Range 1. OR Gain 2 Block. Remove up to 2 rival Block.",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
+      "text": "Gain 1 Block. Hit for 2 at Range 1–2. OR Pay 3 Block. Gain 1 Coin.",
       "art": "assets/hero-atlas-HEL.webp",
       "artIndex": 1,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "cost": {
+        "resource": "block",
+        "n": 3
+      },
+      "reveal": null,
+      "slow": 0,
+      "reactionRange": null
     },
     {
       "id": "H09",
-      "name": "Shield Wall",
+      "name": "Hold Your Ground",
       "speed": null,
       "kind": "Reaction",
       "category": "Hero",
       "ops": [
         {
           "op": "block",
-          "n": 4
+          "n": 5
+        },
+        {
+          "op": "defReward",
+          "n": 0
         }
       ],
       "reactionOps": [
         {
           "op": "block",
-          "n": 4
+          "n": 5
+        },
+        {
+          "op": "defReward",
+          "n": 0
         }
       ],
       "attackText": "",
-      "reactionText": "Gain 4 Block.",
-      "side": "either",
+      "reactionText": "Gain 5 Block. If this attack deals you no Health damage, gain 1 Coin after its strike.",
+      "side": "defender",
       "artId": "T-H05",
       "heroId": "HEL",
       "hero": "Helga Stonewall",
-      "text": "Gain 4 Block.",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
+      "text": "Gain 5 Block. If this attack deals you no Health damage, gain 1 Coin after its strike.",
       "art": "assets/hero-atlas-HEL.webp",
       "artIndex": 4,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0,
+      "reactionRange": null
     },
     {
       "id": "H10",
-      "name": "Armored Advance",
+      "name": "Walking Fortress",
       "speed": null,
       "kind": "Reaction",
       "category": "Hero",
       "ops": [
         {
           "op": "move",
-          "n": 2
-        },
-        {
-          "op": "block",
-          "n": 1
+          "n": 3
         }
       ],
       "reactionOps": [
         {
           "op": "move",
-          "n": 2
-        },
-        {
-          "op": "block",
-          "n": 1
+          "n": 3
         }
       ],
       "attackText": "",
-      "reactionText": "Move up to 2. Gain 1 Block.",
+      "reactionText": "Pay 2 Block. Move up to 3.",
       "side": "either",
       "artId": "T-H06",
       "heroId": "HEL",
       "hero": "Helga Stonewall",
-      "text": "Move up to 2. Gain 1 Block.",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
+      "text": "Pay 2 Block. Move up to 3.",
       "art": "assets/hero-atlas-HEL.webp",
       "artIndex": 5,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "cost": {
+        "resource": "block",
+        "n": 2
+      },
+      "reveal": null,
+      "slow": 0,
+      "reactionRange": null
     },
     {
       "id": "FH1",
       "name": "Unbreakable Express",
-      "speed": 3,
+      "speed": 2,
       "kind": "Attack",
       "category": "Special",
       "ops": [
         {
           "op": "block",
-          "n": 3
+          "n": 4
         },
         {
           "op": "move",
@@ -2397,7 +2695,7 @@
         },
         {
           "op": "hit",
-          "n": 5,
+          "n": 4,
           "min": 1,
           "max": 1
         },
@@ -2407,126 +2705,103 @@
           "onHit": true
         }
       ],
-      "attackText": "Gain 3 Block. Move up to 2. Hit for 5 at Range 1. On hit, push up to 2.",
+      "attackText": "Gain 4 Block. Move up to 2. Hit for 4 at Range 1. On hit, push the rival up to 2.",
       "reactionText": "",
       "artId": "T-FH",
       "heroId": "HEL",
       "hero": "Helga Stonewall",
-      "text": "Gain 3 Block. Move up to 2. Hit for 5 at Range 1. On hit, push up to 2.",
+      "text": "Gain 4 Block. Move up to 2. Hit for 4 at Range 1. On hit, push the rival up to 2.",
       "side": "either",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
       "art": "assets/hero-atlas-HEL.webp",
       "artIndex": 8,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "reactionOps": null,
+      "cost": null,
+      "reveal": null,
+      "slow": 0,
+      "reactionRange": null
     },
     {
       "id": "FH2",
-      "name": "Fortress Fist",
-      "speed": 2,
+      "name": "Living Fortress",
+      "speed": 1,
       "kind": "Attack",
       "category": "Special",
       "ops": [
         {
           "op": "block",
-          "n": 3
+          "n": 6
         },
         {
           "op": "pay",
-          "n": 3,
-          "bonus": 4,
+          "n": 5,
+          "bonus": 6,
           "resource": "block"
+        },
+        {
+          "op": "hit",
+          "n": 4,
+          "min": 1,
+          "max": 2
+        }
+      ],
+      "attackText": "Gain 6 Block. At strike, you may spend 5 Block for +6 damage. Hit for 4 at Range 1–2.",
+      "reactionText": "",
+      "artId": "T-H02",
+      "heroId": "HEL",
+      "hero": "Helga Stonewall",
+      "text": "Gain 6 Block. At strike, you may spend 5 Block for +6 damage. Hit for 4 at Range 1–2.",
+      "side": "either",
+      "art": "assets/hero-atlas-HEL.webp",
+      "artIndex": 1,
+      "artCols": 3,
+      "artRows": 3,
+      "reactionOps": null,
+      "cost": null,
+      "reveal": null,
+      "slow": 0,
+      "reactionRange": null
+    },
+    {
+      "id": "FH3",
+      "name": "Flying Fortress",
+      "speed": 5,
+      "kind": "Attack",
+      "category": "Special",
+      "ops": [
+        {
+          "op": "move",
+          "n": 2
         },
         {
           "op": "hit",
           "n": 5,
           "min": 1,
-          "max": 2
-        }
-      ],
-      "attackText": "Gain 3 Block. Hit for 5 at Range 1–2. At strike, you may spend 3 Block for +4 damage.",
-      "reactionText": "",
-      "artId": "T-H02",
-      "heroId": "HEL",
-      "hero": "Helga Stonewall",
-      "text": "Gain 3 Block. Hit for 5 at Range 1–2. At strike, you may spend 3 Block for +4 damage.",
-      "side": "either",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
-      "art": "assets/hero-atlas-HEL.webp",
-      "artIndex": 1,
-      "artCols": 3,
-      "artRows": 3
-    },
-    {
-      "id": "FH3",
-      "name": "Flying Fortress",
-      "speed": 4,
-      "kind": "Attack",
-      "category": "Special",
-      "ops": [
-        {
-          "op": "move",
-          "n": 1
-        },
-        {
-          "op": "block",
-          "n": 2
-        },
-        {
-          "op": "hit",
-          "n": 6,
-          "min": 1,
           "max": 3
         }
       ],
-      "attackText": "Move up to 1. Gain 2 Block. Hit for 6 at Range 1–3.",
+      "attackText": "Move up to 2. Hit for 5 at Range 1–3.",
       "reactionText": "",
       "artId": "T-H04",
       "heroId": "HEL",
       "hero": "Helga Stonewall",
-      "text": "Move up to 1. Gain 2 Block. Hit for 6 at Range 1–3.",
+      "text": "Move up to 2. Hit for 5 at Range 1–3.",
       "side": "either",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
       "art": "assets/hero-atlas-HEL.webp",
       "artIndex": 3,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "reactionOps": null,
+      "cost": null,
+      "reveal": null,
+      "slow": 0,
+      "reactionRange": null
     },
     {
       "id": "R01",
-      "name": "Crosscut",
+      "name": "A Knife in the Dark",
       "speed": 4,
-      "kind": "Attack",
-      "category": "Hero",
-      "ops": [
-        {
-          "op": "move",
-          "n": 3
-        },
-        {
-          "op": "hit",
-          "n": 3,
-          "min": 1,
-          "max": 1
-        }
-      ],
-      "attackText": "Move up to 3. Hit for 3 at Range 1.",
-      "reactionText": "",
-      "artId": "T-R01",
-      "heroId": "RAV",
-      "hero": "Raven Madison",
-      "text": "Move up to 3. Hit for 3 at Range 1.",
-      "side": "either",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
-      "art": "assets/hero-atlas-RAV.webp",
-      "artIndex": 0,
-      "artCols": 3,
-      "artRows": 3
-    },
-    {
-      "id": "R02",
-      "name": "Backstab",
-      "speed": 3,
       "kind": "Attack",
       "category": "Hero",
       "ops": [
@@ -2535,94 +2810,157 @@
           "n": 5,
           "min": 1,
           "max": 1,
-          "ignore": 2
+          "ignore": 3
         }
       ],
-      "attackText": "Hit for 5 at Range 1. Ignore 2 Block.",
+      "attackText": "Hit for 5 at Range 1, ignoring 3 Block.",
       "reactionText": "",
+      "artId": "T-R01",
+      "heroId": "RAV",
+      "hero": "Raven Madison",
+      "text": "Hit for 5 at Range 1, ignoring 3 Block.",
+      "side": "either",
+      "art": "assets/hero-atlas-RAV.webp",
+      "artIndex": 0,
+      "artCols": 3,
+      "artRows": 3,
+      "reactionOps": null,
+      "cost": null,
+      "reveal": null,
+      "slow": 0,
+      "reactionRange": null
+    },
+    {
+      "id": "R02",
+      "name": "Cut the Purse",
+      "speed": 5,
+      "kind": "Dual",
+      "category": "Hero",
+      "ops": [
+        {
+          "op": "hit",
+          "n": 2,
+          "min": 1,
+          "max": 1
+        },
+        {
+          "op": "steal",
+          "n": 1,
+          "onHit": true
+        }
+      ],
+      "attackText": "Hit for 2 at Range 1. On hit, steal up to 1 Coin.",
+      "reactionText": "Move up to 1. Scry 2.",
       "artId": "T-R02",
       "heroId": "RAV",
       "hero": "Raven Madison",
-      "text": "Hit for 5 at Range 1. Ignore 2 Block.",
+      "text": "Hit for 2 at Range 1. On hit, steal up to 1 Coin. OR Move up to 1. Scry 2.",
       "side": "either",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
       "art": "assets/hero-atlas-RAV.webp",
       "artIndex": 1,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "reactionOps": [
+        {
+          "op": "move",
+          "n": 1
+        },
+        {
+          "op": "scry",
+          "n": 2
+        }
+      ],
+      "cost": null,
+      "reveal": null,
+      "slow": 0,
+      "reactionRange": null
     },
     {
       "id": "R03",
       "name": "Knife Toss",
-      "speed": 5,
-      "kind": "Attack",
+      "speed": 6,
+      "kind": "Dual",
       "category": "Hero",
       "ops": [
         {
-          "op": "move",
-          "n": 1
-        },
-        {
           "op": "hit",
-          "n": 3,
+          "n": 1,
           "min": 1,
           "max": 3
         }
       ],
-      "attackText": "Move up to 1. Hit for 3 at Range 1–3.",
-      "reactionText": "",
+      "attackText": "Hit for 1 at Range 1–3.",
+      "reactionText": "Move to any empty space adjacent to the rival.",
       "artId": "T-R03",
       "heroId": "RAV",
       "hero": "Raven Madison",
-      "text": "Move up to 1. Hit for 3 at Range 1–3.",
-      "side": "either",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
+      "text": "Hit for 1 at Range 1–3. OR Move to any empty space adjacent to the rival.",
+      "side": "attacker",
       "art": "assets/hero-atlas-RAV.webp",
       "artIndex": 2,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "reactionOps": [
+        {
+          "op": "adjacent",
+          "n": 0
+        }
+      ],
+      "cost": null,
+      "reveal": null,
+      "slow": 0,
+      "reactionRange": null
     },
     {
       "id": "R04",
-      "name": "Ambush",
-      "speed": 2,
-      "kind": "Attack",
+      "name": "Tripwire",
+      "speed": 3,
+      "kind": "Dual",
       "category": "Hero",
       "ops": [
+        {
+          "op": "hit",
+          "n": 3,
+          "min": 1,
+          "max": 2
+        }
+      ],
+      "attackText": "Reveal: if adjacent, the paired enemy attack loses 3 Speed. Hit for 3 at Range 1–2.",
+      "reactionText": "Move up to 1. Gain 1 Block.",
+      "artId": "T-R04",
+      "heroId": "RAV",
+      "hero": "Raven Madison",
+      "text": "Reveal: if adjacent, the paired enemy attack loses 3 Speed. Hit for 3 at Range 1–2. OR Move up to 1. Gain 1 Block.",
+      "side": "defender",
+      "art": "assets/hero-atlas-RAV.webp",
+      "artIndex": 3,
+      "artCols": 3,
+      "artRows": 3,
+      "reactionOps": [
         {
           "op": "move",
           "n": 1
         },
         {
-          "op": "hit",
-          "n": 5,
-          "min": 1,
-          "max": 2
+          "op": "block",
+          "n": 1
         }
       ],
-      "attackText": "Move up to 1. Hit for 5 at Range 1–2.",
-      "reactionText": "",
-      "artId": "T-R04",
-      "heroId": "RAV",
-      "hero": "Raven Madison",
-      "text": "Move up to 1. Hit for 5 at Range 1–2.",
-      "side": "either",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
-      "art": "assets/hero-atlas-RAV.webp",
-      "artIndex": 3,
-      "artCols": 3,
-      "artRows": 3
+      "cost": null,
+      "reveal": null,
+      "slow": 3,
+      "reactionRange": null
     },
     {
       "id": "R05",
-      "name": "Shadow Step",
+      "name": "Crosscut",
       "speed": 4,
       "kind": "Dual",
       "category": "Hero",
       "ops": [
         {
           "op": "move",
-          "n": 2
+          "n": 3
         },
         {
           "op": "hit",
@@ -2631,7 +2969,7 @@
           "max": 1
         }
       ],
-      "attackText": "Move up to 2. Hit for 2 at Range 1.",
+      "attackText": "Move up to 3. Hit for 2 at Range 1.",
       "reactionText": "Move up to 2.",
       "artId": "T-R05",
       "reactionOps": [
@@ -2643,12 +2981,15 @@
       "side": "either",
       "heroId": "RAV",
       "hero": "Raven Madison",
-      "text": "Move up to 2. Hit for 2 at Range 1. OR Move up to 2.",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
+      "text": "Move up to 3. Hit for 2 at Range 1. OR Move up to 2.",
       "art": "assets/hero-atlas-RAV.webp",
       "artIndex": 4,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0,
+      "reactionRange": null
     },
     {
       "id": "R06",
@@ -2659,12 +3000,12 @@
       "ops": [
         {
           "op": "hit",
-          "n": 3,
+          "n": 2,
           "min": 1,
           "max": 2
         }
       ],
-      "attackText": "Hit for 3 at Range 1–2.",
+      "attackText": "Hit for 2 at Range 1–2.",
       "reactionText": "Move up to 1. Gain 2 Block.",
       "artId": "T-R06",
       "reactionOps": [
@@ -2680,117 +3021,138 @@
       "side": "defender",
       "heroId": "RAV",
       "hero": "Raven Madison",
-      "text": "Hit for 3 at Range 1–2. OR Move up to 1. Gain 2 Block.",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
+      "text": "Hit for 2 at Range 1–2. OR Move up to 1. Gain 2 Block.",
       "art": "assets/hero-atlas-RAV.webp",
       "artIndex": 5,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0,
+      "reactionRange": null
     },
     {
       "id": "R07",
-      "name": "Slip Through",
-      "speed": 4,
+      "name": "Empty Pockets",
+      "speed": 2,
       "kind": "Dual",
       "category": "Hero",
       "ops": [
         {
-          "op": "move",
-          "n": 1
-        },
-        {
           "op": "hit",
-          "n": 3,
+          "n": 2,
           "min": 1,
           "max": 1
+        },
+        {
+          "op": "steal",
+          "n": 2,
+          "onHit": true
         }
       ],
-      "attackText": "Move up to 1. Hit for 3 at Range 1.",
-      "reactionText": "Move up to 2.",
+      "attackText": "Hit for 2 at Range 1. On hit, steal up to 2 Coins.",
+      "reactionText": "Scry 2. Draw 1 (one draw effect per attack).",
       "artId": "T-R07",
       "reactionOps": [
         {
-          "op": "move",
+          "op": "scry",
           "n": 2
+        },
+        {
+          "op": "draw",
+          "n": 1
         }
       ],
-      "side": "attacker",
+      "side": "either",
       "heroId": "RAV",
       "hero": "Raven Madison",
-      "text": "Move up to 1. Hit for 3 at Range 1. OR Move up to 2.",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
+      "text": "Hit for 2 at Range 1. On hit, steal up to 2 Coins. OR Scry 2. Draw 1 (one draw effect per attack).",
       "art": "assets/hero-atlas-RAV.webp",
       "artIndex": 6,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0,
+      "reactionRange": null
     },
     {
       "id": "R08",
-      "name": "Backflip",
+      "name": "Loose Grip",
       "speed": 3,
       "kind": "Dual",
       "category": "Hero",
       "ops": [
         {
           "op": "hit",
-          "n": 3,
+          "n": 2,
           "min": 1,
-          "max": 2
+          "max": 1
+        },
+        {
+          "op": "disrupt",
+          "n": 1,
+          "onHit": true
         }
       ],
-      "attackText": "Hit for 3 at Range 1–2.",
-      "reactionText": "Move up to 2. Gain 1 Block.",
+      "attackText": "Hit for 2 at Range 1. On hit, the rival chooses and discards 1 card from their remaining hand.",
+      "reactionText": "Move up to 2.",
       "artId": "T-R08",
       "reactionOps": [
         {
           "op": "move",
           "n": 2
-        },
-        {
-          "op": "block",
-          "n": 1
         }
       ],
       "side": "defender",
       "heroId": "RAV",
       "hero": "Raven Madison",
-      "text": "Hit for 3 at Range 1–2. OR Move up to 2. Gain 1 Block.",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
+      "text": "Hit for 2 at Range 1. On hit, the rival chooses and discards 1 card from their remaining hand. OR Move up to 2.",
       "art": "assets/hero-atlas-RAV.webp",
       "artIndex": 7,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0,
+      "reactionRange": null
     },
     {
       "id": "R09",
-      "name": "Vanish",
+      "name": "Slip Inside",
       "speed": null,
       "kind": "Reaction",
       "category": "Hero",
       "ops": [
         {
-          "op": "move",
-          "n": 3
+          "op": "adjacent",
+          "n": 0
         }
       ],
       "reactionOps": [
         {
-          "op": "move",
-          "n": 3
+          "op": "adjacent",
+          "n": 0
         }
       ],
       "attackText": "",
-      "reactionText": "Move up to 3.",
+      "reactionText": "Pay 1 Coins. Move to any empty space adjacent to the rival.",
       "side": "either",
       "artId": "T-R05",
       "heroId": "RAV",
       "hero": "Raven Madison",
-      "text": "Move up to 3.",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
+      "text": "Pay 1 Coins. Move to any empty space adjacent to the rival.",
       "art": "assets/hero-atlas-RAV.webp",
       "artIndex": 4,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "cost": {
+        "resource": "coins",
+        "n": 1
+      },
+      "reveal": null,
+      "slow": 0,
+      "reactionRange": null
     },
     {
       "id": "R10",
@@ -2805,7 +3167,7 @@
         },
         {
           "op": "ignore",
-          "n": 1
+          "n": 2
         }
       ],
       "reactionOps": [
@@ -2815,26 +3177,29 @@
         },
         {
           "op": "ignore",
-          "n": 1
+          "n": 2
         }
       ],
       "attackText": "",
-      "reactionText": "Your attack gets +2 damage and ignores 1 Block.",
+      "reactionText": "Add 2 damage to your attack. Ignore 2 additional Block.",
       "side": "attacker",
       "artId": "T-R02",
       "heroId": "RAV",
       "hero": "Raven Madison",
-      "text": "Your attack gets +2 damage and ignores 1 Block.",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
+      "text": "Add 2 damage to your attack. Ignore 2 additional Block.",
       "art": "assets/hero-atlas-RAV.webp",
       "artIndex": 1,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0,
+      "reactionRange": null
     },
     {
       "id": "FR1",
-      "name": "Now You See Me…",
-      "speed": 4,
+      "name": "Now You See Me",
+      "speed": 5,
       "kind": "Attack",
       "category": "Special",
       "ops": [
@@ -2844,56 +3209,74 @@
         },
         {
           "op": "hit",
-          "n": 5,
+          "n": 4,
           "min": 1,
           "max": 2
+        },
+        {
+          "op": "steal",
+          "n": 1,
+          "onHit": true
         }
       ],
-      "attackText": "Move up to 3. Hit for 5 at Range 1–2.",
+      "attackText": "Move up to 3. Hit for 4 at Range 1–2. On hit, steal up to 1 Coin.",
       "reactionText": "",
       "artId": "T-FR",
       "heroId": "RAV",
       "hero": "Raven Madison",
-      "text": "Move up to 3. Hit for 5 at Range 1–2.",
+      "text": "Move up to 3. Hit for 4 at Range 1–2. On hit, steal up to 1 Coin.",
       "side": "either",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
       "art": "assets/hero-atlas-RAV.webp",
       "artIndex": 8,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "reactionOps": null,
+      "cost": null,
+      "reveal": null,
+      "slow": 0,
+      "reactionRange": null
     },
     {
       "id": "FR2",
-      "name": "A Knife in the Dark",
+      "name": "Nothing Personal",
       "speed": 3,
       "kind": "Attack",
       "category": "Special",
       "ops": [
         {
           "op": "hit",
-          "n": 7,
+          "n": 6,
           "min": 1,
           "max": 2,
           "ignore": 3
+        },
+        {
+          "op": "disrupt",
+          "n": 1,
+          "onHit": true
         }
       ],
-      "attackText": "Hit for 7 at Range 1–2. Ignore 3 Block.",
+      "attackText": "Hit for 6 at Range 1–2, ignoring 3 Block. On hit, the rival chooses and discards 1 card from their remaining hand.",
       "reactionText": "",
       "artId": "T-R02",
       "heroId": "RAV",
       "hero": "Raven Madison",
-      "text": "Hit for 7 at Range 1–2. Ignore 3 Block.",
+      "text": "Hit for 6 at Range 1–2, ignoring 3 Block. On hit, the rival chooses and discards 1 card from their remaining hand.",
       "side": "either",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
       "art": "assets/hero-atlas-RAV.webp",
       "artIndex": 1,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "reactionOps": null,
+      "cost": null,
+      "reveal": null,
+      "slow": 0,
+      "reactionRange": null
     },
     {
       "id": "FR3",
       "name": "Exit Wound",
-      "speed": 5,
+      "speed": 6,
       "kind": "Attack",
       "category": "Special",
       "ops": [
@@ -2903,7 +3286,7 @@
         },
         {
           "op": "hit",
-          "n": 5,
+          "n": 4,
           "min": 1,
           "max": 2
         },
@@ -2913,55 +3296,65 @@
           "onHit": true
         }
       ],
-      "attackText": "Move up to 2. Hit for 5 at Range 1–2. On hit, move up to 2.",
+      "attackText": "Move up to 2. Hit for 4 at Range 1–2. On hit, move up to 2.",
       "reactionText": "",
       "artId": "T-R08",
       "heroId": "RAV",
       "hero": "Raven Madison",
-      "text": "Move up to 2. Hit for 5 at Range 1–2. On hit, move up to 2.",
+      "text": "Move up to 2. Hit for 4 at Range 1–2. On hit, move up to 2.",
       "side": "either",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
       "art": "assets/hero-atlas-RAV.webp",
       "artIndex": 7,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "reactionOps": null,
+      "cost": null,
+      "reveal": null,
+      "slow": 0,
+      "reactionRange": null
     },
     {
       "id": "P01",
-      "name": "Holy Haymaker",
-      "speed": 3,
+      "name": "Last Orders",
+      "speed": 2,
       "kind": "Attack",
       "category": "Hero",
       "ops": [
         {
-          "op": "move",
-          "n": 1
+          "op": "pay",
+          "n": 2,
+          "bonus": 5,
+          "resource": "coins"
         },
         {
           "op": "hit",
           "n": 4,
           "min": 1,
-          "max": 1
+          "max": 2
         }
       ],
-      "attackText": "Move up to 1. Hit for 4 at Range 1.",
+      "attackText": "At strike, you may spend 2 Coins for +5 damage. Hit for 4 at Range 1–2.",
       "reactionText": "",
       "artId": "T-P01",
       "heroId": "FRA",
       "hero": "Friar Franc",
-      "text": "Move up to 1. Hit for 4 at Range 1.",
+      "text": "At strike, you may spend 2 Coins for +5 damage. Hit for 4 at Range 1–2.",
       "side": "either",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
       "art": "assets/hero-atlas-FRA.webp",
       "artIndex": 0,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "reactionOps": null,
+      "cost": null,
+      "reveal": null,
+      "slow": 0,
+      "reactionRange": null
     },
     {
       "id": "P02",
       "name": "Belly Flop",
       "speed": 2,
-      "kind": "Attack",
+      "kind": "Dual",
       "category": "Hero",
       "ops": [
         {
@@ -2970,7 +3363,7 @@
         },
         {
           "op": "hit",
-          "n": 4,
+          "n": 3,
           "min": 1,
           "max": 1
         },
@@ -2980,24 +3373,37 @@
           "onHit": true
         }
       ],
-      "attackText": "Move up to 2. Hit for 4 at Range 1. On hit, push up to 1.",
-      "reactionText": "",
+      "attackText": "Move up to 2. Hit for 3 at Range 1. On hit, push the rival up to 1.",
+      "reactionText": "Move up to 1. Gain 1 Block.",
       "artId": "T-P02",
       "heroId": "FRA",
       "hero": "Friar Franc",
-      "text": "Move up to 2. Hit for 4 at Range 1. On hit, push up to 1.",
+      "text": "Move up to 2. Hit for 3 at Range 1. On hit, push the rival up to 1. OR Move up to 1. Gain 1 Block.",
       "side": "either",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
       "art": "assets/hero-atlas-FRA.webp",
       "artIndex": 1,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "reactionOps": [
+        {
+          "op": "move",
+          "n": 1
+        },
+        {
+          "op": "block",
+          "n": 1
+        }
+      ],
+      "cost": null,
+      "reveal": null,
+      "slow": 0,
+      "reactionRange": null
     },
     {
       "id": "P03",
-      "name": "Ringing Bell",
-      "speed": 4,
-      "kind": "Attack",
+      "name": "Express Service",
+      "speed": 3,
+      "kind": "Dual",
       "category": "Hero",
       "ops": [
         {
@@ -3007,45 +3413,73 @@
           "max": 3
         }
       ],
-      "attackText": "Hit for 3 at Range 1–3.",
-      "reactionText": "",
+      "attackText": "Reveal: you may pay 1 Coins for +4 Speed. Hit for 3 at Range 1–3.",
+      "reactionText": "Move up to 2.",
       "artId": "T-P03",
       "heroId": "FRA",
       "hero": "Friar Franc",
-      "text": "Hit for 3 at Range 1–3.",
+      "text": "Reveal: you may pay 1 Coins for +4 Speed. Hit for 3 at Range 1–3. OR Move up to 2.",
       "side": "either",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
       "art": "assets/hero-atlas-FRA.webp",
       "artIndex": 2,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "reactionOps": [
+        {
+          "op": "move",
+          "n": 2
+        }
+      ],
+      "cost": null,
+      "reveal": {
+        "resource": "coins",
+        "n": 1,
+        "speed": 4
+      },
+      "slow": 0,
+      "reactionRange": null
     },
     {
       "id": "P04",
-      "name": "Last Orders",
-      "speed": 2,
-      "kind": "Attack",
+      "name": "Collection Plate",
+      "speed": 3,
+      "kind": "Dual",
       "category": "Hero",
       "ops": [
         {
           "op": "hit",
-          "n": 5,
+          "n": 2,
           "min": 1,
           "max": 2
+        },
+        {
+          "op": "steal",
+          "n": 1,
+          "onHit": true
         }
       ],
-      "attackText": "Hit for 5 at Range 1–2.",
-      "reactionText": "",
+      "attackText": "Hit for 2 at Range 1–2. On hit, steal up to 1 Coin.",
+      "reactionText": "Discard another card. Gain 1 Coin.",
       "artId": "T-P04",
       "heroId": "FRA",
       "hero": "Friar Franc",
-      "text": "Hit for 5 at Range 1–2.",
+      "text": "Hit for 2 at Range 1–2. On hit, steal up to 1 Coin. OR Discard another card. Gain 1 Coin.",
       "side": "either",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
       "art": "assets/hero-atlas-FRA.webp",
       "artIndex": 3,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "reactionOps": [
+        {
+          "op": "coin",
+          "n": 1
+        }
+      ],
+      "cost": null,
+      "reveal": null,
+      "slow": 0,
+      "reactionRange": null,
+      "discardCost": true
     },
     {
       "id": "P05",
@@ -3060,12 +3494,12 @@
         },
         {
           "op": "hit",
-          "n": 3,
+          "n": 2,
           "min": 1,
           "max": 1
         }
       ],
-      "attackText": "Move up to 1. Hit for 3 at Range 1.",
+      "attackText": "Move up to 1. Hit for 2 at Range 1.",
       "reactionText": "Move up to 2.",
       "artId": "T-P05",
       "reactionOps": [
@@ -3077,17 +3511,20 @@
       "side": "either",
       "heroId": "FRA",
       "hero": "Friar Franc",
-      "text": "Move up to 1. Hit for 3 at Range 1. OR Move up to 2.",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
+      "text": "Move up to 1. Hit for 2 at Range 1. OR Move up to 2.",
       "art": "assets/hero-atlas-FRA.webp",
       "artIndex": 4,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0,
+      "reactionRange": null
     },
     {
       "id": "P06",
       "name": "Bless This Mess",
-      "speed": 3,
+      "speed": 2,
       "kind": "Dual",
       "category": "Hero",
       "ops": [
@@ -3099,28 +3536,34 @@
         }
       ],
       "attackText": "Hit for 3 at Range 1–2.",
-      "reactionText": "Gain 3 Block.",
+      "reactionText": "Pay 1 Coins. Gain 4 Block.",
       "artId": "T-P06",
       "reactionOps": [
         {
           "op": "block",
-          "n": 3
+          "n": 4
         }
       ],
       "side": "defender",
       "heroId": "FRA",
       "hero": "Friar Franc",
-      "text": "Hit for 3 at Range 1–2. OR Gain 3 Block.",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
+      "text": "Hit for 3 at Range 1–2. OR Pay 1 Coins. Gain 4 Block.",
       "art": "assets/hero-atlas-FRA.webp",
       "artIndex": 5,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "cost": {
+        "resource": "coins",
+        "n": 1
+      },
+      "reveal": null,
+      "slow": 0,
+      "reactionRange": null
     },
     {
       "id": "P07",
-      "name": "Bonk",
-      "speed": 4,
+      "name": "One More Thing",
+      "speed": 3,
       "kind": "Dual",
       "category": "Hero",
       "ops": [
@@ -3132,28 +3575,36 @@
         }
       ],
       "attackText": "Hit for 3 at Range 1.",
-      "reactionText": "Your attack gets +1 damage.",
+      "reactionText": "Discard another card. Add 2 damage to your attack. Add 1 maximum Range.",
       "artId": "T-P01",
       "reactionOps": [
         {
           "op": "boost",
+          "n": 2
+        },
+        {
+          "op": "reach",
           "n": 1
         }
       ],
       "side": "attacker",
       "heroId": "FRA",
       "hero": "Friar Franc",
-      "text": "Hit for 3 at Range 1. OR Your attack gets +1 damage.",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
+      "text": "Hit for 3 at Range 1. OR Discard another card. Add 2 damage to your attack. Add 1 maximum Range.",
       "art": "assets/hero-atlas-FRA.webp",
       "artIndex": 0,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0,
+      "reactionRange": null,
+      "discardCost": true
     },
     {
       "id": "P08",
-      "name": "Make Some Room",
-      "speed": 3,
+      "name": "Paid in Advance",
+      "speed": 2,
       "kind": "Dual",
       "category": "Hero",
       "ops": [
@@ -3164,64 +3615,69 @@
           "max": 2
         },
         {
-          "op": "push",
+          "op": "coin",
           "n": 1,
           "onHit": true
         }
       ],
-      "attackText": "Hit for 3 at Range 1–2. On hit, push up to 1.",
-      "reactionText": "Move up to 1. Gain 1 Block.",
+      "attackText": "Hit for 3 at Range 1–2. On hit, gain 1 Coin.",
+      "reactionText": "Scry 2.",
       "artId": "T-P02",
       "reactionOps": [
         {
-          "op": "move",
-          "n": 1
-        },
-        {
-          "op": "block",
-          "n": 1
+          "op": "scry",
+          "n": 2
         }
       ],
       "side": "either",
       "heroId": "FRA",
       "hero": "Friar Franc",
-      "text": "Hit for 3 at Range 1–2. On hit, push up to 1. OR Move up to 1. Gain 1 Block.",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
+      "text": "Hit for 3 at Range 1–2. On hit, gain 1 Coin. OR Scry 2.",
       "art": "assets/hero-atlas-FRA.webp",
       "artIndex": 1,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "cost": null,
+      "reveal": null,
+      "slow": 0,
+      "reactionRange": null
     },
     {
       "id": "P09",
-      "name": "Battle Cry",
+      "name": "Legitimate Refund",
       "speed": null,
       "kind": "Reaction",
       "category": "Hero",
       "ops": [
         {
-          "op": "boost",
-          "n": 2
+          "op": "recover",
+          "n": 0
         }
       ],
       "reactionOps": [
         {
-          "op": "boost",
-          "n": 2
+          "op": "recover",
+          "n": 0
         }
       ],
       "attackText": "",
-      "reactionText": "Your attack gets +2 damage.",
+      "reactionText": "Pay 1 Coins. Return one Basic Reaction you played in this exchange from discard to hand.",
       "side": "attacker",
       "artId": "T-P07",
       "heroId": "FRA",
       "hero": "Friar Franc",
-      "text": "Your attack gets +2 damage.",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
+      "text": "Pay 1 Coins. Return one Basic Reaction you played in this exchange from discard to hand.",
       "art": "assets/hero-atlas-FRA.webp",
       "artIndex": 6,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "cost": {
+        "resource": "coins",
+        "n": 1
+      },
+      "reveal": null,
+      "slow": 0,
+      "reactionRange": null
     },
     {
       "id": "P10",
@@ -3242,17 +3698,23 @@
         }
       ],
       "attackText": "",
-      "reactionText": "Draw 2 cards. Once per attack.",
+      "reactionText": "Pay 1 Coins. Draw 2 (one draw effect per attack).",
       "side": "attacker",
       "artId": "T-P08",
       "heroId": "FRA",
       "hero": "Friar Franc",
-      "text": "Draw 2 cards. Once per attack.",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
+      "text": "Pay 1 Coins. Draw 2 (one draw effect per attack).",
       "art": "assets/hero-atlas-FRA.webp",
       "artIndex": 7,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "cost": {
+        "resource": "coins",
+        "n": 1
+      },
+      "reveal": null,
+      "slow": 0,
+      "reactionRange": null
     },
     {
       "id": "FP1",
@@ -3267,56 +3729,74 @@
         },
         {
           "op": "hit",
-          "n": 6,
+          "n": 5,
           "min": 1,
-          "max": 2,
-          "ignore": 3
+          "max": 2
+        },
+        {
+          "op": "coin",
+          "n": 2,
+          "onHit": true
         }
       ],
-      "attackText": "Move up to 1. Hit for 6 at Range 1–2. Ignore 3 Block.",
+      "attackText": "Move up to 1. Hit for 5 at Range 1–2. On hit, gain 2 Coins.",
       "reactionText": "",
       "artId": "T-FP",
       "heroId": "FRA",
       "hero": "Friar Franc",
-      "text": "Move up to 1. Hit for 6 at Range 1–2. Ignore 3 Block.",
+      "text": "Move up to 1. Hit for 5 at Range 1–2. On hit, gain 2 Coins.",
       "side": "either",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
       "art": "assets/hero-atlas-FRA.webp",
       "artIndex": 8,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "reactionOps": null,
+      "cost": null,
+      "reveal": null,
+      "slow": 0,
+      "reactionRange": null
     },
     {
       "id": "FP2",
-      "name": "Last Call",
-      "speed": 4,
+      "name": "The House Always Wins",
+      "speed": 2,
       "kind": "Attack",
       "category": "Special",
       "ops": [
         {
+          "op": "pay",
+          "n": 3,
+          "bonus": 6,
+          "resource": "coins"
+        },
+        {
           "op": "hit",
-          "n": 6,
+          "n": 4,
           "min": 1,
           "max": 3
         }
       ],
-      "attackText": "Hit for 6 at Range 1–3.",
+      "attackText": "At strike, you may spend 3 Coins for +6 damage. Hit for 4 at Range 1–3.",
       "reactionText": "",
       "artId": "T-P03",
       "heroId": "FRA",
       "hero": "Friar Franc",
-      "text": "Hit for 6 at Range 1–3.",
+      "text": "At strike, you may spend 3 Coins for +6 damage. Hit for 4 at Range 1–3.",
       "side": "either",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
       "art": "assets/hero-atlas-FRA.webp",
       "artIndex": 2,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "reactionOps": null,
+      "cost": null,
+      "reveal": null,
+      "slow": 0,
+      "reactionRange": null
     },
     {
       "id": "FP3",
       "name": "Blessed Brawl",
-      "speed": 2,
+      "speed": 4,
       "kind": "Attack",
       "category": "Special",
       "ops": [
@@ -3326,27 +3806,31 @@
         },
         {
           "op": "draw",
-          "n": 1
+          "n": 2
         },
         {
           "op": "hit",
-          "n": 6,
+          "n": 4,
           "min": 1,
           "max": 1
         }
       ],
-      "attackText": "Move up to 2. Draw 1 card. Hit for 6 at Range 1.",
+      "attackText": "Move up to 2. Draw 2 (one draw effect per attack). Hit for 4 at Range 1.",
       "reactionText": "",
       "artId": "T-P02",
       "heroId": "FRA",
       "hero": "Friar Franc",
-      "text": "Move up to 2. Draw 1 card. Hit for 6 at Range 1.",
+      "text": "Move up to 2. Draw 2 (one draw effect per attack). Hit for 4 at Range 1.",
       "side": "either",
-      "purpose": "Choose the moment: keep an answer for the return attack.",
       "art": "assets/hero-atlas-FRA.webp",
       "artIndex": 1,
       "artCols": 3,
-      "artRows": 3
+      "artRows": 3,
+      "reactionOps": null,
+      "cost": null,
+      "reveal": null,
+      "slow": 0,
+      "reactionRange": null
     },
     {
       "id": "T-L01",
@@ -3689,203 +4173,192 @@
   ],
   "rules": [
     [
-      "Pool",
-      "Each Hero owns 20 designs with two physical copies of each: 40 cards. Choose any 24. You may take 0, 1 or 2 of each design. Each Hero’s pool includes their own physical copies of the ten shared Basic designs. No Basic/Hero quota; no shared Basic draw pile."
+      "Build your fight",
+      "Choose any 24 cards from your Hero’s 40-card pool: 20 designs, two copies each. No point budget or Basic/Hero quotas. Choose one of three Fury cards; keep it outside the deck."
     ],
     [
-      "Setup",
-      "Choose one of three Fury cards and reveal that choice beside your Hero. It is outside the 24-card deck. Shuffle the 24 and draw 7. Start at 20 Health, 0 Coins, spaces 3 and 5. Randomly give one player Edge; it changes sides after every round."
+      "Start",
+      "20 Health, 0 Coins. Start on spaces 3 and 5; random Edge. Shuffle your deck and draw 7."
     ],
     [
-      "Choose attacks",
-      "Commit two attack-capable cards in order if able. If you have only one, use the first slot; if none, leave both empty. Empty slots pass. An out-of-range Attack is still an eligible Attack. All other cards remain in hand. A committed dual-use card is locked as an Attack and cannot also react."
+      "Commit",
+      "Secretly choose two Attack-capable cards in order. A Dual card uses one half only. If you have fewer than two Attacks, commit those you have; missing slots pass."
     ],
     [
-      "Reveal and react",
-      "Reveal the first pair together. Higher Speed activates first; Edge breaks ties. Resolve its Activate text, then the defender reacts first. Alternate one Reaction, one Loot, or pass. Played Reactions and Loot resolve immediately. Two consecutive passes resolve the active Attack using current positions. A card play resets passes; one pass does not prevent reacting later. Give the other Attack its own exchange, then reveal pair 2. If a pair has one Attack, resolve just that Attack; if none, skip the pair."
+      "Reveal & speed",
+      "Flip the first pair. Apply printed adjacent speed reductions. Reveal payments are optional, offered in Edge order. Then lock attack order: higher Speed first; Edge wins ties. Movement cannot change that order."
     ],
     [
-      "Dual-use cards",
-      "Play exactly one half, then discard the card after its effect finishes. Reaction text marked Attacking is only usable during your own active Attack; Defending only during your rival’s active Attack; Either in either exchange. Neither Reaction Speed nor a second Attack is created by a Reaction half. You may play a legal Reaction for little or no benefit, such as Move 0, but cannot ignore its printed timing or Range requirement just to empty your hand."
+      "Activate & react",
+      "Resolve printed preparation and movement. Then the defender reacts first. Alternate one Reaction, Loot or pass. Playing a card resets passes; two consecutive passes resolve the strike at the current distance. Never draw automatically during an exchange."
     ],
     [
       "Movement",
-      "All Move values mean up to that many spaces, chosen when the effect resolves. You can stay, move either direction, or cross your rival, but never finish on their space. Push moves the rival away; pull moves them toward you without crossing or sharing your space. Choose the distance when resolving. Range is the difference between the occupied space numbers."
+      "Move up to the printed distance, in either direction. You may stay, move partly or cross the rival, but never share a space or leave the seven-space arena. Choose when the effect resolves. Push and pull also allow zero or partial movement."
     ],
     [
-      "Range and bonuses",
-      "Use the printed Attack range, then modifiers. Alf gets +1 maximum Range on attacks with printed minimum Range 2 or more, even after Trick Shot changes their minimum. His damage bonus uses the actual distance when striking: +1 at distance 2 or more (+2 after his upgrade). Maximum-range bonuses never change minimum Range. Damage bonuses and ignored Block add together and last only for the current Attack. Each Attack hits once. No extra reactions occur between the hit and its on-hit effects."
+      "Block & damage",
+      "Block caps at 6. Damage consumes Block unless ignored. Ignore X bypasses X Block without consuming it. Ignore all bypasses all. Clear Block after each attack, except Helga banks up to 3 (5 when upgraded). All Block clears at round end."
     ],
     [
-      "Hit and Block",
-      "On-hit effects require at least 1 Health damage to the rival. Block is spent preventing damage and is capped at 6. Ignore N Block leaves up to N existing Block unused for this hit; it does not destroy Block. After each active Attack, both players lose unused Block, except Helga: she keeps up to 2 (4 after her upgrade). All Block clears at round end."
+      "Coins & Loot",
+      "Basic Attacks earn 1 Coin when finished, even on a miss; Franc earns 2. No automatic Coins for reactions or Hero attacks, but printed effects can grant them. Coins cap at 8. End of round: buy one blind Loot for 2 Coins; hold at most 2."
     ],
     [
-      "Wall slam",
-      "A chosen push that would go beyond space 1 or 7 stops at the edge and deals 1 extra damage ignoring Block (Smasherton: 2, upgraded: 3). Landing exactly on the edge deals none. One push effect causes at most one slam, regardless of unused distance. Combine a single Attack’s printed push and bonus push into one push effect. A Reaction push is a separate effect and can slam immediately; pulls never slam."
+      "Scry & preparation",
+      "Scry: privately look at the top cards, choose their order on top, and put unselected cards underneath. No draw. Alf’s preparation then publicly reveals and bottoms the top card: Attack-capable gives +2 damage and ignores 2 Block; otherwise minimum Range becomes 1 and maximum Range gains 2."
     ],
     [
-      "Coins and Loot",
-      "A Basic Attack earns 1 Coin when it finishes, including a miss; cap 8 Coins. Basic Reactions, Hero cards and Fury earn none. After the round, each player may buy one blind Loot for 2 Coins if holding fewer than two. Loot stays outside the seven-card hand/refill. The shared Loot pile contains 12 designs, two copies each."
+      "Payments & discards",
+      "Printed reaction costs are paid before effects. Discard another means a different uncommitted hand card. An opponent forced to discard chooses their own card. Optional pre-reaction Health payments are spent even if the attack later misses. All Health costs leave at least 1 Health."
     ],
     [
-      "Refill",
-      "After all committed Attacks finish, discard spent cards and keep unused hand cards. Draw up to 4, stopping at a hand of 7. No voluntary discard. If you still have 5 cards, draw 2; if you have 2, draw 4 and begin with 6. A printed draw effect may exceed the limit. No automatic draws during combat. When a draw pile runs out, shuffle its spent discard to continue; never include held or committed cards. Each player can resolve at most one printed draw effect per active Attack, including its Activate text. Fury arriving at 10 Health does not use this allowance."
+      "Card draw & recovery",
+      "Only one printed draw effect per player per active attack. Explicit draws may exceed 7. Recover only the specified Basic Reaction already played in this exchange; never recover a committed Attack or a prior exchange’s card."
     ],
     [
-      "Fury at 10",
-      "The first time you have 10 or less Health and are still alive, put the chosen Fury into your hand. This is an extra draw and may take you over 7. It can be committed at the next planning step, never inserted into the current round’s locked Attacks. Once played, it goes to your normal discard and can return on a later reshuffle. Its threshold does not trigger twice."
+      "Finish the round",
+      "Finish both attacks in the first pair, then reveal and resolve pair two. Keep unused cards. Draw up to 4, stopping at 7 in hand. No free discard. Refill an empty deck by shuffling your discard. Edge alternates."
     ],
     [
-      "Upgrade at 5",
-      "The first time you have 5 or less Health and are still alive, permanently upgrade the Hero passive. Healing never removes either unlock. If a single damage event crosses both thresholds, unlock both. Health payments also count. Reaching 0 ends the game immediately; there is no Fury rescue."
+      "Fury",
+      "At 10 Health or less, your chosen Fury enters your hand once; commit it in a future round. At 5 Health or less, upgrade your Hero ability permanently. Healing does not undo unlocks."
     ],
     [
-      "End and anti-stall",
-      "Health 0 means immediate defeat. At round-10 cleanup both lose 2 Health ignoring Block, increasing by 1 each subsequent round up to 18. Simultaneous defeat is a draw."
+      "Win",
+      "Reduce the rival to 0 Health; stop immediately. At round 10 cleanup both lose 2 Health, then one more per later round, capped at 18. Simultaneous knockouts are a draw."
     ]
   ],
-  "version": "brawl2-one-deck-2",
+  "version": "brawl2-extremes-1",
   "builds": [
     {
-      "id": "sma-pursuit",
+      "id": "sma-lab-0",
       "hero": "SMA",
-      "name": "Relentless Pursuit",
-      "fury": "FS2",
+      "name": "Lord Smasherton · Signature",
+      "deck": [
+        "B01",
+        "B01",
+        "B04",
+        "B04",
+        "B05",
+        "B05",
+        "B06",
+        "B06",
+        "B09",
+        "B09",
+        "B10",
+        "B10",
+        "S01",
+        "S01",
+        "S02",
+        "S02",
+        "S03",
+        "S03",
+        "S05",
+        "S05",
+        "S09",
+        "S09",
+        "S10",
+        "S10"
+      ],
+      "fury": "FS1",
+      "plan": "Break shields and force positions. Slow, expensive to chase.",
       "quantities": {
         "B01": 2,
         "B04": 2,
         "B05": 2,
+        "B06": 2,
         "B09": 2,
+        "B10": 2,
+        "S01": 2,
+        "S02": 2,
         "S03": 2,
         "S05": 2,
         "S09": 2,
-        "S01": 2,
-        "B06": 1,
-        "B08": 1,
-        "B10": 1,
-        "S02": 1,
-        "S04": 1,
-        "S06": 1,
-        "S07": 1,
-        "S10": 1
+        "S10": 2
       },
-      "plan": "Use printed movement to start the chase, and keep one movement Reaction to answer the escape. Buy Loot with Quick Jab, Lunge or Advance when a Hero hit is not worth spending.",
-      "sequence": "Bull Rush moves 2 before reactions. If Alf retreats, Hammer Dash moves 2 and makes that Attack hit for 5. Shoulder Check can add one more step, but spending both chase cards leaves less defence and a smaller refill.",
-      "weakness": "Only two Brace/Bear Hug copies combined. Repeatedly spending three Reactions in one round shrinks the next hand.",
-      "why": "The first Smasherton deck to try: multiple ways into melee, mixed damage speeds and real Basic income.",
-      "stats": {
-        "total": 24,
-        "attack_only": 10,
-        "dual": 8,
-        "reaction_only": 6,
-        "attack_capable": 18,
-        "reaction_capable": 14,
-        "coin_attacks": 8,
-        "basics": 11,
-        "hero": 13
-      },
-      "opening": {
-        "two_attacks": 0.9999479925109216,
-        "two_attacks_and_two_reactions": 0.991106719367589
-      },
-      "deck": [
-        "B01",
-        "B01",
-        "B04",
-        "B04",
-        "B05",
-        "B05",
-        "B09",
-        "B09",
-        "S03",
-        "S03",
-        "S05",
-        "S05",
-        "S09",
-        "S09",
-        "S01",
-        "S01",
-        "B06",
-        "B08",
-        "B10",
-        "S02",
-        "S04",
-        "S06",
-        "S07",
-        "S10"
-      ]
+      "weakness": "Strong signature tools; fewer ranged and economy answers."
     },
     {
-      "id": "sma-wall",
+      "id": "sma-lab-1",
       "hero": "SMA",
-      "name": "Wall Demolition",
-      "fury": "FS1",
+      "name": "Lord Smasherton · Flexible",
+      "deck": [
+        "B03",
+        "B03",
+        "B04",
+        "B04",
+        "B05",
+        "B05",
+        "B06",
+        "B06",
+        "B07",
+        "B07",
+        "B09",
+        "B09",
+        "S02",
+        "S02",
+        "S03",
+        "S03",
+        "S04",
+        "S04",
+        "S05",
+        "S05",
+        "S06",
+        "S06",
+        "S08",
+        "S08"
+      ],
+      "fury": "FS2",
+      "plan": "Break shields and force positions. Slow, expensive to chase.",
       "quantities": {
-        "B01": 2,
+        "B03": 2,
         "B04": 2,
+        "B05": 2,
+        "B06": 2,
         "B07": 2,
         "B09": 2,
         "S02": 2,
+        "S03": 2,
         "S04": 2,
+        "S05": 2,
         "S06": 2,
-        "S07": 2,
-        "S08": 2,
-        "S09": 2,
-        "S10": 2,
-        "S01": 2
+        "S08": 2
       },
-      "plan": "Herd the rival toward an end space; save your damage bonus until a push can actually exceed the edge. A push that lands exactly on space 7 is setup, not a wall slam.",
-      "sequence": "At positions 5 and 6, Uppercut plus Wrecking Ball hits for 6, then can push 3. A full push exceeds space 7 and adds one 2-damage wall slam: 8 Health lost with no Block. After the 5-Health upgrade, 9.",
-      "weakness": "Can push Alf out of the second committed Attack’s range. Lower income than the pursuit list; wall Reactions can be dead away from contact.",
-      "why": "Tests whether walls create satisfying tactical payoffs or excessive instant damage.",
-      "stats": {
-        "total": 24,
-        "attack_only": 10,
-        "dual": 8,
-        "reaction_only": 6,
-        "attack_capable": 18,
-        "reaction_capable": 14,
-        "coin_attacks": 6,
-        "basics": 8,
-        "hero": 16
-      },
-      "opening": {
-        "two_attacks": 0.9999479925109216,
-        "two_attacks_and_two_reactions": 0.991106719367589
-      },
+      "weakness": "More ways to react, fewer explosive specialist cards."
+    },
+    {
+      "id": "sma-lab-2",
+      "hero": "SMA",
+      "name": "Lord Smasherton · Economy",
       "deck": [
         "B01",
         "B01",
+        "B02",
+        "B02",
+        "B03",
+        "B03",
         "B04",
         "B04",
+        "B05",
+        "B05",
+        "B06",
+        "B06",
         "B07",
         "B07",
-        "B09",
-        "B09",
-        "S02",
-        "S02",
-        "S04",
-        "S04",
-        "S06",
-        "S06",
+        "B08",
+        "B08",
+        "S03",
+        "S03",
+        "S05",
+        "S05",
         "S07",
         "S07",
-        "S08",
-        "S08",
-        "S09",
-        "S09",
         "S10",
-        "S10",
-        "S01",
-        "S01"
-      ]
-    },
-    {
-      "id": "sma-loot",
-      "hero": "SMA",
-      "name": "Paid to Smash",
+        "S10"
+      ],
       "fury": "FS3",
+      "plan": "Break shields and force positions. Slow, expensive to chase.",
       "quantities": {
         "B01": 2,
         "B02": 2,
@@ -3895,438 +4368,308 @@
         "B06": 2,
         "B07": 2,
         "B08": 2,
-        "B09": 2,
-        "S01": 2,
-        "S09": 2,
+        "S03": 2,
+        "S05": 2,
+        "S07": 2,
         "S10": 2
       },
-      "plan": "Resolve Basic Attacks to buy one blind Loot whenever affordable. Save the Hero amplifiers and a movement card for a hit that matters.",
-      "sequence": "A Basic Heavy Blow plus Hammer Dash is 6 damage after a 2-space chase and still earns a Coin. The same cards can fuel The Last Word later, but Fury never earns a Coin.",
-      "weakness": "Only Guarded Strike supplies Block. Loot is random: the build must function before the desired item appears.",
-      "why": "A deliberate economy-heavy stress test: can Coins compete with a denser Hero package without becoming the mandatory best route?",
-      "stats": {
-        "total": 24,
-        "attack_only": 10,
-        "dual": 8,
-        "reaction_only": 6,
-        "attack_capable": 18,
-        "reaction_capable": 14,
-        "coin_attacks": 16,
-        "basics": 18,
-        "hero": 6
-      },
-      "opening": {
-        "two_attacks": 0.9999479925109216,
-        "two_attacks_and_two_reactions": 0.991106719367589
-      },
+      "weakness": "More Loot income, fewer Hero tricks. Discounted strength is paid for with flexibility."
+    },
+    {
+      "id": "alf-lab-0",
+      "hero": "ALF",
+      "name": "Alf Featherbottom · Signature",
       "deck": [
         "B01",
         "B01",
-        "B02",
-        "B02",
-        "B03",
-        "B03",
         "B04",
         "B04",
         "B05",
         "B05",
         "B06",
         "B06",
-        "B07",
-        "B07",
-        "B08",
-        "B08",
         "B09",
         "B09",
-        "S01",
-        "S01",
-        "S09",
-        "S09",
-        "S10",
-        "S10"
-      ]
-    },
-    {
-      "id": "alf-mobile",
-      "hero": "ALF",
-      "name": "Keep Them Chasing",
-      "fury": "FA3",
-      "quantities": {
-        "B03": 2,
-        "B05": 2,
-        "B09": 2,
-        "A02": 2,
-        "A03": 2,
-        "A05": 2,
-        "A08": 2,
-        "A09": 2,
-        "B01": 1,
-        "B06": 1,
-        "B07": 1,
-        "B10": 1,
-        "A01": 1,
-        "A04": 1,
-        "A06": 1,
-        "A07": 1
-      },
-      "plan": "Use Attack movement for the first reposition and hold a Reaction for the pursuit. Keep useful Basics to pay for surprise Loot.",
-      "sequence": "Vaulting Shot moves 2 on activation. If Smasherton chases into Range 1, Grapple can reopen distance during Alf’s own Attack; Backflip Shot’s Reaction cannot, because it is defending-only.",
-      "weakness": "Damage is lower than the sniper build. Spending every escape to avoid chip damage can empty the hand before an important shot.",
-      "why": "The first Alf deck to try: broad access to movement, with meaningful decisions about when to spend it.",
-      "stats": {
-        "total": 24,
-        "attack_only": 9,
-        "dual": 10,
-        "reaction_only": 5,
-        "attack_capable": 19,
-        "reaction_capable": 15,
-        "coin_attacks": 7,
-        "basics": 10,
-        "hero": 14
-      },
-      "opening": {
-        "two_attacks": 1,
-        "two_attacks_and_two_reactions": 0.9962554607863532
-      },
-      "deck": [
-        "B03",
-        "B03",
-        "B05",
-        "B05",
-        "B09",
-        "B09",
+        "B10",
+        "B10",
+        "A01",
+        "A01",
         "A02",
         "A02",
         "A03",
         "A03",
         "A05",
         "A05",
-        "A08",
-        "A08",
-        "A09",
-        "A09",
-        "B01",
-        "B06",
-        "B07",
-        "B10",
-        "A01",
-        "A04",
-        "A06",
-        "A07"
-      ]
-    },
-    {
-      "id": "alf-sniper",
-      "hero": "ALF",
-      "name": "One Perfect Shot",
-      "fury": "FA2",
-      "quantities": {
-        "B03": 2,
-        "B06": 2,
-        "B07": 2,
-        "B09": 2,
-        "B10": 2,
-        "A01": 2,
-        "A02": 2,
-        "A04": 2,
-        "A06": 2,
-        "A07": 2,
-        "A09": 2,
-        "A10": 2
-      },
-      "plan": "Make one ranged hit worth the commitment. Keep Trick Shot for a close chase or Grapple to reopen the dead zone; these solve different problems.",
-      "sequence": "Power Shot plus Perfect Aim hits for 7 and ignores 2 Block. If Smasherton reaches Range 1, Trick Shot can bring minimum Range down to 1; its printed minimum of 3 still qualifies it for Long Shot.",
-      "weakness": "Less built-in movement and fewer close Attacks. The expensive three-card shot can be spoiled by one well-timed range change.",
-      "why": "Tests the upper damage ceiling against a rival who knows the shot is coming and can still react.",
-      "stats": {
-        "total": 24,
-        "attack_only": 8,
-        "dual": 8,
-        "reaction_only": 8,
-        "attack_capable": 16,
-        "reaction_capable": 16,
-        "coin_attacks": 6,
-        "basics": 10,
-        "hero": 14
-      },
-      "opening": {
-        "two_attacks": 0.9986824769433466,
-        "two_attacks_and_two_reactions": 0.997364953886693
-      },
-      "deck": [
-        "B03",
-        "B03",
-        "B06",
-        "B06",
-        "B07",
-        "B07",
-        "B09",
-        "B09",
-        "B10",
-        "B10",
-        "A01",
-        "A01",
-        "A02",
-        "A02",
-        "A04",
-        "A04",
-        "A06",
-        "A06",
-        "A07",
-        "A07",
         "A09",
         "A09",
         "A10",
         "A10"
-      ]
-    },
-    {
-      "id": "alf-loot",
-      "hero": "ALF",
-      "name": "Trick Shots & Trinkets",
+      ],
       "fury": "FA1",
+      "plan": "Prepare your draws and dominate firing distance. Weak at contact.",
       "quantities": {
         "B01": 2,
+        "B04": 2,
+        "B05": 2,
+        "B06": 2,
+        "B09": 2,
+        "B10": 2,
+        "A01": 2,
+        "A02": 2,
+        "A03": 2,
+        "A05": 2,
+        "A09": 2,
+        "A10": 2
+      },
+      "weakness": "Strong signature tools; fewer ranged and economy answers."
+    },
+    {
+      "id": "alf-lab-1",
+      "hero": "ALF",
+      "name": "Alf Featherbottom · Flexible",
+      "deck": [
+        "B03",
+        "B03",
+        "B04",
+        "B04",
+        "B05",
+        "B05",
+        "B06",
+        "B06",
+        "B07",
+        "B07",
+        "B09",
+        "B09",
+        "A02",
+        "A02",
+        "A03",
+        "A03",
+        "A04",
+        "A04",
+        "A05",
+        "A05",
+        "A06",
+        "A06",
+        "A08",
+        "A08"
+      ],
+      "fury": "FA2",
+      "plan": "Prepare your draws and dominate firing distance. Weak at contact.",
+      "quantities": {
+        "B03": 2,
+        "B04": 2,
+        "B05": 2,
+        "B06": 2,
+        "B07": 2,
+        "B09": 2,
+        "A02": 2,
+        "A03": 2,
+        "A04": 2,
+        "A05": 2,
+        "A06": 2,
+        "A08": 2
+      },
+      "weakness": "More ways to react, fewer explosive specialist cards."
+    },
+    {
+      "id": "alf-lab-2",
+      "hero": "ALF",
+      "name": "Alf Featherbottom · Economy",
+      "deck": [
+        "B01",
+        "B01",
+        "B02",
+        "B02",
+        "B03",
+        "B03",
+        "B04",
+        "B04",
+        "B05",
+        "B05",
+        "B06",
+        "B06",
+        "B07",
+        "B07",
+        "B08",
+        "B08",
+        "A03",
+        "A03",
+        "A05",
+        "A05",
+        "A07",
+        "A07",
+        "A10",
+        "A10"
+      ],
+      "fury": "FA3",
+      "plan": "Prepare your draws and dominate firing distance. Weak at contact.",
+      "quantities": {
+        "B01": 2,
+        "B02": 2,
         "B03": 2,
         "B04": 2,
         "B05": 2,
         "B06": 2,
         "B07": 2,
         "B08": 2,
-        "B09": 2,
+        "A03": 2,
         "A05": 2,
-        "A06": 2,
         "A07": 2,
-        "A09": 2
+        "A10": 2
       },
-      "plan": "Use Basic arrows and flexible Basics to earn Loot, while Hero cards fix their positions or range. Save Arrow Storm for a reliable late-game threat.",
-      "sequence": "Throw a Rock has effective Range 2–4 through Long Shot. Playing Driving Arrow as a Reaction extends that to 2–6; using Trick Shot instead changes it to 1–4. Neither Reaction earns a Coin; the Rock earns one when it finishes.",
-      "weakness": "Few high-damage normal Attacks. Keeping every flexible card for later can mean never taking the decisive shot.",
-      "why": "Tests whether generic economic cards still feel like an archer’s tools because of his passive and Hero reactions.",
-      "stats": {
-        "total": 24,
-        "attack_only": 6,
-        "dual": 14,
-        "reaction_only": 4,
-        "attack_capable": 20,
-        "reaction_capable": 18,
-        "coin_attacks": 14,
-        "basics": 16,
-        "hero": 8
-      },
-      "opening": {
-        "two_attacks": 1,
-        "two_attacks_and_two_reactions": 0.9999479925109216
-      },
-      "deck": [
-        "B01",
-        "B01",
-        "B03",
-        "B03",
-        "B04",
-        "B04",
-        "B05",
-        "B05",
-        "B06",
-        "B06",
-        "B07",
-        "B07",
-        "B08",
-        "B08",
-        "B09",
-        "B09",
-        "A05",
-        "A05",
-        "A06",
-        "A06",
-        "A07",
-        "A07",
-        "A09",
-        "A09"
-      ]
+      "weakness": "More Loot income, fewer Hero tricks. Discounted strength is paid for with flexibility."
     },
     {
-      "id": "she-0",
+      "id": "she-lab-0",
       "hero": "SHE",
-      "name": "Field Surgeon",
-      "fury": "FD1",
-      "plan": "Trade Health for clean hits, then recover with life-steal and healing.",
-      "weakness": "Dual cards committed as attacks cannot also protect you.",
-      "quantities": {
-        "D01": 2,
-        "D02": 2,
-        "D03": 2,
-        "D05": 2,
-        "D06": 2,
-        "D07": 2,
-        "B01": 2,
-        "B03": 2,
-        "B04": 2,
-        "B05": 2,
-        "B06": 2,
-        "B09": 2
-      },
+      "name": "Dr. Shealer · Signature",
       "deck": [
-        "D01",
-        "D01",
-        "D02",
-        "D02",
-        "D03",
-        "D03",
-        "D05",
-        "D05",
-        "D06",
-        "D06",
-        "D07",
-        "D07",
         "B01",
         "B01",
-        "B03",
-        "B03",
         "B04",
         "B04",
         "B05",
         "B05",
-        "B06",
-        "B06",
-        "B09",
-        "B09"
-      ]
-    },
-    {
-      "id": "she-1",
-      "hero": "SHE",
-      "name": "Risky Practice",
-      "fury": "FD2",
-      "plan": "Spend Health for burst; save movement to make that payment count.",
-      "weakness": "Burst spends your answers; an out-of-range hit can waste the setup.",
-      "quantities": {
-        "D01": 2,
-        "D02": 2,
-        "D04": 2,
-        "D05": 2,
-        "D09": 2,
-        "D10": 2,
-        "B01": 2,
-        "B03": 2,
-        "B04": 2,
-        "B05": 2,
-        "B08": 2,
-        "B09": 2
-      },
-      "deck": [
-        "D01",
-        "D01",
-        "D02",
-        "D02",
-        "D04",
-        "D04",
-        "D05",
-        "D05",
-        "D09",
-        "D09",
-        "D10",
-        "D10",
-        "B01",
-        "B01",
-        "B03",
-        "B03",
-        "B04",
-        "B04",
-        "B05",
-        "B05",
-        "B08",
-        "B08",
-        "B09",
-        "B09"
-      ]
-    },
-    {
-      "id": "she-2",
-      "hero": "SHE",
-      "name": "Second Chances",
-      "fury": "FD3",
-      "plan": "Survive a key hit and heal back. Range is more important than racing.",
-      "weakness": "Lower immediate damage. Avoid spending defense without a useful return.",
-      "quantities": {
-        "D03": 2,
-        "D04": 2,
-        "D05": 2,
-        "D06": 2,
-        "D07": 2,
-        "D09": 2,
-        "B01": 2,
-        "B03": 2,
-        "B04": 2,
-        "B06": 2,
-        "B09": 2,
-        "B10": 2
-      },
-      "deck": [
-        "D03",
-        "D03",
-        "D04",
-        "D04",
-        "D05",
-        "D05",
-        "D06",
-        "D06",
-        "D07",
-        "D07",
-        "D09",
-        "D09",
-        "B01",
-        "B01",
-        "B03",
-        "B03",
-        "B04",
-        "B04",
         "B06",
         "B06",
         "B09",
         "B09",
         "B10",
-        "B10"
-      ]
+        "B10",
+        "D01",
+        "D01",
+        "D02",
+        "D02",
+        "D03",
+        "D03",
+        "D05",
+        "D05",
+        "D09",
+        "D09",
+        "D10",
+        "D10"
+      ],
+      "fury": "FD1",
+      "plan": "Spend Health to gain choices and burst; heal by landing attacks.",
+      "quantities": {
+        "B01": 2,
+        "B04": 2,
+        "B05": 2,
+        "B06": 2,
+        "B09": 2,
+        "B10": 2,
+        "D01": 2,
+        "D02": 2,
+        "D03": 2,
+        "D05": 2,
+        "D09": 2,
+        "D10": 2
+      },
+      "weakness": "Strong signature tools; fewer ranged and economy answers."
     },
     {
-      "id": "hel-0",
-      "hero": "HEL",
-      "name": "Shield Engine",
-      "fury": "FH1",
-      "plan": "Use Block as protection or cash it in for a heavy strike.",
-      "weakness": "Dual cards committed as attacks cannot also protect you.",
+      "id": "she-lab-1",
+      "hero": "SHE",
+      "name": "Dr. Shealer · Flexible",
+      "deck": [
+        "B03",
+        "B03",
+        "B04",
+        "B04",
+        "B05",
+        "B05",
+        "B06",
+        "B06",
+        "B07",
+        "B07",
+        "B09",
+        "B09",
+        "D02",
+        "D02",
+        "D03",
+        "D03",
+        "D04",
+        "D04",
+        "D05",
+        "D05",
+        "D06",
+        "D06",
+        "D08",
+        "D08"
+      ],
+      "fury": "FD2",
+      "plan": "Spend Health to gain choices and burst; heal by landing attacks.",
       "quantities": {
-        "H01": 2,
-        "H02": 2,
-        "H03": 2,
-        "H05": 2,
-        "H06": 2,
-        "H10": 2,
-        "B01": 2,
         "B03": 2,
         "B04": 2,
         "B05": 2,
         "B06": 2,
-        "B09": 2
+        "B07": 2,
+        "B09": 2,
+        "D02": 2,
+        "D03": 2,
+        "D04": 2,
+        "D05": 2,
+        "D06": 2,
+        "D08": 2
       },
+      "weakness": "More ways to react, fewer explosive specialist cards."
+    },
+    {
+      "id": "she-lab-2",
+      "hero": "SHE",
+      "name": "Dr. Shealer · Economy",
       "deck": [
-        "H01",
-        "H01",
-        "H02",
-        "H02",
-        "H03",
-        "H03",
-        "H05",
-        "H05",
-        "H06",
-        "H06",
-        "H10",
-        "H10",
         "B01",
         "B01",
+        "B02",
+        "B02",
         "B03",
         "B03",
+        "B04",
+        "B04",
+        "B05",
+        "B05",
+        "B06",
+        "B06",
+        "B07",
+        "B07",
+        "B08",
+        "B08",
+        "D03",
+        "D03",
+        "D05",
+        "D05",
+        "D07",
+        "D07",
+        "D10",
+        "D10"
+      ],
+      "fury": "FD3",
+      "plan": "Spend Health to gain choices and burst; heal by landing attacks.",
+      "quantities": {
+        "B01": 2,
+        "B02": 2,
+        "B03": 2,
+        "B04": 2,
+        "B05": 2,
+        "B06": 2,
+        "B07": 2,
+        "B08": 2,
+        "D03": 2,
+        "D05": 2,
+        "D07": 2,
+        "D10": 2
+      },
+      "weakness": "More Loot income, fewer Hero tricks. Discounted strength is paid for with flexibility."
+    },
+    {
+      "id": "hel-lab-0",
+      "hero": "HEL",
+      "name": "Helga Stonewall · Signature",
+      "deck": [
+        "B01",
+        "B01",
         "B04",
         "B04",
         "B05",
@@ -4334,392 +4677,423 @@
         "B06",
         "B06",
         "B09",
-        "B09"
-      ]
-    },
-    {
-      "id": "hel-1",
-      "hero": "HEL",
-      "name": "Fortress Punch",
-      "fury": "FH2",
-      "plan": "Set up a big Block payment; keep enough movement to connect.",
-      "weakness": "Burst spends your answers; an out-of-range hit can waste the setup.",
+        "B09",
+        "B10",
+        "B10",
+        "H01",
+        "H01",
+        "H02",
+        "H02",
+        "H03",
+        "H03",
+        "H05",
+        "H05",
+        "H09",
+        "H09",
+        "H10",
+        "H10"
+      ],
+      "fury": "FH1",
+      "plan": "Bank Block and choose where to spend it. Slow without a shield.",
       "quantities": {
+        "B01": 2,
+        "B04": 2,
+        "B05": 2,
+        "B06": 2,
+        "B09": 2,
+        "B10": 2,
         "H01": 2,
         "H02": 2,
         "H03": 2,
         "H05": 2,
         "H09": 2,
-        "H10": 2,
-        "B01": 2,
+        "H10": 2
+      },
+      "weakness": "Strong signature tools; fewer ranged and economy answers."
+    },
+    {
+      "id": "hel-lab-1",
+      "hero": "HEL",
+      "name": "Helga Stonewall · Flexible",
+      "deck": [
+        "B03",
+        "B03",
+        "B04",
+        "B04",
+        "B05",
+        "B05",
+        "B06",
+        "B06",
+        "B07",
+        "B07",
+        "B09",
+        "B09",
+        "H02",
+        "H02",
+        "H03",
+        "H03",
+        "H04",
+        "H04",
+        "H05",
+        "H05",
+        "H06",
+        "H06",
+        "H08",
+        "H08"
+      ],
+      "fury": "FH2",
+      "plan": "Bank Block and choose where to spend it. Slow without a shield.",
+      "quantities": {
+        "B03": 2,
         "B04": 2,
         "B05": 2,
         "B06": 2,
-        "B08": 2,
-        "B09": 2
-      },
-      "deck": [
-        "H01",
-        "H01",
-        "H02",
-        "H02",
-        "H03",
-        "H03",
-        "H05",
-        "H05",
-        "H09",
-        "H09",
-        "H10",
-        "H10",
-        "B01",
-        "B01",
-        "B04",
-        "B04",
-        "B05",
-        "B05",
-        "B06",
-        "B06",
-        "B08",
-        "B08",
-        "B09",
-        "B09"
-      ]
-    },
-    {
-      "id": "hel-2",
-      "hero": "HEL",
-      "name": "Walking Wall",
-      "fury": "FH3",
-      "plan": "Carry a little shield between attacks and pressure from mid-range.",
-      "weakness": "Lower immediate damage. Avoid spending defense without a useful return.",
-      "quantities": {
+        "B07": 2,
+        "B09": 2,
+        "H02": 2,
         "H03": 2,
         "H04": 2,
         "H05": 2,
         "H06": 2,
-        "H08": 2,
-        "H09": 2,
+        "H08": 2
+      },
+      "weakness": "More ways to react, fewer explosive specialist cards."
+    },
+    {
+      "id": "hel-lab-2",
+      "hero": "HEL",
+      "name": "Helga Stonewall · Economy",
+      "deck": [
+        "B01",
+        "B01",
+        "B02",
+        "B02",
+        "B03",
+        "B03",
+        "B04",
+        "B04",
+        "B05",
+        "B05",
+        "B06",
+        "B06",
+        "B07",
+        "B07",
+        "B08",
+        "B08",
+        "H03",
+        "H03",
+        "H05",
+        "H05",
+        "H07",
+        "H07",
+        "H10",
+        "H10"
+      ],
+      "fury": "FH3",
+      "plan": "Bank Block and choose where to spend it. Slow without a shield.",
+      "quantities": {
         "B01": 2,
+        "B02": 2,
         "B03": 2,
         "B04": 2,
+        "B05": 2,
         "B06": 2,
-        "B09": 2,
-        "B10": 2
+        "B07": 2,
+        "B08": 2,
+        "H03": 2,
+        "H05": 2,
+        "H07": 2,
+        "H10": 2
       },
+      "weakness": "More Loot income, fewer Hero tricks. Discounted strength is paid for with flexibility."
+    },
+    {
+      "id": "rav-lab-0",
+      "hero": "RAV",
+      "name": "Raven Madison · Signature",
       "deck": [
-        "H03",
-        "H03",
-        "H04",
-        "H04",
-        "H05",
-        "H05",
-        "H06",
-        "H06",
-        "H08",
-        "H08",
-        "H09",
-        "H09",
         "B01",
         "B01",
-        "B03",
-        "B03",
         "B04",
         "B04",
+        "B05",
+        "B05",
         "B06",
         "B06",
         "B09",
         "B09",
         "B10",
-        "B10"
-      ]
-    },
-    {
-      "id": "rav-0",
-      "hero": "RAV",
-      "name": "Crossing Blades",
+        "B10",
+        "R01",
+        "R01",
+        "R02",
+        "R02",
+        "R03",
+        "R03",
+        "R05",
+        "R05",
+        "R09",
+        "R09",
+        "R10",
+        "R10"
+      ],
       "fury": "FR1",
-      "plan": "Cross for your passive, then keep one move to answer a chase.",
-      "weakness": "Dual cards committed as attacks cannot also protect you.",
+      "plan": "Cross, disrupt and steal. Low direct damage without positioning.",
       "quantities": {
+        "B01": 2,
+        "B04": 2,
+        "B05": 2,
+        "B06": 2,
+        "B09": 2,
+        "B10": 2,
         "R01": 2,
         "R02": 2,
         "R03": 2,
         "R05": 2,
-        "R08": 2,
         "R09": 2,
-        "B01": 2,
+        "R10": 2
+      },
+      "weakness": "Strong signature tools; fewer ranged and economy answers."
+    },
+    {
+      "id": "rav-lab-1",
+      "hero": "RAV",
+      "name": "Raven Madison · Flexible",
+      "deck": [
+        "B03",
+        "B03",
+        "B04",
+        "B04",
+        "B05",
+        "B05",
+        "B06",
+        "B06",
+        "B07",
+        "B07",
+        "B09",
+        "B09",
+        "R02",
+        "R02",
+        "R03",
+        "R03",
+        "R04",
+        "R04",
+        "R05",
+        "R05",
+        "R06",
+        "R06",
+        "R08",
+        "R08"
+      ],
+      "fury": "FR2",
+      "plan": "Cross, disrupt and steal. Low direct damage without positioning.",
+      "quantities": {
         "B03": 2,
         "B04": 2,
         "B05": 2,
-        "B08": 2,
-        "B09": 2
-      },
-      "deck": [
-        "R01",
-        "R01",
-        "R02",
-        "R02",
-        "R03",
-        "R03",
-        "R05",
-        "R05",
-        "R08",
-        "R08",
-        "R09",
-        "R09",
-        "B01",
-        "B01",
-        "B03",
-        "B03",
-        "B04",
-        "B04",
-        "B05",
-        "B05",
-        "B08",
-        "B08",
-        "B09",
-        "B09"
-      ]
-    },
-    {
-      "id": "rav-1",
-      "hero": "RAV",
-      "name": "Knife Work",
-      "fury": "FR2",
-      "plan": "Save poison and a crossing move for the attack that matters.",
-      "weakness": "Burst spends your answers; an out-of-range hit can waste the setup.",
-      "quantities": {
-        "R01": 2,
+        "B06": 2,
+        "B07": 2,
+        "B09": 2,
         "R02": 2,
+        "R03": 2,
         "R04": 2,
         "R05": 2,
-        "R09": 2,
-        "R10": 2,
+        "R06": 2,
+        "R08": 2
+      },
+      "weakness": "More ways to react, fewer explosive specialist cards."
+    },
+    {
+      "id": "rav-lab-2",
+      "hero": "RAV",
+      "name": "Raven Madison · Economy",
+      "deck": [
+        "B01",
+        "B01",
+        "B02",
+        "B02",
+        "B03",
+        "B03",
+        "B04",
+        "B04",
+        "B05",
+        "B05",
+        "B06",
+        "B06",
+        "B07",
+        "B07",
+        "B08",
+        "B08",
+        "R03",
+        "R03",
+        "R05",
+        "R05",
+        "R07",
+        "R07",
+        "R10",
+        "R10"
+      ],
+      "fury": "FR3",
+      "plan": "Cross, disrupt and steal. Low direct damage without positioning.",
+      "quantities": {
         "B01": 2,
+        "B02": 2,
         "B03": 2,
         "B04": 2,
         "B05": 2,
+        "B06": 2,
+        "B07": 2,
         "B08": 2,
-        "B09": 2
-      },
-      "deck": [
-        "R01",
-        "R01",
-        "R02",
-        "R02",
-        "R04",
-        "R04",
-        "R05",
-        "R05",
-        "R09",
-        "R09",
-        "R10",
-        "R10",
-        "B01",
-        "B01",
-        "B03",
-        "B03",
-        "B04",
-        "B04",
-        "B05",
-        "B05",
-        "B08",
-        "B08",
-        "B09",
-        "B09"
-      ]
-    },
-    {
-      "id": "rav-2",
-      "hero": "RAV",
-      "name": "Now You Don’t",
-      "fury": "FR3",
-      "plan": "Evade the big hit and keep your fast attacks available.",
-      "weakness": "Lower immediate damage. Avoid spending defense without a useful return.",
-      "quantities": {
-        "R01": 2,
         "R03": 2,
         "R05": 2,
-        "R06": 2,
-        "R08": 2,
-        "R09": 2,
-        "B01": 2,
-        "B03": 2,
-        "B04": 2,
-        "B06": 2,
-        "B09": 2,
-        "B10": 2
+        "R07": 2,
+        "R10": 2
       },
+      "weakness": "More Loot income, fewer Hero tricks. Discounted strength is paid for with flexibility."
+    },
+    {
+      "id": "fra-lab-0",
+      "hero": "FRA",
+      "name": "Friar Franc · Signature",
       "deck": [
-        "R01",
-        "R01",
-        "R03",
-        "R03",
-        "R05",
-        "R05",
-        "R06",
-        "R06",
-        "R08",
-        "R08",
-        "R09",
-        "R09",
         "B01",
         "B01",
-        "B03",
-        "B03",
         "B04",
         "B04",
+        "B05",
+        "B05",
         "B06",
         "B06",
         "B09",
         "B09",
         "B10",
-        "B10"
-      ]
-    },
-    {
-      "id": "fra-0",
-      "hero": "FRA",
-      "name": "One-Two Punch",
+        "B10",
+        "P01",
+        "P01",
+        "P02",
+        "P02",
+        "P03",
+        "P03",
+        "P05",
+        "P05",
+        "P09",
+        "P09",
+        "P10",
+        "P10"
+      ],
       "fury": "FP1",
-      "plan": "Keep a Basic Reaction for your Hero attack; the plain cards make the combo.",
-      "weakness": "Dual cards committed as attacks cannot also protect you.",
+      "plan": "Earn, spend and recycle. Coins cannot fund both powers and Loot.",
       "quantities": {
+        "B01": 2,
+        "B04": 2,
+        "B05": 2,
+        "B06": 2,
+        "B09": 2,
+        "B10": 2,
         "P01": 2,
         "P02": 2,
         "P03": 2,
         "P05": 2,
         "P09": 2,
-        "P10": 2,
+        "P10": 2
+      },
+      "weakness": "Strong signature tools; fewer ranged and economy answers."
+    },
+    {
+      "id": "fra-lab-1",
+      "hero": "FRA",
+      "name": "Friar Franc · Flexible",
+      "deck": [
+        "B03",
+        "B03",
+        "B04",
+        "B04",
+        "B05",
+        "B05",
+        "B06",
+        "B06",
+        "B07",
+        "B07",
+        "B09",
+        "B09",
+        "P02",
+        "P02",
+        "P03",
+        "P03",
+        "P04",
+        "P04",
+        "P05",
+        "P05",
+        "P06",
+        "P06",
+        "P08",
+        "P08"
+      ],
+      "fury": "FP2",
+      "plan": "Earn, spend and recycle. Coins cannot fund both powers and Loot.",
+      "quantities": {
         "B03": 2,
         "B04": 2,
         "B05": 2,
+        "B06": 2,
         "B07": 2,
-        "B08": 2,
-        "B09": 2
-      },
-      "deck": [
-        "P01",
-        "P01",
-        "P02",
-        "P02",
-        "P03",
-        "P03",
-        "P05",
-        "P05",
-        "P09",
-        "P09",
-        "P10",
-        "P10",
-        "B03",
-        "B03",
-        "B04",
-        "B04",
-        "B05",
-        "B05",
-        "B07",
-        "B07",
-        "B08",
-        "B08",
-        "B09",
-        "B09"
-      ]
-    },
-    {
-      "id": "fra-1",
-      "hero": "FRA",
-      "name": "Last Orders",
-      "fury": "FP2",
-      "plan": "Combine a Hero strike, Basic Reaction and damage boost for a knockout.",
-      "weakness": "Burst spends your answers; an out-of-range hit can waste the setup.",
-      "quantities": {
-        "P01": 2,
+        "B09": 2,
+        "P02": 2,
         "P03": 2,
         "P04": 2,
         "P05": 2,
-        "P07": 2,
-        "P09": 2,
-        "B01": 2,
-        "B04": 2,
-        "B05": 2,
-        "B07": 2,
-        "B08": 2,
-        "B09": 2
+        "P06": 2,
+        "P08": 2
       },
-      "deck": [
-        "P01",
-        "P01",
-        "P03",
-        "P03",
-        "P04",
-        "P04",
-        "P05",
-        "P05",
-        "P07",
-        "P07",
-        "P09",
-        "P09",
-        "B01",
-        "B01",
-        "B04",
-        "B04",
-        "B05",
-        "B05",
-        "B07",
-        "B07",
-        "B08",
-        "B08",
-        "B09",
-        "B09"
-      ]
+      "weakness": "More ways to react, fewer explosive specialist cards."
     },
     {
-      "id": "fra-2",
+      "id": "fra-lab-2",
       "hero": "FRA",
-      "name": "Tricks & Tips",
+      "name": "Friar Franc · Economy",
+      "deck": [
+        "B01",
+        "B01",
+        "B02",
+        "B02",
+        "B03",
+        "B03",
+        "B04",
+        "B04",
+        "B05",
+        "B05",
+        "B06",
+        "B06",
+        "B07",
+        "B07",
+        "B08",
+        "B08",
+        "P03",
+        "P03",
+        "P05",
+        "P05",
+        "P07",
+        "P07",
+        "P10",
+        "P10"
+      ],
       "fury": "FP3",
-      "plan": "Use Basic attacks for Loot and Quick Prayer for fresh combo options.",
-      "weakness": "Lower immediate damage. Avoid spending defense without a useful return.",
+      "plan": "Earn, spend and recycle. Coins cannot fund both powers and Loot.",
       "quantities": {
-        "P02": 2,
-        "P03": 2,
-        "P05": 2,
-        "P06": 2,
-        "P08": 2,
-        "P10": 2,
         "B01": 2,
+        "B02": 2,
         "B03": 2,
+        "B04": 2,
         "B05": 2,
         "B06": 2,
         "B07": 2,
-        "B09": 2
+        "B08": 2,
+        "P03": 2,
+        "P05": 2,
+        "P07": 2,
+        "P10": 2
       },
-      "deck": [
-        "P02",
-        "P02",
-        "P03",
-        "P03",
-        "P05",
-        "P05",
-        "P06",
-        "P06",
-        "P08",
-        "P08",
-        "P10",
-        "P10",
-        "B01",
-        "B01",
-        "B03",
-        "B03",
-        "B05",
-        "B05",
-        "B06",
-        "B06",
-        "B07",
-        "B07",
-        "B09",
-        "B09"
-      ]
+      "weakness": "More Loot income, fewer Hero tricks. Discounted strength is paid for with flexibility."
     }
   ]
 }

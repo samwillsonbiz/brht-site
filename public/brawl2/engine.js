@@ -1,5 +1,5 @@
 import {choosePlan,chooseReaction,choosePrompt} from './reaction-ai.js';
-export const VERSION='brawl2-one-deck-2';
+export const VERSION='brawl2-extremes-1';
 export const LOOT_COST=2;
 export const MAX_HEALTH=20;
 const copy=x=>structuredClone(x);
@@ -16,7 +16,7 @@ export class Brawl2 {
    this.s.players.push({hero:h.id,name:h.name,hp:MAX_HEALTH,pos:i?5:3,coins:0,block:0,skillUnlocked:false,ultimate:false,furyId:fury,loadout:[...deck],hand:[],deck:this.shuffle(deck.map(id=>this.instance(id))),discard:[],loot:[]});
    this.draw(i,7);
   }
-  this.s.edge=this.rand()<.5?0:1;
+  this.s.edge=this.rand()<.5?0:1;this.s.events={};
   this.s.lootDeck=this.shuffle(data.cards.filter(c=>c.category==='Loot').flatMap(c=>[c.id,c.id]));
  }
  static restore(data,s){if(s?.version!==VERSION)throw Error('Start a new One Deck match. Earlier Brawl2 saves use different rules.');const g=Object.create(Brawl2.prototype);g.data=data;g.s=copy(s);return g;}
@@ -46,16 +46,18 @@ export class Brawl2 {
   if(s.committed.every(Boolean))this.flip();
  }
  flip(){
-  const s=this.s;s.lastReaction=null;s.trail=[];s.lastResult=null;s.lastCoin=null;s.mains=s.plans.map(a=>copy(a[s.reveal]||null));
+  const s=this.s;s.speedMods=[0,0];s.tempoQueue=[];s.preparedReveal=null;s.lastReaction=null;s.trail=[];s.lastResult=null;s.lastCoin=null;s.mains=s.plans.map(a=>copy(a[s.reveal]||null));
   s.order=[0,1].filter(i=>s.mains[i]).sort((a,b)=>this.speed(b)-this.speed(a)||(a===s.edge?-1:1));
   s.attackIndex=0;s.active=null;s.turn=null;s.phase='reveal';s.passes=0;s.mods=[{},{}];
   this.log(`Pair ${s.reveal+1}: ${this.def(s.mains[0])?.name||'Pass'} versus ${this.def(s.mains[1])?.name||'Pass'}.`);
-  if(!s.order.length){if(s.reveal===0){s.reveal=1;this.flip();}else this.cleanup();}
+  if(!s.order.length){if(s.reveal===0){s.reveal=1;this.flip();}else this.cleanup();}else{for(const i of [s.edge,1-s.edge]){const c=this.def(s.mains[i]);if(c?.slow&&Math.abs(s.players[0].pos-s.players[1].pos)===1)s.speedMods[1-i]-=c.slow;if(c?.reveal)s.tempoQueue.push({i,...c.reveal});}this.nextTempo();}
  }
- speed(i){return this.def(this.s.mains[i])?.speed||0;}
+ speed(i){return Math.max(0,(this.def(this.s.mains[i])?.speed||0)+(this.s.speedMods?.[i]||0));}
+ nextTempo(){const s=this.s;while(s.tempoQueue.length){const t=s.tempoQueue.shift(),p=s.players[t.i],n=this.cost(t.i,t);if(p[t.resource]>=(t.resource==='hp'?n+1:n)){s.phase='tempo';this.ask(t.i,'tempo',`Pay ${n} ${t.resource} for +${t.speed} Speed?`,[0,1],{...t,n});return;}}s.order.sort((a,b)=>this.speed(b)-this.speed(a)||(a===s.edge?-1:1));s.phase='reveal';}
+ event(k){this.s.events[k]=(this.s.events[k]||0)+1;}
  beginAttack(){
   const s=this.s;s.active=s.order[s.attackIndex];const i=s.active,c=s.mains[i],d=this.def(c);
-  s.mods=[{},{}];s.lastReaction=null;s.trail=[];s.lastCoin=null;s.lastResult={attacker:i,name:d.name,hits:[],walls:[],coin:0};s.drawUsed=[false,false];s.passes=0;
+  s.mods=[{},{}];s.playedReactions=[[],[]];s.preparedReveal=null;s.lastReaction=null;s.trail=[];s.lastCoin=null;s.lastResult={attacker:i,name:d.name,hits:[],walls:[],coin:0};s.drawUsed=[false,false];s.passes=0;
   s.activeSource=`attack-${++s.playSerial}-${c.uid}`;s.context={i,card:c,source:s.activeSource,type:'attack',hit:false};
   const first=d.ops.findIndex(o=>o.op==='hit');s.queue=d.ops.slice(0,first).filter(o=>o.op!=='pay').map(o=>({...o,i}));s.queue.push({op:'openWindow',i});s.phase='pre';
   this.log(`${s.players[i].name} activates ${d.name}.`);this.pump();
@@ -70,7 +72,9 @@ export class Brawl2 {
   const distance=Math.abs(p.pos-s.players[1-i].pos);
   if(d.reactionRange&&(distance<d.reactionRange[0]||distance>d.reactionRange[1]))return false;
   if(d.cost){const n=this.cost(i,d.cost);if(p[d.cost.resource]<(d.cost.resource==='hp'?n+1:n))return false;}
-  if(s.drawUsed[i]&&d.ops.every(o=>o.op==='draw'))return false;
+  if(s.drawUsed[i]&&d.ops.some(o=>o.op==='draw')&&d.ops.every(o=>['draw','discard','scry'].includes(o.op)))return false;
+  if(d.discardCost&&p.hand.filter(x=>x.uid!==c.uid).length<1)return false;
+  if(d.ops.some(o=>o.op==='recover')&&!p.discard.some(x=>s.playedReactions[i].includes(x.uid)&&this.def(x).category==='Basic'))return false;
   return true;
  }
  cost(i,t){const p=this.s.players[i];return t.resource==='hp'&&p.hero==='SHE'&&p.ultimate?Math.max(1,t.n-1):t.n;}
@@ -78,23 +82,23 @@ export class Brawl2 {
  playLoot(i,id){const p=this.s.players[i];this.need(p.loot.includes(id)&&this.def(id)?.kind==='Loot'&&this.canPlay(i,id),'Choose usable Loot on your turn.');p.loot.splice(p.loot.indexOf(id),1);this.playReaction(i,{id,uid:'loot-'+(++this.s.playSerial)},true);}
  playReaction(i,card,loot){
   const s=this.s,p=s.players[i],d=this.reactionDef(card);
-  if(d.cost){const n=this.cost(i,d.cost);p[d.cost.resource]-=n;this.log(`${p.name} pays ${n} ${d.cost.resource==='hp'?'Health':'Block'}.`);this.checkThresholds(i);}
-  if(p.hero==='FRA'&&s.active===i&&d.category==='Basic'&&!s.mods[i].oneTwo&&['Hero','Special'].includes(this.def(s.mains[i])?.category)){s.mods[i].oneTwo=true;s.mods[i].damage=(s.mods[i].damage||0)+(p.ultimate?2:1);this.log(`One-Two: +${p.ultimate?2:1} damage.`);}
+  if(d.cost){const n=this.cost(i,d.cost);p[d.cost.resource]-=n;this.log(`${p.name} pays ${n} ${d.cost.resource==='hp'?'Health':d.cost.resource==='coins'?'Coins':'Block'}.`);this.checkThresholds(i);}
+  if(false&&p.hero==='FRA'&&s.active===i&&d.category==='Basic'&&!s.mods[i].oneTwo&&['Hero','Special'].includes(this.def(s.mains[i])?.category)){s.mods[i].oneTwo=true;s.mods[i].damage=(s.mods[i].damage||0)+(p.ultimate?2:1);this.log(`One-Two: +${p.ultimate?2:1} damage.`);}
   s.lastReaction={player:i,id:card.id};s.context={i,card,source:`reaction-${++s.playSerial}-${card.uid}`,type:'reaction',hit:false,loot};s.passes=0;
-  s.queue=d.ops.map(o=>({...o,i}));s.queue.push({op:'reactionEnd',i,card,loot});s.phase='resolve';this.log(`${p.name} ${loot?'throws':'plays'} ${d.name}${d.kind==='Dual'?' · Reaction half':''}.`);this.pump();
+  s.queue=[...(d.discardCost?[{op:'discard',n:1}]:[]),...d.ops].map(o=>({...o,i}));s.queue.push({op:'reactionEnd',i,card,loot});s.phase='resolve';this.log(`${p.name} ${loot?'throws':'plays'} ${d.name}${d.kind==='Dual'?' · Reaction half':''}.`);this.pump();
  }
  pass(i){const s=this.s;this.need(s.phase==='reaction'&&s.turn===i&&!s.prompt,'It is not your reaction turn.');s.passes++;this.log(`${s.players[i].name} passes (${s.passes}/2).`);if(s.passes===2)this.strike();else s.turn=1-i;}
  strike(){
   const s=this.s,i=s.active,c=s.mains[i],d=this.def(c),first=d.ops.findIndex(o=>o.op==='hit'),m=s.mods[i];s.context={i,card:c,source:s.activeSource,type:'attack',hit:false};
   const ops=[...d.ops.slice(0,first).filter(o=>o.op==='pay'),...d.ops.slice(first)].map(o=>({...o,i}));
-  if(m.push){const at=ops.findIndex(o=>o.op==='push');if(at>=0)ops[at].n+=m.push;else ops.push({op:'push',i,n:m.push,onHit:true});}
+  if(m.push){const at=ops.findIndex(o=>o.op==='push');if(at>=0){if(ops[at].inRange)ops[at].bonusOnHit=m.push;else ops[at].n+=m.push;}else ops.push({op:'push',i,n:m.push,onHit:true});}
   if(m.present)ops.push({op:'selfPresent',i});ops.push({op:'attackEnd',i,card:c});s.queue=ops;s.phase='resolve';this.log('Two passes. Resolve the attack at the current distance.');this.pump();
  }
  availableMoves(i,n){const p=this.s.players[i],o=this.s.players[1-i];return Array.from({length:7},(_,k)=>k+1).filter(v=>v!==o.pos&&Math.abs(v-p.pos)<=n);}
  ask(i,kind,title,choices,task){this.s.prompt={player:i,kind,title,choices,task};}
- choose(i,value){const q=this.s.prompt;this.need(q&&q.player===i&&q.choices.includes(value),'Choose a legal option for your own fighter.');this.s.prompt=null;const t=q.task;if(t.op==='move')this.moveTo(i,value);else if(t.op==='pay'){if(value===1){this.s.players[i][t.resource]-=t.cost;this.s.mods[i].damage=(this.s.mods[i].damage||0)+t.bonus;this.checkThresholds(i);}}else this.force(t,value);this.pump();}
+ choose(i,value){const q=this.s.prompt;this.need(q&&q.player===i&&q.choices.includes(value),'Choose a legal option for your own fighter.');this.s.prompt=null;const t=q.task;if(q.kind==='tempo'){if(value){this.s.players[i][t.resource]-=t.n;this.s.speedMods[i]+=t.speed;this.checkThresholds(i);this.log(`${this.s.players[i].name} pays ${t.n} ${t.resource==='hp'?'Health':t.resource==='coins'?'Coins':'Block'}: +${t.speed} Speed.`);this.event('tempoPayments');}this.nextTempo();return;}if(q.kind==='discard'){const p=this.s.players[i],c=p.hand.find(c=>c.uid===value);p.hand=p.hand.filter(c=>c.uid!==value);p.discard.push(c);this.log(`${p.name} discards ${this.def(c).name}.`);this.event(t.forced?'forcedDiscards':'ownDiscards');this.pump();return;}if(q.kind==='scry'){const p=this.s.players[i],top=t.cards,keep=value?value.split(','):[];p.deck.splice(p.deck.length-top.length);const bottom=top.filter(c=>!keep.includes(c.uid));p.deck.unshift(...bottom);p.deck.push(...keep.map(uid=>top.find(c=>c.uid===uid)).reverse());this.log(`${p.name} scries ${top.length}: keeps ${keep.length} on top.`);this.event('scries');this.pump();return;}if(q.kind==='recover'){const p=this.s.players[i],c=p.discard.find(c=>c.uid===value);p.discard=p.discard.filter(c=>c.uid!==value);p.hand.push(c);this.log(`${p.name} recovers ${this.def(c).name}.`);this.event('recovered');this.pump();return;}if(t.op==='invest'){if(value){this.s.players[i][t.resource]-=t.cost;this.s.mods[i].damage=(this.s.mods[i].damage||0)+t.bonus;this.checkThresholds(i);this.log(`${this.s.players[i].name} pays ${t.cost} Health: +${t.bonus} damage before reactions.`);this.event('investments');}this.pump();return;}if(t.op==='adjacent')this.moveTo(i,value);else if(t.op==='move')this.moveTo(i,value);else if(t.op==='pay'){if(value===1){this.s.players[i][t.resource]-=t.cost;this.s.mods[i].damage=(this.s.mods[i].damage||0)+t.bonus;this.checkThresholds(i);}}else this.force(t,value);this.pump();}
  moveTo(i,to){const p=this.s.players[i],from=p.pos,o=this.s.players[1-i];p.pos=to;this.crossing(i,from,to,o.pos);this.log(to===from?`${p.name} stays on ${from}.`:`${p.name} moves ${from} → ${to}.`);}
- crossing(i,from,to,rival){const s=this.s,p=s.players[i],m=s.mods[i];if(p.hero!=='RAV'||s.context?.type==='attack'&&s.context.hit||s.active==null||m.crossed||Math.sign(from-rival)===Math.sign(to-rival))return;m.crossed=true;const n=p.ultimate?3:2;if(s.active===i)m.damage=(m.damage||0)+n;else p.block=Math.min(6,p.block+n);this.log(`Slippery: +${n} ${s.active===i?'damage':'Block'}.`);}
+ crossing(i,from,to,rival){const s=this.s,p=s.players[i],m=s.mods[i];if(p.hero!=='RAV'||s.context?.type==='attack'&&s.context.hit||s.active==null||m.crossed||Math.sign(from-rival)===Math.sign(to-rival))return;m.crossed=true;const n=p.ultimate?3:2;if(s.active===i)m.damage=(m.damage||0)+n;else return;this.log(`Slippery: +${n} ${s.active===i?'damage':'Block'}.`);}
  heal(i,n){const p=this.s.players[i],before=p.hp;p.hp=Math.min(MAX_HEALTH,p.hp+n+(p.hero==='SHE'?1:0));this.log(`${p.name} heals ${p.hp-before} · ${p.hp} Health.`);}
  checkThresholds(i){const p=this.s.players[i];if(p.hp<=0)return;if(p.hp<=10&&!p.skillUnlocked){p.skillUnlocked=true;p.hand.push(this.instance(p.furyId));this.log(`${p.name} unlocks ${this.def(p.furyId).name}! Commit it in a future round.`);}if(p.hp<=5&&!p.ultimate){p.ultimate=true;this.log(`${p.name} unlocks ${this.data.heroes.find(h=>h.id===p.hero).ultimate.name}!`);}}
  damage(target,n,source,{pierce=false,ignore=0,self=false}={}){
@@ -108,14 +112,24 @@ export class Brawl2 {
   s.queue=[];s.prompt=null;s.turn=null;this.log(s.winner==='draw'?'Double knockout!':`${s.players[s.winner].name} wins!`);
  }}
  force(t,n){if(!n)return;const s=this.s,p=s.players[t.i],o=s.players[1-t.i],from=o.pos,dir=Math.sign(o.pos-p.pos)*(t.op==='pull'?-1:1),raw=from+dir*n;let to=Math.max(1,Math.min(7,raw));if(t.op==='pull')to=dir>0?Math.min(to,p.pos-1):Math.max(to,p.pos+1);o.pos=to;this.log(`${p.name} ${t.op==='pull'?'pulls':'launches'} ${o.name} ${from} → ${to}.`);if(t.op==='push'&&(raw<1||raw>7)){const damage=p.hero==='SMA'?(p.ultimate?3:2):1;this.log('WALL SLAM!');if(s.lastResult)s.lastResult.walls.push({damage,target:1-t.i});this.damage(1-t.i,damage,s.context.source,{pierce:true});}}
- attackInfo(i=this.s.active){if(i===null||i===undefined)return null;const s=this.s,c=this.def(s.mains[i]);if(!c)return null;const p=s.players[i],o=s.players[1-i],m=s.mods[i];return {name:c.name,distance:Math.abs(p.pos-o.pos),hits:c.ops.filter(t=>t.op==='hit').map((h,k)=>({damage:h.n+(k===0?m.damage||0:0)+(p.hero==='ALF'&&Math.abs(p.pos-o.pos)>=2?(p.ultimate?2:1):0),min:m.minimum??h.min,max:h.max+(p.hero==='ALF'&&h.min>=2?1:0)+(m.range||0),ignore:(h.ignore||0)+(m.ignore||0),pierce:!!(h.pierce||m.pierce)})),payment:c.ops.filter(t=>t.op==='pay').map(t=>({resource:t.resource,cost:this.cost(i,t),bonus:t.bonus})),block:o.block};}
+ attackInfo(i=this.s.active){if(i===null||i===undefined)return null;const s=this.s,c=this.def(s.mains[i]);if(!c)return null;const p=s.players[i],o=s.players[1-i],m=s.mods[i];return {name:c.name,distance:Math.abs(p.pos-o.pos),hits:c.ops.filter(t=>t.op==='hit').map((h,k)=>({damage:h.n+(p.hero==='FRA'&&p.ultimate&&p.coins>=3&&c.category!=='Basic'?2:0)+(k===0?m.damage||0:0)+(p.hero==='ALF'&&Math.abs(p.pos-o.pos)>=2?(p.ultimate?2:1):0),min:m.minimum??h.min,max:h.max+(p.hero==='ALF'&&h.min>=2?1:0)+(m.range||0),ignore:(h.ignore||0)+(m.ignore||0),pierce:!!(h.pierce||m.pierce)})),payment:c.ops.filter(t=>t.op==='pay').map(t=>({resource:t.resource,cost:this.cost(i,t),bonus:t.bonus})),block:o.block};}
  pump(){const s=this.s;let guard=0;while(['pre','resolve'].includes(s.phase)&&!s.prompt&&s.queue.length){
   if(++guard>100)throw Error('Resolution overflow.');const t=s.queue.shift(),p=s.players[t.i],o=s.players[1-t.i],m=s.mods[t.i],ctx=s.context;
-  if(t.attackingOnly&&s.active!==t.i||t.onHit&&!ctx.hit||t.rangeMax&&Math.abs(p.pos-o.pos)>t.rangeMax)continue;
+  if(t.attackingOnly&&s.active!==t.i||t.onHit&&!ctx.hit||t.inRange&&!ctx.inRange||t.rangeMax&&Math.abs(p.pos-o.pos)>t.rangeMax)continue;
   switch(t.op){
+   case'coin':{const n=Math.min(t.n,8-p.coins);p.coins+=n;this.event('coinEffects');this.log(`${p.name} gains ${n} Coins.`);break;}
+   case'burnCoins':{const n=Math.min(t.n,o.coins);o.coins-=n;this.log(`${o.name} loses ${n} Coins to Pinning Shot.`);this.event('coinsDenied');break;}
+   case'steal':{const n=Math.min(t.n,o.coins,8-p.coins);o.coins-=n;p.coins+=n;if(n)this.event('coinStolen');this.log(`${p.name} steals ${n} Coins.`);break;}
+   case'discard':case'disrupt':{const target=t.op==='disrupt'?1-t.i:t.i,hand=s.players[target].hand;if(hand.length)this.ask(target,'discard','Choose a card from your uncommitted hand to discard.',hand.map(c=>c.uid),{...t,forced:t.op==='disrupt'});break;}
+   case'scry':{if(!p.deck.length){p.deck=this.shuffle(p.discard);p.discard=[];}const cards=p.deck.slice(-t.n).reverse(),choices=[''];const add=(kept,left)=>{for(const c of left){const next=[...kept,c.uid];choices.push(next.join(','));add(next,left.filter(x=>x.uid!==c.uid));}};add([],cards);if(cards.length)this.ask(t.i,'scry','Look at these cards; choose top order, bottom the others.',choices,{...t,cards});break;}
+   case'forecast':{if(!p.deck.length){p.deck=this.shuffle(p.discard);p.discard=[];}const card=p.deck.pop();if(card){p.deck.unshift(card);const attack=this.isAttack(card);if(attack){m.damage=(m.damage||0)+2;m.ignore=(m.ignore||0)+2;}else{m.range=(m.range||0)+2;m.minimum=1;}s.preparedReveal={player:t.i,id:card.id,attack};this.log(`${p.name} reveals ${this.def(card).name}: ${attack?'+2 damage · ignore 2 Block':'minimum Range 1 · +2 maximum Range'}. Card goes to the bottom.`);this.event('preparedReveals');}break;}
+   case'recover':{const cards=p.discard.filter(c=>s.playedReactions[t.i].includes(c.uid)&&this.def(c).category==='Basic');if(cards.length)this.ask(t.i,'recover','Return a Basic Reaction played this exchange.',cards.map(c=>c.uid),t);break;}
+   case'adjacent':{const choices=[o.pos-1,o.pos+1].filter(v=>v>=1&&v<=7);this.ask(t.i,'move','Move to an empty adjacent space.',choices,t);break;}
+   case'invest':{const cost=this.cost(t.i,t);if(p[t.resource]>=cost+1)this.ask(t.i,'invest','Pay before the rival reacts?',[0,1],{...t,cost});break;}
+   case'defReward':m.defReward=true;break;
    case'openWindow':s.phase='reaction';s.turn=1-s.active;s.context=null;this.log(`${s.players[s.turn].name} reacts first. Play a card or pass.`);break;
    case'move':this.ask(t.i,'move',`Move up to ${t.n}. Click a space; your current space means stay.`,this.availableMoves(t.i,t.n),t);break;
-   case'block':p.block=Math.min(6,p.block+t.n);this.log(`${p.name} gains ${t.n} Block.`);break;
+   case'block':{const n=Math.min(t.n,6-p.block);p.block+=n;this.log(`${p.name} gains ${n} Block.`);break;}
    case'boost':m.damage=(m.damage||0)+t.n;this.log(`Current attack: +${t.n} damage.`);break;
    case'reach':m.range=(m.range||0)+t.n;this.log(`Current attack: +${t.n} maximum Range.`);break;
    case'minimum':m.minimum=t.n;this.log(`Current attack: minimum Range ${t.n}.`);break;
@@ -127,22 +141,22 @@ export class Brawl2 {
    case'shred':o.block=Math.max(0,o.block-t.n);this.log(`${o.name} loses up to ${t.n} Block.`);break;
    case'swap':{const a=p.pos;p.pos=o.pos;o.pos=a;this.log('Banana Peel swaps the fighters!');break;}
    case'ping':this.damage(1-t.i,t.n,ctx.source);break;
-   case'draw':if(!s.drawUsed[t.i]){s.drawUsed[t.i]=true;const n=p.hand.length;this.draw(t.i,t.n);this.log(`${p.name} explicitly draws ${p.hand.length-n} cards.`);}break;
-   case'pay':{const cost=this.cost(t.i,t);if(p[t.resource]>=(t.resource==='hp'?cost+1:cost))this.ask(t.i,'pay',`Spend ${cost} ${t.resource==='hp'?'Health':'Block'} for +${t.bonus} damage?`,[0,1],{...t,cost});break;}
+   case'draw':if(!s.drawUsed[t.i]){s.drawUsed[t.i]=true;this.event('drawEffects');const n=p.hand.length;this.draw(t.i,t.n);this.log(`${p.name} explicitly draws ${p.hand.length-n} cards.`);}break;
+   case'pay':{const cost=this.cost(t.i,t);if(p[t.resource]>=(t.resource==='hp'?cost+1:cost))this.ask(t.i,'pay',`Spend ${cost} ${t.resource==='hp'?'Health':t.resource==='coins'?'Coins':'Block'} for +${t.bonus} damage?`,[0,1],{...t,cost});break;}
    case'hit':{const info=this.attackInfo(t.i),h=info.hits[0],distance=info.distance;if(distance<h.min||distance>h.max){s.lastResult.hits.push({damage:0,blocked:0,loss:0,miss:true,distance});this.log(`${this.def(ctx.card).name} misses at Range ${distance}.`);break;}
-    const blocked=h.pierce?0:Math.min(Math.max(0,o.block-h.ignore),h.damage);s.lastResult.hits.push({damage:h.damage,blocked,loss:h.damage-blocked,miss:false,pierce:h.pierce,ignore:h.ignore});
+    ctx.inRange=true;const blocked=h.pierce?0:Math.min(Math.max(0,o.block-h.ignore),h.damage);s.lastResult.hits.push({damage:h.damage,blocked,loss:h.damage-blocked,miss:false,pierce:h.pierce,ignore:h.ignore});
     const dealt=this.damage(1-t.i,h.damage,ctx.source,{pierce:h.pierce,ignore:h.ignore});m.damage=0;if(dealt)ctx.hit=true;break;}
-   case'push':this.ask(t.i,'push',`Push up to ${t.n}. Choose a distance.`,Array.from({length:t.n+1},(_,k)=>k),t);break;
+   case'push':t.n+=ctx.hit?(t.bonusOnHit||0):0;this.ask(t.i,'push',`Push up to ${t.n}. Choose a distance.`,Array.from({length:t.n+1},(_,k)=>k),t);break;
    case'pull':{const max=Math.min(t.n,Math.max(0,Math.abs(p.pos-o.pos)-1));if(max)this.ask(t.i,'pull',`Pull up to ${max}. Choose a distance.`,Array.from({length:max+1},(_,k)=>k),t);else this.log('Already adjacent: no pull.');break;}
    case'selfPresent':if(ctx.hit)this.damage(t.i,1,ctx.source,{self:true});break;
-   case'reactionEnd':if(t.loot)s.lootDiscard.push(t.card.id);else p.discard.push(t.card);s.phase='reaction';s.turn=1-t.i;s.context=null;this.log(`${s.players[s.turn].name}: react or pass.`);break;
-   case'attackEnd':p.discard.push(t.card);s.plans[t.i][s.reveal].spent=true;if(this.def(t.card).category==='Basic'){const earned=Math.min(1,8-p.coins);p.coins+=earned;s.lastCoin={player:t.i,amount:earned,name:this.def(t.card).name};s.lastResult.coin=earned;this.log(`${p.name}: +${earned} Coin · Basic Attack${earned?'':' (Coin cap 8)'}.`);}s.players.forEach(p=>p.block=p.hero==='HEL'?Math.min(p.block,p.ultimate?4:2):0);s.phase='result';s.turn=null;s.context=null;this.log(`${this.def(t.card).name} finished. No cards are drawn.`);break;
+   case'reactionEnd':s.playedReactions[t.i].push(t.card.uid);if(t.loot)s.lootDiscard.push(t.card.id);else p.discard.push(t.card);s.phase='reaction';s.turn=1-t.i;s.context=null;this.log(`${s.players[s.turn].name}: react or pass.`);break;
+   case'attackEnd':if(s.mods[1-t.i].defReward&&s.lastResult.hits.every(h=>!h.loss)){o.coins=Math.min(8,o.coins+1);this.event('defRewards');}p.discard.push(t.card);s.plans[t.i][s.reveal].spent=true;if(this.def(t.card).category==='Basic'){const earned=Math.min(p.hero==='FRA'?2:1,8-p.coins);p.coins+=earned;s.lastCoin={player:t.i,amount:earned,name:this.def(t.card).name};s.lastResult.coin=earned;this.log(`${p.name}: +${earned} Coin · Basic Attack${earned?'':' (Coin cap 8)'}.`);}s.players.forEach(p=>p.block=p.hero==='HEL'?Math.min(p.block,p.ultimate?5:3):0);s.phase='result';s.turn=null;s.context=null;this.log(`${this.def(t.card).name} finished. No cards are drawn.`);break;
   }
  }}
  cleanup(){const s=this.s;
   for(let i=0;i<2;i++){const p=s.players[i];p.block=0;const kept=p.hand.length;this.draw(i,Math.min(4,Math.max(0,7-kept)));s.lastRefill[i]={round:s.round+1,kept,drawn:p.hand.length-kept,total:p.hand.length};}
   if(s.round>=10){const n=Math.min(18,s.round-8);s.players.forEach(p=>p.hp=Math.max(0,p.hp-n));this.log(`Sudden Death: both lose ${n} Health.`);this.checkKO();if(s.phase==='over')return;s.players.forEach((_,i)=>this.checkThresholds(i));}
-  s.lastReaction=null;s.trail=[];s.lastResult=null;s.lastCoin=null;s.round++;s.edge=1-s.edge;s.reveal=0;s.attackIndex=0;s.active=null;s.turn=null;s.passes=0;s.order=[];s.plans=[[],[]];s.mains=[null,null];s.committed=[false,false];s.mods=[{},{}];s.queue=[];s.context=null;
+  s.preparedReveal=null;s.lastReaction=null;s.trail=[];s.lastResult=null;s.lastCoin=null;s.round++;s.edge=1-s.edge;s.reveal=0;s.attackIndex=0;s.active=null;s.turn=null;s.passes=0;s.order=[];s.plans=[[],[]];s.mains=[null,null];s.committed=[false,false];s.mods=[{},{}];s.queue=[];s.context=null;
   s.shopDone=s.players.map(p=>p.coins<LOOT_COST||p.loot.length>=2);s.phase=s.shopDone.every(Boolean)?'program':'shop';this.log('Round complete. Keep unused cards; draw up to 4, stopping at 7.');
  }
  shop(i,buy){const s=this.s,p=s.players[i];this.need(s.phase==='shop'&&!s.shopDone[i],'Your purchase window is closed.');if(buy){this.need(p.coins>=LOOT_COST&&p.loot.length<2,'Loot costs 2 Coins; hold at most two.');if(!s.lootDeck.length){s.lootDeck=this.shuffle(s.lootDiscard);s.lootDiscard=[];}this.need(s.lootDeck.length,'No Loot remains.');p.coins-=LOOT_COST;p.loot.push(s.lootDeck.pop());this.log(`${p.name} buys a secret Loot.`);}s.shopDone[i]=true;if(s.shopDone.every(Boolean))s.phase='program';}
