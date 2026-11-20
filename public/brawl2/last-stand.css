@@ -1,0 +1,26 @@
+/* Last Stand accessories stay attached to the fighter, separate from sprite facing. */
+.r-fighter .ls-prop{position:absolute;display:block;pointer-events:none;z-index:3;inset:0;background:none;border-radius:0;width:100%;height:100%;filter:drop-shadow(0 3px 2px #0008)}
+.r-fighter .ls-prop svg{width:100%;height:100%;overflow:visible}
+.r-fighter .ls-prop-SMA{width:122%;height:122%;left:-48%;top:-34%;transform:rotate(-12deg)}
+.r-fighter .ls-prop-ALF{width:100%;height:100%;top:17%;left:0}
+.r-fighter.ls-ALF>img{transform:translateY(-12%)}
+.r-fighter .ls-prop-SHE{width:155%;height:130%;left:-27%;top:-40%;z-index:0}
+.r-fighter.ls-SHE>img{position:relative;z-index:1;animation:ls-float 3s ease-in-out infinite}
+.r-fighter .ls-prop-HEL{width:74%;height:82%;left:-24%;top:18%}
+.r-fighter .ls-prop-FRA{width:80%;height:80%;left:58%;top:34%}
+.r-fighter.rival.ls-ALF>img{transform:translateY(-12%) scaleX(-1)}
+.r-fighter.ls-on{filter:drop-shadow(0 0 8px #e8bf6640)}
+.r-fighter .ls-label{position:absolute;left:50%;bottom:-12px;transform:translateX(-50%);white-space:nowrap;background:#151b28e8;border:1px solid #d9b46f;color:#ffe3a0;border-radius:10px;padding:3px 6px;font-size:8px;letter-spacing:1px;z-index:8;pointer-events:none}
+.ls-shadow{z-index:1!important;filter:none!important;opacity:1!important}
+.ls-shadow>img{filter:brightness(0) drop-shadow(0 0 3px #b992fb)!important;opacity:1!important}
+.ls-shadow .ls-label{border-color:#a98cce;color:#d4b8ff}
+.ls-shadow:disabled{opacity:1}
+.ls-shadow:not(:disabled){cursor:pointer}.ls-shadow:not(:disabled):hover>img{filter:brightness(0) drop-shadow(0 0 7px #c7a4ff)!important}
+.ls-shadow.ls-overlap{margin-left:-35px;scale:.88}
+.ls-status{display:block;font-size:9px;color:#c1ccd1;margin-top:3px;letter-spacing:.3px}.ls-status.active{color:#ffe09b}.ls-status.pinned{color:#ffba9d}
+.ls-action{border:1px solid #c9a7ec!important;color:#e5cbff!important;background:#30233e!important;font-weight:700}
+.ls-pin{position:absolute;top:12%;left:50%;transform:translateX(-50%);z-index:5;color:#fff0c8;background:#763825;border:1px solid #ffba7f;border-radius:5px;padding:3px 6px;font-size:10px;font-weight:800}
+.ls-stash-choice{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}.ls-stash-choice>button{max-width:230px}
+@keyframes ls-float{0%,100%{translate:0 -18%}50%{translate:0 -26%}}
+@media(prefers-reduced-motion:reduce){.r-fighter.ls-SHE>img{animation:none;translate:0 -20%}}
+@media(max-width:700px){.r-fighter .ls-label{font-size:7px}.r-fighter .ls-prop-SMA{width:100%;left:-25%}.ls-status{font-size:8px}.r-fighter .ls-prop-FRA{left:40%}}

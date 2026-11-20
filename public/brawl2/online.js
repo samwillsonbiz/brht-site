@@ -1,6 +1,6 @@
 import {Brawl2,VERSION} from './engine.js';
 export const ROOM_API='/api/brawl2';
-const PREFIX='fable-brawl2-extremes1-room-';
+const PREFIX='fable-brawl2-laststand1-room-';
 export function invitation(){const p=new URLSearchParams(location.hash.replace(/^#/,''));return {room:p.get('room'),invite:p.get('invite')};}
 export function savedSeat(room){try{return JSON.parse(localStorage.getItem(PREFIX+room)||'null');}catch{return null;}}
 export function rememberSeat(room,token,invite){try{localStorage.setItem(PREFIX+room,JSON.stringify({token,invite}));}catch{/* Active tabs still keep their seat in memory. */}}
@@ -45,6 +45,7 @@ export class OnlineGame extends Brawl2{
   pass(i){if(i!==this.seat)throw Error('Pass on your own turn.');return this.command('pass');}
   advance(){return this.command('advance');}
   playLoot(i,card){if(i!==this.seat)throw Error('Choose your own Loot.');return this.command('loot',{card});}
+  useLastStand(i){if(i!==this.seat)throw Error('Use your own Last Stand.');return this.command('last-stand');}
   choose(i,value){if(i!==this.seat)throw Error('Choose your own move.');return this.command('choose',{value});}
   shop(i,buy){if(i!==this.seat)throw Error('Buy your own Loot.');return this.command('shop',{buy});}
 }

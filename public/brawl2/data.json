@@ -9,8 +9,8 @@
       "trait": "Wallbreaker",
       "traitText": "your wall slams deal 2 damage instead of 1.",
       "ultimate": {
-        "name": "Bring the House Down",
-        "text": "once unlocked at 5 Health, your wall slams deal 3 instead of 2."
+        "name": "You're Not Going Anywhere",
+        "text": "After your attack deals Health damage, pin the rival: they cannot move voluntarily until their next attack finishes. Pushes and pulls still work."
       },
       "weakness": "Slow punches can miss. Draft movement to catch Alf.",
       "recommended": {
@@ -71,8 +71,8 @@
       "trait": "Long Shot",
       "traitText": "Your ranged attacks get +1 maximum Range. At Range 2 or more, your attacks deal +1 damage.",
       "ultimate": {
-        "name": "No Safe Distance",
-        "text": "At Range 2 or more, your attacks deal +2 damage instead of +1. Keep +1 maximum Range."
+        "name": "Emergency Spring Boots",
+        "text": "When your attack activates, you may move 1 space before its printed movement. The rival then reacts normally."
       },
       "weakness": "Power Shot cannot hit next door. Draft escapes and close-range backup.",
       "recommended": {
@@ -133,8 +133,8 @@
       "trait": "Good Medicine",
       "traitText": "Your healing cards restore 1 extra Health.",
       "ultimate": {
-        "name": "Miracle Worker",
-        "text": "Your Health payments cost 1 less, minimum 1. Good Medicine stays active."
+        "name": "Malpractical Flight",
+        "text": "Your attacks gain +1 maximum Range. Your arena position, minimum Range and enemy attacks are unchanged."
       },
       "weakness": "Health payments leave you vulnerable. They never grant Fury.",
       "recommended": {
@@ -195,8 +195,8 @@
       "trait": "Shield Bank",
       "traitText": "After each attack, keep up to 3 unused Block. Clear it at round end.",
       "ultimate": {
-        "name": "Absolutely Not",
-        "text": "Shield Bank keeps up to 5 unused Block instead of 3."
+        "name": "Hit Me. I Dare You.",
+        "text": "After an enemy attack connects in range, reflect 1 damage, even if fully blocked. Once per attack; ignores Block. Misses and Loot do not trigger it. Resolve reflection before checking victory; simultaneous knockouts draw."
       },
       "weakness": "Hits can break your shield before you spend it.",
       "recommended": {
@@ -257,8 +257,8 @@
       "trait": "Slippery",
       "traitText": "Your first crossing before your own strike gives +2 damage. Crossing while defending gives no Block.",
       "ultimate": {
-        "name": "Living Shadow",
-        "text": "Crossing during your own attack gives +3 damage instead."
+        "name": "My Shadow Has Other Plans",
+        "text": "Place your shadow on your space. Once per round, as your reaction, swap places with it. It stays on your old space. It cannot be attacked and does not block spaces. No swap onto the rival or while pinned. Refresh each round."
       },
       "weakness": "You need a landing space beyond your rival. No facing bookkeeping.",
       "recommended": {
@@ -319,8 +319,8 @@
       "trait": "Hustler",
       "traitText": "Your Basic Attacks earn 2 Coins instead of 1.",
       "ultimate": {
-        "name": "Money Talks",
-        "text": "While holding at least 3 Coins, your Hero and Fury attacks deal +2 damage."
+        "name": "The Emergency Stash",
+        "text": "Draw 1 free Loot on activation; at two Loot, you may replace one before drawing. As your reaction, buy Loot for 1 Coin, holding at most two. Your opponent responds before you can play it."
       },
       "weakness": "The finisher still needs Range. Your first card reveals your setup.",
       "recommended": {
@@ -4198,7 +4198,7 @@
     ],
     [
       "Block & damage",
-      "Block caps at 6. Damage consumes Block unless ignored. Ignore X bypasses X Block without consuming it. Ignore all bypasses all. Clear Block after each attack, except Helga banks up to 3 (5 when upgraded). All Block clears at round end."
+      "Block caps at 6. Damage consumes Block unless ignored. Ignore X bypasses X Block without consuming it. Ignore all bypasses all. Clear Block after each attack, except Helga banks up to 3. All Block clears at round end."
     ],
     [
       "Coins & Loot",
@@ -4221,15 +4221,15 @@
       "Finish both attacks in the first pair, then reveal and resolve pair two. Keep unused cards. Draw up to 4, stopping at 7 in hand. No free discard. Refill an empty deck by shuffling your discard. Edge alternates."
     ],
     [
-      "Fury",
-      "At 10 Health or less, your chosen Fury enters your hand once; commit it in a future round. At 5 Health or less, upgrade your Hero ability permanently. Healing does not undo unlocks."
-    ],
-    [
       "Win",
       "Reduce the rival to 0 Health; stop immediately. At round 10 cleanup both lose 2 Health, then one more per later round, capped at 18. Simultaneous knockouts are a draw."
+    ],
+    [
+      "Fury & Last Stand",
+      "Base passives work from the start. At 10 Health or less, your chosen Fury enters your hand once. The first time you reach 5 Health or less, finish the current card; if you survive, activate Last Stand for the rest of the fight, even if you heal. Last Stand replaces the old passive upgrade. A lethal hit does not unlock it. Helga’s already-active reflection resolves before victory."
     ]
   ],
-  "version": "brawl2-extremes-1",
+  "version": "brawl2-last-stand-1",
   "builds": [
     {
       "id": "sma-lab-0",

@@ -1,5 +1,5 @@
-import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import {Brawl2} from '../lib/brawl2/engine.mjs';import {forecast,unavailableReason,combatStep} from '../public/brawl2/combat-view.js';
-const data=JSON.parse(fs.readFileSync(new URL('../lib/brawl2/data.json',import.meta.url)));
+import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import {Brawl2} from '../public/brawl2/engine.js';import {forecast,unavailableReason,combatStep} from '../public/brawl2/combat-view.js';
+const data=JSON.parse(fs.readFileSync(new URL('../public/brawl2/data.json',import.meta.url)));
 function active(){const g=new Brawl2(data,{seed:3});g.s.edge=0;g.s.players[0].hand=['S01','B02','B09'].map(id=>g.instance(id));g.s.players[1].hand=['B02','B02','A05','A06'].map(id=>g.instance(id));g.s.players[1].pos=4;for(let i=0;i<2;i++)g.commit(i,g.hand(i,'Attack').slice(0,2).map(c=>c.uid));g.advance();return g;}
 test('partial Block ignore forecast matches damage and threatened spaces',()=>{const g=active();g.s.players[1].block=6;const f=forecast(g);assert.equal(f.loss,3);assert.equal(f.hits[0].ignore,1);assert.deepEqual(f.spaces,[2,4]);g.pass(1);g.pass(0);assert.equal(g.s.lastResult.hits[0].loss,f.loss);});
 test('card explanations distinguish Attack-only, own-attack, defender and turn',()=>{const g=active();assert.match(unavailableReason(g,1,'B02'),/Attack only/);assert.equal(unavailableReason(g,1,'A06'),'Your attacks only');g.pass(1);assert.equal(unavailableReason(g,1,'A05'),'Opponent’s turn');});
