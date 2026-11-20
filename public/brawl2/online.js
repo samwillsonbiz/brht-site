@@ -1,10 +1,10 @@
 import {Brawl2,VERSION} from './engine.js';
 export const ROOM_API='/api/brawl2';
-const PREFIX='fable-brawl2-reactions4-room-';
+const PREFIX='fable-brawl2-one-deck1-room-';
 export function invitation(){const p=new URLSearchParams(location.hash.replace(/^#/,''));return {room:p.get('room'),invite:p.get('invite')};}
 export function savedSeat(room){try{return JSON.parse(localStorage.getItem(PREFIX+room)||'null');}catch{return null;}}
 export function rememberSeat(room,token,invite){try{localStorage.setItem(PREFIX+room,JSON.stringify({token,invite}));}catch{/* Active tabs still keep their seat in memory. */}}
-export async function onlineSupported(){if(location.protocol==='file:'||location.hostname.endsWith('.chatgpt.site'))return false;try{const r=await fetch(ROOM_API,{cache:'no-store',signal:AbortSignal.timeout(5000)});return r.ok&&(await r.json()).online===true;}catch{return false;}}
+export async function onlineSupported(){if(location.protocol==='file:'||location.hostname.endsWith('.chatgpt.site'))return false;try{const r=await fetch(ROOM_API,{cache:'no-store',signal:AbortSignal.timeout(5000)});const status=await r.json();return r.ok&&status.online===true&&status.engineVersion===VERSION;}catch{return false;}}
 async function api(body,{token,room,signal}={}){
   const r=await fetch(ROOM_API+(body?'':'?room='+encodeURIComponent(room)),{method:body?'POST':'GET',cache:'no-store',headers:{...(body?{'Content-Type':'application/json'}:{}),...(token?{Authorization:`Bearer ${token}`}:{})},...(body?{body:JSON.stringify({...body,engineVersion:VERSION})}:{}),signal:signal||AbortSignal.timeout(15000)});
   const result=await r.json().catch(()=>({error:'The room service did not respond. Please try again.'}));
