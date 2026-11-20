@@ -1,26 +1,60 @@
-/* Last Stand accessories stay attached to the fighter, separate from sprite facing. */
-.r-fighter .ls-prop{position:absolute;display:block;pointer-events:none;z-index:3;inset:0;background:none;border-radius:0;width:100%;height:100%;filter:drop-shadow(0 3px 2px #0008)}
-.r-fighter .ls-prop svg{width:100%;height:100%;overflow:visible}
-.r-fighter .ls-prop-SMA{width:122%;height:122%;left:-48%;top:-34%;transform:rotate(-12deg)}
-.r-fighter .ls-prop-ALF{width:100%;height:100%;top:17%;left:0}
-.r-fighter.ls-ALF>img{transform:translateY(-12%)}
-.r-fighter .ls-prop-SHE{width:155%;height:130%;left:-27%;top:-40%;z-index:0}
-.r-fighter.ls-SHE>img{position:relative;z-index:1;animation:ls-float 3s ease-in-out infinite}
-.r-fighter .ls-prop-HEL{width:74%;height:82%;left:-24%;top:18%}
-.r-fighter .ls-prop-FRA{width:80%;height:80%;left:58%;top:34%}
-.r-fighter.rival.ls-ALF>img{transform:translateY(-12%) scaleX(-1)}
-.r-fighter.ls-on{filter:drop-shadow(0 0 8px #e8bf6640)}
-.r-fighter .ls-label{position:absolute;left:50%;bottom:-12px;transform:translateX(-50%);white-space:nowrap;background:#151b28e8;border:1px solid #d9b46f;color:#ffe3a0;border-radius:10px;padding:3px 6px;font-size:8px;letter-spacing:1px;z-index:8;pointer-events:none}
+/* Hero art is a complete illustrated sprite, never a floating equipment overlay. */
+.r-arena{height:162px}
+.r-fighter{width:160px;height:157px}
+.r-fighter.ls-on{width:182px;height:164px;filter:drop-shadow(0 0 9px #f1c77f30)}
+.r-fighter.ls-SMA{width:230px;height:166px}
+.r-fighter.ls-HEL{width:200px;height:164px}
+.r-fighter.ls-SHE{width:190px;height:178px}
+.r-fighter.ls-on>img{object-fit:contain;object-position:center bottom}
+.r-fighter.ls-SHE>img{animation:ls-float 3.5s ease-in-out infinite}
+.r-fighter .ls-label{position:absolute;left:50%;bottom:-8px;transform:translateX(-50%);white-space:nowrap;background:#111a25ed;border:1px solid #e7c280;color:#ffedbb;border-radius:3px;padding:3px 8px;font-size:8px;letter-spacing:1.4px;z-index:8;pointer-events:none;box-shadow:0 2px 8px #0007}
 .ls-shadow{z-index:1!important;filter:none!important;opacity:1!important}
-.ls-shadow>img{filter:brightness(0) drop-shadow(0 0 3px #b992fb)!important;opacity:1!important}
-.ls-shadow .ls-label{border-color:#a98cce;color:#d4b8ff}
+.ls-shadow>img{filter:brightness(0) drop-shadow(0 0 4px #b992fb)!important;opacity:1!important}
+.ls-shadow .ls-label{border-color:#b89be5;color:#dfc6ff}
 .ls-shadow:disabled{opacity:1}
-.ls-shadow:not(:disabled){cursor:pointer}.ls-shadow:not(:disabled):hover>img{filter:brightness(0) drop-shadow(0 0 7px #c7a4ff)!important}
+.ls-shadow:not(:disabled){cursor:pointer}.ls-shadow:not(:disabled):hover>img{filter:brightness(0) drop-shadow(0 0 9px #c7a4ff)!important}
 .ls-shadow.ls-overlap{margin-left:-35px;scale:.88}
-.ls-status{display:block;font-size:9px;color:#c1ccd1;margin-top:3px;letter-spacing:.3px}.ls-status.active{color:#ffe09b}.ls-status.pinned{color:#ffba9d}
+.ls-status{display:block;font-size:9px;color:#c1ccd1;margin-top:3px;letter-spacing:.3px}.ls-status.pinned{color:#ffba9d;font-weight:800}
 .ls-action{border:1px solid #c9a7ec!important;color:#e5cbff!important;background:#30233e!important;font-weight:700}
 .ls-pin{position:absolute;top:12%;left:50%;transform:translateX(-50%);z-index:5;color:#fff0c8;background:#763825;border:1px solid #ffba7f;border-radius:5px;padding:3px 6px;font-size:10px;font-weight:800}
 .ls-stash-choice{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}.ls-stash-choice>button{max-width:230px}
-@keyframes ls-float{0%,100%{translate:0 -18%}50%{translate:0 -26%}}
-@media(prefers-reduced-motion:reduce){.r-fighter.ls-SHE>img{animation:none;translate:0 -20%}}
-@media(max-width:700px){.r-fighter .ls-label{font-size:7px}.r-fighter .ls-prop-SMA{width:100%;left:-25%}.ls-status{font-size:8px}.r-fighter .ls-prop-FRA{left:40%}}
+/* The player's entire HUD becomes a permanent, readable Last Stand panel. */
+.r-hud{position:relative;--ls-accent:#efc77d;--ls-rgb:239,199,125}
+.r-hud.ls-hud-SMA{--ls-accent:#ffb078;--ls-rgb:255,176,120}
+.r-hud.ls-hud-ALF{--ls-accent:#e5dc82;--ls-rgb:229,220,130}
+.r-hud.ls-hud-SHE{--ls-accent:#aedfdc;--ls-rgb:174,223,220}
+.r-hud.ls-hud-HEL{--ls-accent:#a6d7ed;--ls-rgb:166,215,237}
+.r-hud.ls-hud-RAV{--ls-accent:#c5a0f4;--ls-rgb:197,160,244}
+.r-hud.ls-hud-FRA{--ls-accent:#ffd47f;--ls-rgb:255,212,127}
+.r-hud.ls-hud-active{border-color:var(--ls-accent);border-width:2px;background:linear-gradient(115deg,rgba(var(--ls-rgb),.22),#15222df5 62%);box-shadow:inset 0 0 0 3px #07141b,0 0 25px rgba(var(--ls-rgb),.18),0 8px 20px #0005;padding:10px 13px;border-radius:13px}
+.r-hud.ls-hud-active.right{background:linear-gradient(245deg,rgba(var(--ls-rgb),.22),#15222df5 62%)}
+.r-hud.ls-hud-active>button{width:74px;height:90px;background:radial-gradient(ellipse,rgba(var(--ls-rgb),.2),#06141be6);border-color:var(--ls-accent);border-radius:8px;box-shadow:0 0 12px rgba(var(--ls-rgb),.18)}
+.r-hud.ls-hud-active>button img{object-fit:contain;object-position:center bottom;filter:drop-shadow(0 3px 3px #000a)}
+.r-hud.ls-hud-active h2{color:#fff6db;font-size:22px;margin:3px 0 7px}
+.r-hud.ls-hud-active .r-hp{height:7px;border-color:var(--ls-accent)}
+.r-hud.ls-hud-active .r-hp span{background:linear-gradient(#ffda8c,#ed704b)}
+.r-hud.ls-hud-active .r-resources{gap:10px;flex-wrap:wrap;margin-top:6px;font-size:10px}
+.r-hud.ls-hud-active .fury-on{display:none}
+.ls-power{margin-top:9px;padding-top:8px;border-top:1px solid rgba(var(--ls-rgb),.35);display:grid;grid-template-columns:auto 1fr;column-gap:9px;row-gap:3px;align-items:center;text-align:left}
+.ls-power>strong{font-family:var(--display);font-size:24px;line-height:1;color:var(--ls-accent);letter-spacing:1px;grid-row:1/3;white-space:nowrap;text-shadow:0 2px 4px #0008}
+.ls-power>span{font-weight:800;font-size:11px;color:#fff0cd;line-height:1.2}
+.ls-power>small{font-size:10px;line-height:1.35;color:#cfdbdc}
+.ls-hud-active.right .ls-power{text-align:right;grid-template-columns:1fr auto}
+.ls-hud-active.right .ls-power>strong{grid-column:2}
+.ls-hud-active.right .ls-power>span,.ls-hud-active.right .ls-power>small{grid-column:1}
+.ls-hud-active .od-fury-link{font-size:8px;max-width:45%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ls-hud-active .ls-status:not(.pinned){display:none}
+.ls-live-announcement{position:fixed;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);pointer-events:none}
+.ls-guide-art{background:radial-gradient(ellipse,#e8bc6230,transparent 70%);align-self:center}
+@keyframes ls-float{0%,100%{translate:0 -6px}50%{translate:0 -13px}}
+@media(min-width:1100px) and (max-height:820px){.r-hud.ls-hud-active{padding:7px 10px}.r-hud.ls-hud-active h2{font-size:20px}.r-hud.ls-hud-active>button{width:61px;height:78px}.ls-power{margin-top:7px;padding-top:6px}.ls-power>strong{font-size:21px}.ls-power>small{font-size:9px}.r-arena{height:145px}.r-fighter{height:140px;width:145px}.r-fighter.ls-on{height:148px}.r-fighter.ls-SHE{height:158px}.r-fighter.ls-SMA{width:210px}.r-fighter.ls-HEL{width:180px}}
+@media(max-width:1000px){.ls-power{grid-template-columns:1fr}.ls-power>strong{grid-row:auto;font-size:22px}.ls-hud-active.right .ls-power{grid-template-columns:1fr}.ls-hud-active.right .ls-power>strong,.ls-hud-active.right .ls-power>span,.ls-hud-active.right .ls-power>small{grid-column:1}.ls-power>small{font-size:10px}.r-hud.ls-hud-active>button{width:48px;height:65px}.r-hud.ls-hud-active h2{font-size:18px}}
+@media(max-width:700px){.r-hud.ls-hud-active{padding:8px;gap:7px;align-items:flex-start}.r-hud.ls-hud-active>button{width:32px;height:43px}.r-hud.ls-hud-active h2{font-size:15px;white-space:normal}.r-hud.ls-hud-active .r-resources{font-size:9px;gap:5px}.ls-power{margin-top:6px;padding-top:6px}.ls-power>strong{font-size:21px}.ls-power>span{font-size:10px}.ls-power>small{font-size:9px}.r-arena{height:140px}.r-fighter{width:95px;height:118px}.r-fighter.ls-on{width:105px;height:125px}.r-fighter.ls-SMA{width:135px;height:120px}.r-fighter.ls-HEL{width:120px;height:120px}.r-fighter.ls-SHE{width:118px;height:137px}.r-fighter .ls-label{font-size:6px;padding:3px 4px}.ls-status{font-size:8px}.r-hud.ls-hud-active .od-fury-link{position:static;max-width:100%;font-size:8px;margin-top:4px}.ls-shadow.ls-overlap{margin-left:-18px}.ls-hud-active.right .ls-power{text-align:left}}
+@media(prefers-reduced-motion:reduce){.r-fighter.ls-SHE>img{animation:none;translate:0 -6px}}
+/* Let the full-width ability banner share neither the name nor portrait column. */
+.r-hud.ls-hud-active>div{min-width:0;flex:1;grid-template-columns:minmax(0,1fr)}
+.r-hud.ls-hud-active h2,.r-hud.ls-hud-active.right h2{grid-column:1/-1;overflow-wrap:anywhere;white-space:normal}
+.r-hud.ls-hud-active .od-fury-link{grid-column:1/-1;grid-row:5;max-width:100%;justify-self:start}
+.r-hud.ls-hud-active.right .od-fury-link{justify-self:end}
+.ls-power{grid-column:1/-1;grid-row:6}
+.r-hud.ls-hud-active>button{flex-shrink:0}
