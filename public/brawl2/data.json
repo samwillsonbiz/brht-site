@@ -7,7 +7,7 @@
       "slug": "hero-lord-smasherton",
       "archetype": "Break shields and force positions. Slow, expensive to chase.",
       "trait": "Wallbreaker",
-      "traitText": "your wall slams deal 2 damage instead of 1.",
+      "traitText": "Your wall slams deal 3 damage instead of 1.",
       "ultimate": {
         "name": "You're Not Going Anywhere",
         "text": "After your attack deals Health damage, pin the rival: they cannot move voluntarily until their next attack finishes. Pushes and pulls still work."
@@ -61,6 +61,28 @@
         "FS1",
         "FS2",
         "FS3"
+      ],
+      "lootPool": [
+        "L-SMA-01",
+        "L-SMA-02",
+        "L-SMA-03",
+        "L-SMA-04",
+        "L-SMA-05",
+        "L-SMA-06",
+        "L-SMA-07",
+        "L-SMA-08",
+        "L-SMA-09",
+        "L-SMA-10",
+        "L-SMA-11",
+        "L-SMA-12"
+      ],
+      "defaultLoot": [
+        "L-SMA-01",
+        "L-SMA-02",
+        "L-SMA-03",
+        "L-SMA-06",
+        "L-SMA-09",
+        "L-SMA-12"
       ]
     },
     {
@@ -68,8 +90,8 @@
       "name": "Alf Featherbottom",
       "slug": "hero-alf-featherbottom",
       "archetype": "Prepare your draws and dominate firing distance. Weak at contact.",
-      "trait": "Long Shot",
-      "traitText": "Your ranged attacks get +1 maximum Range. At Range 2 or more, your attacks deal +1 damage.",
+      "trait": "Bullseye",
+      "traitText": "After your attack deals Health damage at Range 3 or farther, draw 1 card.",
       "ultimate": {
         "name": "Emergency Spring Boots",
         "text": "When your attack activates, you may move 1 space before its printed movement. The rival then reacts normally."
@@ -123,6 +145,28 @@
         "FA1",
         "FA2",
         "FA3"
+      ],
+      "lootPool": [
+        "L-ALF-01",
+        "L-ALF-02",
+        "L-ALF-03",
+        "L-ALF-04",
+        "L-ALF-05",
+        "L-ALF-06",
+        "L-ALF-07",
+        "L-ALF-08",
+        "L-ALF-09",
+        "L-ALF-10",
+        "L-ALF-11",
+        "L-ALF-12"
+      ],
+      "defaultLoot": [
+        "L-ALF-01",
+        "L-ALF-02",
+        "L-ALF-03",
+        "L-ALF-06",
+        "L-ALF-09",
+        "L-ALF-12"
       ]
     },
     {
@@ -130,8 +174,8 @@
       "name": "Dr. Shealer",
       "slug": "hero-dr-shealer",
       "archetype": "Spend Health to gain choices and burst; heal by landing attacks.",
-      "trait": "Good Medicine",
-      "traitText": "Your healing cards restore 1 extra Health.",
+      "trait": "Blood Research",
+      "traitText": "Whenever you pay Health for a card, draw 1 card. Damage from enemies and losing Health to an effect do not trigger this.",
       "ultimate": {
         "name": "Malpractical Flight",
         "text": "Your attacks gain +1 maximum Range. Your arena position, minimum Range and enemy attacks are unchanged."
@@ -185,6 +229,28 @@
         "FD1",
         "FD2",
         "FD3"
+      ],
+      "lootPool": [
+        "L-SHE-01",
+        "L-SHE-02",
+        "L-SHE-03",
+        "L-SHE-04",
+        "L-SHE-05",
+        "L-SHE-06",
+        "L-SHE-07",
+        "L-SHE-08",
+        "L-SHE-09",
+        "L-SHE-10",
+        "L-SHE-11",
+        "L-SHE-12"
+      ],
+      "defaultLoot": [
+        "L-SHE-01",
+        "L-SHE-02",
+        "L-SHE-03",
+        "L-SHE-06",
+        "L-SHE-09",
+        "L-SHE-12"
       ]
     },
     {
@@ -192,8 +258,8 @@
       "name": "Helga Stonewall",
       "slug": "hero-helga",
       "archetype": "Bank Block and choose where to spend it. Slow without a shield.",
-      "trait": "Shield Bank",
-      "traitText": "After each attack, keep up to 3 unused Block. Clear it at round end.",
+      "trait": "Shield Up",
+      "traitText": "When your rival activates an attack, gain 1 Block. All unused Block clears after every attack.",
       "ultimate": {
         "name": "Hit Me. I Dare You.",
         "text": "After an enemy attack connects in range, reflect 1 damage, even if fully blocked. Once per attack; ignores Block. Misses and Loot do not trigger it. Resolve reflection before checking victory; simultaneous knockouts draw."
@@ -247,6 +313,28 @@
         "FH1",
         "FH2",
         "FH3"
+      ],
+      "lootPool": [
+        "L-HEL-01",
+        "L-HEL-02",
+        "L-HEL-03",
+        "L-HEL-04",
+        "L-HEL-05",
+        "L-HEL-06",
+        "L-HEL-07",
+        "L-HEL-08",
+        "L-HEL-09",
+        "L-HEL-10",
+        "L-HEL-11",
+        "L-HEL-12"
+      ],
+      "defaultLoot": [
+        "L-HEL-01",
+        "L-HEL-02",
+        "L-HEL-03",
+        "L-HEL-06",
+        "L-HEL-09",
+        "L-HEL-12"
       ]
     },
     {
@@ -309,6 +397,28 @@
         "FR1",
         "FR2",
         "FR3"
+      ],
+      "lootPool": [
+        "L-RAV-01",
+        "L-RAV-02",
+        "L-RAV-03",
+        "L-RAV-04",
+        "L-RAV-05",
+        "L-RAV-06",
+        "L-RAV-07",
+        "L-RAV-08",
+        "L-RAV-09",
+        "L-RAV-10",
+        "L-RAV-11",
+        "L-RAV-12"
+      ],
+      "defaultLoot": [
+        "L-RAV-01",
+        "L-RAV-02",
+        "L-RAV-03",
+        "L-RAV-06",
+        "L-RAV-09",
+        "L-RAV-12"
       ]
     },
     {
@@ -317,7 +427,7 @@
       "slug": "hero-friar-franc",
       "archetype": "Earn, spend and recycle. Coins cannot fund both powers and Loot.",
       "trait": "Hustler",
-      "traitText": "Your Basic Attacks earn 2 Coins instead of 1.",
+      "traitText": "When your Basic Attack deals Health damage, earn 1 extra Coin when it finishes. A miss still earns the normal 1 Coin.",
       "ultimate": {
         "name": "The Emergency Stash",
         "text": "Draw 1 free Loot on activation; at two Loot, you may replace one before drawing. As your reaction, buy Loot for 1 Coin, holding at most two. Your opponent responds before you can play it."
@@ -371,6 +481,28 @@
         "FP1",
         "FP2",
         "FP3"
+      ],
+      "lootPool": [
+        "L-FRA-01",
+        "L-FRA-02",
+        "L-FRA-03",
+        "L-FRA-04",
+        "L-FRA-05",
+        "L-FRA-06",
+        "L-FRA-07",
+        "L-FRA-08",
+        "L-FRA-09",
+        "L-FRA-10",
+        "L-FRA-11",
+        "L-FRA-12"
+      ],
+      "defaultLoot": [
+        "L-FRA-01",
+        "L-FRA-02",
+        "L-FRA-03",
+        "L-FRA-06",
+        "L-FRA-09",
+        "L-FRA-12"
       ]
     }
   ],
@@ -801,7 +933,7 @@
       "ops": [
         {
           "op": "move",
-          "n": 1
+          "n": 2
         },
         {
           "op": "hit",
@@ -818,9 +950,9 @@
       ],
       "side": "either",
       "reactionRange": null,
-      "attackText": "Reveal: you may pay 2 Health for +3 Speed. Move up to 1. Hit for 4 at Range 1.",
+      "attackText": "Reveal: you may pay 2 Health for +3 Speed. Move up to 2. Hit for 4 at Range 1.",
       "reactionText": "Move up to 2.",
-      "text": "Reveal: you may pay 2 Health for +3 Speed. Move up to 1. Hit for 4 at Range 1. OR Move up to 2.",
+      "text": "Reveal: you may pay 2 Health for +3 Speed. Move up to 2. Hit for 4 at Range 1. OR Move up to 2.",
       "art": "assets/hero-atlas-SMA.webp",
       "artIndex": 2,
       "artCols": 3,
@@ -884,7 +1016,7 @@
       "ops": [
         {
           "op": "move",
-          "n": 2
+          "n": 3
         },
         {
           "op": "hit",
@@ -905,9 +1037,9 @@
       ],
       "side": "attacker",
       "reactionRange": null,
-      "attackText": "Move up to 2. Hit for 3 at Range 1.",
+      "attackText": "Move up to 3. Hit for 3 at Range 1.",
       "reactionText": "Move up to 1. Add 1 damage to your attack.",
-      "text": "Move up to 2. Hit for 3 at Range 1. OR Move up to 1. Add 1 damage to your attack.",
+      "text": "Move up to 3. Hit for 3 at Range 1. OR Move up to 1. Add 1 damage to your attack.",
       "art": "assets/hero-atlas-SMA.webp",
       "artIndex": 2,
       "artCols": 3,
@@ -1238,17 +1370,17 @@
       "ops": [
         {
           "op": "hit",
-          "n": 9,
+          "n": 10,
           "min": 3,
-          "max": 5
+          "max": 6
         }
       ],
       "reactionOps": null,
       "side": "either",
       "reactionRange": null,
-      "attackText": "Hit for 9 at Range 3–5.",
+      "attackText": "Hit for 10 at Range 3–6.",
       "reactionText": "",
-      "text": "Hit for 9 at Range 3–5.",
+      "text": "Hit for 10 at Range 3–6.",
       "art": "assets/hero-atlas-ALF.webp",
       "artIndex": 0,
       "artCols": 3,
@@ -1268,9 +1400,9 @@
       "ops": [
         {
           "op": "hit",
-          "n": 3,
+          "n": 4,
           "min": 2,
-          "max": 4
+          "max": 5
         }
       ],
       "reactionOps": [
@@ -1281,9 +1413,9 @@
       ],
       "side": "defender",
       "reactionRange": null,
-      "attackText": "Hit for 3 at Range 2–4.",
+      "attackText": "Hit for 4 at Range 2–5.",
       "reactionText": "Move up to 2.",
-      "text": "Hit for 3 at Range 2–4. OR Move up to 2.",
+      "text": "Hit for 4 at Range 2–5. OR Move up to 2.",
       "art": "assets/hero-atlas-ALF.webp",
       "artIndex": 1,
       "artCols": 3,
@@ -1307,9 +1439,9 @@
         },
         {
           "op": "hit",
-          "n": 3,
+          "n": 4,
           "min": 2,
-          "max": 3
+          "max": 4
         }
       ],
       "reactionOps": [
@@ -1324,9 +1456,9 @@
       ],
       "side": "either",
       "reactionRange": null,
-      "attackText": "Move up to 2. Hit for 3 at Range 2–3.",
+      "attackText": "Move up to 2. Hit for 4 at Range 2–4.",
       "reactionText": "Move up to 1. Scry 2.",
-      "text": "Move up to 2. Hit for 3 at Range 2–3. OR Move up to 1. Scry 2.",
+      "text": "Move up to 2. Hit for 4 at Range 2–4. OR Move up to 1. Scry 2.",
       "art": "assets/hero-atlas-ALF.webp",
       "artIndex": 2,
       "artCols": 3,
@@ -1346,9 +1478,9 @@
       "ops": [
         {
           "op": "hit",
-          "n": 5,
+          "n": 6,
           "min": 2,
-          "max": 4,
+          "max": 5,
           "ignore": 3
         }
       ],
@@ -1360,9 +1492,9 @@
       ],
       "side": "attacker",
       "reactionRange": null,
-      "attackText": "Hit for 5 at Range 2–4, ignoring 3 Block.",
+      "attackText": "Hit for 6 at Range 2–5, ignoring 3 Block.",
       "reactionText": "Ignore 3 additional Block.",
-      "text": "Hit for 5 at Range 2–4, ignoring 3 Block. OR Ignore 3 additional Block.",
+      "text": "Hit for 6 at Range 2–5, ignoring 3 Block. OR Ignore 3 additional Block.",
       "art": "assets/hero-atlas-ALF.webp",
       "artIndex": 3,
       "artCols": 3,
@@ -1386,7 +1518,7 @@
         },
         {
           "op": "hit",
-          "n": 2,
+          "n": 3,
           "min": 1,
           "max": 2
         }
@@ -1399,9 +1531,9 @@
       ],
       "side": "defender",
       "reactionRange": null,
-      "attackText": "Move up to 1. Hit for 2 at Range 1–2.",
+      "attackText": "Move up to 1. Hit for 3 at Range 1–2.",
       "reactionText": "Move up to 3.",
-      "text": "Move up to 1. Hit for 2 at Range 1–2. OR Move up to 3.",
+      "text": "Move up to 1. Hit for 3 at Range 1–2. OR Move up to 3.",
       "art": "assets/hero-atlas-ALF.webp",
       "artIndex": 2,
       "artCols": 3,
@@ -1421,9 +1553,9 @@
       "ops": [
         {
           "op": "hit",
-          "n": 3,
-          "min": 2,
-          "max": 3
+          "n": 4,
+          "min": 1,
+          "max": 4
         }
       ],
       "reactionOps": [
@@ -1434,9 +1566,9 @@
       ],
       "side": "attacker",
       "reactionRange": null,
-      "attackText": "Hit for 3 at Range 2–3.",
+      "attackText": "Hit for 4 at Range 1–4.",
       "reactionText": "Your attack's minimum Range becomes 1.",
-      "text": "Hit for 3 at Range 2–3. OR Your attack's minimum Range becomes 1.",
+      "text": "Hit for 4 at Range 1–4. OR Your attack's minimum Range becomes 1.",
       "art": "assets/hero-atlas-ALF.webp",
       "artIndex": 7,
       "artCols": 3,
@@ -1456,9 +1588,9 @@
       "ops": [
         {
           "op": "hit",
-          "n": 3,
+          "n": 4,
           "min": 2,
-          "max": 4
+          "max": 5
         },
         {
           "op": "push",
@@ -1483,9 +1615,9 @@
       ],
       "side": "either",
       "reactionRange": null,
-      "attackText": "Hit for 3 at Range 2–4. On hit, push the rival up to 1. On hit, the rival loses up to 2 Coins.",
+      "attackText": "Hit for 4 at Range 2–5. On hit, push the rival up to 1. On hit, the rival loses up to 2 Coins.",
       "reactionText": "Scry 2. Draw 1 (one draw effect per attack).",
-      "text": "Hit for 3 at Range 2–4. On hit, push the rival up to 1. On hit, the rival loses up to 2 Coins. OR Scry 2. Draw 1 (one draw effect per attack).",
+      "text": "Hit for 4 at Range 2–5. On hit, push the rival up to 1. On hit, the rival loses up to 2 Coins. OR Scry 2. Draw 1 (one draw effect per attack).",
       "art": "assets/hero-atlas-ALF.webp",
       "artIndex": 1,
       "artCols": 3,
@@ -1517,9 +1649,9 @@
         },
         {
           "op": "hit",
-          "n": 4,
+          "n": 5,
           "min": 2,
-          "max": 4
+          "max": 5
         }
       ],
       "reactionOps": [
@@ -1530,9 +1662,9 @@
       ],
       "side": "attacker",
       "reactionRange": null,
-      "attackText": "Move up to 2. Scry 2. Reveal and bottom your top deck card: Attack-capable gives +2 damage and ignores 2 Block; otherwise minimum Range becomes 1 and maximum Range gains 2. Hit for 4 at Range 2–4.",
+      "attackText": "Move up to 2. Scry 2. Reveal and bottom your top deck card: Attack-capable gives +2 damage and ignores 2 Block; otherwise minimum Range becomes 1 and maximum Range gains 2. Hit for 5 at Range 2–5.",
       "reactionText": "Reveal and bottom your top deck card: Attack-capable gives +2 damage and ignores 2 Block; otherwise minimum Range becomes 1 and maximum Range gains 2.",
-      "text": "Move up to 2. Scry 2. Reveal and bottom your top deck card: Attack-capable gives +2 damage and ignores 2 Block; otherwise minimum Range becomes 1 and maximum Range gains 2. Hit for 4 at Range 2–4. OR Reveal and bottom your top deck card: Attack-capable gives +2 damage and ignores 2 Block; otherwise minimum Range becomes 1 and maximum Range gains 2.",
+      "text": "Move up to 2. Scry 2. Reveal and bottom your top deck card: Attack-capable gives +2 damage and ignores 2 Block; otherwise minimum Range becomes 1 and maximum Range gains 2. Hit for 5 at Range 2–5. OR Reveal and bottom your top deck card: Attack-capable gives +2 damage and ignores 2 Block; otherwise minimum Range becomes 1 and maximum Range gains 2.",
       "art": "assets/hero-atlas-ALF.webp",
       "artIndex": 5,
       "artCols": 3,
@@ -1650,17 +1782,17 @@
         },
         {
           "op": "hit",
-          "n": 5,
+          "n": 6,
           "min": 2,
-          "max": 5
+          "max": 6
         }
       ],
       "reactionOps": null,
       "side": "either",
       "reactionRange": null,
-      "attackText": "Move up to 2. Scry 2. Hit for 5 at Range 2–5.",
+      "attackText": "Move up to 2. Scry 2. Hit for 6 at Range 2–6.",
       "reactionText": "",
-      "text": "Move up to 2. Scry 2. Hit for 5 at Range 2–5.",
+      "text": "Move up to 2. Scry 2. Hit for 6 at Range 2–6.",
       "art": "assets/hero-atlas-ALF.webp",
       "artIndex": 8,
       "artCols": 3,
@@ -1680,18 +1812,18 @@
       "ops": [
         {
           "op": "hit",
-          "n": 6,
+          "n": 7,
           "min": 2,
-          "max": 6,
+          "max": 7,
           "pierce": true
         }
       ],
       "reactionOps": null,
       "side": "either",
       "reactionRange": null,
-      "attackText": "Hit for 6 at Range 2–6, ignoring all Block.",
+      "attackText": "Hit for 7 at Range 2–7, ignoring all Block.",
       "reactionText": "",
-      "text": "Hit for 6 at Range 2–6, ignoring all Block.",
+      "text": "Hit for 7 at Range 2–7, ignoring all Block.",
       "art": "assets/hero-atlas-ALF.webp",
       "artIndex": 0,
       "artCols": 3,
@@ -3833,119 +3965,134 @@
       "reactionRange": null
     },
     {
-      "id": "T-L01",
+      "id": "L-SMA-01",
       "name": "Giant Boxing Glove",
-      "category": "Loot",
-      "kind": "Loot",
-      "text": "Your current attack pushes 3 extra spaces on hit.",
+      "text": "Your attack pushes 3 extra spaces on hit.",
+      "side": "attacker",
       "ops": [
         {
           "op": "launch",
           "n": 3
         }
       ],
-      "side": "attacker",
+      "reactionOps": [
+        {
+          "op": "launch",
+          "n": 3
+        }
+      ],
+      "reactionText": "Your attack pushes 3 extra spaces on hit.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Lord Smasherton",
+      "lootHero": "SMA",
+      "copies": 1,
       "art": "assets/loot-atlas.webp",
       "artIndex": 0,
       "artCols": 4,
-      "artRows": 3,
-      "reactionOps": [
-        {
-          "op": "launch",
-          "n": 3
-        }
-      ],
-      "reactionText": "Your current attack pushes 3 extra spaces on hit.",
-      "attackText": "",
-      "copies": 2
+      "artRows": 3
     },
     {
-      "id": "T-L02",
-      "name": "Spring Boots",
-      "category": "Loot",
-      "kind": "Loot",
-      "text": "Move up to 3.",
+      "id": "L-SMA-02",
+      "name": "Stone-Skipping Boots",
+      "text": "Move up to 2. Gain 1 Block.",
+      "side": "either",
       "ops": [
         {
           "op": "move",
-          "n": 3
+          "n": 2
+        },
+        {
+          "op": "block",
+          "n": 1
         }
       ],
-      "side": "either",
+      "reactionOps": [
+        {
+          "op": "move",
+          "n": 2
+        },
+        {
+          "op": "block",
+          "n": 1
+        }
+      ],
+      "reactionText": "Move up to 2. Gain 1 Block.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Lord Smasherton",
+      "lootHero": "SMA",
+      "copies": 1,
       "art": "assets/loot-atlas.webp",
       "artIndex": 1,
       "artCols": 4,
-      "artRows": 3,
-      "reactionOps": [
-        {
-          "op": "move",
-          "n": 3
-        }
-      ],
-      "reactionText": "Move up to 3.",
-      "attackText": "",
-      "copies": 2
+      "artRows": 3
     },
     {
-      "id": "T-L03",
-      "name": "Ridiculous Telescope",
-      "category": "Loot",
-      "kind": "Loot",
-      "text": "Your current attack gets +3 maximum Range.",
+      "id": "L-SMA-03",
+      "name": "Hammer Extension",
+      "text": "Your attack gets +2 maximum Range.",
+      "side": "attacker",
       "ops": [
         {
           "op": "reach",
-          "n": 3
+          "n": 2
         }
       ],
-      "side": "attacker",
+      "reactionOps": [
+        {
+          "op": "reach",
+          "n": 2
+        }
+      ],
+      "reactionText": "Your attack gets +2 maximum Range.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Lord Smasherton",
+      "lootHero": "SMA",
+      "copies": 1,
       "art": "assets/loot-atlas.webp",
       "artIndex": 2,
       "artCols": 4,
-      "artRows": 3,
-      "reactionOps": [
-        {
-          "op": "reach",
-          "n": 3
-        }
-      ],
-      "reactionText": "Your current attack gets +3 maximum Range.",
-      "attackText": "",
-      "copies": 2
+      "artRows": 3
     },
     {
-      "id": "T-L04",
+      "id": "L-SMA-04",
       "name": "Pocket Anvil",
-      "category": "Loot",
-      "kind": "Loot",
-      "text": "Remove up to 3 Block from your rival.",
+      "text": "Remove up to 3 enemy Block.",
+      "side": "attacker",
       "ops": [
         {
           "op": "shred",
           "n": 3
         }
       ],
-      "side": "either",
+      "reactionOps": [
+        {
+          "op": "shred",
+          "n": 3
+        }
+      ],
+      "reactionText": "Remove up to 3 enemy Block.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Lord Smasherton",
+      "lootHero": "SMA",
+      "copies": 1,
       "art": "assets/loot-atlas.webp",
       "artIndex": 3,
       "artCols": 4,
-      "artRows": 3,
-      "reactionOps": [
-        {
-          "op": "shred",
-          "n": 3
-        }
-      ],
-      "reactionText": "Remove up to 3 Block from your rival.",
-      "attackText": "",
-      "copies": 2
+      "artRows": 3
     },
     {
-      "id": "T-L05",
+      "id": "L-SMA-05",
       "name": "Exploding Present",
-      "category": "Loot",
-      "kind": "Loot",
-      "text": "Your current attack gets +4 damage. Lose 1 Health if it deals damage.",
+      "text": "Your attack gets +4 damage. Lose 1 Health if it deals damage.",
+      "side": "attacker",
       "ops": [
         {
           "op": "boost",
@@ -3955,132 +4102,139 @@
           "op": "present"
         }
       ],
-      "side": "attacker",
+      "reactionOps": [
+        {
+          "op": "boost",
+          "n": 4
+        },
+        {
+          "op": "present"
+        }
+      ],
+      "reactionText": "Your attack gets +4 damage. Lose 1 Health if it deals damage.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Lord Smasherton",
+      "lootHero": "SMA",
+      "copies": 1,
       "art": "assets/loot-atlas.webp",
       "artIndex": 4,
       "artCols": 4,
-      "artRows": 3,
-      "reactionOps": [
-        {
-          "op": "boost",
-          "n": 4
-        },
-        {
-          "op": "present"
-        }
-      ],
-      "reactionText": "Your current attack gets +4 damage. Lose 1 Health if it deals damage.",
-      "attackText": "",
-      "copies": 2
+      "artRows": 3
     },
     {
-      "id": "T-L06",
-      "name": "Emergency Sandwich",
-      "category": "Loot",
-      "kind": "Loot",
-      "text": "Heal 3.",
+      "id": "L-SMA-06",
+      "name": "Mighty Meat Sandwich",
+      "text": "Heal 2. Gain 1 Block.",
+      "side": "either",
       "ops": [
         {
           "op": "heal",
-          "n": 3
+          "n": 2
+        },
+        {
+          "op": "block",
+          "n": 1
         }
       ],
-      "side": "either",
+      "reactionOps": [
+        {
+          "op": "heal",
+          "n": 2
+        },
+        {
+          "op": "block",
+          "n": 1
+        }
+      ],
+      "reactionText": "Heal 2. Gain 1 Block.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Lord Smasherton",
+      "lootHero": "SMA",
+      "copies": 1,
       "art": "assets/loot-atlas.webp",
       "artIndex": 5,
       "artCols": 4,
-      "artRows": 3,
-      "reactionOps": [
-        {
-          "op": "heal",
-          "n": 3
-        }
-      ],
-      "reactionText": "Heal 3.",
-      "attackText": "",
-      "copies": 2
+      "artRows": 3
     },
     {
-      "id": "T-L07",
-      "name": "Rocket Skates",
-      "category": "Loot",
-      "kind": "Loot",
-      "text": "Pay 1 Health. Move up to 4.",
+      "id": "L-SMA-07",
+      "name": "Rocket Charge",
+      "text": "Move up to 3. Your attack gets +1 damage.",
+      "side": "attacker",
       "ops": [
         {
           "op": "move",
-          "n": 4
+          "n": 3
+        },
+        {
+          "op": "boost",
+          "n": 1
         }
       ],
-      "side": "either",
-      "cost": {
-        "resource": "hp",
-        "n": 1
-      },
+      "reactionOps": [
+        {
+          "op": "move",
+          "n": 3
+        },
+        {
+          "op": "boost",
+          "n": 1
+        }
+      ],
+      "reactionText": "Move up to 3. Your attack gets +1 damage.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Lord Smasherton",
+      "lootHero": "SMA",
+      "copies": 1,
       "art": "assets/loot-atlas.webp",
       "artIndex": 6,
       "artCols": 4,
-      "artRows": 3,
-      "reactionOps": [
-        {
-          "op": "move",
-          "n": 4
-        }
-      ],
-      "reactionText": "Pay 1 Health. Move up to 4.",
-      "attackText": "",
-      "copies": 2
+      "artRows": 3
     },
     {
-      "id": "T-L08",
-      "name": "Banana Peel",
-      "category": "Loot",
-      "kind": "Loot",
-      "text": "Swap places with your rival. Then move up to 1.",
+      "id": "L-SMA-08",
+      "name": "Heavy Banana",
+      "text": "Swap places with your rival.",
+      "side": "either",
       "ops": [
         {
           "op": "swap"
-        },
-        {
-          "op": "move",
-          "n": 1
         }
       ],
-      "side": "either",
-      "art": "assets/loot-atlas.webp",
-      "artIndex": 7,
-      "artCols": 4,
-      "artRows": 3,
       "reactionOps": [
         {
           "op": "swap"
-        },
-        {
-          "op": "move",
-          "n": 1
         }
       ],
-      "reactionText": "Swap places with your rival. Then move up to 1.",
+      "reactionText": "Swap places with your rival.",
       "attackText": "",
-      "copies": 2
-    },
-    {
-      "id": "T-L09",
-      "name": "Tin-Foil Fortress",
       "category": "Loot",
       "kind": "Loot",
+      "hero": "Lord Smasherton",
+      "lootHero": "SMA",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 7,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-SMA-09",
+      "name": "Portable Bunker",
       "text": "Gain 4 Block.",
+      "side": "defender",
       "ops": [
         {
           "op": "block",
           "n": 4
         }
       ],
-      "side": "either",
-      "art": "assets/loot-atlas.webp",
-      "artIndex": 8,
-      "artCols": 4,
-      "artRows": 3,
       "reactionOps": [
         {
           "op": "block",
@@ -4089,86 +4243,2168 @@
       ],
       "reactionText": "Gain 4 Block.",
       "attackText": "",
-      "copies": 2
-    },
-    {
-      "id": "T-L10",
-      "name": "Rubber Chicken",
       "category": "Loot",
       "kind": "Loot",
-      "text": "Your current attack ignores Block.",
+      "hero": "Lord Smasherton",
+      "lootHero": "SMA",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 8,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-SMA-10",
+      "name": "Armour-Cracking Chicken",
+      "text": "Your attack ignores all Block.",
+      "side": "attacker",
       "ops": [
         {
           "op": "pierce"
         }
       ],
-      "side": "attacker",
+      "reactionOps": [
+        {
+          "op": "pierce"
+        }
+      ],
+      "reactionText": "Your attack ignores all Block.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Lord Smasherton",
+      "lootHero": "SMA",
+      "copies": 1,
       "art": "assets/loot-atlas.webp",
       "artIndex": 9,
       "artCols": 4,
-      "artRows": 3,
-      "reactionOps": [
-        {
-          "op": "pierce"
-        }
-      ],
-      "reactionText": "Your current attack ignores Block.",
-      "attackText": "",
-      "copies": 2
+      "artRows": 3
     },
     {
-      "id": "T-L11",
-      "name": "Ridiculous Magnet",
-      "category": "Loot",
-      "kind": "Loot",
-      "text": "Pull your rival up to 2.",
+      "id": "L-SMA-11",
+      "name": "Hammer Magnet",
+      "text": "Pull your rival up to 3.",
+      "side": "either",
       "ops": [
         {
           "op": "pull",
-          "n": 2
+          "n": 3
         }
       ],
-      "side": "either",
+      "reactionOps": [
+        {
+          "op": "pull",
+          "n": 3
+        }
+      ],
+      "reactionText": "Pull your rival up to 3.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Lord Smasherton",
+      "lootHero": "SMA",
+      "copies": 1,
       "art": "assets/loot-atlas.webp",
       "artIndex": 10,
       "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-SMA-12",
+      "name": "Demolition Firework",
+      "text": "Deal 1 damage. Push your rival up to 1.",
+      "side": "either",
+      "ops": [
+        {
+          "op": "ping",
+          "n": 1
+        },
+        {
+          "op": "push",
+          "n": 1
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "ping",
+          "n": 1
+        },
+        {
+          "op": "push",
+          "n": 1
+        }
+      ],
+      "reactionText": "Deal 1 damage. Push your rival up to 1.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Lord Smasherton",
+      "lootHero": "SMA",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 11,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-ALF-01",
+      "name": "Keep-Away Glove",
+      "text": "Push your rival up to 2.",
+      "side": "either",
+      "ops": [
+        {
+          "op": "push",
+          "n": 2
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "push",
+          "n": 2
+        }
+      ],
+      "reactionText": "Push your rival up to 2.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Alf Featherbottom",
+      "lootHero": "ALF",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 0,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-ALF-02",
+      "name": "Spring Boots",
+      "text": "Move up to 3.",
+      "side": "either",
+      "ops": [
+        {
+          "op": "move",
+          "n": 3
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "move",
+          "n": 3
+        }
+      ],
+      "reactionText": "Move up to 3.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Alf Featherbottom",
+      "lootHero": "ALF",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 1,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-ALF-03",
+      "name": "Ridiculous Telescope",
+      "text": "Your attack gets +3 maximum Range.",
+      "side": "attacker",
+      "ops": [
+        {
+          "op": "reach",
+          "n": 3
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "reach",
+          "n": 3
+        }
+      ],
+      "reactionText": "Your attack gets +3 maximum Range.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Alf Featherbottom",
+      "lootHero": "ALF",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 2,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-ALF-04",
+      "name": "Arrowhead Anvil",
+      "text": "Your attack ignores 3 Block.",
+      "side": "attacker",
+      "ops": [
+        {
+          "op": "ignore",
+          "n": 3
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "ignore",
+          "n": 3
+        }
+      ],
+      "reactionText": "Your attack ignores 3 Block.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Alf Featherbottom",
+      "lootHero": "ALF",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 3,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-ALF-05",
+      "name": "Target Practice Present",
+      "text": "Your attack gets +2 damage. Scry 1.",
+      "side": "attacker",
+      "ops": [
+        {
+          "op": "boost",
+          "n": 2
+        },
+        {
+          "op": "scry",
+          "n": 1
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "boost",
+          "n": 2
+        },
+        {
+          "op": "scry",
+          "n": 1
+        }
+      ],
+      "reactionText": "Your attack gets +2 damage. Scry 1.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Alf Featherbottom",
+      "lootHero": "ALF",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 4,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-ALF-06",
+      "name": "Trail Sandwich",
+      "text": "Heal 2. Move up to 1.",
+      "side": "either",
+      "ops": [
+        {
+          "op": "heal",
+          "n": 2
+        },
+        {
+          "op": "move",
+          "n": 1
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "heal",
+          "n": 2
+        },
+        {
+          "op": "move",
+          "n": 1
+        }
+      ],
+      "reactionText": "Heal 2. Move up to 1.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Alf Featherbottom",
+      "lootHero": "ALF",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 5,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-ALF-07",
+      "name": "Rocket Skates",
+      "text": "Pay 1 Health. Move up to 4.",
+      "side": "either",
+      "ops": [
+        {
+          "op": "move",
+          "n": 4
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "move",
+          "n": 4
+        }
+      ],
+      "reactionText": "Pay 1 Health. Move up to 4.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Alf Featherbottom",
+      "lootHero": "ALF",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 6,
+      "artCols": 4,
       "artRows": 3,
+      "cost": {
+        "resource": "hp",
+        "n": 1
+      }
+    },
+    {
+      "id": "L-ALF-08",
+      "name": "Banana Escape",
+      "text": "Swap places with your rival. Move up to 1.",
+      "side": "either",
+      "ops": [
+        {
+          "op": "swap"
+        },
+        {
+          "op": "move",
+          "n": 1
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "swap"
+        },
+        {
+          "op": "move",
+          "n": 1
+        }
+      ],
+      "reactionText": "Swap places with your rival. Move up to 1.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Alf Featherbottom",
+      "lootHero": "ALF",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 7,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-ALF-09",
+      "name": "Featherweight Fortress",
+      "text": "Gain 2 Block. Move up to 1.",
+      "side": "defender",
+      "ops": [
+        {
+          "op": "block",
+          "n": 2
+        },
+        {
+          "op": "move",
+          "n": 1
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "block",
+          "n": 2
+        },
+        {
+          "op": "move",
+          "n": 1
+        }
+      ],
+      "reactionText": "Gain 2 Block. Move up to 1.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Alf Featherbottom",
+      "lootHero": "ALF",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 8,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-ALF-10",
+      "name": "Point-Blank Chicken",
+      "text": "Your attack’s minimum Range becomes 1. It gets +1 damage.",
+      "side": "attacker",
+      "ops": [
+        {
+          "op": "minimum",
+          "n": 1
+        },
+        {
+          "op": "boost",
+          "n": 1
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "minimum",
+          "n": 1
+        },
+        {
+          "op": "boost",
+          "n": 1
+        }
+      ],
+      "reactionText": "Your attack’s minimum Range becomes 1. It gets +1 damage.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Alf Featherbottom",
+      "lootHero": "ALF",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 9,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-ALF-11",
+      "name": "Quiver Magnet",
+      "text": "Draw 2 cards.",
+      "side": "either",
+      "ops": [
+        {
+          "op": "draw",
+          "n": 2
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "draw",
+          "n": 2
+        }
+      ],
+      "reactionText": "Draw 2 cards.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Alf Featherbottom",
+      "lootHero": "ALF",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 10,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-ALF-12",
+      "name": "Signal Firework",
+      "text": "Scry 3. Draw 1 card.",
+      "side": "either",
+      "ops": [
+        {
+          "op": "scry",
+          "n": 3
+        },
+        {
+          "op": "draw",
+          "n": 1
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "scry",
+          "n": 3
+        },
+        {
+          "op": "draw",
+          "n": 1
+        }
+      ],
+      "reactionText": "Scry 3. Draw 1 card.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Alf Featherbottom",
+      "lootHero": "ALF",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 11,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-SHE-01",
+      "name": "Rubber Surgery Glove",
+      "text": "Deal 1 damage. Heal 1.",
+      "side": "either",
+      "ops": [
+        {
+          "op": "ping",
+          "n": 1
+        },
+        {
+          "op": "heal",
+          "n": 1
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "ping",
+          "n": 1
+        },
+        {
+          "op": "heal",
+          "n": 1
+        }
+      ],
+      "reactionText": "Deal 1 damage. Heal 1.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Dr. Shealer",
+      "lootHero": "SHE",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 0,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-SHE-02",
+      "name": "Bedside Boots",
+      "text": "Move up to 2. Heal 1.",
+      "side": "either",
+      "ops": [
+        {
+          "op": "move",
+          "n": 2
+        },
+        {
+          "op": "heal",
+          "n": 1
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "move",
+          "n": 2
+        },
+        {
+          "op": "heal",
+          "n": 1
+        }
+      ],
+      "reactionText": "Move up to 2. Heal 1.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Dr. Shealer",
+      "lootHero": "SHE",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 1,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-SHE-03",
+      "name": "Long-Distance Diagnosis",
+      "text": "Your attack gets +2 maximum Range. Scry 1.",
+      "side": "attacker",
+      "ops": [
+        {
+          "op": "reach",
+          "n": 2
+        },
+        {
+          "op": "scry",
+          "n": 1
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "reach",
+          "n": 2
+        },
+        {
+          "op": "scry",
+          "n": 1
+        }
+      ],
+      "reactionText": "Your attack gets +2 maximum Range. Scry 1.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Dr. Shealer",
+      "lootHero": "SHE",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 2,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-SHE-04",
+      "name": "Anaesthetic Anvil",
+      "text": "Remove up to 2 enemy Block. Gain 1 Block.",
+      "side": "either",
+      "ops": [
+        {
+          "op": "shred",
+          "n": 2
+        },
+        {
+          "op": "block",
+          "n": 1
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "shred",
+          "n": 2
+        },
+        {
+          "op": "block",
+          "n": 1
+        }
+      ],
+      "reactionText": "Remove up to 2 enemy Block. Gain 1 Block.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Dr. Shealer",
+      "lootHero": "SHE",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 3,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-SHE-05",
+      "name": "Unlicensed Booster",
+      "text": "Pay 2 Health. Your attack gets +4 damage.",
+      "side": "attacker",
+      "ops": [
+        {
+          "op": "boost",
+          "n": 4
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "boost",
+          "n": 4
+        }
+      ],
+      "reactionText": "Pay 2 Health. Your attack gets +4 damage.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Dr. Shealer",
+      "lootHero": "SHE",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 4,
+      "artCols": 4,
+      "artRows": 3,
+      "cost": {
+        "resource": "hp",
+        "n": 2
+      }
+    },
+    {
+      "id": "L-SHE-06",
+      "name": "Emergency Sandwich",
+      "text": "Heal 3.",
+      "side": "either",
+      "ops": [
+        {
+          "op": "heal",
+          "n": 3
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "heal",
+          "n": 3
+        }
+      ],
+      "reactionText": "Heal 3.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Dr. Shealer",
+      "lootHero": "SHE",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 5,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-SHE-07",
+      "name": "Ambulance Skates",
+      "text": "Move up to 3. Heal 1.",
+      "side": "defender",
+      "ops": [
+        {
+          "op": "move",
+          "n": 3
+        },
+        {
+          "op": "heal",
+          "n": 1
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "move",
+          "n": 3
+        },
+        {
+          "op": "heal",
+          "n": 1
+        }
+      ],
+      "reactionText": "Move up to 3. Heal 1.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Dr. Shealer",
+      "lootHero": "SHE",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 6,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-SHE-08",
+      "name": "Patient Exchange",
+      "text": "Swap places with your rival. Gain 1 Block.",
+      "side": "either",
+      "ops": [
+        {
+          "op": "swap"
+        },
+        {
+          "op": "block",
+          "n": 1
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "swap"
+        },
+        {
+          "op": "block",
+          "n": 1
+        }
+      ],
+      "reactionText": "Swap places with your rival. Gain 1 Block.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Dr. Shealer",
+      "lootHero": "SHE",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 7,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-SHE-09",
+      "name": "Plaster Fortress",
+      "text": "Gain 3 Block. Heal 1.",
+      "side": "defender",
+      "ops": [
+        {
+          "op": "block",
+          "n": 3
+        },
+        {
+          "op": "heal",
+          "n": 1
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "block",
+          "n": 3
+        },
+        {
+          "op": "heal",
+          "n": 1
+        }
+      ],
+      "reactionText": "Gain 3 Block. Heal 1.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Dr. Shealer",
+      "lootHero": "SHE",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 8,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-SHE-10",
+      "name": "Therapy Chicken",
+      "text": "Heal 2. Draw 1 card.",
+      "side": "either",
+      "ops": [
+        {
+          "op": "heal",
+          "n": 2
+        },
+        {
+          "op": "draw",
+          "n": 1
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "heal",
+          "n": 2
+        },
+        {
+          "op": "draw",
+          "n": 1
+        }
+      ],
+      "reactionText": "Heal 2. Draw 1 card.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Dr. Shealer",
+      "lootHero": "SHE",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 9,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-SHE-11",
+      "name": "Scalpel Magnet",
+      "text": "Pull your rival up to 2. Heal 1.",
+      "side": "either",
+      "ops": [
+        {
+          "op": "pull",
+          "n": 2
+        },
+        {
+          "op": "heal",
+          "n": 1
+        }
+      ],
       "reactionOps": [
         {
           "op": "pull",
           "n": 2
+        },
+        {
+          "op": "heal",
+          "n": 1
         }
       ],
-      "reactionText": "Pull your rival up to 2.",
+      "reactionText": "Pull your rival up to 2. Heal 1.",
       "attackText": "",
-      "copies": 2
-    },
-    {
-      "id": "T-L12",
-      "name": "Pocket Firework",
       "category": "Loot",
       "kind": "Loot",
-      "text": "Deal 2 damage to your rival. Block can stop it.",
+      "hero": "Dr. Shealer",
+      "lootHero": "SHE",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 10,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-SHE-12",
+      "name": "Experimental Firework",
+      "text": "Pay 1 Health. Deal 3 damage.",
+      "side": "either",
       "ops": [
         {
           "op": "ping",
-          "n": 2
+          "n": 3
         }
       ],
-      "side": "either",
+      "reactionOps": [
+        {
+          "op": "ping",
+          "n": 3
+        }
+      ],
+      "reactionText": "Pay 1 Health. Deal 3 damage.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Dr. Shealer",
+      "lootHero": "SHE",
+      "copies": 1,
       "art": "assets/loot-atlas.webp",
       "artIndex": 11,
       "artCols": 4,
       "artRows": 3,
+      "cost": {
+        "resource": "hp",
+        "n": 1
+      }
+    },
+    {
+      "id": "L-HEL-01",
+      "name": "Get-Off-My-Lawn Glove",
+      "text": "Gain 2 Block. Push your rival up to 1.",
+      "side": "defender",
+      "ops": [
+        {
+          "op": "block",
+          "n": 2
+        },
+        {
+          "op": "push",
+          "n": 1
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "block",
+          "n": 2
+        },
+        {
+          "op": "push",
+          "n": 1
+        }
+      ],
+      "reactionText": "Gain 2 Block. Push your rival up to 1.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Helga Stonewall",
+      "lootHero": "HEL",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 0,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-HEL-02",
+      "name": "Steel-Toed Boots",
+      "text": "Move up to 1. Gain 3 Block.",
+      "side": "either",
+      "ops": [
+        {
+          "op": "move",
+          "n": 1
+        },
+        {
+          "op": "block",
+          "n": 3
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "move",
+          "n": 1
+        },
+        {
+          "op": "block",
+          "n": 3
+        }
+      ],
+      "reactionText": "Move up to 1. Gain 3 Block.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Helga Stonewall",
+      "lootHero": "HEL",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 1,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-HEL-03",
+      "name": "Watchtower Telescope",
+      "text": "Your attack gets +2 maximum Range. Gain 1 Block.",
+      "side": "attacker",
+      "ops": [
+        {
+          "op": "reach",
+          "n": 2
+        },
+        {
+          "op": "block",
+          "n": 1
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "reach",
+          "n": 2
+        },
+        {
+          "op": "block",
+          "n": 1
+        }
+      ],
+      "reactionText": "Your attack gets +2 maximum Range. Gain 1 Block.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Helga Stonewall",
+      "lootHero": "HEL",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 2,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-HEL-04",
+      "name": "Siege Anvil",
+      "text": "Remove up to 2 enemy Block. Your attack gets +1 damage.",
+      "side": "attacker",
+      "ops": [
+        {
+          "op": "shred",
+          "n": 2
+        },
+        {
+          "op": "boost",
+          "n": 1
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "shred",
+          "n": 2
+        },
+        {
+          "op": "boost",
+          "n": 1
+        }
+      ],
+      "reactionText": "Remove up to 2 enemy Block. Your attack gets +1 damage.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Helga Stonewall",
+      "lootHero": "HEL",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 3,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-HEL-05",
+      "name": "Return-To-Sender Present",
+      "text": "Pay 2 Block. Deal 3 damage.",
+      "side": "either",
+      "ops": [
+        {
+          "op": "ping",
+          "n": 3
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "ping",
+          "n": 3
+        }
+      ],
+      "reactionText": "Pay 2 Block. Deal 3 damage.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Helga Stonewall",
+      "lootHero": "HEL",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 4,
+      "artCols": 4,
+      "artRows": 3,
+      "cost": {
+        "resource": "block",
+        "n": 2
+      }
+    },
+    {
+      "id": "L-HEL-06",
+      "name": "Bunker Sandwich",
+      "text": "Heal 2. Gain 2 Block.",
+      "side": "defender",
+      "ops": [
+        {
+          "op": "heal",
+          "n": 2
+        },
+        {
+          "op": "block",
+          "n": 2
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "heal",
+          "n": 2
+        },
+        {
+          "op": "block",
+          "n": 2
+        }
+      ],
+      "reactionText": "Heal 2. Gain 2 Block.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Helga Stonewall",
+      "lootHero": "HEL",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 5,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-HEL-07",
+      "name": "Armoured Skates",
+      "text": "Move up to 2. Gain 2 Block.",
+      "side": "either",
+      "ops": [
+        {
+          "op": "move",
+          "n": 2
+        },
+        {
+          "op": "block",
+          "n": 2
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "move",
+          "n": 2
+        },
+        {
+          "op": "block",
+          "n": 2
+        }
+      ],
+      "reactionText": "Move up to 2. Gain 2 Block.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Helga Stonewall",
+      "lootHero": "HEL",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 6,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-HEL-08",
+      "name": "Fortress Relocation",
+      "text": "Swap places with your rival. Gain 1 Block.",
+      "side": "either",
+      "ops": [
+        {
+          "op": "swap"
+        },
+        {
+          "op": "block",
+          "n": 1
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "swap"
+        },
+        {
+          "op": "block",
+          "n": 1
+        }
+      ],
+      "reactionText": "Swap places with your rival. Gain 1 Block.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Helga Stonewall",
+      "lootHero": "HEL",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 7,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-HEL-09",
+      "name": "Tin-Foil Fortress",
+      "text": "Gain 5 Block.",
+      "side": "defender",
+      "ops": [
+        {
+          "op": "block",
+          "n": 5
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "block",
+          "n": 5
+        }
+      ],
+      "reactionText": "Gain 5 Block.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Helga Stonewall",
+      "lootHero": "HEL",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 8,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-HEL-10",
+      "name": "Guard Chicken",
+      "text": "Gain 3 Block. Draw 1 card.",
+      "side": "defender",
+      "ops": [
+        {
+          "op": "block",
+          "n": 3
+        },
+        {
+          "op": "draw",
+          "n": 1
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "block",
+          "n": 3
+        },
+        {
+          "op": "draw",
+          "n": 1
+        }
+      ],
+      "reactionText": "Gain 3 Block. Draw 1 card.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Helga Stonewall",
+      "lootHero": "HEL",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 9,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-HEL-11",
+      "name": "Shield Magnet",
+      "text": "Pull your rival up to 2. Gain 1 Block.",
+      "side": "either",
+      "ops": [
+        {
+          "op": "pull",
+          "n": 2
+        },
+        {
+          "op": "block",
+          "n": 1
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "pull",
+          "n": 2
+        },
+        {
+          "op": "block",
+          "n": 1
+        }
+      ],
+      "reactionText": "Pull your rival up to 2. Gain 1 Block.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Helga Stonewall",
+      "lootHero": "HEL",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 10,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-HEL-12",
+      "name": "Bunker Buster",
+      "text": "Pay 2 Block. Your attack gets +3 damage.",
+      "side": "attacker",
+      "ops": [
+        {
+          "op": "boost",
+          "n": 3
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "boost",
+          "n": 3
+        }
+      ],
+      "reactionText": "Pay 2 Block. Your attack gets +3 damage.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Helga Stonewall",
+      "lootHero": "HEL",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 11,
+      "artCols": 4,
+      "artRows": 3,
+      "cost": {
+        "resource": "block",
+        "n": 2
+      }
+    },
+    {
+      "id": "L-RAV-01",
+      "name": "Pickpocket Glove",
+      "text": "Steal up to 1 Coin. Push your rival up to 1.",
+      "side": "either",
+      "ops": [
+        {
+          "op": "steal",
+          "n": 1
+        },
+        {
+          "op": "push",
+          "n": 1
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "steal",
+          "n": 1
+        },
+        {
+          "op": "push",
+          "n": 1
+        }
+      ],
+      "reactionText": "Steal up to 1 Coin. Push your rival up to 1.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Raven Madison",
+      "lootHero": "RAV",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 0,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-RAV-02",
+      "name": "Silent Boots",
+      "text": "Move up to 3.",
+      "side": "either",
+      "ops": [
+        {
+          "op": "move",
+          "n": 3
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "move",
+          "n": 3
+        }
+      ],
+      "reactionText": "Move up to 3.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Raven Madison",
+      "lootHero": "RAV",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 1,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-RAV-03",
+      "name": "Stolen Telescope",
+      "text": "Your attack gets +2 maximum Range. Its minimum Range becomes 1.",
+      "side": "attacker",
+      "ops": [
+        {
+          "op": "reach",
+          "n": 2
+        },
+        {
+          "op": "minimum",
+          "n": 1
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "reach",
+          "n": 2
+        },
+        {
+          "op": "minimum",
+          "n": 1
+        }
+      ],
+      "reactionText": "Your attack gets +2 maximum Range. Its minimum Range becomes 1.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Raven Madison",
+      "lootHero": "RAV",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 2,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-RAV-04",
+      "name": "Distraction Anvil",
+      "text": "Your rival discards 1 uncommitted card of their choice.",
+      "side": "either",
+      "ops": [
+        {
+          "op": "disrupt",
+          "n": 1
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "disrupt",
+          "n": 1
+        }
+      ],
+      "reactionText": "Your rival discards 1 uncommitted card of their choice.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Raven Madison",
+      "lootHero": "RAV",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 3,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-RAV-05",
+      "name": "Blackmail Present",
+      "text": "Steal up to 1 Coin. Your attack gets +2 damage.",
+      "side": "attacker",
+      "ops": [
+        {
+          "op": "steal",
+          "n": 1
+        },
+        {
+          "op": "boost",
+          "n": 2
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "steal",
+          "n": 1
+        },
+        {
+          "op": "boost",
+          "n": 2
+        }
+      ],
+      "reactionText": "Steal up to 1 Coin. Your attack gets +2 damage.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Raven Madison",
+      "lootHero": "RAV",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 4,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-RAV-06",
+      "name": "Stolen Lunch",
+      "text": "Heal 2. Scry 2.",
+      "side": "either",
+      "ops": [
+        {
+          "op": "heal",
+          "n": 2
+        },
+        {
+          "op": "scry",
+          "n": 2
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "heal",
+          "n": 2
+        },
+        {
+          "op": "scry",
+          "n": 2
+        }
+      ],
+      "reactionText": "Heal 2. Scry 2.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Raven Madison",
+      "lootHero": "RAV",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 5,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-RAV-07",
+      "name": "Escape Skates",
+      "text": "Pay 1 Health. Move up to 4.",
+      "side": "either",
+      "ops": [
+        {
+          "op": "move",
+          "n": 4
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "move",
+          "n": 4
+        }
+      ],
+      "reactionText": "Pay 1 Health. Move up to 4.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Raven Madison",
+      "lootHero": "RAV",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 6,
+      "artCols": 4,
+      "artRows": 3,
+      "cost": {
+        "resource": "hp",
+        "n": 1
+      }
+    },
+    {
+      "id": "L-RAV-08",
+      "name": "Perfectly Placed Peel",
+      "text": "Swap places with your rival. Move up to 1.",
+      "side": "either",
+      "ops": [
+        {
+          "op": "swap"
+        },
+        {
+          "op": "move",
+          "n": 1
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "swap"
+        },
+        {
+          "op": "move",
+          "n": 1
+        }
+      ],
+      "reactionText": "Swap places with your rival. Move up to 1.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Raven Madison",
+      "lootHero": "RAV",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 7,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-RAV-09",
+      "name": "Cardboard Decoy",
+      "text": "Gain 3 Block. Scry 2.",
+      "side": "defender",
+      "ops": [
+        {
+          "op": "block",
+          "n": 3
+        },
+        {
+          "op": "scry",
+          "n": 2
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "block",
+          "n": 3
+        },
+        {
+          "op": "scry",
+          "n": 2
+        }
+      ],
+      "reactionText": "Gain 3 Block. Scry 2.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Raven Madison",
+      "lootHero": "RAV",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 8,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-RAV-10",
+      "name": "Accomplice Chicken",
+      "text": "Draw 2 cards, then discard 1 uncommitted card.",
+      "side": "either",
+      "ops": [
+        {
+          "op": "draw",
+          "n": 2
+        },
+        {
+          "op": "discard",
+          "n": 1
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "draw",
+          "n": 2
+        },
+        {
+          "op": "discard",
+          "n": 1
+        }
+      ],
+      "reactionText": "Draw 2 cards, then discard 1 uncommitted card.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Raven Madison",
+      "lootHero": "RAV",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 9,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-RAV-11",
+      "name": "Grappling Magnet",
+      "text": "Move to an empty space beside your rival.",
+      "side": "either",
+      "ops": [
+        {
+          "op": "adjacent"
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "adjacent"
+        }
+      ],
+      "reactionText": "Move to an empty space beside your rival.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Raven Madison",
+      "lootHero": "RAV",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 10,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-RAV-12",
+      "name": "Pocket Firework",
+      "text": "Deal 2 damage. Block can stop it.",
+      "side": "either",
+      "ops": [
+        {
+          "op": "ping",
+          "n": 2
+        }
+      ],
       "reactionOps": [
         {
           "op": "ping",
           "n": 2
         }
       ],
-      "reactionText": "Deal 2 damage to your rival. Block can stop it.",
+      "reactionText": "Deal 2 damage. Block can stop it.",
       "attackText": "",
-      "copies": 2
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Raven Madison",
+      "lootHero": "RAV",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 11,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-FRA-01",
+      "name": "Collection Glove",
+      "text": "Steal up to 1 Coin. Deal 1 damage.",
+      "side": "either",
+      "ops": [
+        {
+          "op": "steal",
+          "n": 1
+        },
+        {
+          "op": "ping",
+          "n": 1
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "steal",
+          "n": 1
+        },
+        {
+          "op": "ping",
+          "n": 1
+        }
+      ],
+      "reactionText": "Steal up to 1 Coin. Deal 1 damage.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Friar Franc",
+      "lootHero": "FRA",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 0,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-FRA-02",
+      "name": "Pilgrim Boots",
+      "text": "Move up to 2. Scry 1.",
+      "side": "either",
+      "ops": [
+        {
+          "op": "move",
+          "n": 2
+        },
+        {
+          "op": "scry",
+          "n": 1
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "move",
+          "n": 2
+        },
+        {
+          "op": "scry",
+          "n": 1
+        }
+      ],
+      "reactionText": "Move up to 2. Scry 1.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Friar Franc",
+      "lootHero": "FRA",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 1,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-FRA-03",
+      "name": "Premium Telescope",
+      "text": "Your attack gets +3 maximum Range.",
+      "side": "attacker",
+      "ops": [
+        {
+          "op": "reach",
+          "n": 3
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "reach",
+          "n": 3
+        }
+      ],
+      "reactionText": "Your attack gets +3 maximum Range.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Friar Franc",
+      "lootHero": "FRA",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 2,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-FRA-04",
+      "name": "Tax-Deductible Anvil",
+      "text": "Remove up to 2 enemy Block. Gain 1 Coin.",
+      "side": "attacker",
+      "ops": [
+        {
+          "op": "shred",
+          "n": 2
+        },
+        {
+          "op": "coin",
+          "n": 1
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "shred",
+          "n": 2
+        },
+        {
+          "op": "coin",
+          "n": 1
+        }
+      ],
+      "reactionText": "Remove up to 2 enemy Block. Gain 1 Coin.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Friar Franc",
+      "lootHero": "FRA",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 3,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-FRA-05",
+      "name": "Premium Present",
+      "text": "Pay 1 Coin. Your attack gets +4 damage.",
+      "side": "attacker",
+      "ops": [
+        {
+          "op": "boost",
+          "n": 4
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "boost",
+          "n": 4
+        }
+      ],
+      "reactionText": "Pay 1 Coin. Your attack gets +4 damage.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Friar Franc",
+      "lootHero": "FRA",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 4,
+      "artCols": 4,
+      "artRows": 3,
+      "cost": {
+        "resource": "coins",
+        "n": 1
+      }
+    },
+    {
+      "id": "L-FRA-06",
+      "name": "All-You-Can-Eat Sandwich",
+      "text": "Heal 3.",
+      "side": "either",
+      "ops": [
+        {
+          "op": "heal",
+          "n": 3
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "heal",
+          "n": 3
+        }
+      ],
+      "reactionText": "Heal 3.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Friar Franc",
+      "lootHero": "FRA",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 5,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-FRA-07",
+      "name": "Express Delivery Skates",
+      "text": "Move up to 3.",
+      "side": "either",
+      "ops": [
+        {
+          "op": "move",
+          "n": 3
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "move",
+          "n": 3
+        }
+      ],
+      "reactionText": "Move up to 3.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Friar Franc",
+      "lootHero": "FRA",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 6,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-FRA-08",
+      "name": "Suspiciously Free Banana",
+      "text": "Swap places with your rival. Gain 1 Coin.",
+      "side": "either",
+      "ops": [
+        {
+          "op": "swap"
+        },
+        {
+          "op": "coin",
+          "n": 1
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "swap"
+        },
+        {
+          "op": "coin",
+          "n": 1
+        }
+      ],
+      "reactionText": "Swap places with your rival. Gain 1 Coin.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Friar Franc",
+      "lootHero": "FRA",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 7,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-FRA-09",
+      "name": "Fully Insured Fortress",
+      "text": "Gain 4 Block.",
+      "side": "defender",
+      "ops": [
+        {
+          "op": "block",
+          "n": 4
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "block",
+          "n": 4
+        }
+      ],
+      "reactionText": "Gain 4 Block.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Friar Franc",
+      "lootHero": "FRA",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 8,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-FRA-10",
+      "name": "Lucky Chicken",
+      "text": "Scry 2. Draw 1 card.",
+      "side": "either",
+      "ops": [
+        {
+          "op": "scry",
+          "n": 2
+        },
+        {
+          "op": "draw",
+          "n": 1
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "scry",
+          "n": 2
+        },
+        {
+          "op": "draw",
+          "n": 1
+        }
+      ],
+      "reactionText": "Scry 2. Draw 1 card.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Friar Franc",
+      "lootHero": "FRA",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 9,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-FRA-11",
+      "name": "Coin Magnet",
+      "text": "Pull your rival up to 2. Steal up to 1 Coin.",
+      "side": "either",
+      "ops": [
+        {
+          "op": "pull",
+          "n": 2
+        },
+        {
+          "op": "steal",
+          "n": 1
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "pull",
+          "n": 2
+        },
+        {
+          "op": "steal",
+          "n": 1
+        }
+      ],
+      "reactionText": "Pull your rival up to 2. Steal up to 1 Coin.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Friar Franc",
+      "lootHero": "FRA",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 10,
+      "artCols": 4,
+      "artRows": 3
+    },
+    {
+      "id": "L-FRA-12",
+      "name": "Fundraiser Firework",
+      "text": "Deal 1 damage. Gain 1 Coin.",
+      "side": "either",
+      "ops": [
+        {
+          "op": "ping",
+          "n": 1
+        },
+        {
+          "op": "coin",
+          "n": 1
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "ping",
+          "n": 1
+        },
+        {
+          "op": "coin",
+          "n": 1
+        }
+      ],
+      "reactionText": "Deal 1 damage. Gain 1 Coin.",
+      "attackText": "",
+      "category": "Loot",
+      "kind": "Loot",
+      "hero": "Friar Franc",
+      "lootHero": "FRA",
+      "copies": 1,
+      "art": "assets/loot-atlas.webp",
+      "artIndex": 11,
+      "artCols": 4,
+      "artRows": 3
     }
   ],
   "rules": [
@@ -4178,7 +6414,7 @@
     ],
     [
       "Start",
-      "20 Health, 0 Coins. Start on spaces 3 and 5; random Edge. Shuffle your deck and draw 7."
+      "20 Health, 0 Coins. Start on spaces 3 and 6; random Edge. Shuffle your deck and draw 7."
     ],
     [
       "Commit",
@@ -4190,19 +6426,11 @@
     ],
     [
       "Activate & react",
-      "Resolve printed preparation and movement. Then the defender reacts first. Alternate one Reaction, Loot or pass. Playing a card resets passes; two consecutive passes resolve the strike at the current distance. Never draw automatically during an exchange."
+      "Resolve printed preparation and movement. Then the defender reacts first. Alternate one Reaction, Loot or pass. Playing a card resets passes; two consecutive passes resolve the strike at the current distance. Draw only when a card or passive says so."
     ],
     [
       "Movement",
-      "Move up to the printed distance, in either direction. You may stay, move partly or cross the rival, but never share a space or leave the seven-space arena. Choose when the effect resolves. Push and pull also allow zero or partial movement."
-    ],
-    [
-      "Block & damage",
-      "Block caps at 6. Damage consumes Block unless ignored. Ignore X bypasses X Block without consuming it. Ignore all bypasses all. Clear Block after each attack, except Helga banks up to 3. All Block clears at round end."
-    ],
-    [
-      "Coins & Loot",
-      "Basic Attacks earn 1 Coin when finished, even on a miss; Franc earns 2. No automatic Coins for reactions or Hero attacks, but printed effects can grant them. Coins cap at 8. End of round: buy one blind Loot for 2 Coins; hold at most 2."
+      "Move up to the printed distance, in either direction. You may stay, move partly or cross the rival, but never share a space or leave the eight-space arena. Choose when the effect resolves. Push and pull also allow zero or partial movement."
     ],
     [
       "Scry & preparation",
@@ -4227,9 +6455,29 @@
     [
       "Fury & Last Stand",
       "Base passives work from the start. At 10 Health or less, your chosen Fury enters your hand once. The first time you reach 5 Health or less, finish the current card; if you survive, activate Last Stand for the rest of the fight, even if you heal. Last Stand replaces the old passive upgrade. A lethal hit does not unlock it. Helga’s already-active reflection resolves before victory."
+    ],
+    [
+      "Coins",
+      "Basic Attacks earn 1 Coin when they finish, even on a miss. Franc earns 1 extra only when his Basic Attack deals Health damage. Reactions give no automatic income. Hold at most 8 Coins."
+    ],
+    [
+      "Arena",
+      "Join the two Heroes’ four-space boards to make a straight 8-space arena. Number the spaces 1–8. Start on 3 and 6. Only the outer ends (1 and 8) are walls. Crossing the join between 4 and 5 has no special effect."
+    ],
+    [
+      "Loot draft & market",
+      "Each Hero chooses 6 different Loot from their 12-card pool. Shuffle both contributions into one shared 12-card deck. Reveal 3. Anyone can use any Loot. Between rounds, starting with the new Edge holder, each player may buy once: pay 2 Coins for a face-up Loot or a blind draw. Refill a bought slot immediately. Hold at most 2 Loot. Shuffle spent Loot when the draw pile empties; never shuffle held or face-up cards."
+    ],
+    [
+      "Block",
+      "All unused Block clears after every attack, for everyone. Maximum 6 Block. Helga gains 1 Block when a rival activates an attack, before printed movement and reactions. No Block banking or round-end exceptions."
+    ],
+    [
+      "Hero passives",
+      "Passives work from the start. Alf draws once after a damaging attack from Range 3 or farther. This is a passive draw, independent of the once-per-attack card-draw limit. Shealer draws 1 whenever she pays Health for a card; this is also a passive draw. Smasherton improves wall slams; Raven rewards crossing before her strike; Franc earns an extra Coin only when a Basic Attack deals Health damage."
     ]
   ],
-  "version": "brawl2-last-stand-1",
+  "version": "brawl2-market-1",
   "builds": [
     {
       "id": "sma-lab-0",
