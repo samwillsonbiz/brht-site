@@ -1,9 +1,11 @@
+import {preloadHeroAnimations} from './hero-animation.js';
 import {playAttack} from './combat-fx.js';
 // Presentation snapshots contain only public DOM positions and public game results.
 let previous=null;
 export function captureStage(root){return [...root.querySelectorAll('.r-fighter[data-player],.od-hand-card,.r-revealed')].map(el=>({key:el.dataset.player!==undefined?'hero-'+el.dataset.player:el.dataset.revealPlayer!==undefined?'reveal-'+el.dataset.revealPlayer:el.querySelector('[data-card]')?.dataset.card,rect:el.getBoundingClientRect()}));}
 export function animateStage(root,before,state,active,options={}){
  if(!active||!state){previous=null;return;}
+ preloadHeroAnimations(state.players);
  const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
  if(!before.length)previous=null;
  const old=new Map(before.map(e=>[e.key,e.rect]));
