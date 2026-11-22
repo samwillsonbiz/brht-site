@@ -1,0 +1,14 @@
+/* Shared Loot identity: every origin uses the same amethyst frame. */
+.r-card.c-type-loot{--card-accent:#795195;border-color:#b58acf!important;background:#f4e9ce;box-shadow:inset 0 0 0 2px #d9bbe3,0 8px 20px #0006}
+.r-card.c-type-loot .r-card-head{background:linear-gradient(135deg,#8c62a4,#5d3a78)!important;color:#fff3da}
+.r-card.c-type-loot .r-card-stat{background:#51375f!important;color:#fff0d3}
+.r-card.c-type-loot .c-react-mark{color:#f3d5ff}.r-card.c-type-loot .c-type{color:#754890}
+.r-card.c-type-loot .c-art-image{background-repeat:no-repeat}
+.lobby-scroll .market-pool .loot-draft-art{display:block;width:100%;height:auto;aspect-ratio:1;background-repeat:no-repeat;border-radius:5px;margin-bottom:8px;border:1px solid #bb8ad055}
+.lobby-scroll .market-pool button{border-color:#8c64a44d}.lobby-scroll .market-pool button.chosen{border-color:#c793e6;background:#63417d42}
+.lobby-scroll .market-pool button{display:grid;grid-template-columns:64px minmax(0,1fr);gap:7px 10px;align-content:start;text-align:left;min-height:130px;padding:12px}
+.lobby-scroll .market-pool .loot-draft-art{width:64px;height:64px;grid-row:1/3;margin:0;align-self:start}
+.lobby-scroll .market-pool button>b{font-size:12px;line-height:1.3}.lobby-scroll .market-pool button>span:not(.loot-draft-art){font-size:11px;line-height:1.4}
+@media(max-width:1100px){.lobby-scroll .market-pool{grid-template-columns:1fr}.lobby-scroll .market-pool button{min-height:90px}}
+.r-card.c-type-loot .r-card-art{background:#f2e3c2}
+.r-card.c-type-loot .c-art-image{width:auto;height:100%;aspect-ratio:1;left:50%;top:0;transform:translateX(-50%)}
