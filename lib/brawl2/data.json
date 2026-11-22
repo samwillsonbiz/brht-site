@@ -6686,13 +6686,14 @@
       "attackText": "Hit for 6 at Range 1–1. Ignore 2 Block.",
       "reactionText": "",
       "text": "Hit for 6 at Range 1–1. Ignore 2 Block.",
-      "art": "assets/hero-marcus-ironheart.webp",
+      "art": "assets/core-cards-v1/M01.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "M02",
@@ -6731,13 +6732,14 @@
       "attackText": "Hit for 3 at Range 1–1. Activate: move up to 1.",
       "reactionText": "Gain 3 Block. You may move 1 toward the rival.",
       "text": "Hit for 3 at Range 1–1. Activate: move up to 1. OR Gain 3 Block. You may move 1 toward the rival.",
-      "art": "assets/hero-marcus-ironheart.webp",
+      "art": "assets/core-cards-v1/M02.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "M03",
@@ -6767,13 +6769,14 @@
       "attackText": "Hit for 4 at Range 1–1.",
       "reactionText": "Gain 3 Block.",
       "text": "Hit for 4 at Range 1–1.  OR Gain 3 Block.",
-      "art": "assets/hero-marcus-ironheart.webp",
+      "art": "assets/core-cards-v1/M03.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "M04",
@@ -6808,13 +6811,14 @@
       "attackText": "Hit for 2 at Range 1–2. On hit: draw 1.",
       "reactionText": "Remove up to 2 rival Block.",
       "text": "Hit for 2 at Range 1–2. On hit: draw 1. OR Remove up to 2 rival Block.",
-      "art": "assets/hero-marcus-ironheart.webp",
+      "art": "assets/core-cards-v1/M04.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "M05",
@@ -6848,13 +6852,14 @@
       "attackText": "Hit for 4 at Range 1–2.",
       "reactionText": "Move up to 1. Gain 1 Block.",
       "text": "Hit for 4 at Range 1–2.  OR Move up to 1. Gain 1 Block.",
-      "art": "assets/hero-marcus-ironheart.webp",
+      "art": "assets/core-cards-v1/M05.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "M06",
@@ -6892,13 +6897,14 @@
       "attackText": "Hit for 3 at Range 1–1. On hit: push the rival up to 1.",
       "reactionText": "At Range 1: push the rival up to 1.",
       "text": "Hit for 3 at Range 1–1. On hit: push the rival up to 1. OR At Range 1: push the rival up to 1.",
-      "art": "assets/hero-marcus-ironheart.webp",
+      "art": "assets/core-cards-v1/M06.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "M07",
@@ -6933,13 +6939,14 @@
       "attackText": "Hit for 4 at Range 1–1. On hit: draw 1.",
       "reactionText": "Discard another non-Loot card from your hand. Gain 5 Block.",
       "text": "Hit for 4 at Range 1–1. On hit: draw 1. OR Discard another non-Loot card from your hand. Gain 5 Block.",
-      "art": "assets/hero-marcus-ironheart.webp",
+      "art": "assets/core-cards-v1/M07.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "M08",
@@ -6969,13 +6976,14 @@
       "attackText": "Hit for 3 at Range 1–1.",
       "reactionText": "Gain 4 Block.",
       "text": "Hit for 3 at Range 1–1.  OR Gain 4 Block.",
-      "art": "assets/hero-marcus-ironheart.webp",
+      "art": "assets/core-cards-v1/M08.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "M09",
@@ -7003,13 +7011,14 @@
       "attackText": "",
       "reactionText": "Gain 4 Block. You may move 1 toward the rival.",
       "text": "Gain 4 Block. You may move 1 toward the rival.",
-      "art": "assets/hero-marcus-ironheart.webp",
+      "art": "assets/core-cards-v1/M09.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "M10",
@@ -7037,13 +7046,14 @@
       "attackText": "",
       "reactionText": "Move up to 2 toward the rival. Gain 1 Block.",
       "text": "Move up to 2 toward the rival. Gain 1 Block.",
-      "art": "assets/hero-marcus-ironheart.webp",
+      "art": "assets/core-cards-v1/M10.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "FM1",
@@ -7073,13 +7083,14 @@
       "attackText": "Hit for 5 at Range 1–2. On hit: heal 3.",
       "reactionText": "",
       "text": "Hit for 5 at Range 1–2. On hit: heal 3.",
-      "art": "assets/hero-marcus-ironheart.webp",
+      "art": "assets/core-cards-v1/FM1.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "FM2",
@@ -7108,13 +7119,14 @@
       "attackText": "Hit for 6 at Range 1–1. Activate: move up to 2.",
       "reactionText": "",
       "text": "Hit for 6 at Range 1–1. Activate: move up to 2.",
-      "art": "assets/hero-marcus-ironheart.webp",
+      "art": "assets/core-cards-v1/FM2.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "FM3",
@@ -7140,13 +7152,14 @@
       "attackText": "Hit for 7 at Range 1–1. Ignore 3 Block.",
       "reactionText": "",
       "text": "Hit for 7 at Range 1–1. Ignore 3 Block.",
-      "art": "assets/hero-marcus-ironheart.webp",
+      "art": "assets/core-cards-v1/FM3.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "Z01",
@@ -7171,13 +7184,14 @@
       "attackText": "Hit for 9 at Range 1–1.",
       "reactionText": "",
       "text": "Hit for 9 at Range 1–1. ",
-      "art": "assets/hero-sibu-stormspear.webp",
+      "art": "assets/core-cards-v1/Z01.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "Z02",
@@ -7215,13 +7229,14 @@
       "attackText": "Hit for 6 at Range 1–1. Activate: move up to 1.",
       "reactionText": "Move up to 1. Add 1 damage.",
       "text": "Hit for 6 at Range 1–1. Activate: move up to 1. OR Move up to 1. Add 1 damage.",
-      "art": "assets/hero-sibu-stormspear.webp",
+      "art": "assets/core-cards-v1/Z02.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "Z03",
@@ -7252,13 +7267,14 @@
       "attackText": "Hit for 5 at Range 1–1. Ignore 2 Block.",
       "reactionText": "Remove up to 3 rival Block.",
       "text": "Hit for 5 at Range 1–1. Ignore 2 Block. OR Remove up to 3 rival Block.",
-      "art": "assets/hero-sibu-stormspear.webp",
+      "art": "assets/core-cards-v1/Z03.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "Z04",
@@ -7288,13 +7304,14 @@
       "attackText": "Hit for 5 at Range 2–4.",
       "reactionText": "Add 1 maximum Range.",
       "text": "Hit for 5 at Range 2–4.  OR Add 1 maximum Range.",
-      "art": "assets/hero-sibu-stormspear.webp",
+      "art": "assets/core-cards-v1/Z04.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "Z05",
@@ -7328,13 +7345,14 @@
       "attackText": "Hit for 4 at Range 1–1. Activate: move up to 2.",
       "reactionText": "Move up to 2.",
       "text": "Hit for 4 at Range 1–1. Activate: move up to 2. OR Move up to 2.",
-      "art": "assets/hero-sibu-stormspear.webp",
+      "art": "assets/core-cards-v1/Z05.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "Z06",
@@ -7373,13 +7391,14 @@
       "attackText": "Hit for 5 at Range 1–2. On hit: push the rival up to 1.",
       "reactionText": "Move up to 1. Gain 1 Block.",
       "text": "Hit for 5 at Range 1–2. On hit: push the rival up to 1. OR Move up to 1. Gain 1 Block.",
-      "art": "assets/hero-sibu-stormspear.webp",
+      "art": "assets/core-cards-v1/Z06.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "Z07",
@@ -7412,13 +7431,14 @@
       "attackText": "Hit for 7 at Range 1–2.",
       "reactionText": "At Range 1–3: pull the rival up to 1.",
       "text": "Hit for 7 at Range 1–2.  OR At Range 1–3: pull the rival up to 1.",
-      "art": "assets/hero-sibu-stormspear.webp",
+      "art": "assets/core-cards-v1/Z07.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "Z08",
@@ -7448,13 +7468,14 @@
       "attackText": "Hit for 4 at Range 1–2.",
       "reactionText": "Gain 2 Block.",
       "text": "Hit for 4 at Range 1–2.  OR Gain 2 Block.",
-      "art": "assets/hero-sibu-stormspear.webp",
+      "art": "assets/core-cards-v1/Z08.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "Z09",
@@ -7481,13 +7502,14 @@
       "attackText": "",
       "reactionText": "Discard another non-Loot card from your hand. Add 2 damage and 1 maximum Range.",
       "text": "Discard another non-Loot card from your hand. Add 2 damage and 1 maximum Range.",
-      "art": "assets/hero-sibu-stormspear.webp",
+      "art": "assets/core-cards-v1/Z09.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "Z10",
@@ -7514,13 +7536,14 @@
       "attackText": "",
       "reactionText": "Move up to 1. Ignore 3 additional Block.",
       "text": "Move up to 1. Ignore 3 additional Block.",
-      "art": "assets/hero-sibu-stormspear.webp",
+      "art": "assets/core-cards-v1/Z10.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "FZ1",
@@ -7549,13 +7572,14 @@
       "attackText": "Hit for 11 at Range 1–1. Activate: move up to 1.",
       "reactionText": "",
       "text": "Hit for 11 at Range 1–1. Activate: move up to 1.",
-      "art": "assets/hero-sibu-stormspear.webp",
+      "art": "assets/core-cards-v1/FZ1.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "FZ2",
@@ -7584,13 +7608,14 @@
       "attackText": "Hit for 7 at Range 1–2. Activate: move up to 2.",
       "reactionText": "",
       "text": "Hit for 7 at Range 1–2. Activate: move up to 2.",
-      "art": "assets/hero-sibu-stormspear.webp",
+      "art": "assets/core-cards-v1/FZ2.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "FZ3",
@@ -7616,13 +7641,14 @@
       "attackText": "Hit for 8 at Range 1–3. Ignore 3 Block.",
       "reactionText": "",
       "text": "Hit for 8 at Range 1–3. Ignore 3 Block.",
-      "art": "assets/hero-sibu-stormspear.webp",
+      "art": "assets/core-cards-v1/FZ3.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "V01",
@@ -7648,13 +7674,14 @@
       "attackText": "Hit for 7 at Range 1–1. Ignore 1 Block.",
       "reactionText": "",
       "text": "Hit for 7 at Range 1–1. Ignore 1 Block.",
-      "art": "assets/hero-vera-vendetta.webp",
+      "art": "assets/core-cards-v1/V01.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "V02",
@@ -7684,13 +7711,14 @@
       "attackText": "Hit for 3 at Range 1–1.",
       "reactionText": "Move up to 1.",
       "text": "Hit for 3 at Range 1–1.  OR Move up to 1.",
-      "art": "assets/hero-vera-vendetta.webp",
+      "art": "assets/core-cards-v1/V02.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "V03",
@@ -7724,13 +7752,14 @@
       "attackText": "Hit for 4 at Range 1–1. Activate: move up to 1.",
       "reactionText": "Move up to 2.",
       "text": "Hit for 4 at Range 1–1. Activate: move up to 1. OR Move up to 2.",
-      "art": "assets/hero-vera-vendetta.webp",
+      "art": "assets/core-cards-v1/V03.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "V04",
@@ -7761,13 +7790,14 @@
       "attackText": "Hit for 4 at Range 1–2. Ignore 1 Block.",
       "reactionText": "Ignore 2 additional Block.",
       "text": "Hit for 4 at Range 1–2. Ignore 1 Block. OR Ignore 2 additional Block.",
-      "art": "assets/hero-vera-vendetta.webp",
+      "art": "assets/core-cards-v1/V04.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "V05",
@@ -7797,13 +7827,14 @@
       "attackText": "Hit for 4 at Range 1–2.",
       "reactionText": "Gain 3 Block.",
       "text": "Hit for 4 at Range 1–2.  OR Gain 3 Block.",
-      "art": "assets/hero-vera-vendetta.webp",
+      "art": "assets/core-cards-v1/V05.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "V06",
@@ -7837,13 +7868,14 @@
       "attackText": "Hit for 3 at Range 1–1.",
       "reactionText": "Move up to 1. Gain 1 Block.",
       "text": "Hit for 3 at Range 1–1.  OR Move up to 1. Gain 1 Block.",
-      "art": "assets/hero-vera-vendetta.webp",
+      "art": "assets/core-cards-v1/V06.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "V07",
@@ -7878,13 +7910,14 @@
       "attackText": "Hit for 3 at Range 1–1. On hit: draw 1.",
       "reactionText": "Discard another non-Loot card from your hand. Add 3 damage.",
       "text": "Hit for 3 at Range 1–1. On hit: draw 1. OR Discard another non-Loot card from your hand. Add 3 damage.",
-      "art": "assets/hero-vera-vendetta.webp",
+      "art": "assets/core-cards-v1/V07.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "V08",
@@ -7914,13 +7947,14 @@
       "attackText": "Hit for 3 at Range 1–3.",
       "reactionText": "Add 1 maximum Range.",
       "text": "Hit for 3 at Range 1–3.  OR Add 1 maximum Range.",
-      "art": "assets/hero-vera-vendetta.webp",
+      "art": "assets/core-cards-v1/V08.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "V09",
@@ -7947,13 +7981,14 @@
       "attackText": "",
       "reactionText": "Draw 2, then discard one non-Loot card from your hand.",
       "text": "Draw 2, then discard one non-Loot card from your hand.",
-      "art": "assets/hero-vera-vendetta.webp",
+      "art": "assets/core-cards-v1/V09.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "V10",
@@ -7980,13 +8015,14 @@
       "attackText": "",
       "reactionText": "Move up to 1. Gain 2 Block.",
       "text": "Move up to 1. Gain 2 Block.",
-      "art": "assets/hero-vera-vendetta.webp",
+      "art": "assets/core-cards-v1/V10.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "FV1",
@@ -8012,13 +8048,14 @@
       "attackText": "Hit for 8 at Range 1–1. Ignore 2 Block.",
       "reactionText": "",
       "text": "Hit for 8 at Range 1–1. Ignore 2 Block.",
-      "art": "assets/hero-vera-vendetta.webp",
+      "art": "assets/core-cards-v1/FV1.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "FV2",
@@ -8047,13 +8084,14 @@
       "attackText": "Hit for 5 at Range 1–2. Activate: move up to 2.",
       "reactionText": "",
       "text": "Hit for 5 at Range 1–2. Activate: move up to 2.",
-      "art": "assets/hero-vera-vendetta.webp",
+      "art": "assets/core-cards-v1/FV2.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "FV3",
@@ -8083,13 +8121,14 @@
       "attackText": "Hit for 5 at Range 1–2. On hit: draw 2.",
       "reactionText": "",
       "text": "Hit for 5 at Range 1–2. On hit: draw 2.",
-      "art": "assets/hero-vera-vendetta.webp",
+      "art": "assets/core-cards-v1/FV3.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "W01",
@@ -8114,13 +8153,14 @@
       "attackText": "Hit for 6 at Range 3–6.",
       "reactionText": "",
       "text": "Hit for 6 at Range 3–6. ",
-      "art": "assets/hero-mei-windwalker.webp",
+      "art": "assets/core-cards-v1/W01.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "W02",
@@ -8154,13 +8194,14 @@
       "attackText": "Hit for 3 at Range 2–4. Activate: move up to 2.",
       "reactionText": "Move up to 3.",
       "text": "Hit for 3 at Range 2–4. Activate: move up to 2. OR Move up to 3.",
-      "art": "assets/hero-mei-windwalker.webp",
+      "art": "assets/core-cards-v1/W02.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "W03",
@@ -8190,13 +8231,14 @@
       "attackText": "Hit for 4 at Range 2–5.",
       "reactionText": "Add 2 maximum Range.",
       "text": "Hit for 4 at Range 2–5.  OR Add 2 maximum Range.",
-      "art": "assets/hero-mei-windwalker.webp",
+      "art": "assets/core-cards-v1/W03.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "W04",
@@ -8230,13 +8272,14 @@
       "attackText": "Hit for 4 at Range 1–2. Activate: move up to 1.",
       "reactionText": "Move up to 2.",
       "text": "Hit for 4 at Range 1–2. Activate: move up to 1. OR Move up to 2.",
-      "art": "assets/hero-mei-windwalker.webp",
+      "art": "assets/core-cards-v1/W04.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "W05",
@@ -8267,13 +8310,14 @@
       "attackText": "Hit for 3 at Range 2–4. Ignore 2 Block.",
       "reactionText": "Ignore 2 additional Block.",
       "text": "Hit for 3 at Range 2–4. Ignore 2 Block. OR Ignore 2 additional Block.",
-      "art": "assets/hero-mei-windwalker.webp",
+      "art": "assets/core-cards-v1/W05.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "W06",
@@ -8308,13 +8352,14 @@
       "attackText": "Hit for 3 at Range 2–4. On hit: move up to 1.",
       "reactionText": "Move up to 2.",
       "text": "Hit for 3 at Range 2–4. On hit: move up to 1. OR Move up to 2.",
-      "art": "assets/hero-mei-windwalker.webp",
+      "art": "assets/core-cards-v1/W06.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "W07",
@@ -8352,13 +8397,14 @@
       "attackText": "Hit for 2 at Range 1–3. On hit: push the rival up to 1.",
       "reactionText": "At Range 1–2: push the rival up to 1.",
       "text": "Hit for 2 at Range 1–3. On hit: push the rival up to 1. OR At Range 1–2: push the rival up to 1.",
-      "art": "assets/hero-mei-windwalker.webp",
+      "art": "assets/core-cards-v1/W07.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "W08",
@@ -8388,13 +8434,14 @@
       "attackText": "Hit for 4 at Range 3–5.",
       "reactionText": "Your attack’s minimum Range becomes 1.",
       "text": "Hit for 4 at Range 3–5.  OR Your attack’s minimum Range becomes 1.",
-      "art": "assets/hero-mei-windwalker.webp",
+      "art": "assets/core-cards-v1/W08.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "W09",
@@ -8421,13 +8468,14 @@
       "attackText": "",
       "reactionText": "Move up to 3. Gain 1 Block.",
       "text": "Move up to 3. Gain 1 Block.",
-      "art": "assets/hero-mei-windwalker.webp",
+      "art": "assets/core-cards-v1/W09.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "W10",
@@ -8457,13 +8505,14 @@
       "attackText": "",
       "reactionText": "At Range 1–3: push the rival up to 1, then move up to 1.",
       "text": "At Range 1–3: push the rival up to 1, then move up to 1.",
-      "art": "assets/hero-mei-windwalker.webp",
+      "art": "assets/core-cards-v1/W10.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "FW1",
@@ -8492,13 +8541,14 @@
       "attackText": "Hit for 5 at Range 2–5. Activate: move up to 3.",
       "reactionText": "",
       "text": "Hit for 5 at Range 2–5. Activate: move up to 3.",
-      "art": "assets/hero-mei-windwalker.webp",
+      "art": "assets/core-cards-v1/FW1.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "FW2",
@@ -8524,13 +8574,14 @@
       "attackText": "Hit for 8 at Range 3–6. Ignore 1 Block.",
       "reactionText": "",
       "text": "Hit for 8 at Range 3–6. Ignore 1 Block.",
-      "art": "assets/hero-mei-windwalker.webp",
+      "art": "assets/core-cards-v1/FW2.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     },
     {
       "id": "FW3",
@@ -8560,13 +8611,14 @@
       "attackText": "Hit for 5 at Range 1–4. On hit: move up to 2.",
       "reactionText": "",
       "text": "Hit for 5 at Range 1–4. On hit: move up to 2.",
-      "art": "assets/hero-mei-windwalker.webp",
+      "art": "assets/core-cards-v1/FW3.webp",
       "artIndex": 0,
       "artCols": 1,
       "artRows": 1,
       "cost": null,
       "reveal": null,
-      "slow": 0
+      "slow": 0,
+      "artRatio": 1.7768331562167907
     }
   ],
   "rules": [
