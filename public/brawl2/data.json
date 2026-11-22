@@ -266,8 +266,8 @@
       "name": "Lord Smasherton",
       "slug": "hero-lord-smasherton",
       "archetype": "Break shields and force positions. Slow, expensive to chase.",
-      "trait": "Wallbreaker",
-      "traitText": "Your wall slams deal 3 damage instead of 1.",
+      "trait": "Impact",
+      "traitText": "Start with 2 Impact; hold up to 3. After your attack deals Health damage, gain 1. On an attack wall slam, spend 1 for +2 wall damage, once per attack. Or, on your attacking reaction, spend 3 for +2 damage and on-hit push up to 3; no Impact wall bonus on that attack.",
       "ultimate": {
         "name": "You're Not Going Anywhere",
         "text": "After your attack deals Health damage, pin the rival: they cannot move voluntarily until their next attack finishes. Pushes and pulls still work."
@@ -343,15 +343,16 @@
         "L-SMA-06",
         "L-SMA-09",
         "L-SMA-12"
-      ]
+      ],
+      "tokenCount": 3
     },
     {
       "id": "ALF",
       "name": "Alf Featherbottom",
       "slug": "hero-alf-featherbottom",
       "archetype": "Prepare your draws and dominate firing distance. Weak at contact.",
-      "trait": "Bullseye",
-      "traitText": "After your attack deals Health damage at Range 3 or farther, draw 1 card.",
+      "trait": "Aim",
+      "traitText": "Start with 1 Aim; hold up to 2. After your attack deals Health damage at Range 3 or more, gain 1. Once per attack, on your attacking reaction, spend 1 for +2 maximum Range OR spend 2 to ignore 3 Block.",
       "ultimate": {
         "name": "Emergency Spring Boots",
         "text": "When your attack activates, you may move 1 space before its printed movement. The rival then reacts normally."
@@ -427,15 +428,16 @@
         "L-ALF-06",
         "L-ALF-09",
         "L-ALF-12"
-      ]
+      ],
+      "tokenCount": 2
     },
     {
       "id": "SHE",
       "name": "Dr. Shealer",
       "slug": "hero-dr-shealer",
       "archetype": "Spend Health to gain choices and burst; heal by landing attacks.",
-      "trait": "Blood Research",
-      "traitText": "Whenever you pay Health for a card, draw 1 card. Damage from enemies and losing Health to an effect do not trigger this.",
+      "trait": "Research",
+      "traitText": "Start with 2 Research; hold up to 3. After paying Health for a card, gain 1 Research. You may immediately spend 1 to draw 1 card. Or, on a reaction turn, spend 2 to heal 3. Paying Research never earns Research.",
       "ultimate": {
         "name": "Malpractical Flight",
         "text": "Your attacks gain +1 maximum Range. Your arena position, minimum Range and enemy attacks are unchanged."
@@ -511,15 +513,16 @@
         "L-SHE-06",
         "L-SHE-09",
         "L-SHE-12"
-      ]
+      ],
+      "tokenCount": 3
     },
     {
       "id": "HEL",
       "name": "Helga Stonewall",
       "slug": "hero-helga",
       "archetype": "Bank Block and choose where to spend it. Slow without a shield.",
-      "trait": "Shield Up",
-      "traitText": "When your rival activates an attack, gain 1 Block. All unused Block clears after every attack.",
+      "trait": "Armour",
+      "traitText": "Start with 3 Armour; hold up to 3. Once per enemy attack, use a defending reaction to break 1 for 2 Block OR break 2 for 3 Block and resist pushes/pulls for this attack. After your first damaging non-Fury Hero attack each round, repair 1.",
       "ultimate": {
         "name": "Hit Me. I Dare You.",
         "text": "After an enemy attack connects in range, reflect 1 damage, even if fully blocked. Once per attack; ignores Block. Misses and Loot do not trigger it. Resolve reflection before checking victory; simultaneous knockouts draw."
@@ -595,15 +598,16 @@
         "L-HEL-06",
         "L-HEL-09",
         "L-HEL-12"
-      ]
+      ],
+      "tokenCount": 3
     },
     {
       "id": "RAV",
       "name": "Raven Madison",
       "slug": "hero-raven-madison",
       "archetype": "Cross, disrupt and steal. Low direct damage without positioning.",
-      "trait": "Slippery",
-      "traitText": "Your first crossing before your own strike gives +2 damage. Crossing while defending gives no Block.",
+      "trait": "Tricks",
+      "traitText": "Start with 1 Trick; hold up to 2. The first time you cross the rival during each active attack, gain 1. Token movement and Shadow swaps never earn Tricks. On a reaction turn, spend 1 to move up to 1 or cross an adjacent rival (once per attack). On your attacking reaction, spend 2 for +2 damage (once per attack).",
       "ultimate": {
         "name": "My Shadow Has Other Plans",
         "text": "Place your shadow on your space. Once per round, as your reaction, swap places with it. It stays on your old space. It cannot be attacked and does not block spaces. No swap onto the rival or while pinned. Refresh each round."
@@ -679,15 +683,16 @@
         "L-RAV-06",
         "L-RAV-09",
         "L-RAV-12"
-      ]
+      ],
+      "tokenCount": 2
     },
     {
       "id": "FRA",
       "name": "Friar Franc",
       "slug": "hero-friar-franc",
       "archetype": "Earn, spend and recycle. Coins cannot fund both powers and Loot.",
-      "trait": "Hustler",
-      "traitText": "When your Basic Attack deals Health damage, earn 1 extra Coin when it finishes. A miss still earns the normal 1 Coin.",
+      "trait": "Profit",
+      "traitText": "Start with 1 Profit; hold up to 3. After a Basic attack deals Health damage, gain 1 Profit; you may immediately cash 1 for 1 Coin. Once on your shopping turn, spend 2 Profit to buy one face-up Loot before your normal Coin purchase. You may replace one offer first. You may then make your normal Coin purchase; hold at most 2 Loot.",
       "ultimate": {
         "name": "The Emergency Stash",
         "text": "Draw 1 free Loot on activation; at two Loot, you may replace one before drawing. As your reaction, buy Loot for 1 Coin, holding at most two. Your opponent responds before you can play it."
@@ -763,7 +768,8 @@
         "L-FRA-06",
         "L-FRA-09",
         "L-FRA-12"
-      ]
+      ],
+      "tokenCount": 3
     }
   ],
   "cards": [
@@ -1358,11 +1364,14 @@
       "speed": 2,
       "ops": [
         {
+          "op": "impactPierce"
+        },
+        {
           "op": "hit",
           "n": 4,
           "min": 1,
           "max": 1,
-          "ignore": 3
+          "ignore": 1
         }
       ],
       "reactionOps": [
@@ -1373,9 +1382,9 @@
       ],
       "side": "defender",
       "reactionRange": null,
-      "attackText": "Hit for 4 at Range 1, ignoring 3 Block.",
+      "attackText": "At activation, you may spend 1 Impact to ignore 2 more Block. Hit for 4 at Range 1, ignoring 1 Block.",
       "reactionText": "Gain 3 Block.",
-      "text": "Hit for 4 at Range 1, ignoring 3 Block. OR Gain 3 Block.",
+      "text": "At activation, you may spend 1 Impact to ignore 2 more Block. Hit for 4 at Range 1, ignoring 1 Block. OR Gain 3 Block.",
       "art": "assets/hero-atlas-SMA.webp",
       "artIndex": 5,
       "artCols": 3,
@@ -1438,36 +1447,33 @@
       "ops": [
         {
           "op": "boost",
-          "n": 3
+          "n": 2
         },
         {
-          "op": "launch",
-          "n": 1
+          "op": "impactPrep"
         }
       ],
       "reactionOps": [
         {
           "op": "boost",
-          "n": 3
+          "n": 2
         },
         {
-          "op": "launch",
-          "n": 1
+          "op": "impactPrep"
         }
       ],
       "side": "attacker",
       "reactionRange": null,
       "attackText": "",
-      "reactionText": "Discard another card. Add 3 damage to your attack. Add 1 on-hit push.",
-      "text": "Discard another card. Add 3 damage to your attack. Add 1 on-hit push.",
+      "reactionText": "Add 2 damage to your attack. Gain 1 Impact.",
+      "text": "Add 2 damage to your attack. Gain 1 Impact.",
       "art": "assets/hero-atlas-SMA.webp",
       "artIndex": 4,
       "artCols": 3,
       "artRows": 3,
       "cost": null,
       "reveal": null,
-      "slow": 0,
-      "discardCost": true
+      "slow": 0
     },
     {
       "id": "S10",
@@ -1787,13 +1793,16 @@
         {
           "op": "move",
           "n": 3
+        },
+        {
+          "op": "escapeAim"
         }
       ],
       "side": "defender",
       "reactionRange": null,
       "attackText": "Move up to 1. Hit for 3 at Range 1–2.",
-      "reactionText": "Move up to 3.",
-      "text": "Move up to 1. Hit for 3 at Range 1–2. OR Move up to 3.",
+      "reactionText": "Move up to 3. If you finish at Range 3 or more, gain 1 Aim.",
+      "text": "Move up to 1. Hit for 3 at Range 1–2. OR Move up to 3. If you finish at Range 3 or more, gain 1 Aim.",
       "art": "assets/hero-atlas-ALF.webp",
       "artIndex": 2,
       "artCols": 3,
@@ -1949,6 +1958,9 @@
         {
           "op": "move",
           "n": 3
+        },
+        {
+          "op": "aimDraw"
         }
       ],
       "reactionOps": [
@@ -1959,13 +1971,16 @@
         {
           "op": "move",
           "n": 3
+        },
+        {
+          "op": "aimDraw"
         }
       ],
       "side": "either",
       "reactionRange": null,
       "attackText": "",
-      "reactionText": "Scry 2. Move up to 3.",
-      "text": "Scry 2. Move up to 3.",
+      "reactionText": "Scry 2. Move up to 3. You may spend 1 Aim to draw 1.",
+      "text": "Scry 2. Move up to 3. You may spend 1 Aim to draw 1.",
       "art": "assets/hero-atlas-ALF.webp",
       "artIndex": 4,
       "artCols": 3,
@@ -2171,10 +2186,9 @@
       "category": "Hero",
       "ops": [
         {
-          "op": "pay",
-          "n": 2,
-          "bonus": 3,
-          "resource": "hp"
+          "op": "researchPay",
+          "cost": 2,
+          "bonus": 3
         },
         {
           "op": "hit",
@@ -2183,12 +2197,12 @@
           "max": 3
         }
       ],
-      "attackText": "At strike, you may spend 2 Health for +3 damage. Hit for 2 at Range 1–3.",
+      "attackText": "At strike, you may pay 2 Health OR 1 Research for +3 damage. Hit for 2 at Range 1–3.",
       "reactionText": "Pay 2 Health. Add 3 damage to your attack.",
       "artId": "T-D02",
       "heroId": "SHE",
       "hero": "Dr. Shealer",
-      "text": "At strike, you may spend 2 Health for +3 damage. Hit for 2 at Range 1–3. OR Pay 2 Health. Add 3 damage to your attack.",
+      "text": "At strike, you may pay 2 Health OR 1 Research for +3 damage. Hit for 2 at Range 1–3. OR Pay 2 Health. Add 3 damage to your attack.",
       "side": "attacker",
       "art": "assets/hero-atlas-SHE.webp",
       "artIndex": 1,
@@ -2431,28 +2445,27 @@
           "n": 2,
           "min": 1,
           "max": 3,
-          "ignore": 2
+          "pierce": true
         }
       ],
-      "attackText": "Hit for 2 at Range 1–3, ignoring 2 Block.",
-      "reactionText": "Pay 1 Health. Gain 3 Block.",
+      "attackText": "Hit for 2 at Range 1–3, ignoring all Block.",
+      "reactionText": "Spend 1 Research: reduce the current enemy attack by 4 damage.",
       "artId": "T-D01",
       "reactionOps": [
         {
-          "op": "block",
-          "n": 3
+          "op": "antidote"
         }
       ],
       "side": "defender",
       "heroId": "SHE",
       "hero": "Dr. Shealer",
-      "text": "Hit for 2 at Range 1–3, ignoring 2 Block. OR Pay 1 Health. Gain 3 Block.",
+      "text": "Hit for 2 at Range 1–3, ignoring all Block. OR Spend 1 Research: reduce the current enemy attack by 4 damage.",
       "art": "assets/hero-atlas-SHE.webp",
       "artIndex": 0,
       "artCols": 3,
       "artRows": 3,
       "cost": {
-        "resource": "hp",
+        "resource": "tokens",
         "n": 1
       },
       "reveal": null,
@@ -2796,18 +2809,21 @@
       "category": "Hero",
       "ops": [
         {
+          "op": "plateStrike"
+        },
+        {
           "op": "hit",
-          "n": 5,
+          "n": 4,
           "min": 2,
           "max": 3
         }
       ],
-      "attackText": "Hit for 5 at Range 2–3.",
+      "attackText": "At activation, you may break 1 Armour for +2 damage. Hit for 4 at Range 2–3.",
       "reactionText": "Pay 2 Block. Add 3 damage to your attack.",
       "artId": "T-H04",
       "heroId": "HEL",
       "hero": "Helga Stonewall",
-      "text": "Hit for 5 at Range 2–3. OR Pay 2 Block. Add 3 damage to your attack.",
+      "text": "At activation, you may break 1 Armour for +2 damage. Hit for 4 at Range 2–3. OR Pay 2 Block. Add 3 damage to your attack.",
       "side": "attacker",
       "art": "assets/hero-atlas-HEL.webp",
       "artIndex": 3,
@@ -3035,37 +3051,42 @@
     },
     {
       "id": "H10",
-      "name": "Walking Fortress",
+      "name": "Field Repairs",
       "speed": null,
       "kind": "Reaction",
       "category": "Hero",
       "ops": [
         {
-          "op": "move",
-          "n": 3
+          "op": "legacyGain",
+          "n": 1
+        },
+        {
+          "op": "block",
+          "n": 1
         }
       ],
       "reactionOps": [
         {
-          "op": "move",
-          "n": 3
+          "op": "legacyGain",
+          "n": 1
+        },
+        {
+          "op": "block",
+          "n": 1
         }
       ],
       "attackText": "",
-      "reactionText": "Pay 2 Block. Move up to 3.",
+      "reactionText": "Repair 1 Armour. Gain 1 Block.",
       "side": "either",
       "artId": "T-H06",
       "heroId": "HEL",
       "hero": "Helga Stonewall",
-      "text": "Pay 2 Block. Move up to 3.",
+      "text": "Repair 1 Armour. Gain 1 Block.",
       "art": "assets/hero-atlas-HEL.webp",
       "artIndex": 5,
       "artCols": 3,
       "artRows": 3,
-      "cost": {
-        "resource": "block",
-        "n": 2
-      },
+      "cost": null,
       "reveal": null,
       "slow": 0,
       "reactionRange": null
@@ -3236,17 +3257,16 @@
           "max": 1
         },
         {
-          "op": "steal",
-          "n": 1,
+          "op": "trickTheft",
           "onHit": true
         }
       ],
-      "attackText": "Hit for 2 at Range 1. On hit, steal up to 1 Coin.",
+      "attackText": "Hit for 2 at Range 1. On hit, steal up to 1 Coin OR gain 1 Trick.",
       "reactionText": "Move up to 1. Scry 2.",
       "artId": "T-R02",
       "heroId": "RAV",
       "hero": "Raven Madison",
-      "text": "Hit for 2 at Range 1. On hit, steal up to 1 Coin. OR Move up to 1. Scry 2.",
+      "text": "Hit for 2 at Range 1. On hit, steal up to 1 Coin OR gain 1 Trick. OR Move up to 1. Scry 2.",
       "side": "either",
       "art": "assets/hero-atlas-RAV.webp",
       "artIndex": 1,
@@ -3362,18 +3382,21 @@
         }
       ],
       "attackText": "Move up to 3. Hit for 2 at Range 1.",
-      "reactionText": "Move up to 2.",
+      "reactionText": "Move up to 2. If you crossed the rival, you may spend 1 Trick to draw 1.",
       "artId": "T-R05",
       "reactionOps": [
         {
           "op": "move",
           "n": 2
+        },
+        {
+          "op": "crossDraw"
         }
       ],
       "side": "either",
       "heroId": "RAV",
       "hero": "Raven Madison",
-      "text": "Move up to 3. Hit for 2 at Range 1. OR Move up to 2.",
+      "text": "Move up to 3. Hit for 2 at Range 1. OR Move up to 2. If you crossed the rival, you may spend 1 Trick to draw 1.",
       "art": "assets/hero-atlas-RAV.webp",
       "artIndex": 4,
       "artCols": 3,
@@ -3851,11 +3874,11 @@
         }
       ],
       "attackText": "Hit for 2 at Range 1–2. On hit, steal up to 1 Coin.",
-      "reactionText": "Discard another card. Gain 1 Coin.",
+      "reactionText": "Discard another card. Gain 2 Coins.",
       "artId": "T-P04",
       "heroId": "FRA",
       "hero": "Friar Franc",
-      "text": "Hit for 2 at Range 1–2. On hit, steal up to 1 Coin. OR Discard another card. Gain 1 Coin.",
+      "text": "Hit for 2 at Range 1–2. On hit, steal up to 1 Coin. OR Discard another card. Gain 2 Coins.",
       "side": "either",
       "art": "assets/hero-atlas-FRA.webp",
       "artIndex": 3,
@@ -3864,7 +3887,7 @@
       "reactionOps": [
         {
           "op": "coin",
-          "n": 1
+          "n": 2
         }
       ],
       "cost": null,
@@ -3928,24 +3951,24 @@
         }
       ],
       "attackText": "Hit for 3 at Range 1–2.",
-      "reactionText": "Pay 1 Coins. Gain 4 Block.",
+      "reactionText": "Spend 1 Profit: gain 5 Block.",
       "artId": "T-P06",
       "reactionOps": [
         {
           "op": "block",
-          "n": 4
+          "n": 5
         }
       ],
       "side": "defender",
       "heroId": "FRA",
       "hero": "Friar Franc",
-      "text": "Hit for 3 at Range 1–2. OR Pay 1 Coins. Gain 4 Block.",
+      "text": "Hit for 3 at Range 1–2. OR Spend 1 Profit: gain 5 Block.",
       "art": "assets/hero-atlas-FRA.webp",
       "artIndex": 5,
       "artCols": 3,
       "artRows": 3,
       "cost": {
-        "resource": "coins",
+        "resource": "tokens",
         "n": 1
       },
       "reveal": null,
@@ -3967,7 +3990,7 @@
         }
       ],
       "attackText": "Hit for 3 at Range 1.",
-      "reactionText": "Discard another card. Add 2 damage to your attack. Add 1 maximum Range.",
+      "reactionText": "Add 2 damage to your attack. Add 1 maximum Range.",
       "artId": "T-P01",
       "reactionOps": [
         {
@@ -3982,7 +4005,7 @@
       "side": "attacker",
       "heroId": "FRA",
       "hero": "Friar Franc",
-      "text": "Hit for 3 at Range 1. OR Discard another card. Add 2 damage to your attack. Add 1 maximum Range.",
+      "text": "Hit for 3 at Range 1. OR Add 2 damage to your attack. Add 1 maximum Range.",
       "art": "assets/hero-atlas-FRA.webp",
       "artIndex": 0,
       "artCols": 3,
@@ -3990,8 +4013,7 @@
       "cost": null,
       "reveal": null,
       "slow": 0,
-      "reactionRange": null,
-      "discardCost": true
+      "reactionRange": null
     },
     {
       "id": "P08",
@@ -4007,12 +4029,12 @@
           "max": 2
         },
         {
-          "op": "coin",
-          "n": 1,
-          "onHit": true
+          "op": "profitGain",
+          "onHit": true,
+          "n": 2
         }
       ],
-      "attackText": "Hit for 3 at Range 1–2. On hit, gain 1 Coin.",
+      "attackText": "Hit for 3 at Range 1–2. On hit, gain 2 Profit; you may immediately cash 1 for 1 Coin.",
       "reactionText": "Scry 2.",
       "artId": "T-P02",
       "reactionOps": [
@@ -4024,7 +4046,7 @@
       "side": "either",
       "heroId": "FRA",
       "hero": "Friar Franc",
-      "text": "Hit for 3 at Range 1–2. On hit, gain 1 Coin. OR Scry 2.",
+      "text": "Hit for 3 at Range 1–2. On hit, gain 2 Profit; you may immediately cash 1 for 1 Coin. OR Scry 2.",
       "art": "assets/hero-atlas-FRA.webp",
       "artIndex": 1,
       "artCols": 3,
@@ -7263,7 +7285,7 @@
           "n": 3,
           "min": 1,
           "max": 1,
-          "ignore": 1
+          "ignore": 3
         }
       ],
       "reactionOps": [
@@ -7275,9 +7297,9 @@
       "side": "attacker",
       "reactionRange": null,
       "discardCost": false,
-      "attackText": "Hit for 3 at Range 1. Ignore 1 Block.",
+      "attackText": "Hit for 3 at Range 1. Ignore 3 Block.",
       "reactionText": "Remove up to 3 rival Block.",
-      "text": "Hit for 3 at Range 1. Ignore 1 Block. OR Remove up to 3 rival Block.",
+      "text": "Hit for 3 at Range 1. Ignore 3 Block. OR Remove up to 3 rival Block.",
       "art": "assets/core-cards-v1/Z03.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -8499,11 +8521,11 @@
       "ops": [
         {
           "op": "push",
-          "n": 1
+          "n": 2
         },
         {
           "op": "move",
-          "n": 1
+          "n": 2
         }
       ],
       "reactionOps": null,
@@ -8514,8 +8536,8 @@
       ],
       "discardCost": false,
       "attackText": "",
-      "reactionText": "At Range 1–3: push the rival up to 1, then move up to 1.",
-      "text": "At Range 1–3: push the rival up to 1, then move up to 1.",
+      "reactionText": "At Range 1–3: push the rival up to 2, then move up to 2.",
+      "text": "At Range 1–3: push the rival up to 2, then move up to 2.",
       "art": "assets/core-cards-v1/W10.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -8651,7 +8673,7 @@
     ],
     [
       "Activate & react",
-      "Resolve printed preparation and movement. Then the defender reacts first. Alternate one Reaction, Loot or pass. Playing a card resets passes; two consecutive passes resolve the strike at the current distance. Draw only when a card or passive says so."
+      "Resolve printed preparation and movement. Then the defender reacts first. Alternate one card Reaction, Loot, token action or pass. Playing a card or token action resets passes; two consecutive passes resolve the strike at the current distance. Draw only when a card or passive says so."
     ],
     [
       "Movement",
@@ -8679,34 +8701,34 @@
     ],
     [
       "Fury & Last Stand",
-      "Base passives work from the start. At 10 Health or less, your chosen Fury enters your hand once. The first time you reach 5 Health or less, finish the current card; if you survive, activate Last Stand for the rest of the fight, even if you heal. Last Stand replaces the old passive upgrade. A lethal hit does not unlock it. Helga’s already-active reflection resolves before victory."
+      "Hero token rules work from the start. At 10 Health or less, your chosen Fury enters your hand once. The first time you reach 5 Health or less, finish the current card; if you survive, activate Last Stand for the rest of the fight, even if you heal. A lethal hit does not unlock it. Helga’s already-active reflection resolves before victory."
     ],
     [
       "Coins",
-      "Basic Attacks earn 1 Coin when they finish, even on a miss. Franc earns 1 extra only when his Basic Attack deals Health damage. Reactions give no automatic income. Hold at most 8 Coins."
+      "Basic Attacks earn 1 Coin when they finish, even on a miss. Franc also gains 1 Profit on a damaging Basic Attack and may immediately cash 1 for 1 Coin. Reactions give no automatic income. Hold at most 8 Coins."
     ],
     [
       "Arena",
-      "Join the two Heroes’ four-space boards to make a straight 8-space arena. Number the spaces 1–8. Start on 3 and 6. Only the outer ends (1 and 8) are walls. Crossing the join between 4 and 5 has no special effect."
+      "Join the two Heroes’ four-space boards to make a straight 8-space arena. Number the spaces 1–8. Start on 3 and 6. Only the outer ends (1 and 8) are walls. Crossing the join between 4 and 5 has no special effect. Pushing beyond an outer wall deals 1 wall damage, ignoring Block. Smasherton may add Crunch when eligible."
     ],
     [
       "Loot draft & market",
-      "Each Hero chooses 6 different Loot from their 12-card pool. Shuffle both contributions into one shared 12-card deck. Reveal 3. Anyone can use any Loot. Between rounds, starting with the new Edge holder, each player may buy once: pay 2 Coins for a face-up Loot or a blind draw. Refill a bought slot immediately. Hold at most 2 Loot. Shuffle spent Loot when the draw pile empties; never shuffle held or face-up cards."
+      "Each Hero chooses 6 different Loot from their 12-card pool. Shuffle both contributions into one shared 12-card deck. Reveal 3. Anyone can use any Loot. Between rounds, starting with the new Edge holder, each player may buy once: pay 2 Coins for a face-up Loot or a blind draw. Refill a bought slot immediately. Hold at most 2 Loot. Shuffle spent Loot when the draw pile empties; never shuffle held or face-up cards. Franc may first use Inside Deal once per shopping turn to buy a face-up item with 2 Profit, then take his normal Coin purchase if he has room."
     ],
     [
       "Block",
-      "All unused Block clears after every attack, for everyone. Maximum 6 Block. Helga gains 1 Block when a rival activates an attack, before printed movement and reactions. No Block banking or round-end exceptions."
+      "All unused Block clears after every attack, for everyone. Maximum 6 Block. Helga can break Armour for Block; she no longer receives free Block at enemy activation."
     ],
     [
       "Hero passives",
-      "Passives work from the start. Alf draws once after a damaging attack from Range 3 or farther. This is a passive draw, independent of the once-per-attack card-draw limit. Shealer draws 1 whenever she pays Health for a card; this is also a passive draw. Smasherton improves wall slams; Raven rewards crossing before her strike; Franc earns an extra Coin only when a Basic Attack deals Health damage."
+      "Hero tokens replace the old passives. Follow your Hero board for starting tokens, earning and spending. Tokens persist between rounds. Spending a token as a reaction passes priority normally. No old passive benefit is also earned."
     ],
     [
-      "Core Hero tokens",
-      "Marcus, Sibu, Vera and Mei use their own token rules instead of their previous passive. Tokens persist between rounds. A token reaction passes priority normally. Activation choices happen before printed movement; the defender still reacts first. Fury unlocks once at 10 Health; Last Stand activates after surviving the triggering card at 5 Health."
+      "Hero tokens",
+      "All ten Heroes use their own token rules instead of their old passive. Tokens persist between rounds and are public information. A token reaction passes priority normally. Activation choices happen before printed movement; the defender still reacts first. Fury unlocks once at 10 Health; Last Stand activates after surviving the triggering card at 5 Health. Neither spends tokens."
     ]
   ],
-  "version": "brawl2-market-1",
+  "version": "brawl2-all-tokens-2",
   "builds": [
     {
       "id": "sma-lab-0",

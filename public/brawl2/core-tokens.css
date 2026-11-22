@@ -3,3 +3,5 @@
 @media(max-width:1000px){.r-battle .r-hud .core-token-rack{position:absolute;top:77px;left:0;margin:0}.r-battle .r-hud.right .core-token-rack{left:auto;right:0}.r-battle .r-hud:has(.core-token-rack) .ls-power{top:117px}.r-battle:has(.core-token-rack) .stage-played{top:168px}}
 @media(max-width:600px){.r-battle .r-hud .core-token-rack{top:60px}.r-battle .r-hud:has(.core-token-rack) .ls-power{top:97px}.r-battle:has(.core-token-rack) .r-round{top:130px}.r-battle:has(.core-token-rack) .stage-cue{top:195px}.r-battle:has(.core-token-rack) .stage-played{top:260px}.r-battle:has(.core-token-rack) .r-clash{top:390px}}
 @media(min-width:1001px){.r-battle .r-hud .core-token-rack{top:0}}
+.core-token-SMA{--token:#edac66}.core-token-ALF{--token:#9ad890}.core-token-SHE{--token:#e494b4}.core-token-HEL{--token:#a8cbdc}.core-token-RAV{--token:#c0a1ea}.core-token-FRA{--token:#f1d37a}
+@media(max-width:600px){.r-battle .r-hud .core-token-rack{top:82px}.r-battle .r-hud:has(.core-token-rack) .ls-power{top:118px}}
