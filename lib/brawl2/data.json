@@ -6,11 +6,11 @@
       "name": "Marcus Ironheart",
       "slug": "hero-marcus-ironheart",
       "archetype": "Tank / steady close pressure",
-      "trait": "Dig In",
-      "traitText": "As your reaction while defending, discard a non-Loot card from your hand to gain 2 Block.",
+      "trait": "Formation",
+      "traitText": "Start with 0 Formation; hold up to 3. After an enemy attack spends any of your Block, gain 1 Formation if you survive. On your attacking reaction, spend 1 to move up to 1 toward the rival (once per attack), or spend 3 for +2 damage and an on-hit push up to 2 (once per attack). Misses and Loot do not earn Formation.",
       "ultimate": {
-        "name": "The Walking Wall",
-        "text": "After you finish a non-Loot reaction while defending, you may move 1 space toward the rival."
+        "name": "Walking Wall",
+        "text": "After playing a non-Loot card Reaction while defending, move up to 1 toward the rival. Token actions do not trigger this."
       },
       "weakness": "Blocking consumes the same cards needed to attack. Little reach, limited pursuit, no passive card income and no retained Block.",
       "combo": "Every card can keep me standing.",
@@ -63,18 +63,19 @@
         "L-HEL-06",
         "L-HEL-07",
         "L-HEL-09"
-      ]
+      ],
+      "tokenCount": 3
     },
     {
       "id": "SIB",
       "name": "Sibu Stormspear",
       "slug": "hero-sibu-stormspear",
       "archetype": "Heavy striker / costly commitment",
-      "trait": "All In",
-      "traitText": "As your reaction during your attack, tuck one non-Loot hand card beneath that attack to add 3 damage. Only one card can be tucked beneath each attack.",
+      "trait": "War Spears",
+      "traitText": "Start with 3 ready War Spears. At attack activation, before movement, commit at most 1 for +2 damage. It is spent even on a miss. After a damaging non-Fury Hero attack without a committed spear, recover 1 spent spear.",
       "ultimate": {
         "name": "Stormhead",
-        "text": "Your attacks ignore 2 additional Block."
+        "text": "Your spear-boosted attacks ignore 2 additional Block. Attacks without a committed spear do not gain this bonus."
       },
       "weakness": "Major hits are slow and mostly short-range. A miss spends the attack and any tucked card. Weak hero-specific defenses and no draw engine.",
       "combo": "One opening. One enormous hit.",
@@ -127,18 +128,19 @@
         "L-SMA-04",
         "L-SMA-05",
         "L-SMA-07"
-      ]
+      ],
+      "tokenCount": 3
     },
     {
       "id": "VER",
       "name": "Vera Vendetta",
       "slug": "hero-vera-vendetta",
       "archetype": "Flexible duelist / balanced offense and defense",
-      "trait": "Clear Your Head",
-      "traitText": "Once per round before you commit, you may discard one non-Loot hand card to draw 1.",
+      "trait": "Techniques",
+      "traitText": "Start with 1 ready Technique; hold up to 3. After your attack deals Health damage, ready 1. On your attacking reaction, spend 1 to play your active Dual card’s Reaction half without discarding it. Once per attack; normal restrictions and costs apply.",
       "ultimate": {
         "name": "Twin Blades",
-        "text": "Once during each of your attacks, you may use that card’s printed Reaction as your reaction without discarding it. Follow its normal timing restrictions."
+        "text": "After using a Technique to play your active card’s Reaction, you may move up to 1 before your opponent responds."
       },
       "weakness": "No large passive damage or defense bonus. Filtering gives no extra cards. Last Stand depends on committing useful Dual attacks.",
       "combo": "I have an answer—and a sharp follow-up.",
@@ -191,18 +193,19 @@
         "L-SHE-03",
         "L-HEL-12",
         "L-RAV-02"
-      ]
+      ],
+      "tokenCount": 3
     },
     {
       "id": "MEI",
       "name": "Mei Windwalker",
       "slug": "hero-mei-windwalker",
       "archetype": "Evasive ranged fighter / movement and distance",
-      "trait": "Windstep",
-      "traitText": "After an enemy attack misses you, you may move up to 1.",
+      "trait": "Wind Currents",
+      "traitText": "After a non-Fury Hero attack, you may place a Wind within 2 spaces of yourself. Three markers maximum; relocate one when all are placed. One of your markers per space. When starting a voluntary move on your Wind, you may consume it to add 2 to that movement. Wind never grants a move by itself.",
       "ultimate": {
         "name": "Walk on Air",
-        "text": "Once per round, as your reaction, move up to 2 without playing a card."
+        "text": "For each non-Fury Hero attack, you may place or relocate its Wind at activation before printed movement, instead of after the attack. Only one placement per attack."
       },
       "weakness": "Low hero-specific Block and modest damage. Several attacks cannot hit at Range 1. Movement still costs hand cards outside her limited Last Stand action.",
       "combo": "Your strike finds empty air. Mine reaches you.",
@@ -255,7 +258,8 @@
         "L-ALF-04",
         "L-ALF-06",
         "L-ALF-07"
-      ]
+      ],
+      "tokenCount": 3
     },
     {
       "id": "SMA",
@@ -6673,7 +6677,7 @@
       "ops": [
         {
           "op": "hit",
-          "n": 6,
+          "n": 5,
           "min": 1,
           "max": 1,
           "ignore": 2
@@ -6683,9 +6687,9 @@
       "side": "either",
       "reactionRange": null,
       "discardCost": false,
-      "attackText": "Hit for 6 at Range 1–1. Ignore 2 Block.",
+      "attackText": "Hit for 5 at Range 1. Ignore 2 Block. Activate: you may spend 2 Formation to ignore all Block.",
       "reactionText": "",
-      "text": "Hit for 6 at Range 1–1. Ignore 2 Block.",
+      "text": "Hit for 5 at Range 1. Ignore 2 Block. Activate: you may spend 2 Formation to ignore all Block.",
       "art": "assets/core-cards-v1/M01.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -6706,7 +6710,8 @@
       "ops": [
         {
           "op": "move",
-          "n": 1
+          "n": 1,
+          "toward": true
         },
         {
           "op": "hit",
@@ -6718,7 +6723,7 @@
       "reactionOps": [
         {
           "op": "block",
-          "n": 3
+          "n": 2
         },
         {
           "op": "move",
@@ -6729,9 +6734,9 @@
       "side": "defender",
       "reactionRange": null,
       "discardCost": false,
-      "attackText": "Hit for 3 at Range 1–1. Activate: move up to 1.",
-      "reactionText": "Gain 3 Block. You may move 1 toward the rival.",
-      "text": "Hit for 3 at Range 1–1. Activate: move up to 1. OR Gain 3 Block. You may move 1 toward the rival.",
+      "attackText": "Hit for 3 at Range 1. Activate: move up to 1 toward the rival; you may spend 1 Formation to move up to 2 instead.",
+      "reactionText": "Gain 2 Block. You may move 1 toward the rival.",
+      "text": "Hit for 3 at Range 1. Activate: move up to 1 toward the rival; you may spend 1 Formation to move up to 2 instead. OR Gain 2 Block. You may move 1 toward the rival.",
       "art": "assets/core-cards-v1/M02.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -6752,7 +6757,7 @@
       "ops": [
         {
           "op": "hit",
-          "n": 4,
+          "n": 2,
           "min": 1,
           "max": 1
         }
@@ -6760,15 +6765,15 @@
       "reactionOps": [
         {
           "op": "block",
-          "n": 3
+          "n": 2
         }
       ],
       "side": "defender",
       "reactionRange": null,
       "discardCost": false,
-      "attackText": "Hit for 4 at Range 1–1.",
-      "reactionText": "Gain 3 Block.",
-      "text": "Hit for 4 at Range 1–1.  OR Gain 3 Block.",
+      "attackText": "Hit for 2 at Range 1–1.",
+      "reactionText": "Gain 2 Block.",
+      "text": "Hit for 2 at Range 1–1. OR Gain 2 Block.",
       "art": "assets/core-cards-v1/M03.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -6831,7 +6836,7 @@
       "ops": [
         {
           "op": "hit",
-          "n": 4,
+          "n": 2,
           "min": 1,
           "max": 2
         }
@@ -6849,9 +6854,9 @@
       "side": "either",
       "reactionRange": null,
       "discardCost": false,
-      "attackText": "Hit for 4 at Range 1–2.",
+      "attackText": "Hit for 2 at Range 1–2.",
       "reactionText": "Move up to 1. Gain 1 Block.",
-      "text": "Hit for 4 at Range 1–2.  OR Move up to 1. Gain 1 Block.",
+      "text": "Hit for 2 at Range 1–2. OR Move up to 1. Gain 1 Block.",
       "art": "assets/core-cards-v1/M05.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -6872,7 +6877,7 @@
       "ops": [
         {
           "op": "hit",
-          "n": 3,
+          "n": 2,
           "min": 1,
           "max": 1
         },
@@ -6894,9 +6899,9 @@
         1
       ],
       "discardCost": false,
-      "attackText": "Hit for 3 at Range 1–1. On hit: push the rival up to 1.",
+      "attackText": "Hit for 2 at Range 1–1. On hit: push the rival up to 1.",
       "reactionText": "At Range 1: push the rival up to 1.",
-      "text": "Hit for 3 at Range 1–1. On hit: push the rival up to 1. OR At Range 1: push the rival up to 1.",
+      "text": "Hit for 2 at Range 1–1. On hit: push the rival up to 1. OR At Range 1: push the rival up to 1.",
       "art": "assets/core-cards-v1/M06.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -6917,12 +6922,12 @@
       "ops": [
         {
           "op": "hit",
-          "n": 4,
+          "n": 3,
           "min": 1,
           "max": 1
         },
         {
-          "op": "draw",
+          "op": "formation",
           "n": 1,
           "onHit": true
         }
@@ -6930,15 +6935,15 @@
       "reactionOps": [
         {
           "op": "block",
-          "n": 5
+          "n": 4
         }
       ],
       "side": "defender",
       "reactionRange": null,
       "discardCost": true,
-      "attackText": "Hit for 4 at Range 1–1. On hit: draw 1.",
-      "reactionText": "Discard another non-Loot card from your hand. Gain 5 Block.",
-      "text": "Hit for 4 at Range 1–1. On hit: draw 1. OR Discard another non-Loot card from your hand. Gain 5 Block.",
+      "attackText": "Hit for 3 at Range 1. On hit: gain 1 Formation.",
+      "reactionText": "Discard another non-Loot card from your hand. Gain 4 Block.",
+      "text": "Hit for 3 at Range 1. On hit: gain 1 Formation. OR Discard another non-Loot card from your hand. Gain 4 Block.",
       "art": "assets/core-cards-v1/M07.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -6958,6 +6963,9 @@
       "speed": 2,
       "ops": [
         {
+          "op": "anchor"
+        },
+        {
           "op": "hit",
           "n": 3,
           "min": 1,
@@ -6967,15 +6975,15 @@
       "reactionOps": [
         {
           "op": "block",
-          "n": 4
+          "n": 2
         }
       ],
       "side": "defender",
       "reactionRange": null,
       "discardCost": false,
-      "attackText": "Hit for 3 at Range 1–1.",
-      "reactionText": "Gain 4 Block.",
-      "text": "Hit for 3 at Range 1–1.  OR Gain 4 Block.",
+      "attackText": "Hit for 3 at Range 1. You cannot be pushed or pulled during this attack.",
+      "reactionText": "Gain 2 Block.",
+      "text": "Hit for 3 at Range 1. You cannot be pushed or pulled during this attack. OR Gain 2 Block.",
       "art": "assets/core-cards-v1/M08.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -6996,7 +7004,7 @@
       "ops": [
         {
           "op": "block",
-          "n": 4
+          "n": 2
         },
         {
           "op": "move",
@@ -7009,8 +7017,8 @@
       "reactionRange": null,
       "discardCost": false,
       "attackText": "",
-      "reactionText": "Gain 4 Block. You may move 1 toward the rival.",
-      "text": "Gain 4 Block. You may move 1 toward the rival.",
+      "reactionText": "Gain 2 Block. You may move 1 toward the rival.",
+      "text": "Gain 2 Block. You may move 1 toward the rival.",
       "art": "assets/core-cards-v1/M09.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -7066,13 +7074,13 @@
       "ops": [
         {
           "op": "hit",
-          "n": 5,
+          "n": 4,
           "min": 1,
           "max": 2
         },
         {
           "op": "heal",
-          "n": 3,
+          "n": 2,
           "onHit": true
         }
       ],
@@ -7080,9 +7088,9 @@
       "side": "either",
       "reactionRange": null,
       "discardCost": false,
-      "attackText": "Hit for 5 at Range 1–2. On hit: heal 3.",
+      "attackText": "Hit for 4 at Range 1–2. On hit: heal 2.",
       "reactionText": "",
-      "text": "Hit for 5 at Range 1–2. On hit: heal 3.",
+      "text": "Hit for 4 at Range 1–2. On hit: heal 2.",
       "art": "assets/core-cards-v1/FM1.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -7103,11 +7111,12 @@
       "ops": [
         {
           "op": "move",
-          "n": 2
+          "n": 2,
+          "toward": true
         },
         {
           "op": "hit",
-          "n": 6,
+          "n": 5,
           "min": 1,
           "max": 1
         }
@@ -7116,9 +7125,9 @@
       "side": "either",
       "reactionRange": null,
       "discardCost": false,
-      "attackText": "Hit for 6 at Range 1–1. Activate: move up to 2.",
+      "attackText": "Hit for 5 at Range 1. Activate: move up to 2 toward the rival.",
       "reactionText": "",
-      "text": "Hit for 6 at Range 1–1. Activate: move up to 2.",
+      "text": "Hit for 5 at Range 1. Activate: move up to 2 toward the rival.",
       "art": "assets/core-cards-v1/FM2.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -7139,19 +7148,23 @@
       "ops": [
         {
           "op": "hit",
-          "n": 7,
+          "n": 6,
           "min": 1,
-          "max": 1,
-          "ignore": 3
+          "max": 1
+        },
+        {
+          "op": "formation",
+          "n": 2,
+          "onHit": true
         }
       ],
       "reactionOps": null,
       "side": "either",
       "reactionRange": null,
       "discardCost": false,
-      "attackText": "Hit for 7 at Range 1–1. Ignore 3 Block.",
+      "attackText": "Hit for 6 at Range 1. On hit: gain 2 Formation.",
       "reactionText": "",
-      "text": "Hit for 7 at Range 1–1. Ignore 3 Block.",
+      "text": "Hit for 6 at Range 1. On hit: gain 2 Formation.",
       "art": "assets/core-cards-v1/FM3.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -7172,7 +7185,7 @@
       "ops": [
         {
           "op": "hit",
-          "n": 9,
+          "n": 6,
           "min": 1,
           "max": 1
         }
@@ -7181,9 +7194,9 @@
       "side": "either",
       "reactionRange": null,
       "discardCost": false,
-      "attackText": "Hit for 9 at Range 1–1.",
+      "attackText": "Hit for 6 at Range 1–1.",
       "reactionText": "",
-      "text": "Hit for 9 at Range 1–1. ",
+      "text": "Hit for 6 at Range 1–1.",
       "art": "assets/core-cards-v1/Z01.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -7204,11 +7217,12 @@
       "ops": [
         {
           "op": "move",
-          "n": 1
+          "n": 1,
+          "toward": true
         },
         {
           "op": "hit",
-          "n": 6,
+          "n": 3,
           "min": 1,
           "max": 1
         }
@@ -7216,19 +7230,16 @@
       "reactionOps": [
         {
           "op": "move",
-          "n": 1
-        },
-        {
-          "op": "boost",
-          "n": 1
+          "n": 1,
+          "toward": true
         }
       ],
       "side": "attacker",
       "reactionRange": null,
       "discardCost": false,
-      "attackText": "Hit for 6 at Range 1–1. Activate: move up to 1.",
-      "reactionText": "Move up to 1. Add 1 damage.",
-      "text": "Hit for 6 at Range 1–1. Activate: move up to 1. OR Move up to 1. Add 1 damage.",
+      "attackText": "Hit for 3 at Range 1. Activate: move up to 1 toward the rival.",
+      "reactionText": "Move up to 1 toward the rival.",
+      "text": "Hit for 3 at Range 1. Activate: move up to 1 toward the rival. OR Move up to 1 toward the rival.",
       "art": "assets/core-cards-v1/Z02.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -7249,10 +7260,10 @@
       "ops": [
         {
           "op": "hit",
-          "n": 5,
+          "n": 3,
           "min": 1,
           "max": 1,
-          "ignore": 2
+          "ignore": 1
         }
       ],
       "reactionOps": [
@@ -7264,9 +7275,9 @@
       "side": "attacker",
       "reactionRange": null,
       "discardCost": false,
-      "attackText": "Hit for 5 at Range 1–1. Ignore 2 Block.",
+      "attackText": "Hit for 3 at Range 1. Ignore 1 Block.",
       "reactionText": "Remove up to 3 rival Block.",
-      "text": "Hit for 5 at Range 1–1. Ignore 2 Block. OR Remove up to 3 rival Block.",
+      "text": "Hit for 3 at Range 1. Ignore 1 Block. OR Remove up to 3 rival Block.",
       "art": "assets/core-cards-v1/Z03.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -7287,7 +7298,7 @@
       "ops": [
         {
           "op": "hit",
-          "n": 5,
+          "n": 3,
           "min": 2,
           "max": 4
         }
@@ -7301,9 +7312,9 @@
       "side": "attacker",
       "reactionRange": null,
       "discardCost": false,
-      "attackText": "Hit for 5 at Range 2–4.",
+      "attackText": "Hit for 3 at Range 2–4. When committing a War Spear, you may choose +2 maximum Range instead of +2 damage.",
       "reactionText": "Add 1 maximum Range.",
-      "text": "Hit for 5 at Range 2–4.  OR Add 1 maximum Range.",
+      "text": "Hit for 3 at Range 2–4. When committing a War Spear, you may choose +2 maximum Range instead of +2 damage. OR Add 1 maximum Range.",
       "art": "assets/core-cards-v1/Z04.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -7328,7 +7339,7 @@
         },
         {
           "op": "hit",
-          "n": 4,
+          "n": 3,
           "min": 1,
           "max": 1
         }
@@ -7342,9 +7353,9 @@
       "side": "either",
       "reactionRange": null,
       "discardCost": false,
-      "attackText": "Hit for 4 at Range 1–1. Activate: move up to 2.",
+      "attackText": "Hit for 3 at Range 1. Activate: move up to 2.",
       "reactionText": "Move up to 2.",
-      "text": "Hit for 4 at Range 1–1. Activate: move up to 2. OR Move up to 2.",
+      "text": "Hit for 3 at Range 1. Activate: move up to 2. OR Move up to 2.",
       "art": "assets/core-cards-v1/Z05.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -7365,7 +7376,7 @@
       "ops": [
         {
           "op": "hit",
-          "n": 5,
+          "n": 4,
           "min": 1,
           "max": 2
         },
@@ -7388,9 +7399,9 @@
       "side": "either",
       "reactionRange": null,
       "discardCost": false,
-      "attackText": "Hit for 5 at Range 1–2. On hit: push the rival up to 1.",
+      "attackText": "Hit for 4 at Range 1–2. On hit: push the rival up to 1.",
       "reactionText": "Move up to 1. Gain 1 Block.",
-      "text": "Hit for 5 at Range 1–2. On hit: push the rival up to 1. OR Move up to 1. Gain 1 Block.",
+      "text": "Hit for 4 at Range 1–2. On hit: push the rival up to 1. OR Move up to 1. Gain 1 Block.",
       "art": "assets/core-cards-v1/Z06.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -7411,9 +7422,9 @@
       "ops": [
         {
           "op": "hit",
-          "n": 7,
+          "n": 5,
           "min": 1,
-          "max": 2
+          "max": 1
         }
       ],
       "reactionOps": [
@@ -7428,9 +7439,9 @@
         3
       ],
       "discardCost": false,
-      "attackText": "Hit for 7 at Range 1–2.",
+      "attackText": "Hit for 5 at Range 1.",
       "reactionText": "At Range 1–3: pull the rival up to 1.",
-      "text": "Hit for 7 at Range 1–2.  OR At Range 1–3: pull the rival up to 1.",
+      "text": "Hit for 5 at Range 1. OR At Range 1–3: pull the rival up to 1.",
       "art": "assets/core-cards-v1/Z07.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -7451,7 +7462,7 @@
       "ops": [
         {
           "op": "hit",
-          "n": 4,
+          "n": 3,
           "min": 1,
           "max": 2
         }
@@ -7460,14 +7471,17 @@
         {
           "op": "block",
           "n": 2
+        },
+        {
+          "op": "spearGuard"
         }
       ],
       "side": "defender",
       "reactionRange": null,
       "discardCost": false,
-      "attackText": "Hit for 4 at Range 1–2.",
-      "reactionText": "Gain 2 Block.",
-      "text": "Hit for 4 at Range 1–2.  OR Gain 2 Block.",
+      "attackText": "Hit for 3 at Range 1–2.",
+      "reactionText": "Gain 2 Block. You may spend 1 War Spear to gain 2 more Block.",
+      "text": "Hit for 3 at Range 1–2. OR Gain 2 Block. You may spend 1 War Spear to gain 2 more Block.",
       "art": "assets/core-cards-v1/Z08.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -7488,11 +7502,7 @@
       "ops": [
         {
           "op": "boost",
-          "n": 2
-        },
-        {
-          "op": "reach",
-          "n": 1
+          "n": 3
         }
       ],
       "reactionOps": null,
@@ -7500,8 +7510,8 @@
       "reactionRange": null,
       "discardCost": true,
       "attackText": "",
-      "reactionText": "Discard another non-Loot card from your hand. Add 2 damage and 1 maximum Range.",
-      "text": "Discard another non-Loot card from your hand. Add 2 damage and 1 maximum Range.",
+      "reactionText": "Discard another non-Loot card from your hand. Add 3 damage.",
+      "text": "Discard another non-Loot card from your hand. Add 3 damage.",
       "art": "assets/core-cards-v1/Z09.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -7521,12 +7531,7 @@
       "speed": 0,
       "ops": [
         {
-          "op": "move",
-          "n": 1
-        },
-        {
-          "op": "ignore",
-          "n": 3
+          "op": "guardChoice"
         }
       ],
       "reactionOps": null,
@@ -7534,8 +7539,8 @@
       "reactionRange": null,
       "discardCost": false,
       "attackText": "",
-      "reactionText": "Move up to 1. Ignore 3 additional Block.",
-      "text": "Move up to 1. Ignore 3 additional Block.",
+      "reactionText": "Choose: move up to 1 toward the rival OR ignore 3 additional Block.",
+      "text": "Choose: move up to 1 toward the rival OR ignore 3 additional Block.",
       "art": "assets/core-cards-v1/Z10.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -7555,12 +7560,8 @@
       "speed": 1,
       "ops": [
         {
-          "op": "move",
-          "n": 1
-        },
-        {
           "op": "hit",
-          "n": 11,
+          "n": 9,
           "min": 1,
           "max": 1
         }
@@ -7569,9 +7570,9 @@
       "side": "either",
       "reactionRange": null,
       "discardCost": false,
-      "attackText": "Hit for 11 at Range 1–1. Activate: move up to 1.",
+      "attackText": "Hit for 9 at Range 1.",
       "reactionText": "",
-      "text": "Hit for 11 at Range 1–1. Activate: move up to 1.",
+      "text": "Hit for 9 at Range 1.",
       "art": "assets/core-cards-v1/FZ1.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -7592,11 +7593,12 @@
       "ops": [
         {
           "op": "move",
-          "n": 2
+          "n": 2,
+          "toward": true
         },
         {
           "op": "hit",
-          "n": 7,
+          "n": 6,
           "min": 1,
           "max": 2
         }
@@ -7605,9 +7607,9 @@
       "side": "either",
       "reactionRange": null,
       "discardCost": false,
-      "attackText": "Hit for 7 at Range 1–2. Activate: move up to 2.",
+      "attackText": "Hit for 6 at Range 1–2. Activate: move up to 2 toward the rival.",
       "reactionText": "",
-      "text": "Hit for 7 at Range 1–2. Activate: move up to 2.",
+      "text": "Hit for 6 at Range 1–2. Activate: move up to 2 toward the rival.",
       "art": "assets/core-cards-v1/FZ2.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -7628,19 +7630,19 @@
       "ops": [
         {
           "op": "hit",
-          "n": 8,
-          "min": 1,
+          "n": 7,
+          "min": 2,
           "max": 3,
-          "ignore": 3
+          "ignore": 2
         }
       ],
       "reactionOps": null,
       "side": "either",
       "reactionRange": null,
       "discardCost": false,
-      "attackText": "Hit for 8 at Range 1–3. Ignore 3 Block.",
+      "attackText": "Hit for 7 at Range 2–3. Ignore 2 Block.",
       "reactionText": "",
-      "text": "Hit for 8 at Range 1–3. Ignore 3 Block.",
+      "text": "Hit for 7 at Range 2–3. Ignore 2 Block.",
       "art": "assets/core-cards-v1/FZ3.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -7710,7 +7712,7 @@
       "discardCost": false,
       "attackText": "Hit for 3 at Range 1–1.",
       "reactionText": "Move up to 1.",
-      "text": "Hit for 3 at Range 1–1.  OR Move up to 1.",
+      "text": "Hit for 3 at Range 1–1. OR Move up to 1.",
       "art": "assets/core-cards-v1/V02.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -7826,7 +7828,7 @@
       "discardCost": false,
       "attackText": "Hit for 4 at Range 1–2.",
       "reactionText": "Gain 3 Block.",
-      "text": "Hit for 4 at Range 1–2.  OR Gain 3 Block.",
+      "text": "Hit for 4 at Range 1–2. OR Gain 3 Block.",
       "art": "assets/core-cards-v1/V05.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -7867,7 +7869,7 @@
       "discardCost": false,
       "attackText": "Hit for 3 at Range 1–1.",
       "reactionText": "Move up to 1. Gain 1 Block.",
-      "text": "Hit for 3 at Range 1–1.  OR Move up to 1. Gain 1 Block.",
+      "text": "Hit for 3 at Range 1–1. OR Move up to 1. Gain 1 Block.",
       "art": "assets/core-cards-v1/V06.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -7946,7 +7948,7 @@
       "discardCost": false,
       "attackText": "Hit for 3 at Range 1–3.",
       "reactionText": "Add 1 maximum Range.",
-      "text": "Hit for 3 at Range 1–3.  OR Add 1 maximum Range.",
+      "text": "Hit for 3 at Range 1–3. OR Add 1 maximum Range.",
       "art": "assets/core-cards-v1/V08.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -8140,8 +8142,12 @@
       "speed": 2,
       "ops": [
         {
+          "op": "windCard",
+          "effect": "windDamage"
+        },
+        {
           "op": "hit",
-          "n": 6,
+          "n": 8,
           "min": 3,
           "max": 6
         }
@@ -8150,9 +8156,9 @@
       "side": "either",
       "reactionRange": null,
       "discardCost": false,
-      "attackText": "Hit for 6 at Range 3–6.",
+      "attackText": "Hit for 8 at Range 3–6. Activate: you may consume Wind on your space for +2 damage.",
       "reactionText": "",
-      "text": "Hit for 6 at Range 3–6. ",
+      "text": "Hit for 8 at Range 3–6. Activate: you may consume Wind on your space for +2 damage.",
       "art": "assets/core-cards-v1/W01.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -8177,7 +8183,7 @@
         },
         {
           "op": "hit",
-          "n": 3,
+          "n": 4,
           "min": 2,
           "max": 4
         }
@@ -8191,9 +8197,9 @@
       "side": "either",
       "reactionRange": null,
       "discardCost": false,
-      "attackText": "Hit for 3 at Range 2–4. Activate: move up to 2.",
+      "attackText": "Hit for 4 at Range 2–4. Activate: move up to 2.",
       "reactionText": "Move up to 3.",
-      "text": "Hit for 3 at Range 2–4. Activate: move up to 2. OR Move up to 3.",
+      "text": "Hit for 4 at Range 2–4. Activate: move up to 2. OR Move up to 3.",
       "art": "assets/core-cards-v1/W02.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -8214,7 +8220,7 @@
       "ops": [
         {
           "op": "hit",
-          "n": 4,
+          "n": 5,
           "min": 2,
           "max": 5
         }
@@ -8228,9 +8234,9 @@
       "side": "attacker",
       "reactionRange": null,
       "discardCost": false,
-      "attackText": "Hit for 4 at Range 2–5.",
+      "attackText": "Hit for 5 at Range 2–5.",
       "reactionText": "Add 2 maximum Range.",
-      "text": "Hit for 4 at Range 2–5.  OR Add 2 maximum Range.",
+      "text": "Hit for 5 at Range 2–5. OR Add 2 maximum Range.",
       "art": "assets/core-cards-v1/W03.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -8251,7 +8257,7 @@
       "ops": [
         {
           "op": "move",
-          "n": 1
+          "n": 2
         },
         {
           "op": "hit",
@@ -8269,9 +8275,9 @@
       "side": "defender",
       "reactionRange": null,
       "discardCost": false,
-      "attackText": "Hit for 4 at Range 1–2. Activate: move up to 1.",
+      "attackText": "Hit for 4 at Range 1–2. Activate: move up to 2.",
       "reactionText": "Move up to 2.",
-      "text": "Hit for 4 at Range 1–2. Activate: move up to 1. OR Move up to 2.",
+      "text": "Hit for 4 at Range 1–2. Activate: move up to 2. OR Move up to 2.",
       "art": "assets/core-cards-v1/W04.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -8292,10 +8298,10 @@
       "ops": [
         {
           "op": "hit",
-          "n": 3,
+          "n": 4,
           "min": 2,
           "max": 4,
-          "ignore": 2
+          "pierce": true
         }
       ],
       "reactionOps": [
@@ -8307,9 +8313,9 @@
       "side": "attacker",
       "reactionRange": null,
       "discardCost": false,
-      "attackText": "Hit for 3 at Range 2–4. Ignore 2 Block.",
+      "attackText": "Hit for 4 at Range 2–4. Ignore all Block.",
       "reactionText": "Ignore 2 additional Block.",
-      "text": "Hit for 3 at Range 2–4. Ignore 2 Block. OR Ignore 2 additional Block.",
+      "text": "Hit for 4 at Range 2–4. Ignore all Block. OR Ignore 2 additional Block.",
       "art": "assets/core-cards-v1/W05.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -8330,13 +8336,13 @@
       "ops": [
         {
           "op": "hit",
-          "n": 3,
+          "n": 5,
           "min": 2,
           "max": 4
         },
         {
           "op": "move",
-          "n": 1,
+          "n": 2,
           "onHit": true
         }
       ],
@@ -8349,9 +8355,9 @@
       "side": "either",
       "reactionRange": null,
       "discardCost": false,
-      "attackText": "Hit for 3 at Range 2–4. On hit: move up to 1.",
+      "attackText": "Hit for 5 at Range 2–4. On hit: move up to 2.",
       "reactionText": "Move up to 2.",
-      "text": "Hit for 3 at Range 2–4. On hit: move up to 1. OR Move up to 2.",
+      "text": "Hit for 5 at Range 2–4. On hit: move up to 2. OR Move up to 2.",
       "art": "assets/core-cards-v1/W06.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -8372,7 +8378,7 @@
       "ops": [
         {
           "op": "hit",
-          "n": 2,
+          "n": 3,
           "min": 1,
           "max": 3
         },
@@ -8394,9 +8400,9 @@
         2
       ],
       "discardCost": false,
-      "attackText": "Hit for 2 at Range 1–3. On hit: push the rival up to 1.",
+      "attackText": "Hit for 3 at Range 1–3. On hit: push the rival up to 1.",
       "reactionText": "At Range 1–2: push the rival up to 1.",
-      "text": "Hit for 2 at Range 1–3. On hit: push the rival up to 1. OR At Range 1–2: push the rival up to 1.",
+      "text": "Hit for 3 at Range 1–3. On hit: push the rival up to 1. OR At Range 1–2: push the rival up to 1.",
       "art": "assets/core-cards-v1/W07.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -8416,10 +8422,15 @@
       "speed": 3,
       "ops": [
         {
+          "op": "windCard",
+          "effect": "windMinimum"
+        },
+        {
           "op": "hit",
-          "n": 4,
+          "n": 5,
           "min": 3,
-          "max": 5
+          "max": 5,
+          "ignore": 2
         }
       ],
       "reactionOps": [
@@ -8431,9 +8442,9 @@
       "side": "attacker",
       "reactionRange": null,
       "discardCost": false,
-      "attackText": "Hit for 4 at Range 3–5.",
+      "attackText": "Hit for 5 at Range 3–5. Activate: you may consume Wind on your space to make minimum Range 1. Ignore 2 Block.",
       "reactionText": "Your attack’s minimum Range becomes 1.",
-      "text": "Hit for 4 at Range 3–5.  OR Your attack’s minimum Range becomes 1.",
+      "text": "Hit for 5 at Range 3–5. Activate: you may consume Wind on your space to make minimum Range 1. Ignore 2 Block. OR Your attack’s minimum Range becomes 1.",
       "art": "assets/core-cards-v1/W08.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -8689,6 +8700,10 @@
     [
       "Hero passives",
       "Passives work from the start. Alf draws once after a damaging attack from Range 3 or farther. This is a passive draw, independent of the once-per-attack card-draw limit. Shealer draws 1 whenever she pays Health for a card; this is also a passive draw. Smasherton improves wall slams; Raven rewards crossing before her strike; Franc earns an extra Coin only when a Basic Attack deals Health damage."
+    ],
+    [
+      "Core Hero tokens",
+      "Marcus, Sibu, Vera and Mei use their own token rules instead of their previous passive. Tokens persist between rounds. A token reaction passes priority normally. Activation choices happen before printed movement; the defender still reacts first. Fury unlocks once at 10 Health; Last Stand activates after surviving the triggering card at 5 Health."
     ]
   ],
   "version": "brawl2-market-1",
@@ -9588,8 +9603,8 @@
         "M10"
       ],
       "fury": "FM1",
-      "plan": "Practice spending cards to survive, then advancing behind the shield. This is the defensive extreme, not a recommended mandatory list.",
-      "weakness": "Blocking consumes the same cards needed to attack. Little reach, limited pursuit, no passive card income and no retained Block."
+      "plan": "Block a strike to earn Formation. Spend it to stay close, or save three for a damaging push.",
+      "weakness": "Short reach and modest damage. A whiff earns no Formation; spending a Dual to block gives up its attack."
     },
     {
       "id": "sib-core",
@@ -9622,8 +9637,8 @@
         "Z10"
       ],
       "fury": "FZ2",
-      "plan": "Includes Basic income and movement so the largest hit is a choice rather than the only plan.",
-      "weakness": "Major hits are slow and mostly short-range. A miss spends the attack and any tucked card. Weak hero-specific defenses and no draw engine."
+      "plan": "Commit a War Spear before the rival reacts. Land unboosted Hero attacks to recover spent spears.",
+      "weakness": "Committed spears are spent even on a miss. Your largest strikes need close range and protection from evasions."
     },
     {
       "id": "ver-core",
@@ -9656,42 +9671,42 @@
         "V10"
       ],
       "fury": "FV2",
-      "plan": "Flexible first-play deck. Swap toward V01/V07 for finishing power or V06/V08 for Twin Blades utility.",
-      "weakness": "No large passive damage or defense bonus. Filtering gives no extra cards. Last Stand depends on committing useful Dual attacks."
+      "plan": "Keep a Technique ready to use the Reaction half of your committed Dual attack. Land a hit to recover it.",
+      "weakness": "Only one Technique per attack; defensive-only reactions cannot be borrowed while attacking. Normal discard costs still apply."
     },
     {
       "id": "mei-core",
       "hero": "MEI",
-      "name": "Never Where You Expect",
+      "name": "Flowing Counterattack",
       "deck": [
-        "B01",
-        "B01",
         "B03",
         "B03",
         "B04",
         "B04",
+        "B06",
+        "B06",
         "B07",
         "B07",
         "B09",
         "B09",
         "B10",
         "B10",
-        "W01",
-        "W01",
         "W02",
         "W02",
-        "W03",
-        "W03",
+        "W04",
+        "W04",
+        "W05",
+        "W05",
         "W06",
         "W06",
-        "W08",
-        "W08",
+        "W07",
+        "W07",
         "W09",
         "W09"
       ],
       "fury": "FW1",
-      "plan": "Demonstrates spacing and evasion while retaining a Basic close-range answer and some Block.",
-      "weakness": "Low hero-specific Block and modest damage. Several attacks cannot hit at Range 1. Movement still costs hand cards outside her limited Last Stand action."
+      "plan": "Build Wind while trading flexible strikes. Falling Blossom handles close pressure; Part the Clouds cuts through shields. Move after hitting to spoil the rival’s next attack.",
+      "weakness": "Wind needs setup and a movement effect. Minimum ranges matter; pins prevent voluntary movement."
     }
   ]
 }
