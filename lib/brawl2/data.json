@@ -5,14 +5,14 @@
       "id": "MAR",
       "name": "Marcus Ironheart",
       "slug": "hero-marcus-ironheart",
-      "archetype": "Tank / steady close pressure",
+      "archetype": "Formation / advancing shield fighter",
       "trait": "Formation",
       "traitText": "Start with 0 Formation; hold up to 3. After an enemy attack spends any of your Block, gain 1 Formation if you survive. On your attacking reaction, spend 1 to move up to 1 toward the rival (once per attack), or spend 3 for +2 damage and an on-hit push up to 2 (once per attack). Misses and Loot do not earn Formation.",
       "ultimate": {
         "name": "Walking Wall",
         "text": "After playing a non-Loot card Reaction while defending, move up to 1 toward the rival. Token actions do not trigger this."
       },
-      "weakness": "Blocking consumes the same cards needed to attack. Little reach, limited pursuit, no passive card income and no retained Block.",
+      "weakness": "Formation comes from Block actually spent against an attack. Piercing attacks and misses do not generate it.",
       "combo": "Every card can keep me standing.",
       "core": true,
       "pool": [
@@ -70,14 +70,14 @@
       "id": "SIB",
       "name": "Sibu Stormspear",
       "slug": "hero-sibu-stormspear",
-      "archetype": "Heavy striker / costly commitment",
+      "archetype": "Committed spear strikes / explosive damage",
       "trait": "War Spears",
       "traitText": "Start with 3 ready War Spears. At attack activation, before movement, commit at most 1 for +2 damage. It is spent even on a miss. After a damaging non-Fury Hero attack without a committed spear, recover 1 spent spear.",
       "ultimate": {
         "name": "Stormhead",
         "text": "Your spear-boosted attacks ignore 2 additional Block. Attacks without a committed spear do not gain this bonus."
       },
-      "weakness": "Major hits are slow and mostly short-range. A miss spends the attack and any tucked card. Weak hero-specific defenses and no draw engine.",
+      "weakness": "A committed spear is spent even on a miss. Recover one only with a damaging non-Fury Hero attack that used no spear.",
       "combo": "One opening. One enormous hit.",
       "core": true,
       "pool": [
@@ -135,14 +135,14 @@
       "id": "VER",
       "name": "Vera Vendetta",
       "slug": "hero-vera-vendetta",
-      "archetype": "Flexible duelist / balanced offense and defense",
+      "archetype": "Dual-card techniques / adaptable duelist",
       "trait": "Techniques",
       "traitText": "Start with 1 ready Technique; hold up to 3. After your attack deals Health damage, ready 1. On your attacking reaction, spend 1 to play your active Dual card’s Reaction half without discarding it. Once per attack; normal restrictions and costs apply.",
       "ultimate": {
         "name": "Twin Blades",
         "text": "After using a Technique to play your active card’s Reaction, you may move up to 1 before your opponent responds."
       },
-      "weakness": "No large passive damage or defense bonus. Filtering gives no extra cards. Last Stand depends on committing useful Dual attacks.",
+      "weakness": "Techniques only reuse your active Dual attack’s Reaction half. Its timing, costs and once-per-attack limit still apply.",
       "combo": "I have an answer—and a sharp follow-up.",
       "core": true,
       "pool": [
@@ -200,14 +200,14 @@
       "id": "MEI",
       "name": "Mei Windwalker",
       "slug": "hero-mei-windwalker",
-      "archetype": "Evasive ranged fighter / movement and distance",
+      "archetype": "Wind placement / evasive ranged fighter",
       "trait": "Wind Currents",
       "traitText": "After a non-Fury Hero attack, you may place a Wind within 2 spaces of yourself. Three markers maximum; relocate one when all are placed. One of your markers per space. When starting a voluntary move on your Wind, you may consume it to add 2 to that movement. Wind never grants a move by itself.",
       "ultimate": {
         "name": "Walk on Air",
         "text": "For each non-Fury Hero attack, you may place or relocate its Wind at activation before printed movement, instead of after the attack. Only one placement per attack."
       },
-      "weakness": "Low hero-specific Block and modest damage. Several attacks cannot hit at Range 1. Movement still costs hand cards outside her limited Last Stand action.",
+      "weakness": "Wind extends a move that starts on its space; it never grants a free move. Several attacks cannot hit adjacent rivals.",
       "combo": "Your strike finds empty air. Mine reaches you.",
       "core": true,
       "pool": [
@@ -265,14 +265,14 @@
       "id": "SMA",
       "name": "Lord Smasherton",
       "slug": "hero-lord-smasherton",
-      "archetype": "Break shields and force positions. Slow, expensive to chase.",
+      "archetype": "Wall pressure / shield-breaking brawler",
       "trait": "Impact",
       "traitText": "Start with 2 Impact; hold up to 3. After your attack deals Health damage, gain 1. On an attack wall slam, spend 1 for +2 wall damage, once per attack. Or, on your attacking reaction, spend 3 for +2 damage and on-hit push up to 3; no Impact wall bonus on that attack.",
       "ultimate": {
         "name": "You're Not Going Anywhere",
         "text": "After your attack deals Health damage, pin the rival: they cannot move voluntarily until their next attack finishes. Pushes and pulls still work."
       },
-      "weakness": "Slow punches can miss. Draft movement to catch Alf.",
+      "weakness": "Slow, short-range attacks need movement or pulls. Impact must be saved for a wall slam or spent on Launch.",
       "recommended": {
         "chosen": [
           "T-S01",
@@ -294,7 +294,7 @@
           "T-B09"
         ]
       },
-      "combo": "Choose which weakness to cover with your 24 cards.",
+      "combo": "Force the rival toward a wall, then choose when to spend Impact.",
       "pool": [
         "B01",
         "B02",
@@ -350,14 +350,14 @@
       "id": "ALF",
       "name": "Alf Featherbottom",
       "slug": "hero-alf-featherbottom",
-      "archetype": "Prepare your draws and dominate firing distance. Weak at contact.",
+      "archetype": "Prepared shots / ranged control",
       "trait": "Aim",
       "traitText": "Start with 1 Aim; hold up to 2. After your attack deals Health damage at Range 3 or more, gain 1. Once per attack, on your attacking reaction, spend 1 for +2 maximum Range OR spend 2 to ignore 3 Block.",
       "ultimate": {
         "name": "Emergency Spring Boots",
         "text": "When your attack activates, you may move 1 space before its printed movement. The rival then reacts normally."
       },
-      "weakness": "Power Shot cannot hit next door. Draft escapes and close-range backup.",
+      "weakness": "Several attacks cannot hit adjacent rivals. Aim extends maximum Range; it does not lower minimum Range.",
       "recommended": {
         "chosen": [
           "T-A01",
@@ -379,7 +379,7 @@
           "T-B09"
         ]
       },
-      "combo": "Choose which weakness to cover with your 24 cards.",
+      "combo": "Prepare a clear shot and preserve an escape.",
       "pool": [
         "B01",
         "B02",
@@ -435,14 +435,14 @@
       "id": "SHE",
       "name": "Dr. Shealer",
       "slug": "hero-dr-shealer",
-      "archetype": "Spend Health to gain choices and burst; heal by landing attacks.",
+      "archetype": "Health payments / recovery and burst",
       "trait": "Research",
       "traitText": "Start with 2 Research; hold up to 3. After paying Health for a card, gain 1 Research. You may immediately spend 1 to draw 1 card. Or, on a reaction turn, spend 2 to heal 3. Paying Research never earns Research.",
       "ultimate": {
         "name": "Malpractical Flight",
         "text": "Your attacks gain +1 maximum Range. Your arena position, minimum Range and enemy attacks are unchanged."
       },
-      "weakness": "Health payments leave you vulnerable. They never grant Fury.",
+      "weakness": "Health payments can unlock Fury and Last Stand, but leave you easier to finish. Research spent on healing cannot also pay for cards or power Blood Bolt.",
       "recommended": {
         "chosen": [
           "T-D01",
@@ -464,7 +464,7 @@
           "T-B09"
         ]
       },
-      "combo": "Choose which weakness to cover with your 24 cards.",
+      "combo": "Spend Health to create an opening; choose whether Research buys cards or recovery.",
       "pool": [
         "B01",
         "B02",
@@ -520,14 +520,14 @@
       "id": "HEL",
       "name": "Helga Stonewall",
       "slug": "hero-helga",
-      "archetype": "Bank Block and choose where to spend it. Slow without a shield.",
+      "archetype": "Breakable Armour / defensive counterpressure",
       "trait": "Armour",
       "traitText": "Start with 3 Armour; hold up to 3. Once per enemy attack, use a defending reaction to break 1 for 2 Block OR break 2 for 3 Block and resist pushes/pulls for this attack. After your first damaging non-Fury Hero attack each round, repair 1.",
       "ultimate": {
         "name": "Hit Me. I Dare You.",
         "text": "After an enemy attack connects in range, reflect 1 damage, even if fully blocked. Once per attack; ignores Block. Misses and Loot do not trigger it. Resolve reflection before checking victory; simultaneous knockouts draw."
       },
-      "weakness": "Hits can break your shield before you spend it.",
+      "weakness": "Unused Block clears after every attack. Armour repairs only after your first damaging non-Fury Hero attack each round.",
       "recommended": {
         "chosen": [
           "T-H01",
@@ -549,7 +549,7 @@
           "T-B09"
         ]
       },
-      "combo": "Choose which weakness to cover with your 24 cards.",
+      "combo": "Break Armour to survive, then land a Hero attack to repair it.",
       "pool": [
         "B01",
         "B02",
@@ -605,14 +605,14 @@
       "id": "RAV",
       "name": "Raven Madison",
       "slug": "hero-raven-madison",
-      "archetype": "Cross, disrupt and steal. Low direct damage without positioning.",
+      "archetype": "Crossing / theft and misdirection",
       "trait": "Tricks",
       "traitText": "Start with 1 Trick; hold up to 2. The first time you cross the rival during each active attack, gain 1. Token movement and Shadow swaps never earn Tricks. On a reaction turn, spend 1 to move up to 1 or cross an adjacent rival (once per attack). On your attacking reaction, spend 2 for +2 damage (once per attack).",
       "ultimate": {
         "name": "My Shadow Has Other Plans",
         "text": "Place your shadow on your space. Once per round, as your reaction, swap places with it. It stays on your old space. It cannot be attacked and does not block spaces. No swap onto the rival or while pinned. Refresh each round."
       },
-      "weakness": "You need a landing space beyond your rival. No facing bookkeeping.",
+      "weakness": "Crossing needs an empty landing space. Token movement and shadow swaps do not generate Tricks.",
       "recommended": {
         "chosen": [
           "T-R01",
@@ -634,7 +634,7 @@
           "T-B09"
         ]
       },
-      "combo": "Choose which weakness to cover with your 24 cards.",
+      "combo": "Cross the rival to earn Tricks, then slip away or strike harder.",
       "pool": [
         "B01",
         "B02",
@@ -690,14 +690,14 @@
       "id": "FRA",
       "name": "Friar Franc",
       "slug": "hero-friar-franc",
-      "archetype": "Earn, spend and recycle. Coins cannot fund both powers and Loot.",
+      "archetype": "Basic attacks / shared-market economy",
       "trait": "Profit",
       "traitText": "Start with 1 Profit; hold up to 3. After a Basic attack deals Health damage, gain 1 Profit; you may immediately cash 1 for 1 Coin. Once on your shopping turn, spend 2 Profit to buy one face-up Loot before your normal Coin purchase. You may replace one offer first. You may then make your normal Coin purchase; hold at most 2 Loot.",
       "ultimate": {
         "name": "The Emergency Stash",
-        "text": "Draw 1 free Loot on activation; at two Loot, you may replace one before drawing. As your reaction, buy Loot for 1 Coin, holding at most two. Your opponent responds before you can play it."
+        "text": "Draw 1 free Loot on activation; at two Loot, you may replace one before drawing. Once per active attack, as your reaction, buy Loot for 1 Coin, holding at most two. Your opponent responds before you can play it."
       },
-      "weakness": "The finisher still needs Range. Your first card reveals your setup.",
+      "weakness": "Profit needs damaging Basic attacks. Spending Coins on card effects leaves fewer for Loot; you can hold only two Loot.",
       "recommended": {
         "chosen": [
           "T-P01",
@@ -719,7 +719,7 @@
           "T-B09"
         ]
       },
-      "combo": "Choose which weakness to cover with your 24 cards.",
+      "combo": "Land Basic attacks to fund your next market play.",
       "pool": [
         "B01",
         "B02",
@@ -1053,7 +1053,7 @@
     },
     {
       "id": "B09",
-      "name": "Move 2",
+      "name": "Footwork",
       "category": "Basic",
       "kind": "Reaction",
       "heroId": null,
@@ -1062,20 +1062,22 @@
       "ops": [
         {
           "op": "move",
-          "n": 2
+          "n": 2,
+          "attackBonus": 1
         }
       ],
       "reactionOps": [
         {
           "op": "move",
-          "n": 2
+          "n": 2,
+          "attackBonus": 1
         }
       ],
       "side": "either",
       "reactionRange": null,
       "attackText": "",
-      "reactionText": "Move up to 2.",
-      "text": "Move up to 2.",
+      "reactionText": "Move up to 2. During your attack, move up to 3 instead.",
+      "text": "Move up to 2. During your attack, move up to 3 instead.",
       "art": "assets/basic-atlas.webp",
       "artIndex": 5,
       "artCols": 4,
@@ -1906,7 +1908,7 @@
       "ops": [
         {
           "op": "move",
-          "n": 2
+          "n": 1
         },
         {
           "op": "scry",
@@ -1931,9 +1933,9 @@
       ],
       "side": "attacker",
       "reactionRange": null,
-      "attackText": "Move up to 2. Scry 2. Reveal and bottom your top deck card: Attack-capable gives +2 damage and ignores 2 Block; otherwise minimum Range becomes 1 and maximum Range gains 2. Hit for 5 at Range 2–5.",
+      "attackText": "Move up to 1. Scry 2. Reveal and bottom your top deck card: Attack-capable gives +2 damage and ignores 2 Block; otherwise minimum Range becomes 1 and maximum Range gains 2. Hit for 5 at Range 2–5.",
       "reactionText": "Reveal and bottom your top deck card: Attack-capable gives +2 damage and ignores 2 Block; otherwise minimum Range becomes 1 and maximum Range gains 2.",
-      "text": "Move up to 2. Scry 2. Reveal and bottom your top deck card: Attack-capable gives +2 damage and ignores 2 Block; otherwise minimum Range becomes 1 and maximum Range gains 2. Hit for 5 at Range 2–5. OR Reveal and bottom your top deck card: Attack-capable gives +2 damage and ignores 2 Block; otherwise minimum Range becomes 1 and maximum Range gains 2.",
+      "text": "Move up to 1. Scry 2. Reveal and bottom your top deck card: Attack-capable gives +2 damage and ignores 2 Block; otherwise minimum Range becomes 1 and maximum Range gains 2. Hit for 5 at Range 2–5. OR Reveal and bottom your top deck card: Attack-capable gives +2 damage and ignores 2 Block; otherwise minimum Range becomes 1 and maximum Range gains 2.",
       "art": "assets/hero-atlas-ALF.webp",
       "artIndex": 5,
       "artCols": 3,
@@ -1957,7 +1959,7 @@
         },
         {
           "op": "move",
-          "n": 3
+          "n": 2
         },
         {
           "op": "aimDraw"
@@ -1970,7 +1972,7 @@
         },
         {
           "op": "move",
-          "n": 3
+          "n": 2
         },
         {
           "op": "aimDraw"
@@ -1979,8 +1981,8 @@
       "side": "either",
       "reactionRange": null,
       "attackText": "",
-      "reactionText": "Scry 2. Move up to 3. You may spend 1 Aim to draw 1.",
-      "text": "Scry 2. Move up to 3. You may spend 1 Aim to draw 1.",
+      "reactionText": "Scry 2. Move up to 2. You may spend 1 Aim to draw 1.",
+      "text": "Scry 2. Move up to 2. You may spend 1 Aim to draw 1.",
       "art": "assets/hero-atlas-ALF.webp",
       "artIndex": 4,
       "artCols": 3,
@@ -2727,12 +2729,12 @@
           "max": 1
         }
       ],
-      "attackText": "Reveal: you may pay 2 Block for +5 Speed. Move up to 1. Hit for 4 at Range 1.",
+      "attackText": "Move up to 1. Hit for 4 at Range 1.",
       "reactionText": "Gain 2 Block.",
       "artId": "T-H02",
       "heroId": "HEL",
       "hero": "Helga Stonewall",
-      "text": "Reveal: you may pay 2 Block for +5 Speed. Move up to 1. Hit for 4 at Range 1. OR Gain 2 Block.",
+      "text": "Move up to 1. Hit for 4 at Range 1. OR Gain 2 Block.",
       "side": "either",
       "art": "assets/hero-atlas-HEL.webp",
       "artIndex": 1,
@@ -2745,11 +2747,7 @@
         }
       ],
       "cost": null,
-      "reveal": {
-        "resource": "block",
-        "n": 2,
-        "speed": 5
-      },
+      "reveal": null,
       "slow": 0,
       "reactionRange": null
     },
@@ -2862,22 +2860,22 @@
         }
       ],
       "attackText": "Move up to 1. Hit for 2 at Range 1.",
-      "reactionText": "Move up to 1. Gain 2 Block.",
+      "reactionText": "Move up to 2. Gain 1 Block.",
       "artId": "T-H06",
       "reactionOps": [
         {
           "op": "move",
-          "n": 1
+          "n": 2
         },
         {
           "op": "block",
-          "n": 2
+          "n": 1
         }
       ],
       "side": "either",
       "heroId": "HEL",
       "hero": "Helga Stonewall",
-      "text": "Move up to 1. Hit for 2 at Range 1. OR Move up to 1. Gain 2 Block.",
+      "text": "Move up to 1. Hit for 2 at Range 1. OR Move up to 2. Gain 1 Block.",
       "art": "assets/hero-atlas-HEL.webp",
       "artIndex": 5,
       "artCols": 3,
@@ -4619,7 +4617,7 @@
       "ops": [
         {
           "op": "move",
-          "n": 2,
+          "n": 3,
           "toward": true
         },
         {
@@ -4632,8 +4630,8 @@
       "reactionRange": null,
       "discardCost": false,
       "attackText": "",
-      "reactionText": "Move up to 2 toward the rival. Gain 1 Block.",
-      "text": "Move up to 2 toward the rival. Gain 1 Block.",
+      "reactionText": "Move up to 3 toward the rival. Gain 1 Block.",
+      "text": "Move up to 3 toward the rival. Gain 1 Block.",
       "art": "assets/core-cards-v1/M10.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -5119,8 +5117,8 @@
       "reactionRange": null,
       "discardCost": false,
       "attackText": "",
-      "reactionText": "Choose: move up to 1 toward the rival OR ignore 3 additional Block.",
-      "text": "Choose: move up to 1 toward the rival OR ignore 3 additional Block.",
+      "reactionText": "Choose: move up to 2 toward the rival OR ignore 3 additional Block.",
+      "text": "Choose: move up to 2 toward the rival OR ignore 3 additional Block.",
       "art": "assets/core-cards-v1/Z10.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -6754,12 +6752,16 @@
     {
       "id": "L-SIB-03",
       "name": "Lightning Javelin",
-      "text": "Your attack gets +3 maximum Range. Your attack gets +2 damage.",
+      "text": "Your attack gets +2 maximum Range and +2 damage. On hit, push your rival up to 2.",
       "side": "attacker",
       "ops": [
         {
           "op": "reach",
-          "n": 3
+          "n": 2
+        },
+        {
+          "op": "launch",
+          "n": 2
         },
         {
           "op": "boost",
@@ -6769,14 +6771,18 @@
       "reactionOps": [
         {
           "op": "reach",
-          "n": 3
+          "n": 2
+        },
+        {
+          "op": "launch",
+          "n": 2
         },
         {
           "op": "boost",
           "n": 2
         }
       ],
-      "reactionText": "Your attack gets +3 maximum Range. Your attack gets +2 damage.",
+      "reactionText": "Your attack gets +2 maximum Range and +2 damage. On hit, push your rival up to 2.",
       "attackText": "",
       "category": "Loot",
       "kind": "Loot",
@@ -8997,7 +9003,7 @@
     {
       "id": "L-SHE-02",
       "name": "Crash-Cart Wheels",
-      "text": "Move up to 3. Your attack gets +2 damage.",
+      "text": "Move up to 3. Heal 1.",
       "side": "attacker",
       "ops": [
         {
@@ -9005,8 +9011,8 @@
           "n": 3
         },
         {
-          "op": "boost",
-          "n": 2
+          "op": "heal",
+          "n": 1
         }
       ],
       "reactionOps": [
@@ -9015,11 +9021,11 @@
           "n": 3
         },
         {
-          "op": "boost",
-          "n": 2
+          "op": "heal",
+          "n": 1
         }
       ],
-      "reactionText": "Move up to 3. Your attack gets +2 damage.",
+      "reactionText": "Move up to 3. Heal 1.",
       "attackText": "",
       "category": "Loot",
       "kind": "Loot",
@@ -10414,29 +10420,29 @@
     {
       "id": "L-FRA-03",
       "name": "Premium Spyglass",
-      "text": "Your attack gets +3 maximum Range. Your attack gets +2 damage.",
+      "text": "Scry 2. Your attack gets +3 maximum Range.",
       "side": "attacker",
       "ops": [
         {
-          "op": "reach",
-          "n": 3
+          "op": "scry",
+          "n": 2
         },
         {
-          "op": "boost",
-          "n": 2
+          "op": "reach",
+          "n": 3
         }
       ],
       "reactionOps": [
         {
-          "op": "reach",
-          "n": 3
+          "op": "scry",
+          "n": 2
         },
         {
-          "op": "boost",
-          "n": 2
+          "op": "reach",
+          "n": 3
         }
       ],
-      "reactionText": "Your attack gets +3 maximum Range. Your attack gets +2 damage.",
+      "reactionText": "Scry 2. Your attack gets +3 maximum Range.",
       "attackText": "",
       "category": "Loot",
       "kind": "Loot",
@@ -10521,29 +10527,29 @@
     {
       "id": "L-FRA-06",
       "name": "Blessed Snack Basket",
-      "text": "Heal 1. Your attack gets +3 damage.",
+      "text": "Heal 2. Scry 2.",
       "side": "attacker",
       "ops": [
         {
           "op": "heal",
-          "n": 1
+          "n": 2
         },
         {
-          "op": "boost",
-          "n": 3
+          "op": "scry",
+          "n": 2
         }
       ],
       "reactionOps": [
         {
           "op": "heal",
-          "n": 1
+          "n": 2
         },
         {
-          "op": "boost",
-          "n": 3
+          "op": "scry",
+          "n": 2
         }
       ],
-      "reactionText": "Heal 1. Your attack gets +3 damage.",
+      "reactionText": "Heal 2. Scry 2.",
       "attackText": "",
       "category": "Loot",
       "kind": "Loot",
@@ -10558,29 +10564,37 @@
     {
       "id": "L-FRA-07",
       "name": "Express Delivery Cart",
-      "text": "Move up to 3. Your attack gets +2 damage.",
+      "text": "Pull your rival up to 3. Scry 1. Your attack gets +1 damage.",
       "side": "attacker",
       "ops": [
         {
-          "op": "move",
+          "op": "pull",
           "n": 3
         },
         {
+          "op": "scry",
+          "n": 1
+        },
+        {
           "op": "boost",
-          "n": 2
+          "n": 1
         }
       ],
       "reactionOps": [
         {
-          "op": "move",
+          "op": "pull",
           "n": 3
         },
         {
+          "op": "scry",
+          "n": 1
+        },
+        {
           "op": "boost",
-          "n": 2
+          "n": 1
         }
       ],
-      "reactionText": "Move up to 3. Your attack gets +2 damage.",
+      "reactionText": "Pull your rival up to 3. Scry 1. Your attack gets +1 damage.",
       "attackText": "",
       "category": "Loot",
       "kind": "Loot",
@@ -10839,7 +10853,7 @@
     ],
     [
       "Fury & Last Stand",
-      "Hero token rules work from the start. At 10 Health or less, your chosen Fury enters your hand once. The first time you reach 5 Health or less, finish the current card; if you survive, activate Last Stand for the rest of the fight, even if you heal. A lethal hit does not unlock it. Helga’s already-active reflection resolves before victory."
+      "Health damage and Health payments both count. The first time you survive at 10 Health or less, add your chosen Fury to hand; commit it in a future round. At 5 Health or less, finish the triggering card; if alive, activate Last Stand permanently. Healing does not remove either unlock. A lethal hit unlocks neither. Already-active Helga reflection resolves before victory."
     ],
     [
       "Coins",
@@ -10858,15 +10872,27 @@
       "All unused Block clears after every attack, for everyone. Maximum 6 Block. Helga can break Armour for Block; she no longer receives free Block at enemy activation."
     ],
     [
-      "Hero passives",
-      "Hero tokens replace the old passives. Follow your Hero board for starting tokens, earning and spending. Tokens persist between rounds. Spending a token as a reaction passes priority normally. No old passive benefit is also earned."
+      "Hero tokens",
+      "Tokens replace the old passive abilities. They work from the start and persist between rounds. Follow the Hero board for earning and spending. A token reaction passes priority like a card. Activation choices happen before printed movement. Fury and Last Stand do not spend tokens."
     ],
     [
-      "Hero tokens",
-      "All ten Heroes use their own token rules instead of their old passive. Tokens persist between rounds and are public information. A token reaction passes priority normally. Activation choices happen before printed movement; the defender still reacts first. Fury unlocks once at 10 Health; Last Stand activates after surviving the triggering card at 5 Health. Neither spends tokens."
+      "Hit & modifiers",
+      "An attack connects if its current Range includes the rival. On hit requires at least 1 Health damage from that attack. Block prevents damage and is spent; ignored Block remains until cleanup, while removed Block is destroyed immediately. Damage, Range, piercing and other attack modifiers last only for the current attack. Loot damage is not an attack hit."
+    ],
+    [
+      "Attack cleanup",
+      "Resolve on-hit effects, then already-active Helga reflection and victory. If still fighting, settle pending Last Stands and attack-end token effects. Discard the finished attack. Clear both players’ unused Block and all temporary attack modifiers before the next attack. Smasherton’s pin ends when the pinned fighter finishes their next attack."
+    ],
+    [
+      "Wall slam",
+      "A push beyond space 1 or 8 stops at the wall and deals 1 damage ignoring Block. Landing exactly on the wall deals no wall damage. One push effect causes at most one slam. Combine printed attack push and on-hit bonus push. Pulls never slam. Smasherton may spend Impact for Crunch only on an attack wall slam."
+    ],
+    [
+      "Draw limits",
+      "At most one printed draw effect per player per active attack, including attack activation and on-hit draws. Aim and Trick draws use that allowance. Shealer’s immediate Research draw after paying Health is a separate token reward, not a printed draw effect. Fury entering hand is also separate. Loot never counts against the seven-card refill limit."
     ]
   ],
-  "version": "brawl2-hero-loot-1",
+  "version": "brawl2-counterplay-1",
   "builds": [
     {
       "id": "sma-lab-0",
@@ -11867,6 +11893,1024 @@
       "fury": "FW1",
       "plan": "Build Wind while trading flexible strikes. Falling Blossom handles close pressure; Part the Clouds cuts through shields. Move after hitting to spoil the rival’s next attack.",
       "weakness": "Wind needs setup and a movement effect. Minimum ranges matter; pins prevent voluntary movement."
+    },
+    {
+      "id": "mar-review-0",
+      "hero": "MAR",
+      "name": "Close the Gap",
+      "deck": [
+        "B05",
+        "B05",
+        "B09",
+        "B09",
+        "M10",
+        "M10",
+        "M02",
+        "M02",
+        "B04",
+        "B04",
+        "M09",
+        "M09",
+        "M05",
+        "M05",
+        "B02",
+        "B02",
+        "B06",
+        "B06",
+        "B07",
+        "B07",
+        "M01",
+        "M01",
+        "M07",
+        "M07"
+      ],
+      "fury": "FM2",
+      "loot": [
+        "L-MAR-06",
+        "L-MAR-03",
+        "L-MAR-07",
+        "L-MAR-11",
+        "L-MAR-05",
+        "L-MAR-02"
+      ],
+      "plan": "Trade some economy and defense for movement and pressure. Suggested Loot is included.",
+      "weakness": "Specialized draft: inspect its attacks and reactions before committing.",
+      "quantities": {
+        "B05": 2,
+        "B09": 2,
+        "M10": 2,
+        "M02": 2,
+        "B04": 2,
+        "M09": 2,
+        "M05": 2,
+        "B02": 2,
+        "B06": 2,
+        "B07": 2,
+        "M01": 2,
+        "M07": 2
+      }
+    },
+    {
+      "id": "mar-review-1",
+      "hero": "MAR",
+      "name": "Answer Friar",
+      "deck": [
+        "M07",
+        "M07",
+        "B10",
+        "B10",
+        "M10",
+        "M02",
+        "B06",
+        "B06",
+        "M08",
+        "M04",
+        "M03",
+        "M03",
+        "M09",
+        "M09",
+        "M05",
+        "M05",
+        "B01",
+        "M10",
+        "B02",
+        "B02",
+        "B04",
+        "B04",
+        "B05",
+        "B05"
+      ],
+      "fury": "FM3",
+      "loot": [
+        "L-MAR-01",
+        "L-MAR-12",
+        "L-MAR-09",
+        "L-MAR-03",
+        "L-MAR-02",
+        "L-MAR-04"
+      ],
+      "plan": "A tested matchup experiment, not a guaranteed counter. Suggested Loot is included.",
+      "weakness": "Specialized draft: inspect its attacks and reactions before committing.",
+      "quantities": {
+        "M07": 2,
+        "B10": 2,
+        "M10": 2,
+        "M02": 1,
+        "B06": 2,
+        "M08": 1,
+        "M04": 1,
+        "M03": 2,
+        "M09": 2,
+        "M05": 2,
+        "B01": 1,
+        "B02": 2,
+        "B04": 2,
+        "B05": 2
+      }
+    },
+    {
+      "id": "sib-review-0",
+      "hero": "SIB",
+      "name": "Close the Gap",
+      "deck": [
+        "Z05",
+        "Z05",
+        "B05",
+        "B05",
+        "B09",
+        "B09",
+        "Z02",
+        "Z02",
+        "B04",
+        "B04",
+        "Z07",
+        "Z07",
+        "Z06",
+        "Z06",
+        "B02",
+        "B02",
+        "Z01",
+        "Z01",
+        "B06",
+        "B06",
+        "B07",
+        "B07",
+        "Z03",
+        "Z03"
+      ],
+      "fury": "FZ2",
+      "loot": [
+        "L-SIB-08",
+        "L-SIB-02",
+        "L-SIB-07",
+        "L-SIB-10",
+        "L-SIB-01",
+        "L-SIB-03"
+      ],
+      "plan": "Trade some economy and defense for movement and pressure. Suggested Loot is included.",
+      "weakness": "Specialized draft: inspect its attacks and reactions before committing.",
+      "quantities": {
+        "Z05": 2,
+        "B05": 2,
+        "B09": 2,
+        "Z02": 2,
+        "B04": 2,
+        "Z07": 2,
+        "Z06": 2,
+        "B02": 2,
+        "Z01": 2,
+        "B06": 2,
+        "B07": 2,
+        "Z03": 2
+      }
+    },
+    {
+      "id": "ver-review-0",
+      "hero": "VER",
+      "name": "Close the Gap",
+      "deck": [
+        "B05",
+        "B05",
+        "B09",
+        "B09",
+        "V03",
+        "V03",
+        "B04",
+        "B04",
+        "V10",
+        "V10",
+        "V02",
+        "V02",
+        "V06",
+        "V06",
+        "V01",
+        "V01",
+        "B02",
+        "B02",
+        "V04",
+        "V04",
+        "V05",
+        "V05",
+        "B06",
+        "B06"
+      ],
+      "fury": "FV2",
+      "loot": [
+        "L-VER-11",
+        "L-VER-02",
+        "L-VER-01",
+        "L-VER-05",
+        "L-VER-12",
+        "L-VER-03"
+      ],
+      "plan": "Trade some economy and defense for movement and pressure. Suggested Loot is included.",
+      "weakness": "Specialized draft: inspect its attacks and reactions before committing.",
+      "quantities": {
+        "B05": 2,
+        "B09": 2,
+        "V03": 2,
+        "B04": 2,
+        "V10": 2,
+        "V02": 2,
+        "V06": 2,
+        "V01": 2,
+        "B02": 2,
+        "V04": 2,
+        "V05": 2,
+        "B06": 2
+      }
+    },
+    {
+      "id": "ver-review-1",
+      "hero": "VER",
+      "name": "Answer Lord",
+      "deck": [
+        "B05",
+        "B05",
+        "B09",
+        "B09",
+        "V03",
+        "V03",
+        "B04",
+        "B04",
+        "V10",
+        "V10",
+        "V02",
+        "V02",
+        "V06",
+        "V06",
+        "V01",
+        "V01",
+        "B02",
+        "B02",
+        "V04",
+        "V04",
+        "V05",
+        "V05",
+        "B06",
+        "V09"
+      ],
+      "fury": "FV2",
+      "loot": [
+        "L-VER-11",
+        "L-VER-02",
+        "L-VER-01",
+        "L-VER-08",
+        "L-VER-12",
+        "L-VER-03"
+      ],
+      "plan": "A tested matchup experiment, not a guaranteed counter. Suggested Loot is included.",
+      "weakness": "Specialized draft: inspect its attacks and reactions before committing.",
+      "quantities": {
+        "B05": 2,
+        "B09": 2,
+        "V03": 2,
+        "B04": 2,
+        "V10": 2,
+        "V02": 2,
+        "V06": 2,
+        "V01": 2,
+        "B02": 2,
+        "V04": 2,
+        "V05": 2,
+        "B06": 1,
+        "V09": 1
+      }
+    },
+    {
+      "id": "mei-review-0",
+      "hero": "MEI",
+      "name": "Close the Gap",
+      "deck": [
+        "W09",
+        "W09",
+        "W02",
+        "W02",
+        "W06",
+        "W06",
+        "W04",
+        "W04",
+        "B05",
+        "B05",
+        "B09",
+        "B09",
+        "W10",
+        "W10",
+        "B04",
+        "B04",
+        "W01",
+        "W01",
+        "W03",
+        "W03",
+        "W08",
+        "W08",
+        "B02",
+        "B02"
+      ],
+      "fury": "FW1",
+      "loot": [
+        "L-MEI-02",
+        "L-MEI-07",
+        "L-MEI-03",
+        "L-MEI-06",
+        "L-MEI-04",
+        "L-MEI-09"
+      ],
+      "plan": "Trade some economy and defense for movement and pressure. Suggested Loot is included.",
+      "weakness": "Specialized draft: inspect its attacks and reactions before committing.",
+      "quantities": {
+        "W09": 2,
+        "W02": 2,
+        "W06": 2,
+        "W04": 2,
+        "B05": 2,
+        "B09": 2,
+        "W10": 2,
+        "B04": 2,
+        "W01": 2,
+        "W03": 2,
+        "W08": 2,
+        "B02": 2
+      }
+    },
+    {
+      "id": "sma-review-0",
+      "hero": "SMA",
+      "name": "Close the Gap",
+      "deck": [
+        "S05",
+        "S05",
+        "S03",
+        "S03",
+        "B05",
+        "B05",
+        "B09",
+        "B09",
+        "S10",
+        "S10",
+        "S02",
+        "S02",
+        "S06",
+        "S06",
+        "B04",
+        "B04",
+        "S01",
+        "S01",
+        "B02",
+        "B02",
+        "S07",
+        "S07",
+        "B06",
+        "B06"
+      ],
+      "fury": "FS2",
+      "loot": [
+        "L-SMA-07",
+        "L-SMA-11",
+        "L-SMA-08",
+        "L-SMA-02",
+        "L-SMA-05",
+        "L-SMA-03"
+      ],
+      "plan": "Trade some economy and defense for movement and pressure. Suggested Loot is included.",
+      "weakness": "Specialized draft: inspect its attacks and reactions before committing.",
+      "quantities": {
+        "S05": 2,
+        "S03": 2,
+        "B05": 2,
+        "B09": 2,
+        "S10": 2,
+        "S02": 2,
+        "S06": 2,
+        "B04": 2,
+        "S01": 2,
+        "B02": 2,
+        "S07": 2,
+        "B06": 2
+      }
+    },
+    {
+      "id": "sma-review-1",
+      "hero": "SMA",
+      "name": "Answer Mei",
+      "deck": [
+        "S05",
+        "S05",
+        "B10",
+        "S03",
+        "B05",
+        "B05",
+        "B09",
+        "B09",
+        "S10",
+        "S10",
+        "S02",
+        "S02",
+        "S06",
+        "S06",
+        "B04",
+        "B04",
+        "S01",
+        "S01",
+        "B02",
+        "B02",
+        "S07",
+        "S07",
+        "B06",
+        "B06"
+      ],
+      "fury": "FS2",
+      "loot": [
+        "L-SMA-07",
+        "L-SMA-11",
+        "L-SMA-08",
+        "L-SMA-02",
+        "L-SMA-05",
+        "L-SMA-03"
+      ],
+      "plan": "A tested matchup experiment, not a guaranteed counter. Suggested Loot is included.",
+      "weakness": "Specialized draft: inspect its attacks and reactions before committing.",
+      "quantities": {
+        "S05": 2,
+        "B10": 1,
+        "S03": 1,
+        "B05": 2,
+        "B09": 2,
+        "S10": 2,
+        "S02": 2,
+        "S06": 2,
+        "B04": 2,
+        "S01": 2,
+        "B02": 2,
+        "S07": 2,
+        "B06": 2
+      }
+    },
+    {
+      "id": "alf-review-0",
+      "hero": "ALF",
+      "name": "Close the Gap",
+      "deck": [
+        "A09",
+        "A09",
+        "A03",
+        "A03",
+        "A05",
+        "A05",
+        "B05",
+        "B05",
+        "B09",
+        "B09",
+        "A08",
+        "A08",
+        "B04",
+        "B04",
+        "A02",
+        "A02",
+        "A01",
+        "A01",
+        "A04",
+        "A04",
+        "A06",
+        "A06",
+        "A07",
+        "A07"
+      ],
+      "fury": "FA3",
+      "loot": [
+        "L-ALF-07",
+        "L-ALF-02",
+        "L-ALF-11",
+        "L-ALF-08",
+        "L-ALF-03",
+        "L-ALF-12"
+      ],
+      "plan": "Trade some economy and defense for movement and pressure. Suggested Loot is included.",
+      "weakness": "Specialized draft: inspect its attacks and reactions before committing.",
+      "quantities": {
+        "A09": 2,
+        "A03": 2,
+        "A05": 2,
+        "B05": 2,
+        "B09": 2,
+        "A08": 2,
+        "B04": 2,
+        "A02": 2,
+        "A01": 2,
+        "A04": 2,
+        "A06": 2,
+        "A07": 2
+      }
+    },
+    {
+      "id": "alf-review-1",
+      "hero": "ALF",
+      "name": "Answer Dr.",
+      "deck": [
+        "B10",
+        "B10",
+        "B06",
+        "B06",
+        "A01",
+        "A01",
+        "A05",
+        "A05",
+        "A02",
+        "A02",
+        "A04",
+        "A04",
+        "A03",
+        "A03",
+        "A08",
+        "A08",
+        "B02",
+        "B02",
+        "A06",
+        "A06",
+        "A07",
+        "A07",
+        "B04",
+        "B04"
+      ],
+      "fury": "FA2",
+      "loot": [
+        "L-ALF-09",
+        "L-ALF-04",
+        "L-ALF-05",
+        "L-ALF-10",
+        "L-ALF-12",
+        "L-ALF-08"
+      ],
+      "plan": "A tested matchup experiment, not a guaranteed counter. Suggested Loot is included.",
+      "weakness": "Specialized draft: inspect its attacks and reactions before committing.",
+      "quantities": {
+        "B10": 2,
+        "B06": 2,
+        "A01": 2,
+        "A05": 2,
+        "A02": 2,
+        "A04": 2,
+        "A03": 2,
+        "A08": 2,
+        "B02": 2,
+        "A06": 2,
+        "A07": 2,
+        "B04": 2
+      }
+    },
+    {
+      "id": "she-review-0",
+      "hero": "SHE",
+      "name": "Close the Gap",
+      "deck": [
+        "D05",
+        "D05",
+        "B05",
+        "B05",
+        "B09",
+        "B09",
+        "D04",
+        "D04",
+        "B04",
+        "B04",
+        "D10",
+        "D10",
+        "B02",
+        "B02",
+        "B06",
+        "B06",
+        "B07",
+        "B07",
+        "D01",
+        "D01",
+        "D03",
+        "D03",
+        "D06",
+        "D06"
+      ],
+      "fury": "FD1",
+      "loot": [
+        "L-SHE-11",
+        "L-SHE-02",
+        "L-SHE-05",
+        "L-SHE-03",
+        "L-SHE-04",
+        "L-SHE-12"
+      ],
+      "plan": "Trade some economy and defense for movement and pressure. Suggested Loot is included.",
+      "weakness": "Specialized draft: inspect its attacks and reactions before committing.",
+      "quantities": {
+        "D05": 2,
+        "B05": 2,
+        "B09": 2,
+        "D04": 2,
+        "B04": 2,
+        "D10": 2,
+        "B02": 2,
+        "B06": 2,
+        "B07": 2,
+        "D01": 2,
+        "D03": 2,
+        "D06": 2
+      }
+    },
+    {
+      "id": "she-review-1",
+      "hero": "SHE",
+      "name": "Answer Helga",
+      "deck": [
+        "D05",
+        "D05",
+        "B05",
+        "B05",
+        "B09",
+        "B09",
+        "D04",
+        "D04",
+        "B04",
+        "B04",
+        "D10",
+        "D10",
+        "B02",
+        "B02",
+        "B06",
+        "B06",
+        "B07",
+        "B07",
+        "D01",
+        "D01",
+        "D03",
+        "D03",
+        "D06",
+        "D06"
+      ],
+      "fury": "FD1",
+      "loot": [
+        "L-SHE-11",
+        "L-SHE-02",
+        "L-SHE-05",
+        "L-SHE-03",
+        "L-SHE-04",
+        "L-SHE-12"
+      ],
+      "plan": "A tested matchup experiment, not a guaranteed counter. Suggested Loot is included.",
+      "weakness": "Specialized draft: inspect its attacks and reactions before committing.",
+      "quantities": {
+        "D05": 2,
+        "B05": 2,
+        "B09": 2,
+        "D04": 2,
+        "B04": 2,
+        "D10": 2,
+        "B02": 2,
+        "B06": 2,
+        "B07": 2,
+        "D01": 2,
+        "D03": 2,
+        "D06": 2
+      }
+    },
+    {
+      "id": "hel-review-0",
+      "hero": "HEL",
+      "name": "Close the Gap",
+      "deck": [
+        "H03",
+        "H03",
+        "B05",
+        "B05",
+        "B09",
+        "B09",
+        "B04",
+        "B04",
+        "H05",
+        "H05",
+        "H02",
+        "H02",
+        "B02",
+        "B02",
+        "H04",
+        "H04",
+        "B06",
+        "B06",
+        "B07",
+        "B07",
+        "H06",
+        "H06",
+        "H07",
+        "H07"
+      ],
+      "fury": "FH3",
+      "loot": [
+        "L-HEL-05",
+        "L-HEL-10",
+        "L-HEL-07",
+        "L-HEL-02",
+        "L-HEL-03",
+        "L-HEL-04"
+      ],
+      "plan": "Trade some economy and defense for movement and pressure. Suggested Loot is included.",
+      "weakness": "Specialized draft: inspect its attacks and reactions before committing.",
+      "quantities": {
+        "H03": 2,
+        "B05": 2,
+        "B09": 2,
+        "B04": 2,
+        "H05": 2,
+        "H02": 2,
+        "B02": 2,
+        "H04": 2,
+        "B06": 2,
+        "B07": 2,
+        "H06": 2,
+        "H07": 2
+      }
+    },
+    {
+      "id": "hel-review-1",
+      "hero": "HEL",
+      "name": "Answer Vera",
+      "deck": [
+        "H07",
+        "H04",
+        "H09",
+        "H09",
+        "H06",
+        "B05",
+        "B10",
+        "B10",
+        "H02",
+        "H02",
+        "B06",
+        "B06",
+        "H05",
+        "H05",
+        "H03",
+        "H03",
+        "H10",
+        "H10",
+        "B02",
+        "B02",
+        "B07",
+        "B01",
+        "B04",
+        "B04"
+      ],
+      "fury": "FH2",
+      "loot": [
+        "L-HEL-09",
+        "L-HEL-08",
+        "L-HEL-07",
+        "L-HEL-06",
+        "L-HEL-04",
+        "L-HEL-11"
+      ],
+      "plan": "A tested matchup experiment, not a guaranteed counter. Suggested Loot is included.",
+      "weakness": "Specialized draft: inspect its attacks and reactions before committing.",
+      "quantities": {
+        "H07": 1,
+        "H04": 1,
+        "H09": 2,
+        "H06": 1,
+        "B05": 1,
+        "B10": 2,
+        "H02": 2,
+        "B06": 2,
+        "H05": 2,
+        "H03": 2,
+        "H10": 2,
+        "B02": 2,
+        "B07": 1,
+        "B01": 1,
+        "B04": 2
+      }
+    },
+    {
+      "id": "rav-review-0",
+      "hero": "RAV",
+      "name": "Close the Gap",
+      "deck": [
+        "R03",
+        "R03",
+        "R05",
+        "R05",
+        "R09",
+        "R09",
+        "B05",
+        "B05",
+        "B09",
+        "B09",
+        "B04",
+        "B04",
+        "R08",
+        "R08",
+        "R04",
+        "R04",
+        "R02",
+        "R02",
+        "R06",
+        "R06",
+        "B02",
+        "B02",
+        "B06",
+        "B06"
+      ],
+      "fury": "FR3",
+      "loot": [
+        "L-RAV-11",
+        "L-RAV-02",
+        "L-RAV-06",
+        "L-RAV-07",
+        "L-RAV-10",
+        "L-RAV-01"
+      ],
+      "plan": "Trade some economy and defense for movement and pressure. Suggested Loot is included.",
+      "weakness": "Specialized draft: inspect its attacks and reactions before committing.",
+      "quantities": {
+        "R03": 2,
+        "R05": 2,
+        "R09": 2,
+        "B05": 2,
+        "B09": 2,
+        "B04": 2,
+        "R08": 2,
+        "R04": 2,
+        "R02": 2,
+        "R06": 2,
+        "B02": 2,
+        "B06": 2
+      }
+    },
+    {
+      "id": "rav-review-1",
+      "hero": "RAV",
+      "name": "Answer Lord",
+      "deck": [
+        "B10",
+        "B10",
+        "R06",
+        "R06",
+        "R08",
+        "B06",
+        "R04",
+        "R04",
+        "R03",
+        "B09",
+        "R05",
+        "R05",
+        "B07",
+        "R08",
+        "B02",
+        "B02",
+        "B04",
+        "B04",
+        "R10",
+        "B05",
+        "R01",
+        "R01",
+        "R02",
+        "R02"
+      ],
+      "fury": "FR1",
+      "loot": [
+        "L-RAV-09",
+        "L-RAV-01",
+        "L-RAV-11",
+        "L-RAV-06",
+        "L-RAV-10",
+        "L-RAV-12"
+      ],
+      "plan": "A tested matchup experiment, not a guaranteed counter. Suggested Loot is included.",
+      "weakness": "Specialized draft: inspect its attacks and reactions before committing.",
+      "quantities": {
+        "B10": 2,
+        "R06": 2,
+        "R08": 2,
+        "B06": 1,
+        "R04": 2,
+        "R03": 1,
+        "B09": 1,
+        "R05": 2,
+        "B07": 1,
+        "B02": 2,
+        "B04": 2,
+        "R10": 1,
+        "B05": 1,
+        "R01": 2,
+        "R02": 2
+      }
+    },
+    {
+      "id": "fra-review-0",
+      "hero": "FRA",
+      "name": "Close the Gap",
+      "deck": [
+        "P02",
+        "P02",
+        "B05",
+        "B05",
+        "B09",
+        "B09",
+        "P05",
+        "P05",
+        "B04",
+        "B04",
+        "P03",
+        "P03",
+        "B02",
+        "B02",
+        "B06",
+        "B06",
+        "B07",
+        "B07",
+        "P06",
+        "P06",
+        "P07",
+        "P07",
+        "P08",
+        "P08"
+      ],
+      "fury": "FP3",
+      "loot": [
+        "L-FRA-07",
+        "L-FRA-02",
+        "L-FRA-11",
+        "L-FRA-05",
+        "L-FRA-03",
+        "L-FRA-04"
+      ],
+      "plan": "Trade some economy and defense for movement and pressure. Suggested Loot is included.",
+      "weakness": "Specialized draft: inspect its attacks and reactions before committing.",
+      "quantities": {
+        "P02": 2,
+        "B05": 2,
+        "B09": 2,
+        "P05": 2,
+        "B04": 2,
+        "P03": 2,
+        "B02": 2,
+        "B06": 2,
+        "B07": 2,
+        "P06": 2,
+        "P07": 2,
+        "P08": 2
+      }
+    },
+    {
+      "id": "fra-review-1",
+      "hero": "FRA",
+      "name": "Answer Alf",
+      "deck": [
+        "P02",
+        "P02",
+        "B05",
+        "B05",
+        "B09",
+        "B09",
+        "P05",
+        "P05",
+        "B04",
+        "B04",
+        "P03",
+        "P03",
+        "B02",
+        "B02",
+        "B06",
+        "B06",
+        "B07",
+        "B07",
+        "P06",
+        "P06",
+        "P07",
+        "P07",
+        "P08",
+        "P08"
+      ],
+      "fury": "FP3",
+      "loot": [
+        "L-FRA-07",
+        "L-FRA-02",
+        "L-FRA-11",
+        "L-FRA-05",
+        "L-FRA-03",
+        "L-FRA-04"
+      ],
+      "plan": "A tested matchup experiment, not a guaranteed counter. Suggested Loot is included.",
+      "weakness": "Specialized draft: inspect its attacks and reactions before committing.",
+      "quantities": {
+        "P02": 2,
+        "B05": 2,
+        "B09": 2,
+        "P05": 2,
+        "B04": 2,
+        "P03": 2,
+        "B02": 2,
+        "B06": 2,
+        "B07": 2,
+        "P06": 2,
+        "P07": 2,
+        "P08": 2
+      }
     }
   ]
 }

@@ -27,7 +27,7 @@ export function handleOp(g,t){const s=g.s,p=s.players[t.i],i=t.i,m=s.mods[i],c=g
  case'formation':gain(g,i,t.n);break;
  case'anchor':m.anchored=true;g.log('HOLD THE LINE: Marcus cannot be pushed or pulled during this attack.');break;
  case'spearGuard':if(p.tokens)prompt(g,i,'guard','Spear Guard · spend a War Spear for 2 more Block?',[['skip','Keep spear'],['spend','Spend spear · +2 Block']]);break;
- case'guardChoice':prompt(g,i,'guardChoice','Through the Guard · choose one.',[['move','Move up to 1 toward'],['ignore','Ignore 3 Block']]);break;
+ case'guardChoice':prompt(g,i,'guardChoice','Through the Guard · choose one.',[['move','Move up to 2 toward'],['ignore','Ignore 3 Block']]);break;
  case'coreEnd':{
   const d=g.def(t.card),hit=s.context.hit;
   if(s.players[1-i].hero==='MAR'&&s.lastResult.hits.some(h=>h.blocked>0))gain(g,1-i);
@@ -48,7 +48,7 @@ export function chooseToken(g,i,q,v){const s=g.s,p=s.players[i],t=q.task,m=s.mod
  case'pierce':if(v==='spend'){spend(g,i,2);m.pierce=true;}break;
  case'march':if(v==='spend'){spend(g,i,1);const move=s.queue.find(o=>o.op==='move');move.n=2;}break;
  case'guard':if(v==='spend'){spend(g,i,1);s.queue.unshift({op:'block',i,n:2});}break;
- case'guardChoice':s.queue.unshift(v==='move'?{op:'move',i,n:1,toward:true}:{op:'ignore',i,n:3});break;
+ case'guardChoice':s.queue.unshift(v==='move'?{op:'move',i,n:2,toward:true}:{op:'ignore',i,n:3});break;
  case'windMove':if(v==='spend')consumeWind(g,i);s.queue.unshift({...t.move,n:t.move.n+(v==='spend'?2:0),windChecked:true});break;
  case'windDamage':case'windMinimum':if(v==='spend'){consumeWind(g,i);if(t.key==='windDamage')m.damage=(m.damage||0)+2;else m.minimum=1;}break;
  }return true;
