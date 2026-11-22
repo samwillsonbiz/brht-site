@@ -1,7 +1,7 @@
 import * as legacy from './legacy-tokens.js';
 import {CORE,initTokens,tokenActions,useToken,activation,handleOp,windMove,chooseToken} from './core-tokens.js';
 import {choosePlan,chooseReaction,choosePrompt} from './reaction-ai.js';
-export const VERSION='brawl2-counterplay-1';
+export const VERSION='brawl2-audit-2';
 export const PRE_TOKEN_VERSION='brawl2-core-1';
 export const LEGACY_VERSION='brawl2-market-1';
 export const LOOT_COST=2;
@@ -64,7 +64,7 @@ export class Brawl2 {
  event(k){this.s.events[k]=(this.s.events[k]||0)+1;}
  beginAttack(){
   const s=this.s;s.active=s.order[s.attackIndex];const i=s.active,c=s.mains[i],d=this.def(c);
-  s.mods=[{},{}];s.playedReactions=[[],[]];s.preparedReveal=null;s.lastReaction=null;s.trail=[];s.lastCoin=null;s.lastResult={attacker:i,name:d.name,hits:[],walls:[],coin:0};s.drawUsed=[false,false];s.passes=0;
+  s.mods=[{},{}];s.playedReactions=[[],[]];s.preparedReveal=null;s.lastReaction=null;s.trail=[];s.lastCoin=null;s.lastResult={attacker:i,name:d.name,hits:[],walls:[],coin:0,attackHealthDamage:0};s.drawUsed=[false,false];s.passes=0;
   s.activeSource=`attack-${++s.playSerial}-${c.uid}`;s.context={i,card:c,source:s.activeSource,type:'attack',hit:false};
   const first=d.ops.findIndex(o=>o.op==='hit');s.queue=d.ops.slice(0,first).filter(o=>!['pay','researchPay'].includes(o.op)).map(o=>({...o,i}));s.queue.unshift(...activation(this,i));if(s.players[i].hero==='ALF'&&s.players[i].ultimate)s.queue.unshift({op:'move',i,n:1,boots:true});s.queue.push({op:'openWindow',i});s.phase='pre';
   this.log(`${s.players[i].name} activates ${d.name}.`);this.pump();
@@ -99,7 +99,7 @@ s.passes=0;
   const s=this.s,i=s.active,c=s.mains[i],d=this.def(c),first=d.ops.findIndex(o=>o.op==='hit'),m=s.mods[i];s.context={i,card:c,source:s.activeSource,type:'attack',hit:false};
   const ops=[...d.ops.slice(0,first).filter(o=>['pay','researchPay'].includes(o.op)),...d.ops.slice(first)].map(o=>({...o,i}));
   if(m.push){const at=ops.findIndex(o=>o.op==='push');if(at>=0){if(ops[at].inRange)ops[at].bonusOnHit=m.push;else ops[at].n+=m.push;}else ops.push({op:'push',i,n:m.push,onHit:true});}
-  if(m.present)ops.push({op:'selfPresent',i});ops.push({op:'attackEnd',i,card:c});s.queue=ops;s.phase='resolve';this.log('Two passes. Resolve the attack at the current distance.');this.pump();
+  for(let n=0;n<(m.present||0);n++)ops.push({op:'selfPresent',i});ops.push({op:'attackEnd',i,card:c});s.queue=ops;s.phase='resolve';this.log('Two passes. Resolve the attack at the current distance.');this.pump();
  }
  availableMoves(i,n,toward=false){const p=this.s.players[i],o=this.s.players[1-i];if(p.pinned)return [p.pos];return Array.from({length:ARENA_SIZE},(_,k)=>k+1).filter(v=>v!==o.pos&&Math.abs(v-p.pos)<=n&&(!toward||v===p.pos||Math.abs(v-o.pos)<Math.abs(p.pos-o.pos)));}
  ask(i,kind,title,choices,task){this.s.prompt={player:i,kind,title,choices,task};}
@@ -121,7 +121,7 @@ s.passes=0;
  damage(target,n,source,{pierce=false,ignore=0,self=false}={}){
   const p=this.s.players[target];let amount=n;
   if(!pierce&&!self){const stopped=Math.min(Math.max(0,p.block-ignore),amount);p.block-=stopped;amount-=stopped;if(stopped)this.log(`${p.name} blocks ${stopped}.`);}
-  if(amount<=0)return 0;p.hp=Math.max(0,p.hp-amount);this.log(`${p.name} takes ${amount} damage · ${p.hp} Health.`);if(this.s.players.some(p=>p.hp<=0))this.reflect();this.checkKO();if(this.s.phase!=='over')this.checkThresholds(target);return amount;
+  if(amount<=0)return 0;if(this.s.context?.type==='attack'&&target!==this.s.context.i&&this.s.lastResult)this.s.lastResult.attackHealthDamage=(this.s.lastResult.attackHealthDamage||0)+Math.min(p.hp,amount);p.hp=Math.max(0,p.hp-amount);this.log(`${p.name} takes ${amount} damage · ${p.hp} Health.`);if(this.s.players.some(p=>p.hp<=0))this.reflect();this.checkKO();if(this.s.phase!=='over')this.checkThresholds(target);return amount;
  }
  checkKO(){const s=this.s;if(s.players.some(p=>p.hp<=0)){s.phase='over';s.winner=s.players.every(p=>p.hp<=0)?'draw':s.players[0].hp>0?0:1;
   // A lethal instant must still leave its physical card in the spent pile.
@@ -146,7 +146,7 @@ s.passes=0;
    case'recover':{const cards=p.discard.filter(c=>s.playedReactions[t.i].includes(c.uid)&&this.def(c).category==='Basic');if(cards.length)this.ask(t.i,'recover','Return a Basic Reaction played this exchange.',cards.map(c=>c.uid),t);break;}
    case'adjacent':{const choices=p.pinned?[p.pos]:[o.pos-1,o.pos+1].filter(v=>v>=1&&v<=ARENA_SIZE);if(choices.length===1)this.moveTo(t.i,choices[0]);else this.ask(t.i,'move','Move to an empty adjacent space.',choices,t);break;}
    case'invest':{const cost=this.cost(t.i,t);if(p[t.resource]>=cost+1)this.ask(t.i,'invest','Pay before the rival reacts?',[0,1],{...t,cost});break;}
-   case'defReward':m.defReward=true;break;
+   case'defReward':m.defReward=(m.defReward||0)+1;break;
    case'openWindow':s.phase='reaction';s.turn=1-s.active;s.context=null;this.log(`${s.players[s.turn].name} reacts first. Play a card or pass.`);break;
    case'move':if(t.attackBonus){if(s.active===t.i)t.n+=t.attackBonus;delete t.attackBonus;}if(windMove(this,t))break;if(this.availableMoves(t.i,t.n,t.toward).length===1){this.moveTo(t.i,p.pos);break;}this.ask(t.i,'move',p.pinned?'Pinned: stay here until your attack finishes.':`${t.label|| (t.boots?'SPRING BOOTS · ':'')}Move up to ${t.n}${t.toward?' toward the rival':''}. Click a space; your current space means stay.`,this.availableMoves(t.i,t.n,t.toward),t);break;
    case'block':{const n=Math.min(t.n,6-p.block);p.block+=n;this.log(`${p.name} gains ${n} Block.`);break;}
@@ -156,10 +156,10 @@ s.passes=0;
    case'ignore':m.ignore=(m.ignore||0)+t.n;this.log(`Current attack ignores ${t.n} more Block.`);break;
    case'launch':m.push=(m.push||0)+t.n;break;
    case'pierce':m.pierce=true;this.log('Current attack ignores all Block.');break;
-   case'present':m.present=true;break;
+   case'present':m.present=(m.present||0)+1;break;
    case'heal':this.heal(t.i,t.n);break;
    case'shred':o.block=Math.max(0,o.block-t.n);this.log(`${o.name} loses up to ${t.n} Block.`);break;
-   case'swap':{const a=p.pos;p.pos=o.pos;o.pos=a;this.log(`${this.def(ctx.card)?.name||'The effect'} swaps the fighters!`);break;}
+   case'swap':{if(p.pinned){this.log(`${p.name} is pinned: swap skipped; remaining effects still resolve.`);break;}const a=p.pos;p.pos=o.pos;o.pos=a;this.log(`${this.def(ctx.card)?.name||'The effect'} swaps the fighters!`);break;}
    case'ping':this.damage(1-t.i,t.n,ctx.source);break;
    case'draw':if(!s.drawUsed[t.i]){s.drawUsed[t.i]=true;this.event('drawEffects');const n=p.hand.length;this.draw(t.i,t.n);this.log(`${p.name} explicitly draws ${p.hand.length-n} cards.`);}break;
    case'pay':{const cost=this.cost(t.i,t);if(p[t.resource]>=(t.resource==='hp'?cost+1:cost))this.ask(t.i,'pay',`Spend ${cost} ${t.resource==='hp'?'Health':t.resource==='coins'?'Coins':'Block'} for +${t.bonus} damage?`,[0,1],{...t,cost});break;}
@@ -170,7 +170,7 @@ s.passes=0;
    case'pull':{const max=Math.min(t.n,Math.max(0,Math.abs(p.pos-o.pos)-1));if(max)this.ask(t.i,'pull',`Pull up to ${max}. Choose a distance.`,Array.from({length:max+1},(_,k)=>k),t);else this.log('Already adjacent: no pull.');break;}
    case'selfPresent':if(ctx.hit)this.damage(t.i,1,ctx.source,{self:true});break;
    case'reactionEnd':if(ctx.techniqueMove&&!t.techniqueMoved){t.techniqueMoved=true;s.queue.push({op:'move',i:t.i,n:1,label:'TWIN BLADES · '},t);break;}if(ctx.walking&&!t.walked){t.walked=true;s.queue.push({op:'move',i:t.i,n:1,toward:true,label:'WALKING WALL · '},t);break;}this.settleLastStands();if(s.queue.length){s.queue.push(t);break;}if(t.card&&!t.retained){s.playedReactions[t.i].push(t.card.uid);if(t.loot)s.lootDiscard.push(t.card.id);else p.discard.push(t.card);}s.phase='reaction';s.turn=1-t.i;s.context=null;this.log(`${s.players[s.turn].name}: react or pass.`);break;
-   case'attackEnd':this.reflect();this.checkKO();if(s.phase==='over')break;this.settleLastStands();if(s.queue.length){s.queue.push(t);break;}p.pinned=false;if(s.mods[1-t.i].defReward&&s.lastResult.hits.every(h=>!h.loss)){o.coins=Math.min(8,o.coins+1);this.event('defRewards');}p.discard.push(t.card);if(p.tucked){p.discard.push(p.tucked);p.tucked=null;}s.plans[t.i][s.reveal].spent=true;if(this.def(t.card).category==='Basic'){const earned=Math.min(1,8-p.coins);p.coins+=earned;s.lastCoin={player:t.i,amount:earned,name:this.def(t.card).name};s.lastResult.coin=earned;this.log(`${p.name}: +${earned} Coin · Basic Attack${earned?'':' (Coin cap 8)'}.`);}if(ctx.bullseye)legacy.earn(this,t.i);s.players.forEach(p=>p.block=0);if(true){s.queue.push({op:'coreEnd',i:t.i,card:t.card},{op:'finishAttack',i:t.i,card:t.card});break;}this.finishAttack(t.card);break;
+   case'attackEnd':this.reflect();this.checkKO();if(s.phase==='over')break;this.settleLastStands();if(s.queue.length){s.queue.push(t);break;}p.pinned=false;if(s.mods[1-t.i].defReward&&!s.lastResult.attackHealthDamage){const earned=Math.min(8-o.coins,s.mods[1-t.i].defReward);o.coins+=earned;this.event('defRewards');this.log(`${o.name} gains ${earned} Coins from Hold Your Ground.`);}p.discard.push(t.card);if(p.tucked){p.discard.push(p.tucked);p.tucked=null;}s.plans[t.i][s.reveal].spent=true;if(this.def(t.card).category==='Basic'){const earned=Math.min(1,8-p.coins);p.coins+=earned;s.lastCoin={player:t.i,amount:earned,name:this.def(t.card).name};s.lastResult.coin=earned;this.log(`${p.name}: +${earned} Coin · Basic Attack${earned?'':' (Coin cap 8)'}.`);}if(ctx.bullseye)legacy.earn(this,t.i);s.players.forEach(p=>p.block=0);if(true){s.queue.push({op:'coreEnd',i:t.i,card:t.card},{op:'finishAttack',i:t.i,card:t.card});break;}this.finishAttack(t.card);break;
    case'finishAttack':if(!t.legacyDone){t.legacyDone=true;legacy.end(this,t);if(s.queue.length){s.queue.push(t);break;}}this.finishAttack(t.card);break;
   }
  }}
