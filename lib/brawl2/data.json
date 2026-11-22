@@ -2,6 +2,262 @@
   "title": "Brawl2 — Distinct by design",
   "heroes": [
     {
+      "id": "MAR",
+      "name": "Marcus Ironheart",
+      "slug": "hero-marcus-ironheart",
+      "archetype": "Tank / steady close pressure",
+      "trait": "Dig In",
+      "traitText": "As your reaction while defending, discard a non-Loot card from your hand to gain 2 Block.",
+      "ultimate": {
+        "name": "The Walking Wall",
+        "text": "After you finish a non-Loot reaction while defending, you may move 1 space toward the rival."
+      },
+      "weakness": "Blocking consumes the same cards needed to attack. Little reach, limited pursuit, no passive card income and no retained Block.",
+      "combo": "Every card can keep me standing.",
+      "core": true,
+      "pool": [
+        "B01",
+        "B02",
+        "B03",
+        "B04",
+        "B05",
+        "B06",
+        "B07",
+        "B08",
+        "B09",
+        "B10",
+        "M01",
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06",
+        "M07",
+        "M08",
+        "M09",
+        "M10"
+      ],
+      "furies": [
+        "FM1",
+        "FM2",
+        "FM3"
+      ],
+      "lootPool": [
+        "L-HEL-01",
+        "L-HEL-02",
+        "L-HEL-03",
+        "L-HEL-06",
+        "L-HEL-07",
+        "L-HEL-09",
+        "L-SMA-02",
+        "L-SMA-04",
+        "L-SMA-06",
+        "L-SMA-11",
+        "L-RAV-12",
+        "L-FRA-10"
+      ],
+      "defaultLoot": [
+        "L-HEL-01",
+        "L-HEL-02",
+        "L-HEL-03",
+        "L-HEL-06",
+        "L-HEL-07",
+        "L-HEL-09"
+      ]
+    },
+    {
+      "id": "SIB",
+      "name": "Sibu Stormspear",
+      "slug": "hero-sibu-stormspear",
+      "archetype": "Heavy striker / costly commitment",
+      "trait": "All In",
+      "traitText": "As your reaction during your attack, tuck one non-Loot hand card beneath that attack to add 3 damage. Only one card can be tucked beneath each attack.",
+      "ultimate": {
+        "name": "Stormhead",
+        "text": "Your attacks ignore 2 additional Block."
+      },
+      "weakness": "Major hits are slow and mostly short-range. A miss spends the attack and any tucked card. Weak hero-specific defenses and no draw engine.",
+      "combo": "One opening. One enormous hit.",
+      "core": true,
+      "pool": [
+        "B01",
+        "B02",
+        "B03",
+        "B04",
+        "B05",
+        "B06",
+        "B07",
+        "B08",
+        "B09",
+        "B10",
+        "Z01",
+        "Z02",
+        "Z03",
+        "Z04",
+        "Z05",
+        "Z06",
+        "Z07",
+        "Z08",
+        "Z09",
+        "Z10"
+      ],
+      "furies": [
+        "FZ1",
+        "FZ2",
+        "FZ3"
+      ],
+      "lootPool": [
+        "L-SMA-01",
+        "L-SMA-02",
+        "L-SMA-03",
+        "L-SMA-04",
+        "L-SMA-05",
+        "L-SMA-07",
+        "L-SMA-10",
+        "L-SMA-11",
+        "L-SHE-06",
+        "L-RAV-11",
+        "L-RAV-12",
+        "L-ALF-04"
+      ],
+      "defaultLoot": [
+        "L-SMA-01",
+        "L-SMA-02",
+        "L-SMA-03",
+        "L-SMA-04",
+        "L-SMA-05",
+        "L-SMA-07"
+      ]
+    },
+    {
+      "id": "VER",
+      "name": "Vera Vendetta",
+      "slug": "hero-vera-vendetta",
+      "archetype": "Flexible duelist / balanced offense and defense",
+      "trait": "Clear Your Head",
+      "traitText": "Once per round before you commit, you may discard one non-Loot hand card to draw 1.",
+      "ultimate": {
+        "name": "Twin Blades",
+        "text": "Once during each of your attacks, you may use that card’s printed Reaction as your reaction without discarding it. Follow its normal timing restrictions."
+      },
+      "weakness": "No large passive damage or defense bonus. Filtering gives no extra cards. Last Stand depends on committing useful Dual attacks.",
+      "combo": "I have an answer—and a sharp follow-up.",
+      "core": true,
+      "pool": [
+        "B01",
+        "B02",
+        "B03",
+        "B04",
+        "B05",
+        "B06",
+        "B07",
+        "B08",
+        "B09",
+        "B10",
+        "V01",
+        "V02",
+        "V03",
+        "V04",
+        "V05",
+        "V06",
+        "V07",
+        "V08",
+        "V09",
+        "V10"
+      ],
+      "furies": [
+        "FV1",
+        "FV2",
+        "FV3"
+      ],
+      "lootPool": [
+        "L-SMA-02",
+        "L-SMA-04",
+        "L-SMA-06",
+        "L-SHE-03",
+        "L-HEL-12",
+        "L-RAV-02",
+        "L-RAV-03",
+        "L-RAV-06",
+        "L-RAV-09",
+        "L-RAV-10",
+        "L-RAV-12",
+        "L-FRA-10"
+      ],
+      "defaultLoot": [
+        "L-SMA-02",
+        "L-SMA-04",
+        "L-SMA-06",
+        "L-SHE-03",
+        "L-HEL-12",
+        "L-RAV-02"
+      ]
+    },
+    {
+      "id": "MEI",
+      "name": "Mei Windwalker",
+      "slug": "hero-mei-windwalker",
+      "archetype": "Evasive ranged fighter / movement and distance",
+      "trait": "Windstep",
+      "traitText": "After an enemy attack misses you, you may move up to 1.",
+      "ultimate": {
+        "name": "Walk on Air",
+        "text": "Once per round, as your reaction, move up to 2 without playing a card."
+      },
+      "weakness": "Low hero-specific Block and modest damage. Several attacks cannot hit at Range 1. Movement still costs hand cards outside her limited Last Stand action.",
+      "combo": "Your strike finds empty air. Mine reaches you.",
+      "core": true,
+      "pool": [
+        "B01",
+        "B02",
+        "B03",
+        "B04",
+        "B05",
+        "B06",
+        "B07",
+        "B08",
+        "B09",
+        "B10",
+        "W01",
+        "W02",
+        "W03",
+        "W04",
+        "W05",
+        "W06",
+        "W07",
+        "W08",
+        "W09",
+        "W10"
+      ],
+      "furies": [
+        "FW1",
+        "FW2",
+        "FW3"
+      ],
+      "lootPool": [
+        "L-ALF-01",
+        "L-ALF-02",
+        "L-ALF-03",
+        "L-ALF-04",
+        "L-ALF-06",
+        "L-ALF-07",
+        "L-ALF-08",
+        "L-ALF-09",
+        "L-ALF-10",
+        "L-ALF-12",
+        "L-RAV-02",
+        "L-RAV-12"
+      ],
+      "defaultLoot": [
+        "L-ALF-01",
+        "L-ALF-02",
+        "L-ALF-03",
+        "L-ALF-04",
+        "L-ALF-06",
+        "L-ALF-07"
+      ]
+    },
+    {
       "id": "SMA",
       "name": "Lord Smasherton",
       "slug": "hero-lord-smasherton",
@@ -6405,6 +6661,1912 @@
       "artIndex": 11,
       "artCols": 4,
       "artRows": 3
+    },
+    {
+      "id": "M01",
+      "name": "Arena’s End",
+      "category": "Hero",
+      "kind": "Attack",
+      "heroId": "MAR",
+      "hero": "Marcus Ironheart",
+      "speed": 1,
+      "ops": [
+        {
+          "op": "hit",
+          "n": 6,
+          "min": 1,
+          "max": 1,
+          "ignore": 2
+        }
+      ],
+      "reactionOps": null,
+      "side": "either",
+      "reactionRange": null,
+      "discardCost": false,
+      "attackText": "Hit for 6 at Range 1–1. Ignore 2 Block.",
+      "reactionText": "",
+      "text": "Hit for 6 at Range 1–1. Ignore 2 Block.",
+      "art": "assets/hero-marcus-ironheart.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "M02",
+      "name": "Shield March",
+      "category": "Hero",
+      "kind": "Dual",
+      "heroId": "MAR",
+      "hero": "Marcus Ironheart",
+      "speed": 3,
+      "ops": [
+        {
+          "op": "move",
+          "n": 1
+        },
+        {
+          "op": "hit",
+          "n": 3,
+          "min": 1,
+          "max": 1
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "block",
+          "n": 3
+        },
+        {
+          "op": "move",
+          "n": 1,
+          "toward": true
+        }
+      ],
+      "side": "defender",
+      "reactionRange": null,
+      "discardCost": false,
+      "attackText": "Hit for 3 at Range 1–1. Activate: move up to 1.",
+      "reactionText": "Gain 3 Block. You may move 1 toward the rival.",
+      "text": "Hit for 3 at Range 1–1. Activate: move up to 1. OR Gain 3 Block. You may move 1 toward the rival.",
+      "art": "assets/hero-marcus-ironheart.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "M03",
+      "name": "Gladius Thrust",
+      "category": "Hero",
+      "kind": "Dual",
+      "heroId": "MAR",
+      "hero": "Marcus Ironheart",
+      "speed": 4,
+      "ops": [
+        {
+          "op": "hit",
+          "n": 4,
+          "min": 1,
+          "max": 1
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "block",
+          "n": 3
+        }
+      ],
+      "side": "defender",
+      "reactionRange": null,
+      "discardCost": false,
+      "attackText": "Hit for 4 at Range 1–1.",
+      "reactionText": "Gain 3 Block.",
+      "text": "Hit for 4 at Range 1–1.  OR Gain 3 Block.",
+      "art": "assets/hero-marcus-ironheart.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "M04",
+      "name": "Sand in Your Eyes",
+      "category": "Hero",
+      "kind": "Dual",
+      "heroId": "MAR",
+      "hero": "Marcus Ironheart",
+      "speed": 5,
+      "ops": [
+        {
+          "op": "hit",
+          "n": 2,
+          "min": 1,
+          "max": 2
+        },
+        {
+          "op": "draw",
+          "n": 1,
+          "onHit": true
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "shred",
+          "n": 2
+        }
+      ],
+      "side": "attacker",
+      "reactionRange": null,
+      "discardCost": false,
+      "attackText": "Hit for 2 at Range 1–2. On hit: draw 1.",
+      "reactionText": "Remove up to 2 rival Block.",
+      "text": "Hit for 2 at Range 1–2. On hit: draw 1. OR Remove up to 2 rival Block.",
+      "art": "assets/hero-marcus-ironheart.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "M05",
+      "name": "Hold the Centre",
+      "category": "Hero",
+      "kind": "Dual",
+      "heroId": "MAR",
+      "hero": "Marcus Ironheart",
+      "speed": 2,
+      "ops": [
+        {
+          "op": "hit",
+          "n": 4,
+          "min": 1,
+          "max": 2
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "move",
+          "n": 1
+        },
+        {
+          "op": "block",
+          "n": 1
+        }
+      ],
+      "side": "either",
+      "reactionRange": null,
+      "discardCost": false,
+      "attackText": "Hit for 4 at Range 1–2.",
+      "reactionText": "Move up to 1. Gain 1 Block.",
+      "text": "Hit for 4 at Range 1–2.  OR Move up to 1. Gain 1 Block.",
+      "art": "assets/hero-marcus-ironheart.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "M06",
+      "name": "Shove Aside",
+      "category": "Hero",
+      "kind": "Dual",
+      "heroId": "MAR",
+      "hero": "Marcus Ironheart",
+      "speed": 3,
+      "ops": [
+        {
+          "op": "hit",
+          "n": 3,
+          "min": 1,
+          "max": 1
+        },
+        {
+          "op": "push",
+          "n": 1,
+          "onHit": true
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "push",
+          "n": 1
+        }
+      ],
+      "side": "either",
+      "reactionRange": [
+        1,
+        1
+      ],
+      "discardCost": false,
+      "attackText": "Hit for 3 at Range 1–1. On hit: push the rival up to 1.",
+      "reactionText": "At Range 1: push the rival up to 1.",
+      "text": "Hit for 3 at Range 1–1. On hit: push the rival up to 1. OR At Range 1: push the rival up to 1.",
+      "art": "assets/hero-marcus-ironheart.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "M07",
+      "name": "Paid in Bruises",
+      "category": "Hero",
+      "kind": "Dual",
+      "heroId": "MAR",
+      "hero": "Marcus Ironheart",
+      "speed": 2,
+      "ops": [
+        {
+          "op": "hit",
+          "n": 4,
+          "min": 1,
+          "max": 1
+        },
+        {
+          "op": "draw",
+          "n": 1,
+          "onHit": true
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "block",
+          "n": 5
+        }
+      ],
+      "side": "defender",
+      "reactionRange": null,
+      "discardCost": true,
+      "attackText": "Hit for 4 at Range 1–1. On hit: draw 1.",
+      "reactionText": "Discard another non-Loot card from your hand. Gain 5 Block.",
+      "text": "Hit for 4 at Range 1–1. On hit: draw 1. OR Discard another non-Loot card from your hand. Gain 5 Block.",
+      "art": "assets/hero-marcus-ironheart.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "M08",
+      "name": "Stand Firm",
+      "category": "Hero",
+      "kind": "Dual",
+      "heroId": "MAR",
+      "hero": "Marcus Ironheart",
+      "speed": 2,
+      "ops": [
+        {
+          "op": "hit",
+          "n": 3,
+          "min": 1,
+          "max": 1
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "block",
+          "n": 4
+        }
+      ],
+      "side": "defender",
+      "reactionRange": null,
+      "discardCost": false,
+      "attackText": "Hit for 3 at Range 1–1.",
+      "reactionText": "Gain 4 Block.",
+      "text": "Hit for 3 at Range 1–1.  OR Gain 4 Block.",
+      "art": "assets/hero-marcus-ironheart.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "M09",
+      "name": "Under the Shield",
+      "category": "Hero",
+      "kind": "Reaction",
+      "heroId": "MAR",
+      "hero": "Marcus Ironheart",
+      "speed": 0,
+      "ops": [
+        {
+          "op": "block",
+          "n": 4
+        },
+        {
+          "op": "move",
+          "n": 1,
+          "toward": true
+        }
+      ],
+      "reactionOps": null,
+      "side": "defender",
+      "reactionRange": null,
+      "discardCost": false,
+      "attackText": "",
+      "reactionText": "Gain 4 Block. You may move 1 toward the rival.",
+      "text": "Gain 4 Block. You may move 1 toward the rival.",
+      "art": "assets/hero-marcus-ironheart.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "M10",
+      "name": "March On",
+      "category": "Hero",
+      "kind": "Reaction",
+      "heroId": "MAR",
+      "hero": "Marcus Ironheart",
+      "speed": 0,
+      "ops": [
+        {
+          "op": "move",
+          "n": 2,
+          "toward": true
+        },
+        {
+          "op": "block",
+          "n": 1
+        }
+      ],
+      "reactionOps": null,
+      "side": "either",
+      "reactionRange": null,
+      "discardCost": false,
+      "attackText": "",
+      "reactionText": "Move up to 2 toward the rival. Gain 1 Block.",
+      "text": "Move up to 2 toward the rival. Gain 1 Block.",
+      "art": "assets/hero-marcus-ironheart.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "FM1",
+      "name": "Unbroken",
+      "category": "Special",
+      "kind": "Attack",
+      "heroId": "MAR",
+      "hero": "Marcus Ironheart",
+      "speed": 2,
+      "ops": [
+        {
+          "op": "hit",
+          "n": 5,
+          "min": 1,
+          "max": 2
+        },
+        {
+          "op": "heal",
+          "n": 3,
+          "onHit": true
+        }
+      ],
+      "reactionOps": null,
+      "side": "either",
+      "reactionRange": null,
+      "discardCost": false,
+      "attackText": "Hit for 5 at Range 1–2. On hit: heal 3.",
+      "reactionText": "",
+      "text": "Hit for 5 at Range 1–2. On hit: heal 3.",
+      "art": "assets/hero-marcus-ironheart.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "FM2",
+      "name": "Arena Champion",
+      "category": "Special",
+      "kind": "Attack",
+      "heroId": "MAR",
+      "hero": "Marcus Ironheart",
+      "speed": 3,
+      "ops": [
+        {
+          "op": "move",
+          "n": 2
+        },
+        {
+          "op": "hit",
+          "n": 6,
+          "min": 1,
+          "max": 1
+        }
+      ],
+      "reactionOps": null,
+      "side": "either",
+      "reactionRange": null,
+      "discardCost": false,
+      "attackText": "Hit for 6 at Range 1–1. Activate: move up to 2.",
+      "reactionText": "",
+      "text": "Hit for 6 at Range 1–1. Activate: move up to 2.",
+      "art": "assets/hero-marcus-ironheart.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "FM3",
+      "name": "Last Man Standing",
+      "category": "Special",
+      "kind": "Attack",
+      "heroId": "MAR",
+      "hero": "Marcus Ironheart",
+      "speed": 1,
+      "ops": [
+        {
+          "op": "hit",
+          "n": 7,
+          "min": 1,
+          "max": 1,
+          "ignore": 3
+        }
+      ],
+      "reactionOps": null,
+      "side": "either",
+      "reactionRange": null,
+      "discardCost": false,
+      "attackText": "Hit for 7 at Range 1–1. Ignore 3 Block.",
+      "reactionText": "",
+      "text": "Hit for 7 at Range 1–1. Ignore 3 Block.",
+      "art": "assets/hero-marcus-ironheart.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "Z01",
+      "name": "Thunderstrike",
+      "category": "Hero",
+      "kind": "Attack",
+      "heroId": "SIB",
+      "hero": "Sibu Stormspear",
+      "speed": 1,
+      "ops": [
+        {
+          "op": "hit",
+          "n": 9,
+          "min": 1,
+          "max": 1
+        }
+      ],
+      "reactionOps": null,
+      "side": "either",
+      "reactionRange": null,
+      "discardCost": false,
+      "attackText": "Hit for 9 at Range 1–1.",
+      "reactionText": "",
+      "text": "Hit for 9 at Range 1–1. ",
+      "art": "assets/hero-sibu-stormspear.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "Z02",
+      "name": "Driving Spear",
+      "category": "Hero",
+      "kind": "Dual",
+      "heroId": "SIB",
+      "hero": "Sibu Stormspear",
+      "speed": 3,
+      "ops": [
+        {
+          "op": "move",
+          "n": 1
+        },
+        {
+          "op": "hit",
+          "n": 6,
+          "min": 1,
+          "max": 1
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "move",
+          "n": 1
+        },
+        {
+          "op": "boost",
+          "n": 1
+        }
+      ],
+      "side": "attacker",
+      "reactionRange": null,
+      "discardCost": false,
+      "attackText": "Hit for 6 at Range 1–1. Activate: move up to 1.",
+      "reactionText": "Move up to 1. Add 1 damage.",
+      "text": "Hit for 6 at Range 1–1. Activate: move up to 1. OR Move up to 1. Add 1 damage.",
+      "art": "assets/hero-sibu-stormspear.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "Z03",
+      "name": "Shield Hook",
+      "category": "Hero",
+      "kind": "Dual",
+      "heroId": "SIB",
+      "hero": "Sibu Stormspear",
+      "speed": 2,
+      "ops": [
+        {
+          "op": "hit",
+          "n": 5,
+          "min": 1,
+          "max": 1,
+          "ignore": 2
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "shred",
+          "n": 3
+        }
+      ],
+      "side": "attacker",
+      "reactionRange": null,
+      "discardCost": false,
+      "attackText": "Hit for 5 at Range 1–1. Ignore 2 Block.",
+      "reactionText": "Remove up to 3 rival Block.",
+      "text": "Hit for 5 at Range 1–1. Ignore 2 Block. OR Remove up to 3 rival Block.",
+      "art": "assets/hero-sibu-stormspear.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "Z04",
+      "name": "Spear Cast",
+      "category": "Hero",
+      "kind": "Dual",
+      "heroId": "SIB",
+      "hero": "Sibu Stormspear",
+      "speed": 3,
+      "ops": [
+        {
+          "op": "hit",
+          "n": 5,
+          "min": 2,
+          "max": 4
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "reach",
+          "n": 1
+        }
+      ],
+      "side": "attacker",
+      "reactionRange": null,
+      "discardCost": false,
+      "attackText": "Hit for 5 at Range 2–4.",
+      "reactionText": "Add 1 maximum Range.",
+      "text": "Hit for 5 at Range 2–4.  OR Add 1 maximum Range.",
+      "art": "assets/hero-sibu-stormspear.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "Z05",
+      "name": "Hunting Step",
+      "category": "Hero",
+      "kind": "Dual",
+      "heroId": "SIB",
+      "hero": "Sibu Stormspear",
+      "speed": 4,
+      "ops": [
+        {
+          "op": "move",
+          "n": 2
+        },
+        {
+          "op": "hit",
+          "n": 4,
+          "min": 1,
+          "max": 1
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "move",
+          "n": 2
+        }
+      ],
+      "side": "either",
+      "reactionRange": null,
+      "discardCost": false,
+      "attackText": "Hit for 4 at Range 1–1. Activate: move up to 2.",
+      "reactionText": "Move up to 2.",
+      "text": "Hit for 4 at Range 1–1. Activate: move up to 2. OR Move up to 2.",
+      "art": "assets/hero-sibu-stormspear.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "Z06",
+      "name": "Sweep the Legs",
+      "category": "Hero",
+      "kind": "Dual",
+      "heroId": "SIB",
+      "hero": "Sibu Stormspear",
+      "speed": 2,
+      "ops": [
+        {
+          "op": "hit",
+          "n": 5,
+          "min": 1,
+          "max": 2
+        },
+        {
+          "op": "push",
+          "n": 1,
+          "onHit": true
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "move",
+          "n": 1
+        },
+        {
+          "op": "block",
+          "n": 1
+        }
+      ],
+      "side": "either",
+      "reactionRange": null,
+      "discardCost": false,
+      "attackText": "Hit for 5 at Range 1–2. On hit: push the rival up to 1.",
+      "reactionText": "Move up to 1. Gain 1 Block.",
+      "text": "Hit for 5 at Range 1–2. On hit: push the rival up to 1. OR Move up to 1. Gain 1 Block.",
+      "art": "assets/hero-sibu-stormspear.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "Z07",
+      "name": "Close and Crush",
+      "category": "Hero",
+      "kind": "Dual",
+      "heroId": "SIB",
+      "hero": "Sibu Stormspear",
+      "speed": 1,
+      "ops": [
+        {
+          "op": "hit",
+          "n": 7,
+          "min": 1,
+          "max": 2
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "pull",
+          "n": 1
+        }
+      ],
+      "side": "attacker",
+      "reactionRange": [
+        1,
+        3
+      ],
+      "discardCost": false,
+      "attackText": "Hit for 7 at Range 1–2.",
+      "reactionText": "At Range 1–3: pull the rival up to 1.",
+      "text": "Hit for 7 at Range 1–2.  OR At Range 1–3: pull the rival up to 1.",
+      "art": "assets/hero-sibu-stormspear.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "Z08",
+      "name": "Spear Guard",
+      "category": "Hero",
+      "kind": "Dual",
+      "heroId": "SIB",
+      "hero": "Sibu Stormspear",
+      "speed": 4,
+      "ops": [
+        {
+          "op": "hit",
+          "n": 4,
+          "min": 1,
+          "max": 2
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "block",
+          "n": 2
+        }
+      ],
+      "side": "defender",
+      "reactionRange": null,
+      "discardCost": false,
+      "attackText": "Hit for 4 at Range 1–2.",
+      "reactionText": "Gain 2 Block.",
+      "text": "Hit for 4 at Range 1–2.  OR Gain 2 Block.",
+      "art": "assets/hero-sibu-stormspear.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "Z09",
+      "name": "Nothing Held Back",
+      "category": "Hero",
+      "kind": "Reaction",
+      "heroId": "SIB",
+      "hero": "Sibu Stormspear",
+      "speed": 0,
+      "ops": [
+        {
+          "op": "boost",
+          "n": 2
+        },
+        {
+          "op": "reach",
+          "n": 1
+        }
+      ],
+      "reactionOps": null,
+      "side": "attacker",
+      "reactionRange": null,
+      "discardCost": true,
+      "attackText": "",
+      "reactionText": "Discard another non-Loot card from your hand. Add 2 damage and 1 maximum Range.",
+      "text": "Discard another non-Loot card from your hand. Add 2 damage and 1 maximum Range.",
+      "art": "assets/hero-sibu-stormspear.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "Z10",
+      "name": "Through the Guard",
+      "category": "Hero",
+      "kind": "Reaction",
+      "heroId": "SIB",
+      "hero": "Sibu Stormspear",
+      "speed": 0,
+      "ops": [
+        {
+          "op": "move",
+          "n": 1
+        },
+        {
+          "op": "ignore",
+          "n": 3
+        }
+      ],
+      "reactionOps": null,
+      "side": "attacker",
+      "reactionRange": null,
+      "discardCost": false,
+      "attackText": "",
+      "reactionText": "Move up to 1. Ignore 3 additional Block.",
+      "text": "Move up to 1. Ignore 3 additional Block.",
+      "art": "assets/hero-sibu-stormspear.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "FZ1",
+      "name": "Break the Horizon",
+      "category": "Special",
+      "kind": "Attack",
+      "heroId": "SIB",
+      "hero": "Sibu Stormspear",
+      "speed": 1,
+      "ops": [
+        {
+          "op": "move",
+          "n": 1
+        },
+        {
+          "op": "hit",
+          "n": 11,
+          "min": 1,
+          "max": 1
+        }
+      ],
+      "reactionOps": null,
+      "side": "either",
+      "reactionRange": null,
+      "discardCost": false,
+      "attackText": "Hit for 11 at Range 1–1. Activate: move up to 1.",
+      "reactionText": "",
+      "text": "Hit for 11 at Range 1–1. Activate: move up to 1.",
+      "art": "assets/hero-sibu-stormspear.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "FZ2",
+      "name": "Storm Hunt",
+      "category": "Special",
+      "kind": "Attack",
+      "heroId": "SIB",
+      "hero": "Sibu Stormspear",
+      "speed": 4,
+      "ops": [
+        {
+          "op": "move",
+          "n": 2
+        },
+        {
+          "op": "hit",
+          "n": 7,
+          "min": 1,
+          "max": 2
+        }
+      ],
+      "reactionOps": null,
+      "side": "either",
+      "reactionRange": null,
+      "discardCost": false,
+      "attackText": "Hit for 7 at Range 1–2. Activate: move up to 2.",
+      "reactionText": "",
+      "text": "Hit for 7 at Range 1–2. Activate: move up to 2.",
+      "art": "assets/hero-sibu-stormspear.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "FZ3",
+      "name": "The Spear Answers",
+      "category": "Special",
+      "kind": "Attack",
+      "heroId": "SIB",
+      "hero": "Sibu Stormspear",
+      "speed": 2,
+      "ops": [
+        {
+          "op": "hit",
+          "n": 8,
+          "min": 1,
+          "max": 3,
+          "ignore": 3
+        }
+      ],
+      "reactionOps": null,
+      "side": "either",
+      "reactionRange": null,
+      "discardCost": false,
+      "attackText": "Hit for 8 at Range 1–3. Ignore 3 Block.",
+      "reactionText": "",
+      "text": "Hit for 8 at Range 1–3. Ignore 3 Block.",
+      "art": "assets/hero-sibu-stormspear.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "V01",
+      "name": "Clean Cut",
+      "category": "Hero",
+      "kind": "Attack",
+      "heroId": "VER",
+      "hero": "Vera Vendetta",
+      "speed": 2,
+      "ops": [
+        {
+          "op": "hit",
+          "n": 7,
+          "min": 1,
+          "max": 1,
+          "ignore": 1
+        }
+      ],
+      "reactionOps": null,
+      "side": "either",
+      "reactionRange": null,
+      "discardCost": false,
+      "attackText": "Hit for 7 at Range 1–1. Ignore 1 Block.",
+      "reactionText": "",
+      "text": "Hit for 7 at Range 1–1. Ignore 1 Block.",
+      "art": "assets/hero-vera-vendetta.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "V02",
+      "name": "Draw Steel",
+      "category": "Hero",
+      "kind": "Dual",
+      "heroId": "VER",
+      "hero": "Vera Vendetta",
+      "speed": 7,
+      "ops": [
+        {
+          "op": "hit",
+          "n": 3,
+          "min": 1,
+          "max": 1
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "move",
+          "n": 1
+        }
+      ],
+      "side": "either",
+      "reactionRange": null,
+      "discardCost": false,
+      "attackText": "Hit for 3 at Range 1–1.",
+      "reactionText": "Move up to 1.",
+      "text": "Hit for 3 at Range 1–1.  OR Move up to 1.",
+      "art": "assets/hero-vera-vendetta.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "V03",
+      "name": "Yellow Flash",
+      "category": "Hero",
+      "kind": "Dual",
+      "heroId": "VER",
+      "hero": "Vera Vendetta",
+      "speed": 4,
+      "ops": [
+        {
+          "op": "move",
+          "n": 1
+        },
+        {
+          "op": "hit",
+          "n": 4,
+          "min": 1,
+          "max": 1
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "move",
+          "n": 2
+        }
+      ],
+      "side": "either",
+      "reactionRange": null,
+      "discardCost": false,
+      "attackText": "Hit for 4 at Range 1–1. Activate: move up to 1.",
+      "reactionText": "Move up to 2.",
+      "text": "Hit for 4 at Range 1–1. Activate: move up to 1. OR Move up to 2.",
+      "art": "assets/hero-vera-vendetta.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "V04",
+      "name": "Across the Guard",
+      "category": "Hero",
+      "kind": "Dual",
+      "heroId": "VER",
+      "hero": "Vera Vendetta",
+      "speed": 3,
+      "ops": [
+        {
+          "op": "hit",
+          "n": 4,
+          "min": 1,
+          "max": 2,
+          "ignore": 1
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "ignore",
+          "n": 2
+        }
+      ],
+      "side": "attacker",
+      "reactionRange": null,
+      "discardCost": false,
+      "attackText": "Hit for 4 at Range 1–2. Ignore 1 Block.",
+      "reactionText": "Ignore 2 additional Block.",
+      "text": "Hit for 4 at Range 1–2. Ignore 1 Block. OR Ignore 2 additional Block.",
+      "art": "assets/hero-vera-vendetta.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "V05",
+      "name": "Measured Cut",
+      "category": "Hero",
+      "kind": "Dual",
+      "heroId": "VER",
+      "hero": "Vera Vendetta",
+      "speed": 4,
+      "ops": [
+        {
+          "op": "hit",
+          "n": 4,
+          "min": 1,
+          "max": 2
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "block",
+          "n": 3
+        }
+      ],
+      "side": "defender",
+      "reactionRange": null,
+      "discardCost": false,
+      "attackText": "Hit for 4 at Range 1–2.",
+      "reactionText": "Gain 3 Block.",
+      "text": "Hit for 4 at Range 1–2.  OR Gain 3 Block.",
+      "art": "assets/hero-vera-vendetta.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "V06",
+      "name": "Turn the Blade",
+      "category": "Hero",
+      "kind": "Dual",
+      "heroId": "VER",
+      "hero": "Vera Vendetta",
+      "speed": 5,
+      "ops": [
+        {
+          "op": "hit",
+          "n": 3,
+          "min": 1,
+          "max": 1
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "move",
+          "n": 1
+        },
+        {
+          "op": "block",
+          "n": 1
+        }
+      ],
+      "side": "either",
+      "reactionRange": null,
+      "discardCost": false,
+      "attackText": "Hit for 3 at Range 1–1.",
+      "reactionText": "Move up to 1. Gain 1 Block.",
+      "text": "Hit for 3 at Range 1–1.  OR Move up to 1. Gain 1 Block.",
+      "art": "assets/hero-vera-vendetta.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "V07",
+      "name": "Not Finished",
+      "category": "Hero",
+      "kind": "Dual",
+      "heroId": "VER",
+      "hero": "Vera Vendetta",
+      "speed": 3,
+      "ops": [
+        {
+          "op": "hit",
+          "n": 3,
+          "min": 1,
+          "max": 1
+        },
+        {
+          "op": "draw",
+          "n": 1,
+          "onHit": true
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "boost",
+          "n": 3
+        }
+      ],
+      "side": "attacker",
+      "reactionRange": null,
+      "discardCost": true,
+      "attackText": "Hit for 3 at Range 1–1. On hit: draw 1.",
+      "reactionText": "Discard another non-Loot card from your hand. Add 3 damage.",
+      "text": "Hit for 3 at Range 1–1. On hit: draw 1. OR Discard another non-Loot card from your hand. Add 3 damage.",
+      "art": "assets/hero-vera-vendetta.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "V08",
+      "name": "Reach for It",
+      "category": "Hero",
+      "kind": "Dual",
+      "heroId": "VER",
+      "hero": "Vera Vendetta",
+      "speed": 3,
+      "ops": [
+        {
+          "op": "hit",
+          "n": 3,
+          "min": 1,
+          "max": 3
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "reach",
+          "n": 1
+        }
+      ],
+      "side": "attacker",
+      "reactionRange": null,
+      "discardCost": false,
+      "attackText": "Hit for 3 at Range 1–3.",
+      "reactionText": "Add 1 maximum Range.",
+      "text": "Hit for 3 at Range 1–3.  OR Add 1 maximum Range.",
+      "art": "assets/hero-vera-vendetta.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "V09",
+      "name": "Read the Room",
+      "category": "Hero",
+      "kind": "Reaction",
+      "heroId": "VER",
+      "hero": "Vera Vendetta",
+      "speed": 0,
+      "ops": [
+        {
+          "op": "draw",
+          "n": 2
+        },
+        {
+          "op": "discard",
+          "n": 1
+        }
+      ],
+      "reactionOps": null,
+      "side": "either",
+      "reactionRange": null,
+      "discardCost": false,
+      "attackText": "",
+      "reactionText": "Draw 2, then discard one non-Loot card from your hand.",
+      "text": "Draw 2, then discard one non-Loot card from your hand.",
+      "art": "assets/hero-vera-vendetta.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "V10",
+      "name": "Change the Angle",
+      "category": "Hero",
+      "kind": "Reaction",
+      "heroId": "VER",
+      "hero": "Vera Vendetta",
+      "speed": 0,
+      "ops": [
+        {
+          "op": "move",
+          "n": 1
+        },
+        {
+          "op": "block",
+          "n": 2
+        }
+      ],
+      "reactionOps": null,
+      "side": "either",
+      "reactionRange": null,
+      "discardCost": false,
+      "attackText": "",
+      "reactionText": "Move up to 1. Gain 2 Block.",
+      "text": "Move up to 1. Gain 2 Block.",
+      "art": "assets/hero-vera-vendetta.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "FV1",
+      "name": "One Clean Finish",
+      "category": "Special",
+      "kind": "Attack",
+      "heroId": "VER",
+      "hero": "Vera Vendetta",
+      "speed": 3,
+      "ops": [
+        {
+          "op": "hit",
+          "n": 8,
+          "min": 1,
+          "max": 1,
+          "ignore": 2
+        }
+      ],
+      "reactionOps": null,
+      "side": "either",
+      "reactionRange": null,
+      "discardCost": false,
+      "attackText": "Hit for 8 at Range 1–1. Ignore 2 Block.",
+      "reactionText": "",
+      "text": "Hit for 8 at Range 1–1. Ignore 2 Block.",
+      "art": "assets/hero-vera-vendetta.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "FV2",
+      "name": "Steel in Motion",
+      "category": "Special",
+      "kind": "Attack",
+      "heroId": "VER",
+      "hero": "Vera Vendetta",
+      "speed": 5,
+      "ops": [
+        {
+          "op": "move",
+          "n": 2
+        },
+        {
+          "op": "hit",
+          "n": 5,
+          "min": 1,
+          "max": 2
+        }
+      ],
+      "reactionOps": null,
+      "side": "either",
+      "reactionRange": null,
+      "discardCost": false,
+      "attackText": "Hit for 5 at Range 1–2. Activate: move up to 2.",
+      "reactionText": "",
+      "text": "Hit for 5 at Range 1–2. Activate: move up to 2.",
+      "art": "assets/hero-vera-vendetta.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "FV3",
+      "name": "The Long Fight",
+      "category": "Special",
+      "kind": "Attack",
+      "heroId": "VER",
+      "hero": "Vera Vendetta",
+      "speed": 3,
+      "ops": [
+        {
+          "op": "hit",
+          "n": 5,
+          "min": 1,
+          "max": 2
+        },
+        {
+          "op": "draw",
+          "n": 2,
+          "onHit": true
+        }
+      ],
+      "reactionOps": null,
+      "side": "either",
+      "reactionRange": null,
+      "discardCost": false,
+      "attackText": "Hit for 5 at Range 1–2. On hit: draw 2.",
+      "reactionText": "",
+      "text": "Hit for 5 at Range 1–2. On hit: draw 2.",
+      "art": "assets/hero-vera-vendetta.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "W01",
+      "name": "Sky-Cutting Sword",
+      "category": "Hero",
+      "kind": "Attack",
+      "heroId": "MEI",
+      "hero": "Mei Windwalker",
+      "speed": 2,
+      "ops": [
+        {
+          "op": "hit",
+          "n": 6,
+          "min": 3,
+          "max": 6
+        }
+      ],
+      "reactionOps": null,
+      "side": "either",
+      "reactionRange": null,
+      "discardCost": false,
+      "attackText": "Hit for 6 at Range 3–6.",
+      "reactionText": "",
+      "text": "Hit for 6 at Range 3–6. ",
+      "art": "assets/hero-mei-windwalker.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "W02",
+      "name": "Flying Swallow",
+      "category": "Hero",
+      "kind": "Dual",
+      "heroId": "MEI",
+      "hero": "Mei Windwalker",
+      "speed": 5,
+      "ops": [
+        {
+          "op": "move",
+          "n": 2
+        },
+        {
+          "op": "hit",
+          "n": 3,
+          "min": 2,
+          "max": 4
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "move",
+          "n": 3
+        }
+      ],
+      "side": "either",
+      "reactionRange": null,
+      "discardCost": false,
+      "attackText": "Hit for 3 at Range 2–4. Activate: move up to 2.",
+      "reactionText": "Move up to 3.",
+      "text": "Hit for 3 at Range 2–4. Activate: move up to 2. OR Move up to 3.",
+      "art": "assets/hero-mei-windwalker.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "W03",
+      "name": "Jade Arc",
+      "category": "Hero",
+      "kind": "Dual",
+      "heroId": "MEI",
+      "hero": "Mei Windwalker",
+      "speed": 3,
+      "ops": [
+        {
+          "op": "hit",
+          "n": 4,
+          "min": 2,
+          "max": 5
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "reach",
+          "n": 2
+        }
+      ],
+      "side": "attacker",
+      "reactionRange": null,
+      "discardCost": false,
+      "attackText": "Hit for 4 at Range 2–5.",
+      "reactionText": "Add 2 maximum Range.",
+      "text": "Hit for 4 at Range 2–5.  OR Add 2 maximum Range.",
+      "art": "assets/hero-mei-windwalker.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "W04",
+      "name": "Falling Blossom",
+      "category": "Hero",
+      "kind": "Dual",
+      "heroId": "MEI",
+      "hero": "Mei Windwalker",
+      "speed": 4,
+      "ops": [
+        {
+          "op": "move",
+          "n": 1
+        },
+        {
+          "op": "hit",
+          "n": 4,
+          "min": 1,
+          "max": 2
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "move",
+          "n": 2
+        }
+      ],
+      "side": "defender",
+      "reactionRange": null,
+      "discardCost": false,
+      "attackText": "Hit for 4 at Range 1–2. Activate: move up to 1.",
+      "reactionText": "Move up to 2.",
+      "text": "Hit for 4 at Range 1–2. Activate: move up to 1. OR Move up to 2.",
+      "art": "assets/hero-mei-windwalker.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "W05",
+      "name": "Part the Clouds",
+      "category": "Hero",
+      "kind": "Dual",
+      "heroId": "MEI",
+      "hero": "Mei Windwalker",
+      "speed": 3,
+      "ops": [
+        {
+          "op": "hit",
+          "n": 3,
+          "min": 2,
+          "max": 4,
+          "ignore": 2
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "ignore",
+          "n": 2
+        }
+      ],
+      "side": "attacker",
+      "reactionRange": null,
+      "discardCost": false,
+      "attackText": "Hit for 3 at Range 2–4. Ignore 2 Block.",
+      "reactionText": "Ignore 2 additional Block.",
+      "text": "Hit for 3 at Range 2–4. Ignore 2 Block. OR Ignore 2 additional Block.",
+      "art": "assets/hero-mei-windwalker.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "W06",
+      "name": "Drifting Blade",
+      "category": "Hero",
+      "kind": "Dual",
+      "heroId": "MEI",
+      "hero": "Mei Windwalker",
+      "speed": 4,
+      "ops": [
+        {
+          "op": "hit",
+          "n": 3,
+          "min": 2,
+          "max": 4
+        },
+        {
+          "op": "move",
+          "n": 1,
+          "onHit": true
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "move",
+          "n": 2
+        }
+      ],
+      "side": "either",
+      "reactionRange": null,
+      "discardCost": false,
+      "attackText": "Hit for 3 at Range 2–4. On hit: move up to 1.",
+      "reactionText": "Move up to 2.",
+      "text": "Hit for 3 at Range 2–4. On hit: move up to 1. OR Move up to 2.",
+      "art": "assets/hero-mei-windwalker.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "W07",
+      "name": "Gentle Reversal",
+      "category": "Hero",
+      "kind": "Dual",
+      "heroId": "MEI",
+      "hero": "Mei Windwalker",
+      "speed": 5,
+      "ops": [
+        {
+          "op": "hit",
+          "n": 2,
+          "min": 1,
+          "max": 3
+        },
+        {
+          "op": "push",
+          "n": 1,
+          "onHit": true
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "push",
+          "n": 1
+        }
+      ],
+      "side": "defender",
+      "reactionRange": [
+        1,
+        2
+      ],
+      "discardCost": false,
+      "attackText": "Hit for 2 at Range 1–3. On hit: push the rival up to 1.",
+      "reactionText": "At Range 1–2: push the rival up to 1.",
+      "text": "Hit for 2 at Range 1–3. On hit: push the rival up to 1. OR At Range 1–2: push the rival up to 1.",
+      "art": "assets/hero-mei-windwalker.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "W08",
+      "name": "Thread the Needle",
+      "category": "Hero",
+      "kind": "Dual",
+      "heroId": "MEI",
+      "hero": "Mei Windwalker",
+      "speed": 3,
+      "ops": [
+        {
+          "op": "hit",
+          "n": 4,
+          "min": 3,
+          "max": 5
+        }
+      ],
+      "reactionOps": [
+        {
+          "op": "minimum",
+          "n": 1
+        }
+      ],
+      "side": "attacker",
+      "reactionRange": null,
+      "discardCost": false,
+      "attackText": "Hit for 4 at Range 3–5.",
+      "reactionText": "Your attack’s minimum Range becomes 1.",
+      "text": "Hit for 4 at Range 3–5.  OR Your attack’s minimum Range becomes 1.",
+      "art": "assets/hero-mei-windwalker.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "W09",
+      "name": "Step on the Wind",
+      "category": "Hero",
+      "kind": "Reaction",
+      "heroId": "MEI",
+      "hero": "Mei Windwalker",
+      "speed": 0,
+      "ops": [
+        {
+          "op": "move",
+          "n": 3
+        },
+        {
+          "op": "block",
+          "n": 1
+        }
+      ],
+      "reactionOps": null,
+      "side": "either",
+      "reactionRange": null,
+      "discardCost": false,
+      "attackText": "",
+      "reactionText": "Move up to 3. Gain 1 Block.",
+      "text": "Move up to 3. Gain 1 Block.",
+      "art": "assets/hero-mei-windwalker.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "W10",
+      "name": "Turn the Current",
+      "category": "Hero",
+      "kind": "Reaction",
+      "heroId": "MEI",
+      "hero": "Mei Windwalker",
+      "speed": 0,
+      "ops": [
+        {
+          "op": "push",
+          "n": 1
+        },
+        {
+          "op": "move",
+          "n": 1
+        }
+      ],
+      "reactionOps": null,
+      "side": "attacker",
+      "reactionRange": [
+        1,
+        3
+      ],
+      "discardCost": false,
+      "attackText": "",
+      "reactionText": "At Range 1–3: push the rival up to 1, then move up to 1.",
+      "text": "At Range 1–3: push the rival up to 1, then move up to 1.",
+      "art": "assets/hero-mei-windwalker.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "FW1",
+      "name": "Across the Sky",
+      "category": "Special",
+      "kind": "Attack",
+      "heroId": "MEI",
+      "hero": "Mei Windwalker",
+      "speed": 5,
+      "ops": [
+        {
+          "op": "move",
+          "n": 3
+        },
+        {
+          "op": "hit",
+          "n": 5,
+          "min": 2,
+          "max": 5
+        }
+      ],
+      "reactionOps": null,
+      "side": "either",
+      "reactionRange": null,
+      "discardCost": false,
+      "attackText": "Hit for 5 at Range 2–5. Activate: move up to 3.",
+      "reactionText": "",
+      "text": "Hit for 5 at Range 2–5. Activate: move up to 3.",
+      "art": "assets/hero-mei-windwalker.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "FW2",
+      "name": "Distant Thunder",
+      "category": "Special",
+      "kind": "Attack",
+      "heroId": "MEI",
+      "hero": "Mei Windwalker",
+      "speed": 2,
+      "ops": [
+        {
+          "op": "hit",
+          "n": 8,
+          "min": 3,
+          "max": 6,
+          "ignore": 1
+        }
+      ],
+      "reactionOps": null,
+      "side": "either",
+      "reactionRange": null,
+      "discardCost": false,
+      "attackText": "Hit for 8 at Range 3–6. Ignore 1 Block.",
+      "reactionText": "",
+      "text": "Hit for 8 at Range 3–6. Ignore 1 Block.",
+      "art": "assets/hero-mei-windwalker.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
+    },
+    {
+      "id": "FW3",
+      "name": "A Thousand Petals",
+      "category": "Special",
+      "kind": "Attack",
+      "heroId": "MEI",
+      "hero": "Mei Windwalker",
+      "speed": 4,
+      "ops": [
+        {
+          "op": "hit",
+          "n": 5,
+          "min": 1,
+          "max": 4
+        },
+        {
+          "op": "move",
+          "n": 2,
+          "onHit": true
+        }
+      ],
+      "reactionOps": null,
+      "side": "either",
+      "reactionRange": null,
+      "discardCost": false,
+      "attackText": "Hit for 5 at Range 1–4. On hit: move up to 2.",
+      "reactionText": "",
+      "text": "Hit for 5 at Range 1–4. On hit: move up to 2.",
+      "art": "assets/hero-mei-windwalker.webp",
+      "artIndex": 0,
+      "artCols": 1,
+      "artRows": 1,
+      "cost": null,
+      "reveal": null,
+      "slow": 0
     }
   ],
   "rules": [
@@ -7342,6 +9504,142 @@
         "P10": 2
       },
       "weakness": "More Loot income, fewer Hero tricks. Discounted strength is paid for with flexibility."
+    },
+    {
+      "id": "mar-core",
+      "hero": "MAR",
+      "name": "The Unbroken",
+      "deck": [
+        "B01",
+        "B01",
+        "B02",
+        "B02",
+        "B04",
+        "B04",
+        "B06",
+        "B06",
+        "B09",
+        "B09",
+        "B10",
+        "B10",
+        "M02",
+        "M02",
+        "M03",
+        "M03",
+        "M05",
+        "M05",
+        "M08",
+        "M08",
+        "M09",
+        "M09",
+        "M10",
+        "M10"
+      ],
+      "fury": "FM1",
+      "plan": "Practice spending cards to survive, then advancing behind the shield. This is the defensive extreme, not a recommended mandatory list.",
+      "weakness": "Blocking consumes the same cards needed to attack. Little reach, limited pursuit, no passive card income and no retained Block."
+    },
+    {
+      "id": "sib-core",
+      "hero": "SIB",
+      "name": "The Big Opening",
+      "deck": [
+        "B01",
+        "B01",
+        "B03",
+        "B03",
+        "B04",
+        "B04",
+        "B05",
+        "B05",
+        "B09",
+        "B09",
+        "B10",
+        "B10",
+        "Z01",
+        "Z01",
+        "Z02",
+        "Z02",
+        "Z03",
+        "Z03",
+        "Z04",
+        "Z04",
+        "Z05",
+        "Z05",
+        "Z10",
+        "Z10"
+      ],
+      "fury": "FZ2",
+      "plan": "Includes Basic income and movement so the largest hit is a choice rather than the only plan.",
+      "weakness": "Major hits are slow and mostly short-range. A miss spends the attack and any tucked card. Weak hero-specific defenses and no draw engine."
+    },
+    {
+      "id": "ver-core",
+      "hero": "VER",
+      "name": "Always an Answer",
+      "deck": [
+        "B01",
+        "B01",
+        "B02",
+        "B02",
+        "B03",
+        "B03",
+        "B04",
+        "B04",
+        "B09",
+        "B09",
+        "B10",
+        "B10",
+        "V02",
+        "V02",
+        "V03",
+        "V03",
+        "V04",
+        "V04",
+        "V05",
+        "V05",
+        "V09",
+        "V09",
+        "V10",
+        "V10"
+      ],
+      "fury": "FV2",
+      "plan": "Flexible first-play deck. Swap toward V01/V07 for finishing power or V06/V08 for Twin Blades utility.",
+      "weakness": "No large passive damage or defense bonus. Filtering gives no extra cards. Last Stand depends on committing useful Dual attacks."
+    },
+    {
+      "id": "mei-core",
+      "hero": "MEI",
+      "name": "Never Where You Expect",
+      "deck": [
+        "B01",
+        "B01",
+        "B03",
+        "B03",
+        "B04",
+        "B04",
+        "B07",
+        "B07",
+        "B09",
+        "B09",
+        "B10",
+        "B10",
+        "W01",
+        "W01",
+        "W02",
+        "W02",
+        "W03",
+        "W03",
+        "W06",
+        "W06",
+        "W08",
+        "W08",
+        "W09",
+        "W09"
+      ],
+      "fury": "FW1",
+      "plan": "Demonstrates spacing and evasion while retaining a Basic close-range answer and some Block.",
+      "weakness": "Low hero-specific Block and modest damage. Several attacks cannot hit at Range 1. Movement still costs hand cards outside her limited Last Stand action."
     }
   ]
 }

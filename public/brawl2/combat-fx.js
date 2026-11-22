@@ -3,7 +3,7 @@ import {choreography,playHeroPose} from './hero-animation.js';
 export function attackStyle(card,hero){
  const hits=card?.ops?.filter(o=>o.op==='hit')||[],ranged=hits.some(h=>h.max>1);
  if(/rock/i.test(card?.name||''))return 'stone';
- if(ranged)return hero==='ALF'?'arrow':'arcane';
+ if(hero==='SIB')return ranged?'arrow':'spear';if(hero==='VER')return 'slash';if(hero==='MAR')return 'shield';if(ranged)return hero==='ALF'?'arrow':'arcane';
  return {SMA:'hammer',ALF:'arrow',SHE:'arcane',HEL:'shield',RAV:'slash',FRA:'palm'}[hero]||'jab';
 }
 export function impactOutcome(result){const hits=result?.hits||[];if(!hits.length)return null;if(hits.every(h=>h.miss))return 'miss';return hits.some(h=>h.loss>0)?'hit':'block';}
@@ -33,6 +33,7 @@ export function playAttack(root,state,card,sound){
   else if(style==='stone'){group.append(node('path',{d:'M -12 -7 L 0 -13 L 13 -4 L 9 10 L -5 13 L -14 3 Z',fill:'#9e9783',stroke:'#f0e2bd','stroke-width':2}));}
   else{group.append(node('ellipse',{rx:19,ry:5,fill:color}));group.append(node('path',{d:'M -75 0 Q -30 -15 15 0 Q -30 15 -75 0',fill:color,opacity:.35}));}
   const dx=bx-ax+(outcome==='miss'?dir*65:0),dy=by-ay+(outcome==='miss'?-35:0);group.animate([{translate:'0 0',opacity:0},{opacity:1,offset:.08},{translate:`${dx}px ${dy}px`,opacity:1,offset:.85},{translate:`${dx}px ${dy}px`,opacity:0}],{duration:profile.travel,delay:profile.release,fill:'both',easing:'cubic-bezier(.4,0,1,1)'});
+ }else if(style==='spear'){const thrust=node('path',{d:`M ${bx-dir*125} ${by} L ${bx+dir*12} ${by} M ${bx-dir*12} ${by-10} L ${bx+dir*18} ${by} L ${bx-dir*12} ${by+10}`,fill:'none',stroke:color,'stroke-width':7,'stroke-linecap':'round'});svg.append(thrust);thrust.animate([{opacity:0,translate:`${-dir*70}px 0`},{opacity:1,translate:'0 0',offset:.45},{opacity:0,translate:`${dir*18}px 0`}],{duration:300,delay:profile.release-100,fill:'both'});
  }else if(style==='shield'||style==='palm'){
   for(let i=0;i<2;i++){const wave=node('path',{d:`M ${bx-dir*20} ${by-55} Q ${bx+dir*55} ${by} ${bx-dir*20} ${by+55}`,fill:'none',stroke:color,'stroke-width':style==='shield'?8:4,'stroke-linecap':'round'});svg.append(wave);wave.animate([{opacity:0,translate:`${-dir*35}px 0`},{opacity:.85,offset:.25},{opacity:0,translate:`${dir*25}px 0`}],{duration:280,delay:profile.release+i*65,fill:'both'});}
  }else{

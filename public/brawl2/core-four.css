@@ -1,0 +1,10 @@
+.r-roster{grid-template-columns:repeat(5,minmax(0,1fr))}
+.core-ability-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;max-width:1100px}.core-ability-cards>button{padding:0;background:none;border:0;cursor:pointer}.core-ability-cards .r-card{width:100%;height:360px;pointer-events:none}
+:is(.hero-MAR,.hero-SIB,.hero-VER,.hero-MEI) .c-art-image{background-size:contain!important;background-repeat:no-repeat;background-position:center!important;width:100%;height:100%}
+.hero-MAR{--card-accent:#a6603d}.hero-SIB{--card-accent:#ac6c27}.hero-VER{--card-accent:#b49824}.hero-MEI{--card-accent:#369d8a}
+.ls-MAR,.ls-hud-MAR{--ls-color:#e5a061}.ls-SIB,.ls-hud-SIB{--ls-color:#ffd576}.ls-VER,.ls-hud-VER{--ls-color:#f5db50}.ls-MEI,.ls-hud-MEI{--ls-color:#75ead0}
+@media(max-width:600px){.r-roster{grid-template-columns:repeat(5,minmax(0,1fr))}.r-roster b{font-size:10px}.core-ability-cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+:is(.hero-MAR,.hero-SIB,.hero-VER,.hero-MEI):not(.c-type-fury) .r-card-head{background:var(--card-accent)}
+.r-fighter.ls-MEI>img{animation:ls-float 3.5s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){.r-fighter.ls-MEI>img{animation:none}}

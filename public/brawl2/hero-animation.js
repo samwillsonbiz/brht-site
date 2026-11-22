@@ -19,7 +19,7 @@ export function preloadHeroAnimations(players=[]){
  })));
 }
 export function choreography(hero,style){
- const p=HERO_MOTION[hero]||HERO_MOTION.SMA;
+ const core={MAR:{...HERO_MOTION.HEL,color:'#e9b978'},SIB:{...HERO_MOTION.SMA,color:'#ffd37a',release:440},VER:{...HERO_MOTION.RAV,color:'#ffe866',release:230},MEI:{...HERO_MOTION.SHE,color:'#88e6ce',release:280}};const p=core[hero]||HERO_MOTION[hero]||HERO_MOTION.SMA;
  const travel=['arrow','stone','arcane'].includes(style)?(p.travel||170):0;
  return {...p,travel,impact:p.release+travel};
 }

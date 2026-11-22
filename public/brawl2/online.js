@@ -45,6 +45,7 @@ export class OnlineGame extends Brawl2{
   pass(i){if(i!==this.seat)throw Error('Pass on your own turn.');return this.command('pass');}
   advance(){return this.command('advance');}
   playLoot(i,card){if(i!==this.seat)throw Error('Choose your own Loot.');return this.command('loot',{card});}
+  useHeroAbility(i,uid){if(i!==this.seat)throw Error('Use your own Hero ability.');return this.command('hero-ability',{uid});}
   useLastStand(i,selection='blind'){if(i!==this.seat)throw Error('Use your own Last Stand.');return this.command('last-stand',{selection});}
   choose(i,value){if(i!==this.seat)throw Error('Choose your own move.');return this.command('choose',{value});}
   shop(i,buy,selection='blind'){if(i!==this.seat)throw Error('Buy your own Loot.');return this.command('shop',{buy,selection});}
