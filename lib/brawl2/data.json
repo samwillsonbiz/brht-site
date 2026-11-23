@@ -7677,7 +7677,7 @@
     {
       "id": "L-MEI-03",
       "name": "Moon-Silk Ribbon",
-      "text": "Your attack’s minimum Range becomes 1. Your attack gets +3 maximum Range. Your attack gets +2 damage.",
+      "text": "Your attack’s minimum Range becomes 1. Your attack gets +3 maximum Range.",
       "side": "attacker",
       "ops": [
         {
@@ -7687,10 +7687,6 @@
         {
           "op": "reach",
           "n": 3
-        },
-        {
-          "op": "boost",
-          "n": 2
         }
       ],
       "reactionOps": [
@@ -7701,13 +7697,9 @@
         {
           "op": "reach",
           "n": 3
-        },
-        {
-          "op": "boost",
-          "n": 2
         }
       ],
-      "reactionText": "Your attack’s minimum Range becomes 1. Your attack gets +3 maximum Range. Your attack gets +2 damage.",
+      "reactionText": "Your attack’s minimum Range becomes 1. Your attack gets +3 maximum Range.",
       "attackText": "",
       "category": "Loot",
       "kind": "Loot",
