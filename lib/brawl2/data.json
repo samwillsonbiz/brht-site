@@ -7,7 +7,7 @@
       "slug": "hero-marcus-ironheart",
       "archetype": "Formation / advancing shield fighter",
       "trait": "Formation",
-      "traitText": "Start with 0 Formation; hold up to 3. After an enemy attack spends any of your Block, gain 1 Formation if you survive. On your attacking reaction, spend 1 to move up to 1 toward the rival, once per attack. Misses and Loot do not earn Formation. Cards may offer other Formation effects.",
+      "traitText": "Start with 0 Formation; hold up to 3. After surviving an enemy attack, gain 1 if your Block prevented strike damage. On your attacking reaction, spend 1 to move up to 1 toward the rival. Once per attack.",
       "ultimate": {
         "name": "Walking Wall",
         "text": "After playing a non-Loot card Reaction while defending, move up to 1 toward the rival. Token actions do not trigger this."
@@ -72,7 +72,7 @@
       "slug": "hero-sibu-stormspear",
       "archetype": "Committed spear strikes / explosive damage",
       "trait": "War Spears",
-      "traitText": "Start with 3 ready War Spears. At attack activation, before movement, commit at most 1 for +2 damage. It is spent even on a miss. After a damaging non-Fury Hero attack without a committed spear, recover 1 spent spear.",
+      "traitText": "Start with 3 ready War Spears. Ready 1 spent spear at round end. At attack activation, commit 1 for +1 damage, before movement and reactions. At most 1 per attack; spent even on a miss. Follow special uses printed on cards.",
       "ultimate": {
         "name": "Stormhead",
         "text": "Your spear-boosted attacks ignore 2 additional Block. Attacks without a committed spear do not gain this bonus."
@@ -137,7 +137,7 @@
       "slug": "hero-vera-vendetta",
       "archetype": "Dual-card techniques / adaptable duelist",
       "trait": "Techniques",
-      "traitText": "Start with 1 ready Technique; hold up to 3. After your attack deals Health damage, ready 1. On your attacking reaction, spend 1 to play your active Dual card’s Reaction half without discarding it. Once per attack; normal restrictions and costs apply.",
+      "traitText": "Start with 1 Technique; hold up to 3. After your attack deals Health damage, gain 1. On your attacking reaction, spend 1 to use the active Dual card’s Reaction half. Pay its normal costs and follow its restrictions. Once per attack.",
       "ultimate": {
         "name": "Twin Blades",
         "text": "After using a Technique to play your active card’s Reaction, you may move up to 1 before your opponent responds."
@@ -202,10 +202,10 @@
       "slug": "hero-mei-windwalker",
       "archetype": "Wind placement / evasive ranged fighter",
       "trait": "Wind Currents",
-      "traitText": "After a non-Fury Hero attack, you may place a Wind within 2 spaces of yourself. Three markers maximum; relocate one when all are placed. One of your markers per space. When starting a voluntary move on your Wind, you may consume it to add 2 to that movement. Wind never grants a move by itself.",
+      "traitText": "Start with 3 Wind markers in supply. After your first damaging attack each round, place Wind on your space; relocate one if all three are placed. On your reaction turn, consume Wind beneath you to move up to 1. Once per round. Wind no longer extends other moves.",
       "ultimate": {
         "name": "Walk on Air",
-        "text": "For each non-Fury Hero attack, you may place or relocate its Wind at activation before printed movement, instead of after the attack. Only one placement per attack."
+        "text": "Once each round, place Wind at your first attack’s activation instead of earning it after a hit. Only one Wind earning per round."
       },
       "weakness": "Wind extends a move that starts on its space; it never grants a free move. Several attacks cannot hit adjacent rivals.",
       "combo": "Your strike finds empty air. Mine reaches you.",
@@ -267,10 +267,10 @@
       "slug": "hero-lord-smasherton",
       "archetype": "Wall pressure / shield-breaking brawler",
       "trait": "Impact",
-      "traitText": "Start with 2 Impact; hold up to 3. After your attack deals Health damage, gain 1. On an attack wall slam, spend 1 for +2 wall damage, once per attack. Or, on your attacking reaction, spend 3 for +2 damage and on-hit push up to 3; no Impact wall bonus on that attack.",
+      "traitText": "Start with 2 Impact; hold up to 3. After your attack’s printed effects, gain 1 if its strike dealt Health damage. Then you may spend 1 to push the rival 1 space if the strike was in range. Once per attack; existing Impact can pay after a fully blocked strike.",
       "ultimate": {
-        "name": "You're Not Going Anywhere",
-        "text": "After your attack deals Health damage, pin the rival: they cannot move voluntarily until their next attack finishes. Pushes and pulls still work."
+        "name": "Spike Wall",
+        "text": "Once per fight, on your reaction turn, close empty original end space 1 or 8 with a Spike Wall. Pushing into it deals 2 total wall damage ignoring Block. Either fighter can be slammed into it. The wall replaces pin."
       },
       "weakness": "Slow, short-range attacks need movement or pulls. Impact must be saved for a wall slam or spent on Launch.",
       "recommended": {
@@ -352,7 +352,7 @@
       "slug": "hero-alf-featherbottom",
       "archetype": "Prepared shots / ranged control",
       "trait": "Aim",
-      "traitText": "Start with 1 Aim; hold up to 2. After your attack deals Health damage at Range 3 or more, gain 1. Once per attack, on your attacking reaction, spend 1 for +2 maximum Range OR spend 2 to ignore 3 Block.",
+      "traitText": "Start with 1 Aim; hold up to 2. After your attack deals Health damage at distance 3 or more, gain 1. On your attacking reaction, spend 1 to give your attack +2 maximum Range and ignore 1 additional Block. Once per attack.",
       "ultimate": {
         "name": "Emergency Spring Boots",
         "text": "When your attack activates, you may move 1 space before its printed movement. The rival then reacts normally."
@@ -437,7 +437,7 @@
       "slug": "hero-dr-shealer",
       "archetype": "Health payments / recovery and burst",
       "trait": "Research",
-      "traitText": "Start with 2 Research; hold up to 3. After paying Health for a card, gain 1 Research. You may immediately spend 1 to draw 1 card. Or, on a reaction turn, spend 2 to heal 3. Paying Research never earns Research.",
+      "traitText": "Start with 2 Research; hold up to 3. Gain 1 after each Health payment for a card. On your reaction turn, spend 2 to heal 3, up to 20 Health. Once per attack. No automatic Research draw.",
       "ultimate": {
         "name": "Malpractical Flight",
         "text": "Your attacks gain +1 maximum Range. Your arena position, minimum Range and enemy attacks are unchanged."
@@ -522,7 +522,7 @@
       "slug": "hero-helga",
       "archetype": "Breakable Armour / defensive counterpressure",
       "trait": "Armour",
-      "traitText": "Start with 3 Armour; hold up to 3. Once per enemy attack, use a defending reaction to break 1 for 2 Block OR break 2 for 3 Block and resist pushes/pulls for this attack. After your first damaging non-Fury Hero attack each round, repair 1.",
+      "traitText": "Start with 3 Armour; hold up to 3. After your first damaging Hero attack each round, repair 1. On your defending reaction, spend 1 for 2 Block. Once per enemy attack. Cards can provide push resistance.",
       "ultimate": {
         "name": "Hit Me. I Dare You.",
         "text": "After an enemy attack connects in range, reflect 1 damage, even if fully blocked. Once per attack; ignores Block. Misses and Loot do not trigger it. Resolve reflection before checking victory; simultaneous knockouts draw."
@@ -607,7 +607,7 @@
       "slug": "hero-raven-madison",
       "archetype": "Crossing / theft and misdirection",
       "trait": "Tricks",
-      "traitText": "Start with 1 Trick; hold up to 2. The first time you cross the rival during each active attack, gain 1. Token movement and all swaps never earn Tricks. On a reaction turn, spend 1 to move up to 1 or cross an adjacent rival (once per attack). On your attacking reaction, spend 2 for +2 damage (once per attack).",
+      "traitText": "Start with 1 Trick; hold up to 2. The first time a card’s Move crosses the rival during an active attack, gain 1. On your reaction turn, spend 1 to move up to 1 or cross an adjacent rival. Once per attack. Token movement and swaps never earn Tricks.",
       "ultimate": {
         "name": "My Shadow Has Other Plans",
         "text": "Place your shadow on your space. Once per round, as your reaction, swap places with it. It stays on your old space. It cannot be attacked and does not block spaces. No swap onto the rival or while pinned. Refresh each round."
@@ -692,7 +692,7 @@
       "slug": "hero-friar-franc",
       "archetype": "Basic attacks / shared-market economy",
       "trait": "Profit",
-      "traitText": "Start with 1 Profit; hold up to 3. After a Basic attack deals Health damage, gain 1 Profit; you may immediately cash 1 for 1 Coin, even if already at 3 Profit. Once on your shopping turn, spend 2 Profit to buy one face-up Loot before your normal Coin purchase. You may replace one offer first. You may then make your normal Coin purchase; hold at most 2 Loot.",
+      "traitText": "Start with 1 Profit; hold up to 3. After a Basic attack deals Health damage, gain 1 Profit. Once on your shopping turn, spend 2 Profit to buy 1 face-up Loot before your normal Coin purchase. Hold at most 2 Loot. Cash-out is only available when printed on a card.",
       "ultimate": {
         "name": "The Emergency Stash",
         "text": "Draw 1 free Loot on activation; at two Loot, you may replace one before drawing. Once per active attack, as your reaction, buy Loot for 1 Coin, holding at most two. Your opponent responds before you can play it."
@@ -2903,18 +2903,21 @@
         }
       ],
       "attackText": "Gain 3 Block. Hit for 3 at Range 1–2.",
-      "reactionText": "Gain 3 Block.",
+      "reactionText": "Gain 3 Block. You may spend 1 Armour to resist pushes and pulls this attack.",
       "artId": "T-H07",
       "reactionOps": [
         {
           "op": "block",
           "n": 3
+        },
+        {
+          "op": "armourResist"
         }
       ],
       "side": "either",
       "heroId": "HEL",
       "hero": "Helga Stonewall",
-      "text": "Gain 3 Block. Hit for 3 at Range 1–2. OR Gain 3 Block.",
+      "text": "Gain 3 Block. Hit for 3 at Range 1–2. OR Gain 3 Block. You may spend 1 Armour to resist pushes and pulls this attack.",
       "art": "assets/hero-atlas-HEL.webp",
       "artIndex": 6,
       "artCols": 3,
@@ -4028,7 +4031,8 @@
         {
           "op": "profitGain",
           "onHit": true,
-          "n": 2
+          "n": 2,
+          "cash": true
         }
       ],
       "attackText": "Hit for 3 at Range 1–2. On hit, gain 2 Profit; you may immediately cash 1 for 1 Coin.",
@@ -4765,15 +4769,20 @@
           "n": 6,
           "min": 1,
           "max": 1
+        },
+        {
+          "op": "spearRecover",
+          "n": 1,
+          "onHit": true
         }
       ],
       "reactionOps": null,
       "side": "either",
       "reactionRange": null,
       "discardCost": false,
-      "attackText": "Hit for 6 at Range 1–1.",
+      "attackText": "Hit for 6 at Range 1. On hit: ready 1 War Spear if this attack committed no spear.",
       "reactionText": "",
-      "text": "Hit for 6 at Range 1–1.",
+      "text": "Hit for 6 at Range 1. On hit: ready 1 War Spear if this attack committed no spear.",
       "art": "assets/core-cards-v1/Z01.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -5768,15 +5777,15 @@
       "reactionOps": [
         {
           "op": "move",
-          "n": 3
+          "n": 2
         }
       ],
       "side": "either",
       "reactionRange": null,
       "discardCost": false,
       "attackText": "Hit for 4 at Range 2–4. Activate: move up to 2.",
-      "reactionText": "Move up to 3.",
-      "text": "Hit for 4 at Range 2–4. Activate: move up to 2. OR Move up to 3.",
+      "reactionText": "Move up to 2.",
+      "text": "Hit for 4 at Range 2–4. Activate: move up to 2. OR Move up to 2.",
       "art": "assets/core-cards-v1/W02.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -10852,11 +10861,11 @@
     ],
     [
       "Arena",
-      "Join the two Heroes’ four-space boards to make a straight 8-space arena. Number the spaces 1–8. Start on 3 and 6. Only the outer ends (1 and 8) are walls. Crossing the join between 4 and 5 has no special effect. Pushing beyond an outer wall deals 1 wall damage, ignoring Block. Smasherton may add Crunch when eligible."
+      "Join the two Heroes’ four-space boards to make a straight 8-space arena. Number the spaces 1–8. Start on 3 and 6. Only the outer ends (1 and 8) are walls. Crossing the join between 4 and 5 has no special effect. Pushing beyond an outer wall deals 1 wall damage, ignoring Block. A Spike Wall can close original end 1 or 8; the remaining space numbers do not change."
     ],
     [
       "Loot draft & market",
-      "Each Hero chooses 6 different Loot from their 12-card pool. Shuffle both contributions into one shared 12-card deck. Reveal 3. Anyone can use any Loot. Between rounds, starting with the new Edge holder, each player may buy once: pay 2 Coins for a face-up Loot or a blind draw. Refill a bought slot immediately. Hold at most 2 Loot. Shuffle spent Loot when the draw pile empties; never shuffle held or face-up cards. Franc may first use Inside Deal once per shopping turn to buy a face-up item with 2 Profit, then take his normal Coin purchase if he has room."
+      "Each Hero chooses 6 different Loot from their 12-card pool. Shuffle both contributions into one shared 12-card deck. Reveal 3. Anyone can use any Loot. Between rounds, starting with the new Edge holder, each player may buy once: pay 2 Coins for a face-up Loot or a blind draw. Refill a bought slot immediately. Hold at most 2 Loot. Shuffle spent Loot when the draw pile empties; never shuffle held or face-up cards. Franc may first use Inside Deal once per shopping turn to buy a face-up item with 2 Profit, then take his normal Coin purchase if he has room. There is no default cash-out or market replacement."
     ],
     [
       "Block",
@@ -10872,23 +10881,31 @@
     ],
     [
       "Attack cleanup",
-      "If no lethal effect ended the fight, resolve on-hit effects and each delayed per-card effect, then already-active Helga reflection and victory. If still fighting, settle pending Last Stands and attack-end token effects. Discard the finished attack. Clear both players’ unused Block and temporary attack modifiers before the next attack. Smasherton’s pin ends when the pinned fighter finishes their next attack."
+      "If no lethal effect ended the fight, resolve on-hit effects and each delayed per-card effect, then already-active Helga reflection and victory. If still fighting, settle pending Last Stands and attack-end token effects. Discard the finished attack. Clear both players’ unused Block and temporary attack modifiers before the next attack. Smasherton no longer pins; his finishing shove resolves after printed attack effects, before delayed penalties and cleanup."
     ],
     [
       "Wall slam",
-      "A push beyond space 1 or 8 stops at the wall and deals 1 damage ignoring Block. Landing exactly on the wall deals no wall damage. One push effect causes at most one slam. Combine printed attack push and on-hit bonus push. Pulls never slam. Smasherton may spend Impact for Crunch only on an attack wall slam."
+      "A push beyond space 1 or 8 stops at the wall and deals 1 damage ignoring Block. Landing exactly on the wall deals no wall damage. One push effect causes at most one slam. Combine printed attack push and on-hit bonus push. Pulls never slam. A push into a Spike Wall deals 2 total wall damage; ordinary walls deal 1. Separate pushes can each slam."
     ],
     [
       "Draw limits",
-      "At most one printed draw effect per player per active attack, including attack activation and on-hit draws. Aim and Trick draws use that allowance. Shealer’s immediate Research draw after paying Health is a separate token reward, not a printed draw effect. Fury entering hand is also separate. Loot never counts against the seven-card refill limit."
+      "At most one printed draw effect per player per active attack, including attack activation and on-hit draws. Card-specific Aim and Trick draws use that allowance. Adding Fury to hand is separate. There is no default Research draw. Loot does not count against the seven-card refill limit."
     ],
     [
-      "Pin and swaps",
-      "Pin prevents voluntary Move, adjacent repositioning, token movement, Shadow swaps and ordinary swaps initiated by the pinned fighter. A blocked swap skips only the relocation; its other effects still resolve. A rival’s swap forcibly relocates a pinned target. Push and pull are forced movement and still work unless separately resisted. Swaps do not earn Raven Tricks."
+      "Swaps",
+      "A swap relocates both fighters. It is not a card Move and never earns Raven Tricks. Neither destination may be a closed Spike Wall space."
     ],
     [
       "Repeated delayed effects",
       "Each Exploding Present played registers its own 1-Health loss after a damaging strike, unless an earlier lethal effect has ended the fight. Each Hold Your Ground registers its own Coin reward, capped by the shared 8-Coin limit. Any Health damage from the active attack, including its wall slam, prevents these rewards. Separate Loot damage does not."
+    ],
+    [
+      "Linear Hero powers",
+      "Each Hero has one default earning rule and one main token spend. Printed cards may offer other earning/spending effects. Sibu readies 1 spear at round end and commits one for +1 damage. Mei earns Wind beneath herself after her first damaging attack each round; at Last Stand she earns it at her first attack’s activation instead. Wind is a separate Move 1 reaction, once per round, and never extends a printed move. Research draws are only printed card effects."
+    ],
+    [
+      "Spike Wall",
+      "At 5 Health, Smasherton unlocks one wall placement per fight. Use your reaction to close original end 1 or 8 only if empty. Neither fighter can enter it. Pushes into it deal 2 total wall damage ignoring Block; either fighter can suffer it. Covered Wind returns to supply; covered Shadow moves to Raven’s current space. Two Smashertons can close opposite ends. The wall replaces pin."
     ]
   ],
   "version": "brawl2-audit-2",
@@ -10924,7 +10941,7 @@
         "S10"
       ],
       "fury": "FS1",
-      "plan": "Break shields and force positions. Slow, expensive to chase.",
+      "plan": "Land a hammer hit, then spend Impact for a finishing shove. At 5 Health, place a neutral Spike Wall.",
       "quantities": {
         "B01": 2,
         "B04": 2,
@@ -10972,7 +10989,7 @@
         "S08"
       ],
       "fury": "FS2",
-      "plan": "Break shields and force positions. Slow, expensive to chase.",
+      "plan": "Land a hammer hit, then spend Impact for a finishing shove. At 5 Health, place a neutral Spike Wall.",
       "quantities": {
         "B03": 2,
         "B04": 2,
@@ -11020,7 +11037,7 @@
         "S10"
       ],
       "fury": "FS3",
-      "plan": "Break shields and force positions. Slow, expensive to chase.",
+      "plan": "Land a hammer hit, then spend Impact for a finishing shove. At 5 Health, place a neutral Spike Wall.",
       "quantities": {
         "B01": 2,
         "B02": 2,
@@ -11644,7 +11661,7 @@
         "P10"
       ],
       "fury": "FP1",
-      "plan": "Earn, spend and recycle. Coins cannot fund both powers and Loot.",
+      "plan": "Land Basic attacks to earn Profit, then buy shared Loot. Cash-out only comes from printed card effects.",
       "quantities": {
         "B01": 2,
         "B04": 2,
@@ -11692,7 +11709,7 @@
         "P08"
       ],
       "fury": "FP2",
-      "plan": "Earn, spend and recycle. Coins cannot fund both powers and Loot.",
+      "plan": "Land Basic attacks to earn Profit, then buy shared Loot. Cash-out only comes from printed card effects.",
       "quantities": {
         "B03": 2,
         "B04": 2,
@@ -11740,7 +11757,7 @@
         "P10"
       ],
       "fury": "FP3",
-      "plan": "Earn, spend and recycle. Coins cannot fund both powers and Loot.",
+      "plan": "Land Basic attacks to earn Profit, then buy shared Loot. Cash-out only comes from printed card effects.",
       "quantities": {
         "B01": 2,
         "B02": 2,
@@ -11822,7 +11839,7 @@
         "Z10"
       ],
       "fury": "FZ2",
-      "plan": "Commit a War Spear before the rival reacts. Land unboosted Hero attacks to recover spent spears.",
+      "plan": "Commit a spear for +1 damage. Recover one each round; an unboosted Thunderstrike can recover another on hit.",
       "weakness": "Committed spears are spent even on a miss. Your largest strikes need close range and protection from evasions."
     },
     {
@@ -11890,7 +11907,7 @@
         "W09"
       ],
       "fury": "FW1",
-      "plan": "Build Wind while trading flexible strikes. Falling Blossom handles close pressure; Part the Clouds cuts through shields. Move after hitting to spoil the rival’s next attack.",
+      "plan": "Land a hit to leave Wind beneath you, then spend it for a free step. Earn and step once each round.",
       "weakness": "Wind needs setup and a movement effect. Minimum ranges matter; pins prevent voluntary movement."
     },
     {
@@ -12046,7 +12063,7 @@
         "L-SIB-01",
         "L-SIB-03"
       ],
-      "plan": "Trade some economy and defense for movement and pressure. Suggested Loot is included.",
+      "plan": "Commit a spear for +1 damage. Recover one each round; an unboosted Thunderstrike can recover another on hit.",
       "weakness": "Specialized draft: inspect its attacks and reactions before committing.",
       "quantities": {
         "Z05": 2,
@@ -12215,7 +12232,7 @@
         "L-MEI-04",
         "L-MEI-09"
       ],
-      "plan": "Trade some economy and defense for movement and pressure. Suggested Loot is included.",
+      "plan": "Land a hit to leave Wind beneath you, then spend it for a free step. Earn and step once each round.",
       "weakness": "Specialized draft: inspect its attacks and reactions before committing.",
       "quantities": {
         "W09": 2,
@@ -12271,7 +12288,7 @@
         "L-SMA-05",
         "L-SMA-03"
       ],
-      "plan": "Trade some economy and defense for movement and pressure. Suggested Loot is included.",
+      "plan": "Land a hammer hit, then spend Impact for a finishing shove. At 5 Health, place a neutral Spike Wall.",
       "weakness": "Specialized draft: inspect its attacks and reactions before committing.",
       "quantities": {
         "S05": 2,
@@ -12327,7 +12344,7 @@
         "L-SMA-05",
         "L-SMA-03"
       ],
-      "plan": "A tested matchup experiment, not a guaranteed counter. Suggested Loot is included.",
+      "plan": "Land a hammer hit, then spend Impact for a finishing shove. At 5 Health, place a neutral Spike Wall.",
       "weakness": "Specialized draft: inspect its attacks and reactions before committing.",
       "quantities": {
         "S05": 2,
@@ -12838,7 +12855,7 @@
         "L-FRA-03",
         "L-FRA-04"
       ],
-      "plan": "Trade some economy and defense for movement and pressure. Suggested Loot is included.",
+      "plan": "Land Basic attacks to earn Profit, then buy shared Loot. Cash-out only comes from printed card effects.",
       "weakness": "Specialized draft: inspect its attacks and reactions before committing.",
       "quantities": {
         "P02": 2,
@@ -12894,7 +12911,7 @@
         "L-FRA-03",
         "L-FRA-04"
       ],
-      "plan": "A tested matchup experiment, not a guaranteed counter. Suggested Loot is included.",
+      "plan": "Land Basic attacks to earn Profit, then buy shared Loot. Cash-out only comes from printed card effects.",
       "weakness": "Specialized draft: inspect its attacks and reactions before committing.",
       "quantities": {
         "P02": 2,
@@ -12911,5 +12928,6 @@
         "P08": 2
       }
     }
-  ]
+  ],
+  "experimentMode": "shove-wall"
 }

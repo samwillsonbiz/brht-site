@@ -7,6 +7,7 @@ export function exchangeDecisions(log,players,cards,limit=4){
   const rest=actor?line.slice(actor.name.length+1):'';
   const start=rest.match(/^(activates|plays|throws|uses) (.+?)(?: · Reaction half)?\.$/);
   const pass=/^passes \(/.test(rest);
+  const wall=rest.match(/^places Spike Wall on ([18])\.$/);if(wall){current={actor:actor.name,kind:'Last Stand',name:'Spike Wall · space '+wall[1],effects:[]};rows.push(current);continue;}
   if(start||pass){const verb=start?.[1],name=pass?'Pass':start[2];const card=cards.find(c=>c.name===name);current={actor:actor.name,kind:pass?'Pass':verb==='activates'?'Attack':verb==='throws'?'Loot':verb==='uses'?'Ability':'Reaction',name,id:card?.id,effects:[]};rows.push(current);}
   else if(current&&!/reacts first|react or pass|finished\. No cards|^Paid |^Pair /.test(line))current.effects.push(line);
  }
@@ -17,6 +18,7 @@ export function attackResultSummary(s){
  const r=s.lastResult,hits=r.hits||[],target=s.players[1-r.attacker]?.name||'Rival';
  if(!hits.length)return {name:r.name,text:'Fight ended before this strike resolved.'};
  const blocked=hits.reduce((n,h)=>n+(h.blocked||0),0),loss=hits.reduce((n,h)=>n+(h.loss||0),0);
+ const wallDamage=(r.walls||[]).filter(w=>w.attack&&w.target===1-r.attacker).reduce((n,w)=>n+w.damage,0);
  const allMiss=hits.every(h=>h.miss),distance=hits.find(h=>h.miss)?.distance;
- return {name:r.name,text:allMiss?`Missed${distance!==undefined?' at distance '+distance:''}.`:loss===0?`${target} blocked the strike (${blocked} Block).`:`${target} took ${loss} strike damage${blocked?' · '+blocked+' blocked':''}.`};
+ return {name:r.name,text:allMiss?`Missed${distance!==undefined?' at distance '+distance:''}.`:loss===0?`${target} blocked the strike (${blocked} Block)${wallDamage?' · '+wallDamage+' wall damage':''}.`:`${target} took ${loss} strike damage${blocked?' · '+blocked+' blocked':''}${wallDamage?' · '+wallDamage+' wall damage':''}.`};
 }

@@ -1,14 +1,124 @@
 // Player-facing reference for existing mechanics; no resolver logic.
 export const HERO_POWER_VIEW={
- MAR:{start:0,cap:3,gain:'After you survive an enemy attack, gain 1 Formation if your Block prevented strike damage.',actions:[['Advance · 1 Formation','Your attacking reaction','Move up to 1 toward the rival. Once per attack.']]},
- SIB:{start:3,cap:3,gain:'After a damaging non-Fury Hero attack without a committed spear, ready 1 War Spear.',actions:[['Commit · 1 War Spear','At attack activation, before movement','+2 damage. At most one spear per attack; spent even on a miss. Follow any different option printed on the card.']]},
- VER:{start:1,cap:3,gain:'After your attack deals Health damage, ready 1 Technique.',actions:[['Technique · 1 token','Your attacking reaction','Use the active Dual attack’s Reaction half. Pay its normal costs and follow its timing restrictions. Once per attack.']]},
- MEI:{start:3,cap:3,gain:'After a non-Fury Hero attack, you may place Wind within 2 spaces. If all three are placed, relocate one. One of your markers per space.',actions:[['Ride the Wind · consume the marker beneath you','When starting a voluntary Move on your Wind','Add 2 to that move’s maximum distance. Wind does not start a move or extend pushes, pulls or swaps.']]},
- SMA:{start:2,cap:3,gain:'After your attack deals Health damage, gain 1 Impact.',actions:[['Crunch · 1 Impact','On your attack’s wall slam','+2 wall damage. Once per attack; unavailable after Launch.'],['Launch · 3 Impact','Your attacking reaction','+2 damage; on hit, push up to 3 extra spaces. Once per attack; no Crunch on this attack.']]},
- ALF:{start:1,cap:2,gain:'After your attack deals Health damage at distance 3 or more, gain 1 Aim.',actions:[['Adjust · 1 Aim','Your attacking reaction','+2 maximum Range.'],['Find the Gap · 2 Aim','Your attacking reaction','Ignore 3 additional Block.']],limit:'Choose at most one Aim action per attack. Extra maximum Range never lowers minimum Range.'},
- SHE:{start:2,cap:3,gain:'After each Health payment for a card, gain 1 Research. Enemy damage does not count.',actions:[['Research draw · 1 Research','Immediately after the Health payment','Draw 1, or save the Research. Separate from the printed draw limit.'],['Treatment · 2 Research','Either player’s attack, on your reaction turn','Heal 3, up to 20 Health. Each use takes a reaction turn.']]},
- HEL:{start:3,cap:3,gain:'After your first damaging non-Fury Hero attack each round, repair 1 Armour.',actions:[['Brace · 1 Armour','Your defending reaction','Gain 2 Block.'],['Hold the Line · 2 Armour','Your defending reaction','Gain 3 Block and resist pushes/pulls for this attack.']],limit:'Choose at most one Armour action per enemy attack. Armour persists; unused Block clears after each attack.'},
- RAV:{start:1,cap:2,gain:'The first card Move that crosses the rival during an active attack earns 1 Trick. Token movement and swaps never earn Tricks.',actions:[['Slip Through · 1 Trick','Either player’s attack, on your reaction turn','Move up to 1, or cross an adjacent rival. Once per attack; pin prevents it.'],['Backstab · 2 Tricks','Your attacking reaction','+2 damage. Once per attack.']]},
- FRA:{start:1,cap:3,gain:'After a Basic attack deals Health damage, gain 1 Profit; you may cash 1 for 1 Coin, even if already at the Profit cap.',actions:[['Inside Deal · 2 Profit','Once on your shopping turn','Buy one face-up Loot before your normal Coin purchase. You may replace one offer first. Hold at most 2 Loot.']]}
+  "MAR": {
+    "start": 0,
+    "cap": 3,
+    "gain": "After surviving an enemy attack, gain 1 if Block prevented strike damage.",
+    "actions": [
+      [
+        "Advance · 1 Formation",
+        "Your attacking reaction",
+        "Move up to 1 toward the rival. Once per attack."
+      ]
+    ]
+  },
+  "SIB": {
+    "start": 3,
+    "cap": 3,
+    "gain": "At round end, ready 1 spent War Spear.",
+    "actions": [
+      [
+        "Commit · 1 War Spear",
+        "At attack activation, before movement",
+        "+1 damage. At most 1 spear per attack; spent even on a miss. Special card uses stay on their cards."
+      ]
+    ]
+  },
+  "VER": {
+    "start": 1,
+    "cap": 3,
+    "gain": "After your attack deals Health damage, gain 1 Technique.",
+    "actions": [
+      [
+        "Technique · 1 token",
+        "Your attacking reaction",
+        "Use the active Dual attack’s Reaction half, paying normal costs and following its restrictions. Once per attack."
+      ]
+    ]
+  },
+  "MEI": {
+    "start": 3,
+    "cap": 3,
+    "gain": "After your first damaging attack each round, place Wind on your space. If all three are placed, relocate one. If Wind is already beneath you, it stays.",
+    "actions": [
+      [
+        "Ride the Wind · consume the marker beneath you",
+        "Your reaction turn, once per round",
+        "Move up to 1. Wind starts this move; it never extends another Move."
+      ]
+    ]
+  },
+  "SMA": {
+    "start": 2,
+    "cap": 3,
+    "gain": "After printed attack effects, gain 1 if the strike dealt Health damage.",
+    "actions": [
+      [
+        "Finishing shove · 1 Impact",
+        "After printed effects of a strike that was in range",
+        "Push the rival 1 space. Once per attack. Existing Impact can pay even after a fully blocked strike."
+      ]
+    ]
+  },
+  "ALF": {
+    "start": 1,
+    "cap": 2,
+    "gain": "After your attack deals Health damage at distance 3 or more, gain 1 Aim.",
+    "actions": [
+      [
+        "Line Up · 1 Aim",
+        "Your attacking reaction",
+        "+2 maximum Range and ignore 1 additional Block. Once per attack; minimum Range is unchanged."
+      ]
+    ]
+  },
+  "SHE": {
+    "start": 2,
+    "cap": 3,
+    "gain": "After each Health payment for a card, gain 1 Research. Enemy damage does not count.",
+    "actions": [
+      [
+        "Treatment · 2 Research",
+        "Your reaction turn, once per attack",
+        "Heal 3, up to 20 Health. There is no automatic Research draw."
+      ]
+    ]
+  },
+  "HEL": {
+    "start": 3,
+    "cap": 3,
+    "gain": "After your first damaging Hero attack each round, repair 1 Armour.",
+    "actions": [
+      [
+        "Brace · 1 Armour",
+        "Your defending reaction, once per enemy attack",
+        "Gain 2 Block. Unused Block clears after each attack. Hold the Line offers paid push resistance."
+      ]
+    ]
+  },
+  "RAV": {
+    "start": 1,
+    "cap": 2,
+    "gain": "The first card Move that crosses the rival during an attack earns 1 Trick. Token movement and swaps never earn Tricks.",
+    "actions": [
+      [
+        "Slip Through · 1 Trick",
+        "Your reaction turn, once per attack",
+        "Move up to 1, or cross an adjacent rival into the empty space directly beyond them."
+      ]
+    ]
+  },
+  "FRA": {
+    "start": 1,
+    "cap": 3,
+    "gain": "After a Basic attack deals Health damage, gain 1 Profit.",
+    "actions": [
+      [
+        "Inside Deal · 2 Profit",
+        "Once on your shopping turn, before a normal Coin purchase",
+        "Buy 1 face-up Loot. Hold at most 2 Loot. No default market replacement or cash-out; follow printed card effects."
+      ]
+    ]
+  }
 };
 export function selectedFuryIds(hero,selected,inFight){return inFight&&hero.furies.includes(selected)?[selected]:hero.furies;}
