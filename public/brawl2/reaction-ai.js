@@ -69,7 +69,7 @@ function tokenPrompt(g,i,q,before){const s=g.s,p=s.players[i],t=q.task||q;
  const change=fn=>{const after=clone(before);fn(after);return utility(g,i,before,after);};
  const moveValue=n=>Math.max(...g.availableMoves(i,n,t.move?.toward||t.key==='guardChoice'||t.key==='march').map(pos=>change(w=>{w.players[i].pos=pos;})));
  if(t.key==='windMove')return moveValue(t.move.n+2)>moveValue(t.move.n)+.25?'spend':'skip';
- if(t.key==='march'){const n=s.queue.find(o=>o.op==='move')?.n||1;return moveValue(n+1)>moveValue(n)+.3?'spend':'skip';}
+ if(t.key==='march'){const n=s.queue?.find(o=>o.op==='move')?.n||g.def(s.mains[i])?.ops.find(o=>o.op==='move')?.n||1;return moveValue(n+1)>moveValue(n)+.3?'spend':'skip';}
  if(t.key==='guard')return change(w=>{w.players[i].block=Math.min(6,w.players[i].block+2);})>.3?'spend':'skip';
  if(t.key==='guardChoice')return moveValue(2)>change(w=>{w.mods[i].ignore=(w.mods[i].ignore||0)+3;})?'move':'ignore';
  if(t.key==='pierce')return change(w=>{w.mods[i].pierce=true;})>.6?'spend':'skip';
