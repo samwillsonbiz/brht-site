@@ -7,10 +7,10 @@
       "slug": "hero-marcus-ironheart",
       "archetype": "Formation / advancing shield fighter",
       "trait": "Formation",
-      "traitText": "Start with 0 Formation; hold up to 3. After surviving an enemy attack, gain 1 if your Block prevented strike damage. On your attacking reaction, spend 1 to move up to 1 toward the rival. Once per attack.",
+      "traitText": "Start with 0 Formation; hold up to 3. After surviving an enemy attack, gain 1 if your Block prevented strike damage. On your attacking reaction, spend 1 to move up to 1. Once per attack.",
       "ultimate": {
         "name": "Walking Wall",
-        "text": "After playing a non-Loot card Reaction while defending, move up to 1 toward the rival. Token actions do not trigger this."
+        "text": "Once per enemy attack, after playing a non-Loot card Reaction while defending, move up to 1 in either direction. Token actions do not trigger this."
       },
       "weakness": "Formation comes from Block actually spent against an attack. Piercing attacks and misses do not generate it.",
       "combo": "Every card can keep me standing.",
@@ -137,7 +137,7 @@
       "slug": "hero-vera-vendetta",
       "archetype": "Dual-card techniques / adaptable duelist",
       "trait": "Techniques",
-      "traitText": "Start with 1 Technique; hold up to 3. After your attack deals Health damage, gain 1. On your attacking reaction, spend 1 to use the active Dual card’s Reaction half. Pay its normal costs and follow its restrictions. Once per attack.",
+      "traitText": "Start with 1 Technique; hold up to 3. After your first damaging attack each round, gain 1. On your attacking reaction, spend 1 to use the active Dual card’s Reaction half. Pay its normal costs and follow its restrictions. Once per attack.",
       "ultimate": {
         "name": "Twin Blades",
         "text": "After using a Technique to play your active card’s Reaction, you may move up to 1 before your opponent responds."
@@ -522,12 +522,12 @@
       "slug": "hero-helga",
       "archetype": "Breakable Armour / defensive counterpressure",
       "trait": "Armour",
-      "traitText": "Start with 3 Armour; hold up to 3. After your first damaging Hero attack each round, repair 1. On your defending reaction, spend 1 for 2 Block. Once per enemy attack. Cards can provide push resistance.",
+      "traitText": "Start with 3 Armour; hold up to 3. After your first damaging Hero attack each round, repair 1. On your reaction turn, spend 1 for 2 Block. Once per attack. Cards can provide push resistance.",
       "ultimate": {
         "name": "Hit Me. I Dare You.",
         "text": "After an enemy attack connects in range, reflect 1 damage, even if fully blocked. Once per attack; ignores Block. Misses and Loot do not trigger it. Resolve reflection before checking victory; simultaneous knockouts draw."
       },
-      "weakness": "Unused Block clears after every attack. Armour repairs only after your first damaging non-Fury Hero attack each round.",
+      "weakness": "Unused Block clears after the next enemy attack or at round end. Armour repairs only after your first damaging non-Fury Hero attack each round.",
       "recommended": {
         "chosen": [
           "T-H01",
@@ -855,7 +855,7 @@
           "n": 2
         }
       ],
-      "side": "attacker",
+      "side": "either",
       "reactionRange": null,
       "attackText": "Hit for 2 at Range 2–3.",
       "reactionText": "Remove 2 rival Block.",
@@ -968,7 +968,7 @@
           "n": 2
         }
       ],
-      "side": "defender",
+      "side": "either",
       "reactionRange": null,
       "attackText": "Hit for 3 at Range 1.",
       "reactionText": "Gain 2 Block.",
@@ -1106,7 +1106,7 @@
           "n": 3
         }
       ],
-      "side": "defender",
+      "side": "either",
       "reactionRange": null,
       "attackText": "",
       "reactionText": "Gain 3 Block.",
@@ -1177,7 +1177,7 @@
           "n": 2
         }
       ],
-      "side": "defender",
+      "side": "either",
       "reactionRange": null,
       "attackText": "Hit for 4 at Range 1. If the strike was in range, push the rival up to 2.",
       "reactionText": "Pull the rival up to 2.",
@@ -1260,7 +1260,7 @@
           "n": 2
         }
       ],
-      "side": "defender",
+      "side": "either",
       "reactionRange": null,
       "attackText": "Hit for 3 at Range 1. On hit, the rival chooses and discards 1 card from their remaining hand.",
       "reactionText": "Gain 2 Block.",
@@ -1343,7 +1343,7 @@
           "n": 2
         }
       ],
-      "side": "attacker",
+      "side": "either",
       "reactionRange": null,
       "attackText": "Hit for 3 at Range 1–2. On hit, pull the rival up to 2.",
       "reactionText": "Pull the rival up to 2.",
@@ -1382,7 +1382,7 @@
           "n": 3
         }
       ],
-      "side": "defender",
+      "side": "either",
       "reactionRange": null,
       "attackText": "At activation, you may spend 1 Impact to ignore 2 more Block. Hit for 4 at Range 1, ignoring 1 Block.",
       "reactionText": "Gain 3 Block.",
@@ -1505,7 +1505,7 @@
           "n": 2
         }
       ],
-      "side": "attacker",
+      "side": "either",
       "reactionRange": null,
       "attackText": "",
       "reactionText": "Move up to 2. Remove 2 rival Block.",
@@ -1679,7 +1679,7 @@
           "n": 2
         }
       ],
-      "side": "defender",
+      "side": "either",
       "reactionRange": null,
       "attackText": "Hit for 4 at Range 2–5.",
       "reactionText": "Move up to 2.",
@@ -1800,7 +1800,7 @@
           "op": "escapeAim"
         }
       ],
-      "side": "defender",
+      "side": "either",
       "reactionRange": null,
       "attackText": "Move up to 1. Hit for 3 at Range 1–2.",
       "reactionText": "Move up to 3. If you finish at Range 3 or more, gain 1 Aim.",
@@ -2376,7 +2376,7 @@
           "n": 2
         }
       ],
-      "side": "defender",
+      "side": "either",
       "heroId": "SHE",
       "hero": "Dr. Shealer",
       "text": "Hit for 3 at Range 1–2. OR Discard another card. Heal 2. Gain 2 Block.",
@@ -3034,12 +3034,12 @@
         }
       ],
       "attackText": "",
-      "reactionText": "Gain 5 Block. If this attack deals you no Health damage, gain 1 Coin after its strike. Includes attack wall damage; separate Loot damage does not count. Each copy can reward a Coin.",
-      "side": "defender",
+      "reactionText": "Gain 5 Block. If the next enemy attack this round deals you no Health damage, gain 1 Coin after it resolves. Includes attack wall damage; separate Loot damage does not count. Each copy can reward a Coin.",
+      "side": "either",
       "artId": "T-H05",
       "heroId": "HEL",
       "hero": "Helga Stonewall",
-      "text": "Gain 5 Block. If this attack deals you no Health damage, gain 1 Coin after its strike. Includes attack wall damage; separate Loot damage does not count. Each copy can reward a Coin.",
+      "text": "Gain 5 Block. If the next enemy attack this round deals you no Health damage, gain 1 Coin after it resolves. Includes attack wall damage; separate Loot damage does not count. Each copy can reward a Coin.",
       "art": "assets/hero-atlas-HEL.webp",
       "artIndex": 4,
       "artCols": 3,
@@ -3307,7 +3307,7 @@
       "heroId": "RAV",
       "hero": "Raven Madison",
       "text": "Hit for 1 at Range 1–3. OR Move to any empty space adjacent to the rival.",
-      "side": "attacker",
+      "side": "either",
       "art": "assets/hero-atlas-RAV.webp",
       "artIndex": 2,
       "artCols": 3,
@@ -3343,7 +3343,7 @@
       "heroId": "RAV",
       "hero": "Raven Madison",
       "text": "Reveal: if adjacent, the paired enemy attack loses 3 Speed. Hit for 3 at Range 1–2. OR Move up to 1. Gain 1 Block.",
-      "side": "defender",
+      "side": "either",
       "art": "assets/hero-atlas-RAV.webp",
       "artIndex": 3,
       "artCols": 3,
@@ -3433,7 +3433,7 @@
           "n": 2
         }
       ],
-      "side": "defender",
+      "side": "either",
       "heroId": "RAV",
       "hero": "Raven Madison",
       "text": "Hit for 2 at Range 1–2. OR Move up to 1. Gain 2 Block.",
@@ -3519,7 +3519,7 @@
           "n": 2
         }
       ],
-      "side": "defender",
+      "side": "either",
       "heroId": "RAV",
       "hero": "Raven Madison",
       "text": "Hit for 2 at Range 1. On hit, the rival chooses and discards 1 card from their remaining hand. OR Move up to 2.",
@@ -3959,7 +3959,7 @@
           "n": 5
         }
       ],
-      "side": "defender",
+      "side": "either",
       "heroId": "FRA",
       "hero": "Friar Franc",
       "text": "Hit for 3 at Range 1–2. OR Spend 1 Profit: gain 5 Block.",
@@ -4077,7 +4077,7 @@
       ],
       "attackText": "",
       "reactionText": "Pay 1 Coins. Return one Basic Reaction you played in this exchange from discard to hand.",
-      "side": "attacker",
+      "side": "either",
       "artId": "T-P07",
       "heroId": "FRA",
       "hero": "Friar Franc",
@@ -4114,7 +4114,7 @@
       ],
       "attackText": "",
       "reactionText": "Pay 1 Coins. Draw 2 (one draw effect per attack).",
-      "side": "attacker",
+      "side": "either",
       "artId": "T-P08",
       "heroId": "FRA",
       "hero": "Friar Franc",
@@ -4291,8 +4291,7 @@
       "ops": [
         {
           "op": "move",
-          "n": 1,
-          "toward": true
+          "n": 1
         },
         {
           "op": "hit",
@@ -4308,16 +4307,15 @@
         },
         {
           "op": "move",
-          "n": 1,
-          "toward": true
+          "n": 1
         }
       ],
-      "side": "defender",
+      "side": "either",
       "reactionRange": null,
       "discardCost": false,
-      "attackText": "Hit for 3 at Range 1. Activate: move up to 1 toward the rival; you may spend 1 Formation to move up to 2 instead.",
-      "reactionText": "Gain 2 Block. You may move 1 toward the rival.",
-      "text": "Hit for 3 at Range 1. Activate: move up to 1 toward the rival; you may spend 1 Formation to move up to 2 instead. OR Gain 2 Block. You may move 1 toward the rival.",
+      "attackText": "Hit for 3 at Range 1. Activate: move up to 1; you may spend 1 Formation to move up to 2 instead.",
+      "reactionText": "Gain 2 Block. You may move 1.",
+      "text": "Hit for 3 at Range 1. Activate: move up to 1; you may spend 1 Formation to move up to 2 instead. OR Gain 2 Block. You may move 1.",
       "art": "assets/core-cards-v1/M02.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -4349,7 +4347,7 @@
           "n": 2
         }
       ],
-      "side": "defender",
+      "side": "either",
       "reactionRange": null,
       "discardCost": false,
       "attackText": "Hit for 2 at Range 1–1.",
@@ -4391,7 +4389,7 @@
           "n": 2
         }
       ],
-      "side": "attacker",
+      "side": "either",
       "reactionRange": null,
       "discardCost": false,
       "attackText": "Hit for 2 at Range 1–2. On hit: draw 1.",
@@ -4519,7 +4517,7 @@
           "n": 4
         }
       ],
-      "side": "defender",
+      "side": "either",
       "reactionRange": null,
       "discardCost": true,
       "attackText": "Hit for 3 at Range 1. On hit: gain 1 Formation.",
@@ -4559,7 +4557,7 @@
           "n": 2
         }
       ],
-      "side": "defender",
+      "side": "either",
       "reactionRange": null,
       "discardCost": false,
       "attackText": "Hit for 3 at Range 1. You cannot be pushed or pulled during this attack.",
@@ -4589,17 +4587,16 @@
         },
         {
           "op": "move",
-          "n": 1,
-          "toward": true
+          "n": 1
         }
       ],
       "reactionOps": null,
-      "side": "defender",
+      "side": "either",
       "reactionRange": null,
       "discardCost": false,
       "attackText": "",
-      "reactionText": "Gain 2 Block. You may move 1 toward the rival.",
-      "text": "Gain 2 Block. You may move 1 toward the rival.",
+      "reactionText": "Gain 2 Block. You may move 1.",
+      "text": "Gain 2 Block. You may move 1.",
       "art": "assets/core-cards-v1/M09.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -4620,8 +4617,7 @@
       "ops": [
         {
           "op": "move",
-          "n": 3,
-          "toward": true
+          "n": 2
         },
         {
           "op": "block",
@@ -4633,8 +4629,8 @@
       "reactionRange": null,
       "discardCost": false,
       "attackText": "",
-      "reactionText": "Move up to 3 toward the rival. Gain 1 Block.",
-      "text": "Move up to 3 toward the rival. Gain 1 Block.",
+      "reactionText": "Move up to 2. Gain 1 Block.",
+      "text": "Move up to 2. Gain 1 Block.",
       "art": "assets/core-cards-v1/M10.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -4692,8 +4688,7 @@
       "ops": [
         {
           "op": "move",
-          "n": 2,
-          "toward": true
+          "n": 2
         },
         {
           "op": "hit",
@@ -4706,9 +4701,9 @@
       "side": "either",
       "reactionRange": null,
       "discardCost": false,
-      "attackText": "Hit for 5 at Range 1. Activate: move up to 2 toward the rival.",
+      "attackText": "Hit for 5 at Range 1. Activate: move up to 2.",
       "reactionText": "",
-      "text": "Hit for 5 at Range 1. Activate: move up to 2 toward the rival.",
+      "text": "Hit for 5 at Range 1. Activate: move up to 2.",
       "art": "assets/core-cards-v1/FM2.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -4803,8 +4798,7 @@
       "ops": [
         {
           "op": "move",
-          "n": 1,
-          "toward": true
+          "n": 1
         },
         {
           "op": "hit",
@@ -4816,16 +4810,15 @@
       "reactionOps": [
         {
           "op": "move",
-          "n": 1,
-          "toward": true
+          "n": 1
         }
       ],
-      "side": "attacker",
+      "side": "either",
       "reactionRange": null,
       "discardCost": false,
-      "attackText": "Hit for 3 at Range 1. Activate: move up to 1 toward the rival.",
-      "reactionText": "Move up to 1 toward the rival.",
-      "text": "Hit for 3 at Range 1. Activate: move up to 1 toward the rival. OR Move up to 1 toward the rival.",
+      "attackText": "Hit for 3 at Range 1. Activate: move up to 1.",
+      "reactionText": "Move up to 1.",
+      "text": "Hit for 3 at Range 1. Activate: move up to 1. OR Move up to 1.",
       "art": "assets/core-cards-v1/Z02.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -4858,7 +4851,7 @@
           "n": 3
         }
       ],
-      "side": "attacker",
+      "side": "either",
       "reactionRange": null,
       "discardCost": false,
       "attackText": "Hit for 3 at Range 1. Ignore 3 Block.",
@@ -5019,7 +5012,7 @@
           "n": 1
         }
       ],
-      "side": "attacker",
+      "side": "either",
       "reactionRange": [
         1,
         3
@@ -5062,7 +5055,7 @@
           "op": "spearGuard"
         }
       ],
-      "side": "defender",
+      "side": "either",
       "reactionRange": null,
       "discardCost": false,
       "attackText": "Hit for 3 at Range 1–2.",
@@ -5121,12 +5114,12 @@
         }
       ],
       "reactionOps": null,
-      "side": "attacker",
+      "side": "either",
       "reactionRange": null,
       "discardCost": false,
       "attackText": "",
-      "reactionText": "Choose: move up to 2 toward the rival OR ignore 3 additional Block.",
-      "text": "Choose: move up to 2 toward the rival OR ignore 3 additional Block.",
+      "reactionText": "Choose: move up to 2 OR ignore 3 additional Block.",
+      "text": "Choose: move up to 2 OR ignore 3 additional Block.",
       "art": "assets/core-cards-v1/Z10.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -5179,8 +5172,7 @@
       "ops": [
         {
           "op": "move",
-          "n": 2,
-          "toward": true
+          "n": 2
         },
         {
           "op": "hit",
@@ -5193,9 +5185,9 @@
       "side": "either",
       "reactionRange": null,
       "discardCost": false,
-      "attackText": "Hit for 6 at Range 1–2. Activate: move up to 2 toward the rival.",
+      "attackText": "Hit for 6 at Range 1–2. Activate: move up to 2.",
       "reactionText": "",
-      "text": "Hit for 6 at Range 1–2. Activate: move up to 2 toward the rival.",
+      "text": "Hit for 6 at Range 1–2. Activate: move up to 2.",
       "art": "assets/core-cards-v1/FZ2.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -5406,15 +5398,15 @@
       "reactionOps": [
         {
           "op": "block",
-          "n": 3
+          "n": 2
         }
       ],
-      "side": "defender",
+      "side": "either",
       "reactionRange": null,
       "discardCost": false,
       "attackText": "Hit for 4 at Range 1–2.",
-      "reactionText": "Gain 3 Block.",
-      "text": "Hit for 4 at Range 1–2. OR Gain 3 Block.",
+      "reactionText": "Gain 2 Block.",
+      "text": "Hit for 4 at Range 1–2. OR Gain 2 Block.",
       "art": "assets/core-cards-v1/V05.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -5769,7 +5761,7 @@
         },
         {
           "op": "hit",
-          "n": 4,
+          "n": 3,
           "min": 2,
           "max": 4
         }
@@ -5783,9 +5775,9 @@
       "side": "either",
       "reactionRange": null,
       "discardCost": false,
-      "attackText": "Hit for 4 at Range 2–4. Activate: move up to 2.",
+      "attackText": "Hit for 3 at Range 2–4. Activate: move up to 2.",
       "reactionText": "Move up to 2.",
-      "text": "Hit for 4 at Range 2–4. Activate: move up to 2. OR Move up to 2.",
+      "text": "Hit for 3 at Range 2–4. Activate: move up to 2. OR Move up to 2.",
       "art": "assets/core-cards-v1/W02.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -5847,7 +5839,7 @@
         },
         {
           "op": "hit",
-          "n": 4,
+          "n": 3,
           "min": 1,
           "max": 2
         }
@@ -5858,12 +5850,12 @@
           "n": 2
         }
       ],
-      "side": "defender",
+      "side": "either",
       "reactionRange": null,
       "discardCost": false,
-      "attackText": "Hit for 4 at Range 1–2. Activate: move up to 2.",
+      "attackText": "Hit for 3 at Range 1–2. Activate: move up to 2.",
       "reactionText": "Move up to 2.",
-      "text": "Hit for 4 at Range 1–2. Activate: move up to 2. OR Move up to 2.",
+      "text": "Hit for 3 at Range 1–2. Activate: move up to 2. OR Move up to 2.",
       "art": "assets/core-cards-v1/W04.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -5980,7 +5972,7 @@
           "n": 1
         }
       ],
-      "side": "defender",
+      "side": "either",
       "reactionRange": [
         1,
         2
@@ -6093,7 +6085,7 @@
         }
       ],
       "reactionOps": null,
-      "side": "attacker",
+      "side": "either",
       "reactionRange": [
         1,
         3
@@ -6221,7 +6213,7 @@
       "id": "L-MAR-01",
       "name": "Lion-Head Buckler",
       "text": "Gain 3 Block. Deal 1 damage. Block can stop it. Move up to 1.",
-      "side": "defender",
+      "side": "either",
       "ops": [
         {
           "op": "block",
@@ -6422,7 +6414,7 @@
       "id": "L-MAR-06",
       "name": "Tower-Shield Sled",
       "text": "Move up to 3. Remove up to 2 rival Block.",
-      "side": "attacker",
+      "side": "either",
       "ops": [
         {
           "op": "move",
@@ -6533,7 +6525,7 @@
       "id": "L-MAR-09",
       "name": "Duelist Mantle",
       "text": "Gain 2 Block. Remove up to 3 rival Block.",
-      "side": "defender",
+      "side": "either",
       "ops": [
         {
           "op": "block",
@@ -6921,7 +6913,7 @@
       "id": "L-SIB-07",
       "name": "Hunting Bolas",
       "text": "Pull your rival up to 3. Remove up to 2 rival Block.",
-      "side": "attacker",
+      "side": "either",
       "ops": [
         {
           "op": "pull",
@@ -6993,7 +6985,7 @@
       "id": "L-SIB-09",
       "name": "Oxhide Shield",
       "text": "Gain 2 Block. Deal 2 damage. Block can stop it. Push your rival up to 1.",
-      "side": "defender",
+      "side": "either",
       "ops": [
         {
           "op": "block",
@@ -7416,7 +7408,7 @@
       "id": "L-VER-08",
       "name": "Mirror-Shard Charm",
       "text": "Gain 2 Block. Deal 1 damage. Block can stop it. Draw 1.",
-      "side": "defender",
+      "side": "either",
       "ops": [
         {
           "op": "block",
@@ -7461,7 +7453,7 @@
       "id": "L-VER-09",
       "name": "Duelist Parasol",
       "text": "Gain 3 Block. Move up to 1.",
-      "side": "defender",
+      "side": "either",
       "ops": [
         {
           "op": "block",
@@ -7533,7 +7525,7 @@
       "id": "L-VER-11",
       "name": "Crimson Grapple",
       "text": "Move to an empty space beside your rival. Draw 1.",
-      "side": "attacker",
+      "side": "either",
       "ops": [
         {
           "op": "adjacent"
@@ -7841,7 +7833,7 @@
       "id": "L-MEI-07",
       "name": "Kite-Spool Grapple",
       "text": "Pull your rival up to 3. Move up to 1.",
-      "side": "attacker",
+      "side": "either",
       "ops": [
         {
           "op": "pull",
@@ -7921,7 +7913,7 @@
       "id": "L-MEI-09",
       "name": "Lotus Parasol",
       "text": "Gain 2 Block. Move up to 2.",
-      "side": "defender",
+      "side": "either",
       "ops": [
         {
           "op": "block",
@@ -8114,7 +8106,7 @@
       "id": "L-SMA-02",
       "name": "Quake Boots",
       "text": "Move up to 2. Remove up to 3 rival Block.",
-      "side": "attacker",
+      "side": "either",
       "ops": [
         {
           "op": "move",
@@ -8371,7 +8363,7 @@
       "id": "L-SMA-09",
       "name": "Iron Jaw Guard",
       "text": "Gain 3 Block. Deal 1 damage. Block can stop it.",
-      "side": "defender",
+      "side": "either",
       "ops": [
         {
           "op": "block",
@@ -8811,7 +8803,7 @@
       "id": "L-ALF-09",
       "name": "Porcupine Cloak",
       "text": "Gain 2 Block. Deal 2 damage. Block can stop it.",
-      "side": "defender",
+      "side": "either",
       "ops": [
         {
           "op": "block",
@@ -9004,7 +8996,7 @@
       "id": "L-SHE-02",
       "name": "Crash-Cart Wheels",
       "text": "Move up to 3. Heal 1.",
-      "side": "attacker",
+      "side": "either",
       "ops": [
         {
           "op": "move",
@@ -9265,7 +9257,7 @@
       "id": "L-SHE-09",
       "name": "Quarantine Screen",
       "text": "Gain 3 Block. Remove up to 2 rival Block.",
-      "side": "defender",
+      "side": "either",
       "ops": [
         {
           "op": "block",
@@ -9419,7 +9411,7 @@
       "id": "L-HEL-01",
       "name": "Get-Off-My-Lawn Gauntlet",
       "text": "Gain 2 Block. Push your rival up to 2. Deal 1 damage. Block can stop it.",
-      "side": "defender",
+      "side": "either",
       "ops": [
         {
           "op": "block",
@@ -9655,7 +9647,7 @@
       "id": "L-HEL-07",
       "name": "Armoured Skates",
       "text": "Move up to 3. Gain 2 Block.",
-      "side": "attacker",
+      "side": "either",
       "ops": [
         {
           "op": "move",
@@ -9692,7 +9684,7 @@
       "id": "L-HEL-08",
       "name": "Spring-Loaded Shield",
       "text": "Gain 3 Block. Deal 2 damage. Block can stop it.",
-      "side": "defender",
+      "side": "either",
       "ops": [
         {
           "op": "block",
@@ -9729,7 +9721,7 @@
       "id": "L-HEL-09",
       "name": "Tin-Foil Fortress",
       "text": "Gain 4 Block. Gain 1 Coin.",
-      "side": "defender",
+      "side": "either",
       "ops": [
         {
           "op": "block",
@@ -10113,7 +10105,7 @@
       "id": "L-RAV-07",
       "name": "Smoke Pellets",
       "text": "Move up to 2. Deal 1 damage. Block can stop it.",
-      "side": "defender",
+      "side": "either",
       "ops": [
         {
           "op": "move",
@@ -10185,7 +10177,7 @@
       "id": "L-RAV-09",
       "name": "Cardboard Decoy",
       "text": "Gain 2 Block. Draw 1.",
-      "side": "defender",
+      "side": "either",
       "ops": [
         {
           "op": "block",
@@ -10267,7 +10259,7 @@
       "id": "L-RAV-11",
       "name": "Grappling Hook",
       "text": "Move to an empty space beside your rival. Remove up to 3 rival Block.",
-      "side": "attacker",
+      "side": "either",
       "ops": [
         {
           "op": "adjacent"
@@ -10458,7 +10450,7 @@
       "id": "L-FRA-04",
       "name": "Tax-Deductible Anvil",
       "text": "Remove up to 4 rival Block. Gain 1 Coin.",
-      "side": "attacker",
+      "side": "either",
       "ops": [
         {
           "op": "shred",
@@ -10528,7 +10520,7 @@
       "id": "L-FRA-06",
       "name": "Blessed Snack Basket",
       "text": "Heal 2. Scry 2.",
-      "side": "attacker",
+      "side": "either",
       "ops": [
         {
           "op": "heal",
@@ -10653,7 +10645,7 @@
       "id": "L-FRA-09",
       "name": "Fully Insured Shield",
       "text": "Gain 3 Block. Remove up to 1 rival Block.",
-      "side": "defender",
+      "side": "either",
       "ops": [
         {
           "op": "block",
@@ -10869,7 +10861,7 @@
     ],
     [
       "Block",
-      "All unused Block clears after every attack, for everyone. Maximum 6 Block. Helga can break Armour for Block; she no longer receives free Block at enemy activation."
+      "Gain or spend Block during either player’s reaction turn when the card or action allows. Maximum 6. Block is spent when it prevents damage or pays a cost. Keep unused Block until the next enemy attack finishes, then clear it. All Block also clears at round end before refill. Offensive attack bonuses still need your own active attack."
     ],
     [
       "Hero tokens",
@@ -10881,7 +10873,7 @@
     ],
     [
       "Attack cleanup",
-      "If no lethal effect ended the fight, resolve on-hit effects and each delayed per-card effect, then already-active Helga reflection and victory. If still fighting, settle pending Last Stands and attack-end token effects. Discard the finished attack. Clear both players’ unused Block and temporary attack modifiers before the next attack. Smasherton no longer pins; his finishing shove resolves after printed attack effects, before delayed penalties and cleanup."
+      "If no lethal effect ended the fight, resolve on-hit effects and each delayed per-card effect, then already-active Helga reflection and victory. If still fighting, settle pending Last Stands and attack-end token effects. Discard the finished attack. Clear temporary attack modifiers before the next attack; the defender’s unused Block clears after this enemy attack; the attacker’s prepared Block stays until their next enemy attack or round end. Smasherton no longer pins; his finishing shove resolves after printed attack effects, before delayed penalties and cleanup."
     ],
     [
       "Wall slam",
@@ -10897,7 +10889,7 @@
     ],
     [
       "Repeated delayed effects",
-      "Each Exploding Present played registers its own 1-Health loss after a damaging strike, unless an earlier lethal effect has ended the fight. Each Hold Your Ground registers its own Coin reward, capped by the shared 8-Coin limit. Any Health damage from the active attack, including its wall slam, prevents these rewards. Separate Loot damage does not."
+      "Each Exploding Present registers its own delayed penalty. Each Hold Your Ground registers one Coin reward for the next enemy attack this round. Any Health damage from that attack including wall slams cancels the reward; independent Loot does not. Resolve after that enemy attack, not your own attack. Unused rewards expire at round end. Lethal ends before later rewards."
     ],
     [
       "Linear Hero powers",
@@ -10906,6 +10898,10 @@
     [
       "Spike Wall",
       "At 5 Health, Smasherton unlocks one wall placement per fight. Use your reaction to close original end 1 or 8 only if empty. Neither fighter can enter it. Pushes into it deal 2 total wall damage ignoring Block; either fighter can suffer it. Covered Wind returns to supply; covered Shadow moves to Raven’s current space. Two Smashertons can close opposite ends. The wall replaces pin."
+    ],
+    [
+      "Open movement and reactions",
+      "All Move distances are up to, in either direction. Stay, move partly or cross the rival without sharing a space. Keep printed timing: activation and on-hit moves remain in those windows. Push and pull still move the rival relative to you. Block/resource/utility reactions with Either Turn timing may be played on either player’s reaction turn. An attack-modifying reaction still needs your active attack; no attack bonuses are banked."
     ]
   ],
   "version": "brawl2-audit-2",

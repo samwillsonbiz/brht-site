@@ -9,7 +9,7 @@ export function actions(g,i){const s=g.s,p=s.players[i],m=s.mods[i];if(!p||s.pha
  if(!g.simpleImpact()&&p.hero==='SMA'&&own&&!m.impactLaunch)add('impact-launch','Launch · 3 Impact','+2 damage; on hit: push up to 3. No Crunch bonus this attack.',3,[{op:'boost',n:2},{op:'launch',n:3}]);
  if(p.hero==='ALF'&&own&&!m.aimUsed)add('aim-gap','Line Up · 1 Aim','+2 maximum Range and ignore 1 Block. Once per attack.',1,[{op:'reach',n:2},{op:'ignore',n:1}]);
  if(p.hero==='SHE'&&p.hp<20&&!m.researchHealUsed)add('research-heal','Treatment · 2 Research','Heal 3. Once per attack.',2,[{op:'heal',n:3}]);
- if(p.hero==='HEL'&&!own&&!m.armourUsed)add('armour-brace','Brace · 1 Armour','Gain 2 Block. Once per enemy attack.',1,[{op:'block',n:2}]);
+ if(p.hero==='HEL'&&!m.armourUsed)add('armour-brace','Brace · 1 Armour','Gain 2 Block. Once per attack.',1,[{op:'block',n:2}]);
  if(p.hero==='RAV'&&!p.pinned&&!m.slipUsed)add('trick-slip','Slip Through · 1 Trick','Move 1, or cross an adjacent rival. Once per attack.',1,[{op:'trickMove'}]);return a;
 }
 export function use(g,i,id){const a=actions(g,i).find(x=>x.id===id);g.need(a,'That token action is not available.');spend(g,i,a.cost);const m=g.s.mods[i];if(id==='impact-launch')m.impactLaunch=true;if(id.startsWith('aim-'))m.aimUsed=true;if(id.startsWith('armour-'))m.armourUsed=true;if(id==='trick-slip')m.slipUsed=true;if(id==='research-heal')m.researchHealUsed=true;g.abilityReaction(i,a.label,a.ops,null,a.text);}

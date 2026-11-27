@@ -8,7 +8,7 @@ export const HERO_POWER_VIEW={
       [
         "Advance · 1 Formation",
         "Your attacking reaction",
-        "Move up to 1 toward the rival. Once per attack."
+        "Move up to 1 in either direction. Once per attack."
       ]
     ]
   },
@@ -27,7 +27,7 @@ export const HERO_POWER_VIEW={
   "VER": {
     "start": 1,
     "cap": 3,
-    "gain": "After your attack deals Health damage, gain 1 Technique.",
+    "gain": "After your first damaging attack each round, gain 1 Technique.",
     "actions": [
       [
         "Technique · 1 token",
@@ -91,8 +91,8 @@ export const HERO_POWER_VIEW={
     "actions": [
       [
         "Brace · 1 Armour",
-        "Your defending reaction, once per enemy attack",
-        "Gain 2 Block. Unused Block clears after each attack. Hold the Line offers paid push resistance."
+        "Your reaction turn, once per attack",
+        "Gain 2 Block. Keep Block until the next enemy attack finishes, or round end. Hold the Line offers paid push resistance."
       ]
     ]
   },
