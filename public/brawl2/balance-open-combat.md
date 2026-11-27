@@ -1,6 +1,6 @@
 # Brawl2: open movement and prepared Block
 
-Rules version: `brawl2-open-1`. Published playtest revision, not a claim of final competitive balance.
+Rules version: `brawl2-open-2`. Published playtest revision, not a claim of final competitive balance.
 
 ## What changed
 
@@ -49,7 +49,7 @@ Prioritize human Mei–Smasherton, Mei–Vera, Alf–Sibu and Alf–Marcus; swap
 
 ## Verification
 
-198 automated rules/UI/server tests. Five complete local two-client matches, all ten Heroes, 561 authoritative commands, including market/blind purchases and hidden-hand checks. Production build passed. Live multiplayer verification is recorded separately after deployment.
+199 automated rules/UI/server tests. Five complete local two-client matches, all ten Heroes, 561 authoritative commands, including market/blind purchases and hidden-hand checks. Production build passed. A first live check caught an omitted server database copy; that copy is now synchronized, and a release-parity regression test prevents recurrence. Live multiplayer verification is recorded separately after the corrected deployment.
 
 ## Files
 
