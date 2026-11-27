@@ -10861,7 +10861,7 @@
     ],
     [
       "Block",
-      "Gain or spend Block during either player’s reaction turn when the card or action allows. Maximum 6. Block is spent when it prevents damage or pays a cost. Keep unused Block until the next enemy attack finishes, then clear it. All Block also clears at round end before refill. Offensive attack bonuses still need your own active attack."
+      "Gain or spend Block on your reaction turn during either player’s attack when the card or action allows. Maximum 6. Block is spent when it prevents damage or pays a cost. Keep unused Block until the next enemy attack finishes, then clear it. All Block also clears at round end before refill. Offensive attack bonuses still need your own active attack."
     ],
     [
       "Hero tokens",
@@ -10901,7 +10901,7 @@
     ],
     [
       "Open movement and reactions",
-      "All Move distances are up to, in either direction. Stay, move partly or cross the rival without sharing a space. Keep printed timing: activation and on-hit moves remain in those windows. Push and pull still move the rival relative to you. Block/resource/utility reactions with Either Turn timing may be played on either player’s reaction turn. An attack-modifying reaction still needs your active attack; no attack bonuses are banked."
+      "All Move distances are up to, in either direction. Stay, move partly or cross the rival without sharing a space. Keep printed timing: activation and on-hit moves remain in those windows. Push and pull still move the rival relative to you. Block/resource/utility reactions with Either Turn timing may be played on your reaction turn during either player’s attack. An attack-modifying reaction still needs your active attack; no attack bonuses are banked."
     ]
   ],
   "version": "brawl2-audit-2",

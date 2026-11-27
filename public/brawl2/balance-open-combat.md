@@ -5,7 +5,7 @@ Rules version: `brawl2-open-2`. Published playtest revision, not a claim of fina
 ## What changed
 
 - All printed Move effects and Hero movement now allow either direction, partial movement, staying and legal crossing. Activation/on-hit/reaction timing is retained. Push and pull retain their meaning; occupied and closed spaces remain illegal.
-- Defensive and resource/utility reactions can be played on either player’s reaction turn. Offensive attack modifiers still require your active attack. Mixed Loot packages containing an offensive modifier retain that requirement; bonuses are not stored for a future attack.
+- Defensive and resource/utility reactions can be played on your reaction turn during either player’s attack. Offensive attack modifiers still require your active attack. Mixed Loot packages containing an offensive modifier retain that requirement; bonuses are not stored for a future attack.
 - Prepare Block while attacking; keep it until the next enemy attack finishes, or round end. Cap remains 6. Damage and printed costs consume it normally. This expiry applies even if the enemy attack misses.
 - Helga may Brace on either reaction turn, once per active attack. Shield Dividend can spend Block for Coins in either role.
 - Hold Your Ground now waits for the next enemy attack this round. No reward after your own attack. Copies stack, Coin cap stays 8, attack wall damage cancels the reward, independent Loot damage is separate, unused promises expire at round end. The pending count is visible.
