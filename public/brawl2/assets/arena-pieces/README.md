@@ -1,9 +1,9 @@
 # Arena pieces
 
-Generated with the built-in image-generation tool, then resized and encoded as WebP with alpha preserved using Sharp. Both assets are consumed by `arena-presentation.js`.
+Generated with the built-in image-generation tool, then resized and encoded as WebP with alpha preserved using Sharp. Spike Wall is consumed by `arena-presentation.js`. Wind artwork is retained as an unused source asset; Mei uses only the original arena token.
 
 - `spike-wall.webp`: grounded wooden-and-iron barricade for Smasherton's occupied end space.
-- `wind-current.webp`: upright jade-and-turquoise Wind marker for Mei. Player two uses a violet tint to preserve the existing owner distinction.
+- `wind-current.webp`: unused Wind artwork from the earlier visual experiment.
 
 ## Spike Wall prompt
 

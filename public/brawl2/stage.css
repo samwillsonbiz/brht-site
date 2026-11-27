@@ -116,12 +116,12 @@ body.in-battle{height:100dvh;overflow:hidden;background:#091820}
 .arena-piece img{display:block;width:100%;height:100%;object-fit:contain;object-position:center bottom;filter:drop-shadow(0 5px 4px #0009)}
 .arena-piece-wall{height:clamp(80px,20vh,185px);z-index:5;width:13.5%}
 .arena-piece-label{position:absolute;bottom:-12px;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:8px;letter-spacing:1px;color:#ffe2a5;background:#172027e8;border:1px solid #dfb67577;border-radius:3px;padding:3px 6px}
-.arena-piece-wind{width:8%;height:clamp(65px,14vh,125px);z-index:1;opacity:.9}
-.arena-piece-wind.owner-1{margin-left:1.2%;filter:hue-rotate(70deg)}.arena-piece-wind.owner-0{margin-left:-1.2%}
-.arena-piece-wind img{animation:arena-wind-breathe 3.6s ease-in-out infinite;transform-origin:center bottom}
+
+
+
 .r-battle .r-lane>button.arena-place-wall{opacity:1;border:2px dashed #f3cb8c;background:#9a642740;cursor:pointer;box-shadow:0 0 18px #f6c56a33}
 .r-battle .r-lane>button.arena-place-wall:hover{background:#d5a54c66;box-shadow:0 0 24px #ffd88b77}.r-battle .r-lane>button.arena-place-wall small{font-size:8px;color:#ffedbd}
-@keyframes arena-wind-breathe{50%{opacity:.8;transform:scaleY(1.035) translateY(-2px)}}
+
 @media(max-width:1000px){.stage-history{left:12px;width:210px}.arena-piece-wall{height:clamp(65px,17vh,135px)}}
-@media(max-width:600px){.stage-history{top:205px;left:12px;width:170px}.stage-history>summary{padding:8px 10px;min-height:35px;font-size:11px}.stage-history-body{max-height:28dvh}.arena-piece-wall{height:80px;width:15%}.arena-piece-wind{width:10%;height:65px}.arena-piece-label{font-size:6px;padding:2px}.r-battle .r-lane>button.arena-place-wall small{font-size:6px}}
-@media(prefers-reduced-motion:reduce){.arena-piece-wind img{animation:none}.history-disclosure{transition:none}}
+@media(max-width:600px){.stage-history{top:205px;left:12px;width:170px}.stage-history>summary{padding:8px 10px;min-height:35px;font-size:11px}.stage-history-body{max-height:28dvh}.arena-piece-wall{height:80px;width:15%}.arena-piece-label{font-size:6px;padding:2px}.r-battle .r-lane>button.arena-place-wall small{font-size:6px}}
+@media(prefers-reduced-motion:reduce){.history-disclosure{transition:none}}
