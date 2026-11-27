@@ -56,7 +56,7 @@ export function createMobileUI({getContext,def,card,modal,closeModal,toast,rende
     const {game:g,viewer}=ctx();if(!g)return '';
     const s=g.s,c=s.active===null?null:def(s.mains[s.active]);
     if(s.prompt)return s.prompt.player===viewer?s.prompt.title:'Your rival is choosing.';
-    if(s.phase==='program')return 'Plan your attacks in order. The other cards stay in your hand.';
+    if(s.phase==='program')return 'Choose an attack slot. Your other cards stay in hand.';
     if(s.phase==='reaction'){
       const f=forecast(g);
       return `${s.turn===viewer?'Your reaction':'Rival’s reaction'} · ${c?.name||'Attack'} · ${f?.miss?'If both pass: out of range':f?'If both pass: '+(f.loss===f.maxLoss?f.loss:f.loss+'–'+f.maxLoss)+' Health damage':''}`;
@@ -65,7 +65,7 @@ export function createMobileUI({getContext,def,card,modal,closeModal,toast,rende
   };
   function sheet(c,body,actions,title=c?.name){
     const context=contextText();
-    modal(`<section class="mobile-card-sheet" aria-label="${esc(title)}"><div class="mobile-card-art">${c?card(c):''}</div><div class="mobile-card-copy"><div class="mobile-card-description"><p class="mobile-inspector-context">${esc(context)}</p><h2>${esc(title)}</h2>${body}</div><div class="mobile-sheet-actions">${actions}<button class="quiet" data-mobile="close">Back to battle</button></div></div></section>`);
+    modal(`<section class="mobile-card-sheet" aria-label="${esc(title)}"><div class="mobile-card-art">${c?card(c):''}</div><div class="mobile-card-copy"><div class="mobile-card-description"><p class="mobile-inspector-context">${esc(context)}</p><h2>${esc(title)}</h2>${body}</div><div class="mobile-sheet-actions">${actions}</div></div></section>`);
   }
   function showHand(uid){
     const {game:g,viewer,selected}=ctx();if(!g)return;
@@ -75,7 +75,7 @@ export function createMobileUI({getContext,def,card,modal,closeModal,toast,rende
     const s=g.s,planning=s.phase==='program',canPlan=planning&&!s.prompt&&!s.committed[viewer]&&!loot&&g.isAttack(item),canReact=s.phase==='reaction'&&g.canPlay(viewer,loot?c.id:item),required=g.requiredAttacks(viewer);
     let actions='';
     if(canPlan){
-      actions=Array.from({length:required},(_,slot)=>`<button class="primary" data-mobile="assign" data-slot="${slot}" ${slot>selected.length?'disabled':''}>${selected[slot]===uid?'Keep as':selected[slot]?'Replace':'Assign'} Attack ${slot+1}</button>`).join('');
+      actions=Array.from({length:required},(_,slot)=>selected[slot]===uid?'':`<button class="primary" data-mobile="assign" data-slot="${slot}" ${slot>selected.length?'disabled':''}>${selected[slot]?'Replace':'Assign'} Attack ${slot+1}</button>`).join('');
       if(selected.includes(uid))actions+='<button data-mobile="remove-card">Return to hand</button>';
     }else if(canReact)actions=`<button class="primary" data-mobile="play-card">${loot?'Use Loot':'Play reaction'}</button>`;
     const reason=canPlan||canReact?'':planning?loot?'Use Loot during a reaction window.':s.prompt?'Finish the current choice first.':s.committed[viewer]?'Your attacks are locked.':g.isAttack(item)?'Waiting for your planning turn.':'Reaction only. Keep this card as an answer.':s.phase==='shop'?'Ready for next round.':unavailableReason(g,viewer,loot?c.id:item);
@@ -142,7 +142,7 @@ export function createMobileUI({getContext,def,card,modal,closeModal,toast,rende
     }
     if(selection?.kind==='wall'&&!q){title='Place Spike Wall';detail='Choose an empty end of the arena.';extra=moveConfirmation();actionHtml=spaceControls()+'<button data-mobile="cancel-space">Cancel placement</button>';}
     const f=s.phase==='reaction'&&!q?forecast(g):null;
-    return `<aside class="mobile-decision" aria-label="Current decision"><div class="mobile-decision-info"><div class="stage-cue" role="status" aria-live="polite"><span>${s.phase==='program'?'MAKE YOUR PLAN':s.phase==='shop'?'BETWEEN ROUNDS':s.phase==='over'?'FIGHT FINISHED':'PAIR '+(s.reveal+1)}</span><strong>${esc(title)}</strong><small>${esc(detail)}</small></div>${extra}${f?`<div class="stage-forecast ${f.miss?'safe':''}"><span>IF BOTH PASS NOW</span><b>${f.miss?'Out of range':(f.loss===f.maxLoss?f.loss:f.loss+'–'+f.maxLoss)+' damage'}</b><small>${esc(s.players[1-s.active].name)}${f.reflection?' · reflects 1':''}${f.lethalNote?' · '+esc(f.lethalNote):''}</small></div>`:''}</div><div class="stage-controls">${actionHtml}</div><span class="mobile-pending" role="status" ${pending?'':'hidden'}>Saving action…</span></aside>`;
+    return `<aside class="mobile-decision" aria-label="Current decision"><div class="mobile-decision-info"><div class="stage-cue" role="status" aria-live="polite"><span>${s.phase==='program'?'MAKE YOUR PLAN':s.phase==='shop'?'BETWEEN ROUNDS':s.phase==='over'?'FIGHT FINISHED':'PAIR '+(s.reveal+1)}</span><strong>${esc(title)}</strong><small>${esc(detail)}</small></div>${extra}</div>${f?`<div class="stage-forecast ${f.miss?'safe':''}"><span>IF BOTH PASS NOW</span><b>${f.miss?'Out of range':(f.loss===f.maxLoss?f.loss:f.loss+'–'+f.maxLoss)+' damage'}</b><small>${esc(s.players[1-s.active].name)}${f.reflection?' · reflects 1':''}${f.lethalNote?' · '+esc(f.lethalNote):''}</small></div>`:''}<div class="stage-controls">${actionHtml}</div><span class="mobile-pending" role="status" ${pending?'':'hidden'}>Saving action…</span></aside>`;
   }
   function spaceControls(){
     const {game:g}=ctx(),q=g.s.prompt,valid=selection&&Number.isInteger(selection.space)&&selection.key===key();

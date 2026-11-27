@@ -113,6 +113,7 @@ html.brawl-mobile #dialog .mobile-card-description .mobile-inspector-context { p
 html.brawl-mobile #dialog .mobile-sheet-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); flex: 0 0 auto; gap: 6px; max-height: 50%; margin-top: 8px; padding-top: 8px; overflow-y: auto; overscroll-behavior: contain; }
 html.brawl-mobile #dialog .mobile-sheet-actions button { min-width: 0; min-height: 48px; padding: 8px 10px; line-height: 1.25; }
 html.brawl-mobile #dialog .mobile-sheet-actions button:only-child { grid-column: 1 / -1; }
+html.brawl-mobile #dialog .mobile-sheet-actions:empty { display: none; }
 html.brawl-mobile .mobile-inspector-context { padding: 9px 12px; margin-bottom: 12px; border: 1px solid #92c7b655; border-radius: 7px; background: #102f35; color: #cde7dc; font-size: 14px; line-height: 1.4; }
 html.brawl-mobile .mobile-inspector-context :is(b, strong, span, small) { display: block; }
 html.brawl-mobile .mobile-inspector-context small { font-size: 13px; }
@@ -283,10 +284,10 @@ html.brawl-mobile #toast { bottom: max(12px, var(--mobile-safe-bottom)); max-wid
   html.brawl-mobile .mobile-decision .stage-controls .stage-technique small { font-size: 11px; }
   html.brawl-mobile .mobile-decision .stage-controls .stage-technique b { font-size: 15px; }
   html.brawl-mobile .mobile-decision .stage-controls .stage-technique span { font-size: 14px; }
-  html.brawl-mobile .mobile-decision .stage-forecast { position: static; inset: auto; display: block; width: auto; margin: 0; padding: 9px 10px; border-left: 3px solid #e4b68a; border-radius: 4px; background: #0a1925bd; text-align: left; }
-  html.brawl-mobile .mobile-decision .stage-forecast > span { display: block; font-size: 10px; letter-spacing: 1px; }
-  html.brawl-mobile .mobile-decision .stage-forecast > b { display: block; font-size: 22px; line-height: 1.08; margin: 4px 0 2px; }
-  html.brawl-mobile .mobile-decision .stage-forecast > small { display: block; font-size: 13px; line-height: 1.35; }
+  html.brawl-mobile .mobile-decision .stage-forecast { position: static; inset: auto; display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto auto; align-items: center; flex: 0 0 auto; gap: 2px 6px; width: auto; min-height: 44px; max-height: 70px; margin: 0; padding: 5px 8px; border-left: 3px solid #e4b68a; border-radius: 4px; background: #0a1925bd; text-align: left; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
+  html.brawl-mobile .mobile-decision .stage-forecast > span { display: block; grid-column: 1; grid-row: 1; font-size: 9px; line-height: 12px; letter-spacing: .5px; }
+  html.brawl-mobile .mobile-decision .stage-forecast > b { display: block; grid-column: 2; grid-row: 1; font-size: 18px; line-height: 20px; margin: 0; white-space: nowrap; }
+  html.brawl-mobile .mobile-decision .stage-forecast > small { display: block; grid-column: 1 / -1; grid-row: 2; font-size: 11px; line-height: 13px; }
   html.brawl-mobile .mobile-decision .stage-forecast.safe { border-left-color: #95dcb5; }
   html.brawl-mobile .mobile-decision .stage-waiting,
   html.brawl-mobile .mobile-decision .stage-playing { font-size: 15px; line-height: 1.4; text-align: left; }
@@ -376,9 +377,18 @@ html.brawl-mobile #toast { bottom: max(12px, var(--mobile-safe-bottom)); max-wid
   html.brawl-mobile .r-battle .r-hud > button { height: 44px; }
   html.brawl-mobile .r-battle .r-resources { font-size: 11px; gap: 6px; }
   html.brawl-mobile .r-battle .c-fan .r-card-art { min-height: 9px; height: 9px !important; }
-  html.brawl-mobile .mobile-decision { gap: 7px; }
+  html.brawl-mobile .r-battle .mobile-decision { gap: 4px; padding: 6px 9px 54px; }
   html.brawl-mobile .mobile-decision .stage-cue > strong { font-size: 20px; }
   html.brawl-mobile .od-phase-program .mobile-decision .stage-cue > span { display: none; }
+  html.brawl-mobile .od-phase-reaction .mobile-decision-info { gap: 4px; }
+  html.brawl-mobile .od-phase-reaction .mobile-decision .stage-cue > span,
+  html.brawl-mobile .od-phase-reaction .mobile-decision .stage-cue > small { display: none; }
+  html.brawl-mobile .r-battle.od-phase-reaction .mobile-decision .stage-cue > strong { font-size: 18px; line-height: 20px; }
+  html.brawl-mobile .od-phase-reaction .mobile-active-attack { min-height: 44px; padding: 5px 8px; gap: 2px; }
+  html.brawl-mobile .od-phase-reaction .mobile-active-attack small { display: none; }
+  html.brawl-mobile .od-phase-reaction .mobile-active-attack b { font-size: 14px; line-height: 16px; }
+  html.brawl-mobile .od-phase-reaction .mobile-active-attack span { font-size: 12px; line-height: 14px; }
+  html.brawl-mobile .mobile-decision .stage-forecast { max-height: 60px; row-gap: 1px; }
 }
 @media (orientation: landscape) and (max-width: 700px) {
   html.brawl-mobile .r-battle .r-huds { grid-template-columns: minmax(0, 1fr) 54px minmax(0, 1fr); gap: 5px; }
@@ -389,7 +399,10 @@ html.brawl-mobile #toast { bottom: max(12px, var(--mobile-safe-bottom)); max-wid
   html.brawl-mobile .r-battle .r-lane { gap: 2px; }
   html.brawl-mobile .r-battle .mobile-decision { padding: 9px 9px 60px; }
   html.brawl-mobile .mobile-decision .stage-cue > strong { font-size: 20px; }
-  html.brawl-mobile .mobile-decision .stage-forecast > b { font-size: 20px; }
+  html.brawl-mobile .mobile-decision .stage-forecast > b { font-size: 18px; }
+}
+@media (orientation: landscape) and (max-height: 350px) and (max-width: 700px) {
+  html.brawl-mobile .r-battle .mobile-decision { padding: 6px 9px 54px; }
 }
 @media (orientation: portrait) {
   html.brawl-mobile .in-lobby .topbar .brand strong { font-size: 21px; }
