@@ -7,7 +7,7 @@
       "slug": "hero-marcus-ironheart",
       "archetype": "Formation / advancing shield fighter",
       "trait": "Formation",
-      "traitText": "Start with 0 Formation; hold up to 3. After an enemy attack spends any of your Block, gain 1 Formation if you survive. On your attacking reaction, spend 1 to move up to 1 toward the rival (once per attack), or spend 3 for +2 damage and an on-hit push up to 2 (once per attack). Misses and Loot do not earn Formation.",
+      "traitText": "Start with 0 Formation; hold up to 3. After an enemy attack spends any of your Block, gain 1 Formation if you survive. On your attacking reaction, spend 1 to move up to 1 toward the rival, once per attack. Misses and Loot do not earn Formation. Cards may offer other Formation effects.",
       "ultimate": {
         "name": "Walking Wall",
         "text": "After playing a non-Loot card Reaction while defending, move up to 1 toward the rival. Token actions do not trigger this."
@@ -11788,7 +11788,7 @@
         "M10"
       ],
       "fury": "FM1",
-      "plan": "Block a strike to earn Formation. Spend it to stay close, or save three for a damaging push.",
+      "plan": "Block a strike to earn Formation. Spend it to stay close; use printed card effects to break through defenses.",
       "weakness": "Short reach and modest damage. A whiff earns no Formation; spending a Dual to block gives up its attack."
     },
     {

@@ -1,7 +1,7 @@
 import * as legacy from './legacy-tokens.js';
 import {CORE,initTokens,tokenActions,useToken,activation,handleOp,windMove,chooseToken} from './core-tokens.js';
 import {choosePlan,chooseReaction,choosePrompt} from './reaction-ai.js';
-export const VERSION='brawl2-audit-2';
+export const VERSION='brawl2-clear-powers-1';
 export const PRE_TOKEN_VERSION='brawl2-core-1';
 export const LEGACY_VERSION='brawl2-market-1';
 export const LOOT_COST=2;

@@ -4,13 +4,13 @@ export function initTokens(p){if(CORE.includes(p.hero)){p.tokens={MAR:0,SIB:3,VE
 export function gain(g,i,n=1){const p=g.s.players[i],added=Math.min(n,3-p.tokens);p.tokens+=added;if(added){g.event('tokenGained'+p.hero);g.log(`${p.name} readies ${added} ${p.hero==='MAR'?'Formation':p.hero==='SIB'?'War Spear':'Technique'} · ${p.tokens}/3.`);}}
 function spend(g,i,n){const p=g.s.players[i];g.need(p.tokens>=n,'Not enough ready tokens.');p.tokens-=n;g.event('tokenSpent'+p.hero);}
 export function tokenActions(g,i){const s=g.s,p=s.players[i];if(!p||s.phase!=='reaction'||s.turn!==i||s.prompt)return [];
- if(p.hero==='MAR'&&s.active===i)return [...(p.tokens>=1&&!p.pinned&&!s.mods[i].formationAdvanced?[{id:'advance',label:'Advance · 1 Formation',text:'Move up to 1 toward your rival. Once per attack.'}]:[]),...(p.tokens>=3&&!s.mods[i].breakthrough?[{id:'breakthrough',label:'Breakthrough · 3 Formation',text:'+2 damage. On hit, push up to 2. Once per attack.'}]:[])];
+ if(p.hero==='MAR'&&s.active===i)return [...(p.tokens>=1&&!p.pinned&&!s.mods[i].formationAdvanced?[{id:'advance',label:'Advance · 1 Formation',text:'Move up to 1 toward your rival. Once per attack.'}]:[])];
  if(p.hero==='VER'&&p.tokens>0&&s.active===i&&!s.mods[i].techniqueUsed&&g.def(s.mains[i])?.kind==='Dual'&&g.canPlay(i,s.mains[i],true))return [{id:'technique',label:'Technique · 1 token',text:'Use your active attack’s Reaction half. Pay its normal costs.'}];return [];
 }
-export function useToken(g,i,id){const a=tokenActions(g,i).find(a=>a.id===id);g.need(a,'That token action is not available.');const s=g.s,p=s.players[i];spend(g,i,id==='breakthrough'?3:1);
+export function useToken(g,i,id){const a=tokenActions(g,i).find(a=>a.id===id);g.need(a,'That token action is not available.');const s=g.s,p=s.players[i];spend(g,i,1);
  if(id==='technique'){s.mods[i].techniqueUsed=true;g.playReaction(i,s.mains[i],false,true);return;}
- if(id==='breakthrough')s.mods[i].breakthrough=true;else s.mods[i].formationAdvanced=true;
- g.abilityReaction(i,id==='advance'?'Formation Advance':'Formation Breakthrough',id==='advance'?[{op:'move',n:1,toward:true}]:[{op:'boost',n:2},{op:'launch',n:2}],null,a.text);
+ s.mods[i].formationAdvanced=true;
+ g.abilityReaction(i,'Formation Advance',[{op:'move',n:1,toward:true}],null,a.text);
 }
 function prompt(g,i,key,title,options,task={}){g.ask(i,'token',title,options.map(x=>x[0]),{op:'token',key,labels:Object.fromEntries(options),...task});}
 function windPlacement(g,i,early=false){const p=g.s.players[i],choices=Array.from({length:8},(_,k)=>k+1).filter(v=>Math.abs(v-p.pos)<=2&&!p.wind.includes(v));if(choices.length)g.ask(i,'wind-place','Place a Wind Current within 2 spaces, or keep your currents.',[0,...choices],{op:'token',key:'place',early});}
