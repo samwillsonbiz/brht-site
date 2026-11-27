@@ -1296,7 +1296,7 @@
       "reactionOps": [
         {
           "op": "move",
-          "n": 1
+          "n": 2
         },
         {
           "op": "boost",
@@ -1306,8 +1306,8 @@
       "side": "attacker",
       "reactionRange": null,
       "attackText": "Move up to 3. Hit for 3 at Range 1.",
-      "reactionText": "Move up to 1. Add 1 damage to your attack.",
-      "text": "Move up to 3. Hit for 3 at Range 1. OR Move up to 1. Add 1 damage to your attack.",
+      "reactionText": "Move up to 2. Add 1 damage to your attack.",
+      "text": "Move up to 3. Hit for 3 at Range 1. OR Move up to 2. Add 1 damage to your attack.",
       "art": "assets/hero-atlas-SMA.webp",
       "artIndex": 2,
       "artCols": 3,
@@ -1794,7 +1794,7 @@
       "reactionOps": [
         {
           "op": "move",
-          "n": 3
+          "n": 2
         },
         {
           "op": "escapeAim"
@@ -1803,8 +1803,8 @@
       "side": "either",
       "reactionRange": null,
       "attackText": "Move up to 1. Hit for 3 at Range 1–2.",
-      "reactionText": "Move up to 3. If you finish at Range 3 or more, gain 1 Aim.",
-      "text": "Move up to 1. Hit for 3 at Range 1–2. OR Move up to 3. If you finish at Range 3 or more, gain 1 Aim.",
+      "reactionText": "Move up to 2. If you finish at Range 3 or more, gain 1 Aim.",
+      "text": "Move up to 1. Hit for 3 at Range 1–2. OR Move up to 2. If you finish at Range 3 or more, gain 1 Aim.",
       "art": "assets/hero-atlas-ALF.webp",
       "artIndex": 2,
       "artCols": 3,
@@ -4810,15 +4810,15 @@
       "reactionOps": [
         {
           "op": "move",
-          "n": 1
+          "n": 2
         }
       ],
       "side": "either",
       "reactionRange": null,
       "discardCost": false,
       "attackText": "Hit for 3 at Range 1. Activate: move up to 1.",
-      "reactionText": "Move up to 1.",
-      "text": "Hit for 3 at Range 1. Activate: move up to 1. OR Move up to 1.",
+      "reactionText": "Move up to 2.",
+      "text": "Hit for 3 at Range 1. Activate: move up to 1. OR Move up to 2.",
       "art": "assets/core-cards-v1/Z02.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -5311,7 +5311,7 @@
       "ops": [
         {
           "op": "move",
-          "n": 1
+          "n": 2
         },
         {
           "op": "hit",
@@ -5329,9 +5329,9 @@
       "side": "either",
       "reactionRange": null,
       "discardCost": false,
-      "attackText": "Hit for 4 at Range 1–1. Activate: move up to 1.",
+      "attackText": "Hit for 4 at Range 1–1. Activate: move up to 2.",
       "reactionText": "Move up to 2.",
-      "text": "Hit for 4 at Range 1–1. Activate: move up to 1. OR Move up to 2.",
+      "text": "Hit for 4 at Range 1–1. Activate: move up to 2. OR Move up to 2.",
       "art": "assets/core-cards-v1/V03.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -6077,7 +6077,7 @@
       "ops": [
         {
           "op": "push",
-          "n": 2
+          "n": 1
         },
         {
           "op": "move",
@@ -6092,8 +6092,8 @@
       ],
       "discardCost": false,
       "attackText": "",
-      "reactionText": "At Range 1–3: push the rival up to 2, then move up to 2.",
-      "text": "At Range 1–3: push the rival up to 2, then move up to 2.",
+      "reactionText": "At Range 1–3: push the rival up to 1, then move up to 2.",
+      "text": "At Range 1–3: push the rival up to 1, then move up to 2.",
       "art": "assets/core-cards-v1/W10.webp",
       "artIndex": 0,
       "artCols": 1,
@@ -10904,7 +10904,7 @@
       "All Move distances are up to, in either direction. Stay, move partly or cross the rival without sharing a space. Keep printed timing: activation and on-hit moves remain in those windows. Push and pull still move the rival relative to you. Block/resource/utility reactions with Either Turn timing may be played on your reaction turn during either player’s attack. An attack-modifying reaction still needs your active attack; no attack bonuses are banked."
     ]
   ],
-  "version": "brawl2-audit-2",
+  "version": "brawl2-melee-1",
   "builds": [
     {
       "id": "sma-lab-0",
@@ -12923,6 +12923,121 @@
         "P07": 2,
         "P08": 2
       }
+    },
+    {
+      "id": "sib-counter-alf",
+      "hero": "SIB",
+      "name": "Answer Alf",
+      "deck": [
+        "Z05",
+        "Z05",
+        "B05",
+        "B05",
+        "B09",
+        "B09",
+        "Z02",
+        "Z02",
+        "B04",
+        "B04",
+        "Z07",
+        "Z07",
+        "Z06",
+        "Z06",
+        "B02",
+        "B02",
+        "Z01",
+        "Z01",
+        "B06",
+        "B06",
+        "B07",
+        "Z10",
+        "Z04",
+        "Z04"
+      ],
+      "fury": "FZ2",
+      "loot": [
+        "L-SIB-04",
+        "L-SIB-02",
+        "L-SIB-07",
+        "L-SIB-10",
+        "L-SIB-01",
+        "L-SIB-03"
+      ],
+      "quantities": {
+        "Z05": 2,
+        "B05": 2,
+        "B09": 2,
+        "Z02": 2,
+        "B04": 2,
+        "Z07": 2,
+        "Z06": 2,
+        "B02": 2,
+        "Z01": 2,
+        "B06": 2,
+        "B07": 1,
+        "Z10": 1,
+        "Z04": 2
+      },
+      "plan": "Keep Spear Cast for distant targets and use Storm Hunt to close in. Hold movement reactions for Alf’s escapes.",
+      "weakness": "Trades some piercing for reach; choose carefully when to commit your spears."
+    },
+    {
+      "id": "ver-counter-mei",
+      "hero": "VER",
+      "name": "Answer Mei",
+      "deck": [
+        "V04",
+        "V04",
+        "V10",
+        "B03",
+        "V08",
+        "V08",
+        "V03",
+        "V03",
+        "B02",
+        "B02",
+        "B05",
+        "B05",
+        "V05",
+        "V05",
+        "B04",
+        "B04",
+        "B06",
+        "B06",
+        "B09",
+        "B09",
+        "B08",
+        "V02",
+        "V06",
+        "V06"
+      ],
+      "fury": "FV2",
+      "loot": [
+        "L-VER-04",
+        "L-VER-01",
+        "L-VER-02",
+        "L-VER-03",
+        "L-VER-06",
+        "L-VER-05"
+      ],
+      "quantities": {
+        "V04": 2,
+        "V10": 1,
+        "B03": 1,
+        "V08": 2,
+        "V03": 2,
+        "B02": 2,
+        "B05": 2,
+        "V05": 2,
+        "B04": 2,
+        "B06": 2,
+        "B09": 2,
+        "B08": 1,
+        "V02": 1,
+        "V06": 2
+      },
+      "plan": "Use Reach for It, Footwork and Steel in Motion to pursue Mei. Save Technique for the response you need.",
+      "weakness": "Trades peak melee damage for reach and movement. Avoid spending every answer on the first attack."
     }
   ],
   "experimentMode": "shove-wall"

@@ -10,7 +10,7 @@ import {attackSummary,artLayout,fanStyle} from './card-presentation.js';
 import {BattleAudio} from './battle-audio.js';
 import {OnlineGame,onlineSupported,invitation,savedSeat,createOnline,joinOnline,readOnline} from './online.js';
 const $=s=>document.querySelector(s),app=$('#app'),dialog=$('#dialog'),content=$('#dialog-content'),audio=new BattleAudio();
-const SAVE='fable-brawl2-open-2',esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const SAVE='fable-brawl2-melee-1',esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const DRAFT_SAVE='fable-brawl2-deck-builds-v3';let drafts={};let lootPicks=[];
 function loadDraft(id,slot){const saved=drafts[slot+'-'+id],h=hero(id);if(id==='MEI'&&saved?.build==='mei-core'&&JSON.stringify([...(saved.deck||[])].sort())===JSON.stringify(['B01','B03','B04','B07','B09','B10','W01','W02','W03','W06','W08','W09'].flatMap(id=>[id,id]).sort())){const b=Brawl2.defaultBuild(data,id);return {deck:[...b.deck],fury:b.fury,build:b.id,loot:Brawl2.validLoot(data,id,saved.loot)?saved.loot:h.defaultLoot};}if(saved&&Array.isArray(saved.deck)&&saved.deck.length<=24&&saved.deck.every(c=>h.pool.includes(c)&&saved.deck.filter(x=>x===c).length<=2)&&h.furies.includes(saved.fury))return {...saved,loot:Brawl2.validLoot(data,id,saved.loot)?saved.loot:h.defaultLoot};return {loot:h.defaultLoot,deck:Brawl2.defaultDeck(data,id),fury:Brawl2.defaultFury(data,id),build:Brawl2.defaultBuild(data,id).id};}
 let lobbyView='loadout';
