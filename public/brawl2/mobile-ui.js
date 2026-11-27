@@ -65,7 +65,7 @@ export function createMobileUI({getContext,def,card,modal,closeModal,toast,rende
   };
   function sheet(c,body,actions,title=c?.name){
     const context=contextText();
-    modal(`<section class="mobile-card-sheet" aria-label="${esc(title)}"><div class="mobile-card-art">${c?card(c):''}</div><div class="mobile-card-copy"><p class="mobile-inspector-context">${esc(context)}</p><h2>${esc(title)}</h2>${body}<div class="mobile-sheet-actions">${actions}<button class="quiet" data-mobile="close">Back to battle</button></div></div></section>`);
+    modal(`<section class="mobile-card-sheet" aria-label="${esc(title)}"><div class="mobile-card-art">${c?card(c):''}</div><div class="mobile-card-copy"><div class="mobile-card-description"><p class="mobile-inspector-context">${esc(context)}</p><h2>${esc(title)}</h2>${body}</div><div class="mobile-sheet-actions">${actions}<button class="quiet" data-mobile="close">Back to battle</button></div></div></section>`);
   }
   function showHand(uid){
     const {game:g,viewer,selected}=ctx();if(!g)return;
@@ -108,6 +108,10 @@ export function createMobileUI({getContext,def,card,modal,closeModal,toast,rende
   function decision(controls,result=''){
     const {game:g,viewer,selected}=ctx(),s=g.s,q=s.prompt,step=combatStep(g,viewer);
     let title=step.title,detail=step.detail,extra='',actionHtml=controls;
+    if(s.phase==='reaction'&&!q&&s.players[viewer].hero==='SMA'&&g.canLastStand(viewer)){
+      actionHtml=actionHtml.replace(/<button class="ls-action" data-spike-wall="[^"]+">.*?<\/button>/g,'');
+      actionHtml+='<button class="ls-action" data-mobile="wall-mode">Place Spike Wall</button>';
+    }
     if(s.phase==='program'&&!q){
       const n=s.committed[viewer]?s.plans[viewer].length:g.requiredAttacks(viewer);
       title=s.committed[viewer]?'Attacks locked':n?'Plan your attacks':'No attacks in hand';
@@ -133,16 +137,20 @@ export function createMobileUI({getContext,def,card,modal,closeModal,toast,rende
       detail=q.player===viewer?q.title:'Your choices will return when they finish.';
       if(q.player===viewer&&['move','wind-place','wind-replace'].includes(q.kind)){
         extra=moveConfirmation();
-        actionHtml=q.kind==='wind-place'?controls:'';
+        actionHtml=spaceControls()+(q.kind==='wind-place'?controls:'');
       }
     }
-    if(selection?.kind==='wall'&&!q){title='Place Spike Wall';detail='Choose an empty end of the arena.';extra+=moveConfirmation();}
+    if(selection?.kind==='wall'&&!q){title='Place Spike Wall';detail='Choose an empty end of the arena.';extra=moveConfirmation();actionHtml=spaceControls()+'<button data-mobile="cancel-space">Cancel placement</button>';}
     const f=s.phase==='reaction'&&!q?forecast(g):null;
     return `<aside class="mobile-decision" aria-label="Current decision"><div class="mobile-decision-info"><div class="stage-cue" role="status" aria-live="polite"><span>${s.phase==='program'?'MAKE YOUR PLAN':s.phase==='shop'?'BETWEEN ROUNDS':s.phase==='over'?'FIGHT FINISHED':'PAIR '+(s.reveal+1)}</span><strong>${esc(title)}</strong><small>${esc(detail)}</small></div>${extra}${f?`<div class="stage-forecast ${f.miss?'safe':''}"><span>IF BOTH PASS NOW</span><b>${f.miss?'Out of range':(f.loss===f.maxLoss?f.loss:f.loss+'–'+f.maxLoss)+' damage'}</b><small>${esc(s.players[1-s.active].name)}${f.reflection?' · reflects 1':''}${f.lethalNote?' · '+esc(f.lethalNote):''}</small></div>`:''}</div><div class="stage-controls">${actionHtml}</div><span class="mobile-pending" role="status" ${pending?'':'hidden'}>Saving action…</span></aside>`;
   }
+  function spaceControls(){
+    const {game:g}=ctx(),q=g.s.prompt,valid=selection&&Number.isInteger(selection.space)&&selection.key===key();
+    return `<button class="primary" data-mobile="confirm-space" ${valid?'':'disabled'}>${selection?.kind==='wall'?'Place wall':q?.kind==='move'?(selection?.space===g.s.players[q.player].pos?'Stay here':'Move here'):'Confirm Wind'}</button>`;
+  }
   function moveConfirmation(){
-    const {game:g}=ctx(),q=g.s.prompt,valid=selection&&selection.key===key();
-    return `<div class="mobile-move-confirm"><p>${valid?esc(selection.kind==='wall'?`Place Spike Wall on space ${selection.space}. This closes that end of the arena.`:movementDescription(g,selection.space)):'Tap a highlighted arena space to preview it.'}</p><button class="primary" data-mobile="confirm-space" ${valid?'':'disabled'}>${selection?.kind==='wall'?'Place wall':q?.kind==='move'?(selection?.space===g.s.players[q.player].pos?'Stay here':'Move here'):'Confirm Wind'}</button>${selection?.kind==='wall'?'<button data-mobile="cancel-space">Cancel placement</button>':''}</div>`;
+    const {game:g}=ctx(),valid=selection&&Number.isInteger(selection.space)&&selection.key===key();
+    return `<div class="mobile-move-confirm"><p>${valid?esc(selection.kind==='wall'?`Place Spike Wall on space ${selection.space}. This closes that end of the arena.`:movementDescription(g,selection.space)):'Tap a highlighted arena space to preview it.'}</p></div>`;
   }
   async function handleClick(e,t){
     const {game:g,viewer,selected,screen,busy}=ctx();
@@ -165,12 +173,13 @@ export function createMobileUI({getContext,def,card,modal,closeModal,toast,rende
     if(!t.dataset.mobile)return false;
     const action=t.dataset.mobile;
     if(action==='close'){close();return true;}
+    if(action==='wall-mode'){selection={kind:'wall',space:null,key:key()};render();return true;}
     if(action==='cancel-space'){selection=null;render();return true;}
     if(action==='plan-slot'){
       const uid=selected[Number(t.dataset.slot)];if(uid)showHand(uid);else toast('Tap a card in your hand to assign this attack.');return true;
     }
     if(action==='confirm-space'){
-      if(!selection||selection.key!==key()){selection=null;render();return true;}
+      if(!selection||!Number.isInteger(selection.space)||selection.key!==key()){selection=null;render();return true;}
       const choice=selection;selection=null;
       if(choice.kind==='wall'){if(g.canLastStand(viewer)&&g.wallChoices().includes(choice.space))await run(()=>g.useLastStand(viewer,choice.space));}
       else if(g.s.prompt?.player===viewer&&g.s.prompt.choices.includes(choice.space))await run(()=>g.choose(viewer,choice.space));
