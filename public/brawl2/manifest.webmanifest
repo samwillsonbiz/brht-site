@@ -1,0 +1,16 @@
+{
+  "id": "/brawl2/",
+  "name": "Fable Fury: Brawl 2",
+  "short_name": "Brawl 2",
+  "description": "Commit. React. Strike. Fable Fury's eight-space Hero duel.",
+  "start_url": "/brawl2/",
+  "scope": "/brawl2/",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#101c23",
+  "theme_color": "#161c29",
+  "icons": [
+    { "src": "assets/mobile-icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/mobile-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}

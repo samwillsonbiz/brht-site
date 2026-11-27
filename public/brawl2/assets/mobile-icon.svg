@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Fable Fury Brawl">
+  <defs>
+    <radialGradient id="stone"><stop stop-color="#334a55"/><stop offset="1" stop-color="#101c23"/></radialGradient>
+    <linearGradient id="gold" x2="0" y2="1"><stop stop-color="#fff0ba"/><stop offset="1" stop-color="#ba8136"/></linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="76" fill="url(#stone)"/>
+  <rect x="25" y="25" width="462" height="462" rx="56" fill="none" stroke="#ae8040" stroke-width="5"/>
+  <path d="M77 158h358M77 341h358" stroke="#ae8040" stroke-width="3" opacity=".7"/>
+  <text x="256" y="125" text-anchor="middle" font-family="Georgia,serif" font-size="43" font-weight="bold" fill="url(#gold)">FABLE FURY</text>
+  <!-- The same hammer glyph as Smasherton's existing Impact token. -->
+  <g transform="translate(167 170) scale(8)" fill="none" stroke="url(#gold)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 3h12v7H4Z M10 10v12"/>
+  </g>
+  <text x="256" y="420" text-anchor="middle" font-family="Georgia,serif" font-size="72" font-weight="bold" letter-spacing="4" fill="url(#gold)">BRAWL</text>
+</svg>
