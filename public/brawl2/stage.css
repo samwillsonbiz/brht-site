@@ -125,3 +125,6 @@ body.in-battle{height:100dvh;overflow:hidden;background:#091820}
 @media(max-width:1000px){.stage-history{left:12px;width:210px}.arena-piece-wall{height:clamp(65px,17vh,135px)}}
 @media(max-width:600px){.stage-history{top:205px;left:12px;width:170px}.stage-history>summary{padding:8px 10px;min-height:35px;font-size:11px}.stage-history-body{max-height:28dvh}.arena-piece-wall{height:80px;width:15%}.arena-piece-label{font-size:6px;padding:2px}.r-battle .r-lane>button.arena-place-wall small{font-size:6px}}
 @media(prefers-reduced-motion:reduce){.history-disclosure{transition:none}}
+
+/* Training arena occupies its own isolated surface. */
+dialog.tutorial-dialog{width:100vw;max-width:none;height:100dvh;max-height:none;margin:0;padding:0;border:0;border-radius:0;background:#08171f;overflow:hidden}dialog.tutorial-dialog #dialog-content{height:100%;padding:0}.tutorial-frame{width:100%;height:100%;border:0;display:block}.tutorial-dialog>.dialog-close{display:none}
